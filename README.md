@@ -1,9 +1,10 @@
 # Fretlab
 
-A guitar practice app in a single HTML file. Open `index.html` in any modern browser, or turn on GitHub Pages for this repo to use it from your phone.
+A guitar practice app in a single HTML file. Open `index.html` in any modern browser, or use the hosted version on GitHub Pages.
 
 ## What's inside
 
+- **Exercises**: 13 play-along exercises (warm-ups, picking, legato, scales, strumming, triads, riffs, fretboard) with 3 to 5 steps each. A scrolling tab with a fixed playhead shows every note in time, with pick direction, technique marks and finger numbers, while a live fretboard shows the note to play now and the next one. Count-in, looping, guide audio, a click, a step-through mode (arrow keys) and an automatic speed ladder. Rate each run (Clean, Almost, Messy) and the tempo moves toward the step's goal.
 - **Today**: guided routines (15, 20, 30 and 45 minutes) that open each tool and time every block, plus a daily goal, streak and 7-day chart.
 - **Metronome**: click, wood, beep or drum beats (rock, half-time, four on the floor, funk, shuffle), swing, tap tempo, time signatures, subdivisions, per-beat accents, a speed trainer, a gap trainer and a tempo log. The space bar starts and stops it from any tab.
 - **Fretboard trainer**: find the note, name the note, intervals, and find them all. It asks more often about notes you miss or answer slowly. A progress map shows what you've learned.
