@@ -522,7 +522,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <!-- EXERCISES -->
 <section class="view" id="view-exercises" hidden>
   <div id="exLib" class="stack" style="gap:16px">
-    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Ten core workouts for knowing the neck in any key and turning it into riffs, plus a play-along for every voicing. Each one shows exactly what to play, note by note, in time. Most work in any key: pick one, or let it move up a 4th every loop until you've played it in all 12. Rate every run and the tempo climbs toward the goal.</p></div>
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Workouts for knowing the neck in any key, connecting it with technique and chord tones, and turning it into riffs, plus a play-along for every voicing. Each one shows exactly what to play, note by note, in time. Most work in any key: pick one, or let it move up a 4th every loop until you've played it in all 12. Rate every run and the tempo climbs toward the goal.</p></div>
     <div id="exList" class="stack" style="gap:18px"></div>
   </div>
   <div id="exPlayer" class="stack" hidden>
@@ -1964,6 +1964,48 @@ function legato3(list) {
 }
 const pentBox = (key, i) => { const w = cagedWins(key, 'min')[i]; return winNotes(w.lo, w.hi, pcsOf(key, MINP)); };
 const triTones = (key, w, ivs) => winNotes(w.lo, w.hi, pcsOf(key, ivs));
+const QUAL7 = ['maj7', 'm7', 'm7', 'maj7', '7', 'm7', 'm7b5'];
+function seqPattern(N, offs) {
+  const mx = Math.max(...offs), up = [], dn = [];
+  for (let i = 0; i + mx < N.length; i++) offs.forEach(o => up.push(N[i + o]));
+  for (let i = N.length - 1; i - mx >= 0; i--) offs.forEach(o => dn.push(N[i - o]));
+  return up.concat(dn);
+}
+function chordPcs7(key, deg) { return [0, 2, 4, 6].map(k => (key + MAJ[(deg + k) % 7]) % 12); }
+const chordName7 = (key, deg) => nn((key + MAJ[deg]) % 12) + QUAL7[deg];
+function arpBar(key, deg, w, dir) {
+  const tones = winNotes(w.lo, w.hi, chordPcs7(key, deg)), name = chordName7(key, deg);
+  return fit(dir === 'down' ? rev(tones) : tones, 8).map(([s, f, fg]) => ({ n: [nt(s, f, fg)], chord: name }));
+}
+function guideLine(key, w) {
+  const steps = [[1, 2], [1, 6], [4, 2], [4, 6], [0, 2], [0, 6], [0, 0]];
+  let prev = null; const out = [];
+  steps.forEach(([deg, k], i) => {
+    const pc = (key + MAJ[(deg + k) % 7]) % 12;
+    const cands = winNotes(w.lo, w.hi, [pc]);
+    let best = cands[0];
+    if (cands.length) {
+      if (prev == null) best = cands.slice().sort((a, b) => Math.abs(a[0] - 2.5) - Math.abs(b[0] - 2.5))[0];
+      else best = cands.slice().sort((a, b) => Math.abs(OPEN[a[0]] + a[1] - prev) - Math.abs(OPEN[b[0]] + b[1] - prev))[0];
+      prev = OPEN[best[0]] + best[1];
+      out.push({ n: [nt(best[0], best[1], best[2])], d: i === 6 ? 4 : 2, chord: chordName7(key, deg) });
+    }
+  });
+  return out;
+}
+function transposeShape(list, key, ref) {
+  const o0 = ((key - ref) % 12 + 12) % 12;
+  const cands = [o0, o0 - 12].map(o => ({ o, fr: list.map(it => it[1] + o) }));
+  const ok = cands.filter(c => Math.min(...c.fr) >= 1 && Math.max(...c.fr) <= 17);
+  const best = (ok.length ? ok : cands).sort((a, b) => Math.abs(a.o) - Math.abs(b.o))[0];
+  return list.map(it => [it[0], it[1] + best.o, it[2], it[3], it[4]]);
+}
+const withPicks = list => list.map(([s, f, fg, x, p]) => ({ n: [nt(s, f, fg)], x: x || '', p: p || '' }));
+const SW3m = [[2, 14, 3, '', 'D'], [1, 13, 2, '', 'D'], [0, 12, 1, '', 'D'], [1, 13, 2, '', 'U']];
+const SW3M = [[2, 14, 3, '', 'D'], [1, 14, 4, '', 'D'], [0, 12, 1, '', 'D'], [1, 14, 4, '', 'U']];
+const SW5m = [[4, 12, 1, '', 'D'], [3, 14, 3, '', 'D'], [2, 14, 3, '', 'D'], [1, 13, 2, '', 'D'], [0, 12, 1, '', 'D'], [1, 13, 2, '', 'U'], [2, 14, 3, '', 'U'], [3, 14, 3, '', 'U']];
+const SW5M = [[4, 12, 1, '', 'D'], [3, 14, 3, '', 'D'], [2, 14, 3, '', 'D'], [1, 14, 4, '', 'D'], [0, 12, 1, '', 'D'], [1, 14, 4, '', 'U'], [2, 14, 3, '', 'U'], [3, 14, 3, '', 'U']];
+const sweep = (shape, key, n) => pad(seq(withPicks(rep(transposeShape(shape, key, 9), n)), 0.25));
 function slideLink(k, a, b, s) {
   const A = pentBox(k, a), B = pentBox(k, b), As = A.filter(n => n[0] === s), Bs = B.filter(n => n[0] === s);
   const aTop = As[As.length - 1], bTop = Bs[Bs.length - 1];
@@ -1987,7 +2029,7 @@ function pedalFor(k, f) {
   const c = allPos(k, 17).concat(allPos((k + 7) % 12, 17)).filter(([s, ff]) => s >= 4 && ff > 0);
   c.sort((a, b) => Math.abs(a[1] - f) - Math.abs(b[1] - f)); return nt(c[0][0], c[0][1], 1);
 }
-const EXCATS = ['Fretboard fluency', 'Positions and scales', 'Arpeggios and chords', 'Riff building'];
+const EXCATS = ['Fretboard fluency', 'Positions and scales', 'Arpeggios and chords', 'Technique', 'Riff building'];
 const EX = [
   { id: 'pentall', cat: 'Positions and scales', title: 'Minor pentatonic: all five boxes', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Intermediate', about: 'Link the five pentatonic boxes until the whole neck feels like one scale. Works in any key.', tip: 'Shift on the string where the boxes overlap. Watch the scale-degree labels: know where every root (1) and b3 is.', steps: [
     { n: 'Boxes 1 and 2', d: 'Up box 1, down box 2, in 8th notes.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 0).concat(rev(pentBox(k, 1))), 0.5)) },
@@ -1998,12 +2040,34 @@ const EX = [
   { id: 'majcaged', cat: 'Positions and scales', title: 'Major scale in five positions', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate', about: 'The major scale in each CAGED position, then connected across the neck.', tip: 'Before each run, find the root (1) in the position and say its name. Positions overlap by a fret or two.', steps: [
     ...[0, 1, 2, 3, 4].map(i => ({ n: `Position ${i + 1} (${POS[i].c})`, d: 'Up and down in 8th notes.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[i]; return pad(seq(loopUD(winNotes(w.lo, w.hi, pcsOf(k, MAJ))), 0.5)); } })),
     { n: 'All five, climbing', d: 'Up one position, down the next, up the neck and back.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'maj').map(w => winNotes(w.lo, w.hi, pcsOf(k, MAJ))); return pad(seq(zigUp(l).concat(zigDown(rev(l))), 0.5)); } } ] },
+  { id: 'nps3', cat: 'Positions and scales', title: 'Major scale, three notes per string', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate to advanced', about: 'Three notes on every string gives even picking and legato patterns that move diagonally across the neck.', tip: 'Fingers 1-2-4 for whole steps, 1-3-4 when there is a half step at the top. Keep the thumb behind the neck for the stretches.', steps: [
+    { n: 'Pattern from the root', d: 'Six strings up and back, in triplets.', bpm: 60, goal: 120, build: k => pad(seq(loopUD(nps(k, MAJ, k, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Pattern from the 3rd', d: 'Start on the 3rd of the key.', bpm: 60, goal: 120, build: k => pad(seq(loopUD(nps(k, MAJ, (k + 4) % 12, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Pattern from the 5th', d: 'Start on the 5th of the key.', bpm: 60, goal: 120, build: k => pad(seq(loopUD(nps(k, MAJ, (k + 7) % 12, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Legato', d: 'Pick only the first note on each string. Hammer up, pull off down.', bpm: 60, goal: 120, build: k => pad(seq(legato3(nps(k, MAJ, k, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Groups of six', d: 'Two strings at a time, moving across: strings 6-5, 5-4, 4-3, 3-2, 2-1. 16th notes.', bpm: 60, goal: 120, build: k => { const u = nps(k, MAJ, k, [5, 4, 3, 2, 1, 0], 3), l = []; for (let i = 0; i < 5; i++) l.push(...u.slice(i * 3, i * 3 + 6)); return pad(seq(l, 0.25)); } } ] },
+  { id: 'seqs', cat: 'Positions and scales', title: 'Scale sequences', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate to advanced', about: 'Sequences break the up-and-down habit and make scales sound like music. All in the E-shape position of the key.', tip: 'Say the pattern in your head ("1-2-3, 2-3-4"). Sequences are where your picking hand learns to cross strings on both strokes.', steps: [
+    { n: 'Groups of three', d: '1-2-3, 2-3-4 and so on, up and back, in triplets.', bpm: 60, goal: 120, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 1, 2]), 1 / 3)); } },
+    { n: 'Groups of four', d: '1-2-3-4, 2-3-4-5, in 16th notes.', bpm: 60, goal: 110, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 1, 2, 3]), 0.25)); } },
+    { n: 'Descending fours', d: '4-3-2-1, 5-4-3-2, climbing up. 16th notes.', bpm: 60, goal: 110, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [3, 2, 1, 0]), 0.25)); } },
+    { n: 'Thirds', d: '1-3, 2-4, 3-5, in 8th notes.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 2]), 0.5)); } },
+    { n: 'Fourths', d: '1-4, 2-5, 3-6. Wider leaps, a modern sound.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 3]), 0.5)); } } ] },
   { id: 'cagedarp', cat: 'Arpeggios and chords', title: 'CAGED arpeggios', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate', about: 'The tonic chord as an arpeggio in all five CAGED shapes. These are the notes riffs and melodies land on, and the 3rd is the one that sets the mood.', tip: 'Watch the 3rds. They tell the listener whether a chord is major or minor, so know exactly where they are in every shape.', steps: [
     { n: 'E shape', d: 'Root, 3rd and 5th in the E-shape position, up and down.', bpm: 70, goal: 130, build: k => pad(seq(loopUD(triTones(k, cagedWins(k, 'maj')[1], [0, 4, 7])), 0.5)) },
     { n: 'A shape', d: 'The same chord in the A-shape position.', bpm: 70, goal: 130, build: k => pad(seq(loopUD(triTones(k, cagedWins(k, 'maj')[4], [0, 4, 7])), 0.5)) },
     { n: 'Two shapes linked', d: 'Up the lowest shape, down the next one.', bpm: 70, goal: 130, build: k => { const s = sortedWins(k, 'maj'); return pad(seq(triTones(k, s[0], [0, 4, 7]).concat(rev(triTones(k, s[1], [0, 4, 7]))), 0.5)); } },
     { n: 'All five, climbing', d: 'Up one shape, down the next, all the way up and back.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'maj').map(w => triTones(k, w, [0, 4, 7])); return pad(seq(zigUp(l).concat(zigDown(rev(l))), 0.5)); } },
     { n: 'Major 7, all five', d: 'Add the 7th, a half step below the root. That is the dreamy maj7 sound of emo and indie chords.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'maj').map(w => triTones(k, w, [0, 4, 7, 11])); return pad(seq(zigUp(l), 0.5)); } } ] },
+  { id: 'dia7', cat: 'Arpeggios and chords', title: 'Diatonic 7th arpeggios', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Advanced', about: 'Every 7th chord in the key, arpeggiated in one position. Seeing all seven chords inside one shape is how you play over changes without moving around.', tip: 'Chord names show above the tab. Labels show each note\'s scale degree in the key, so you can see which chord tones the arpeggios share.', steps: [
+    { n: 'I to IV in the E shape', d: 'Imaj7, ii7, iii7, IVmaj7. One bar each, up.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([0, 1, 2, 3].flatMap(d => arpBar(k, d, w, 'up')), 0.5)); } },
+    { n: 'V to I in the E shape', d: 'V7, vi7, viim7b5, back to Imaj7.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([4, 5, 6, 0].flatMap(d => arpBar(k, d, w, 'up')), 0.5)); } },
+    { n: 'All seven, up and down', d: 'Up one chord, down the next, through the whole key.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([0, 1, 2, 3, 4, 5, 6, 0].flatMap((d, i) => arpBar(k, d, w, i % 2 ? 'down' : 'up')), 0.5)); } },
+    { n: 'All seven in the A shape', d: 'The same idea in a different position.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[4]; return pad(seq([0, 1, 2, 3, 4, 5, 6, 0].flatMap((d, i) => arpBar(k, d, w, i % 2 ? 'down' : 'up')), 0.5)); } } ] },
+  { id: 'twofive', cat: 'Arpeggios and chords', title: 'ii–V–I arpeggios and guide tones', keyed: 'maj', key0: 0, labels: 'degree', lvl: 'Advanced', about: 'The most important progression in jazz and much of pop. Outline each chord, then connect them with guide tones: the 3rds and 7ths.', tip: 'In the guide-tone step, notice how the 7th of each chord falls by a half step to the 3rd of the next. That move is the sound of a chord change.', steps: [
+    { n: 'Arpeggios in the E shape', d: 'ii7, V7, Imaj7, one bar each.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([...arpBar(k, 1, w, 'up'), ...arpBar(k, 4, w, 'up'), ...arpBar(k, 0, w, 'up'), ...arpBar(k, 0, w, 'down')], 0.5)); } },
+    { n: 'Guide tones', d: 'Only the 3rd and 7th of each chord, in half notes, moving to the nearest note each time.', bpm: 70, goal: 120, build: k => pad(seq(guideLine(k, cagedWins(k, 'maj')[1]), 2)) },
+    { n: 'Arpeggios in the A shape', d: 'Same progression, new position.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[4]; return pad(seq([...arpBar(k, 1, w, 'up'), ...arpBar(k, 4, w, 'up'), ...arpBar(k, 0, w, 'up'), ...arpBar(k, 0, w, 'down')], 0.5)); } },
+    { n: 'Up ii, down V, up I', d: 'Alternate direction so each chord connects smoothly to the next.', bpm: 70, goal: 140, build: k => { const w = cagedWins(k, 'maj')[1]; const root = winNotes(w.lo, w.hi, [k])[0]; return pad(seq([...arpBar(k, 1, w, 'up'), ...arpBar(k, 4, w, 'down'), ...arpBar(k, 0, w, 'up'), { n: [nt(root[0], root[1], root[2])], d: 4, chord: chordName7(k, 0) }], 0.5)); } } ] },
   { id: 'triads', cat: 'Arpeggios and chords', title: 'Triad inversions on every string set', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate to advanced', about: 'Every inversion of the tonic triad on each group of three strings, then real progressions where each chord moves to the closest shape.', tip: 'Each shape has the root (1) in a different place. Learn to spot it instantly; that\'s what makes these usable in a band.', steps: [
     { n: 'G-B-e strings', d: 'Every inversion up the neck: strum, then pick.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.gbe) },
     { n: 'D-G-B strings', d: 'Same chord, next string set down.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.dgb) },
@@ -2011,6 +2075,12 @@ const EX = [
     { n: 'E-A-D strings', d: 'Low strings. Useful for riffs.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.ead) },
     { n: 'I–vi–IV–V on G-B-e', d: 'Each chord takes the nearest shape, so your hand barely moves.', bpm: 60, goal: 110, build: k => triadProgVL(k, SETS.gbe, [0, 5, 3, 4]) },
     { n: 'I–V–vi–IV on D-G-B', d: 'The most common progression in pop and alternative, voice-led on the next set down.', bpm: 60, goal: 110, build: k => triadProgVL(k, SETS.dgb, [0, 4, 5, 3]) } ] },
+  { id: 'sweeps', cat: 'Technique', title: 'Sweep-picked arpeggios', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Advanced', about: 'One continuous pick motion across the strings, like a slow strum where each note sounds separately.', tip: 'Let the pick fall through the strings in one motion. Lift each fretting finger as soon as its note has sounded, so notes don\'t ring together.', steps: [
+    { n: '3-string minor', d: 'Down-down-down, up. Minor triad on the G, B and high e strings.', bpm: 50, goal: 110, build: k => sweep(SW3m, k, 4) },
+    { n: '3-string major', d: 'The same motion, major triad.', bpm: 50, goal: 110, build: k => sweep(SW3M, k, 4) },
+    { n: '5-string minor', d: 'From the A string to the high e and back.', bpm: 50, goal: 100, build: k => sweep(SW5m, k, 2) },
+    { n: '5-string major', d: 'Same shape with a major 3rd.', bpm: 50, goal: 100, build: k => sweep(SW5M, k, 2) },
+    { n: 'Minor to major', d: 'One bar minor, one bar major. Only the 3rd moves.', bpm: 50, goal: 100, build: k => pad(seq(withPicks(rep(transposeShape(SW5m, k, 9), 2).concat(rep(transposeShape(SW5M, k, 9), 2))), 0.25)) } ] },
   { id: 'legato', cat: 'Riff building', title: 'Hammer-ons, pull-offs and slides', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Intermediate · warm-up', about: 'Legato and slides inside the pentatonic boxes: a musical warm-up and the ornaments that make riffs sing. The slides also teach you how one box connects to the next.', tip: 'Pick only the first note on each string. Hammer hard enough that the second note is as loud as the first.', steps: [
     { n: 'Box 1 legato', d: 'Hammer up each string, pull off on the way down. 8th notes.', bpm: 70, goal: 130, build: k => pad(seq(legato3(pentBox(k, 0)), 0.5)) },
     { n: 'Box 2 legato', d: 'The same in the next box up.', bpm: 70, goal: 130, build: k => pad(seq(legato3(pentBox(k, 1)), 0.5)) },
@@ -2057,6 +2127,7 @@ function exDueList() {
   return out.sort((a, b) => a.due.localeCompare(b.due));
 }
 const FOCUS = {
+  'Technique': 'one smooth sound per pick direction, like a slow strum that happens to be one note at a time.',
   'Riff building': 'both notes of each pair (or each hammer-on) sounding as loud and clear as a picked note, right on the click.',
   'Positions and scales': 'an even string of notes, like beads of the same size. No note louder or longer than the others.',
   'Arpeggios and chords': 'each chord tone ringing clearly on its own, then the next one taking over without a gap.',
@@ -2560,6 +2631,21 @@ function qScaleNote() {
   const { options, answer } = mcOpts(ans, MAJ.map(i => nn((k + i) % 12)).concat([nn((k + MAJ[d] + 1) % 12), nn((k + MAJ[d] + 11) % 12)]));
   return { type: 'mc', prompt: `What is the ${ORD[d]} note of ${nn(k)} major?`, options, answer, explain: `${nn(k)} major: ${MAJ.map(i => nn((k + i) % 12)).join(' ')}. The ${ORD[d]} note is ${ans}.` };
 }
+function qQuality() {
+  const k = rnd(12), d = rnd(7), opts = ['maj7', 'm7', '7', 'm7b5'];
+  return { type: 'mc', prompt: `In ${nn(k)} major, what kind of 7th chord is built on the ${ORD[d]} degree (${nn((k + MAJ[d]) % 12)})?`, options: opts, answer: opts.indexOf(QUAL7[d]), explain: `The chords of ${nn(k)} major are ${[0, 1, 2, 3, 4, 5, 6].map(i => chordName7(k, i)).join(', ')}.` };
+}
+function qChordIn() {
+  const k = rnd(12), d = pick([1, 4, 5, 3]), rn = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii'][d], ans = chordName7(k, d);
+  const { options, answer } = mcOpts(ans, [0, 1, 2, 3, 4, 5, 6].filter(i => i !== d).map(i => chordName7(k, i)));
+  return { type: 'mc', prompt: `What is the ${rn} chord in ${nn(k)} major?`, options, answer, explain: `Count up the ${nn(k)} major scale to the ${ORD[d]} note (${nn((k + MAJ[d]) % 12)}). Built from the scale, it's ${ans}.` };
+}
+function qGuide() {
+  const k = rnd(12), d = pick([1, 4, 0]), pcs = chordPcs7(k, d), name = chordName7(k, d);
+  const pair = (a, b) => `${nn(pcs[a])} and ${nn(pcs[b])}`;
+  const { options, answer } = mcOpts(pair(1, 3), [pair(0, 2), pair(1, 2), pair(0, 3), pair(0, 1)]);
+  return { type: 'mc', prompt: `Which two notes are the guide tones (3rd and 7th) of ${name}?`, options, answer, explain: `${name} is ${pcs.map(nn).join(' ')} (1, 3, 5, 7). The 3rd and 7th are ${pair(1, 3)}. They decide the chord's quality.` };
+}
 const TRI_RN = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'];
 function triName(k, d) { const r = (k + MAJ[d]) % 12; return nn(r) + (d === 6 ? '°' : [1, 2, 5].includes(d) ? 'm' : ''); }
 function qChordIn3() {
@@ -2634,16 +2720,18 @@ const UNITS = [
         show: () => { const w = cagedWins(9, 'min')[1]; return Object.assign(board(degCells(9, pcsOf(9, MINP), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', 'b3'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] } ],
     quiz: () => rep10([[() => qDegree('min'), 4], [() => qFindDegree('min', ['b3', '5', 'b7']), 4], [qRelative, 2]]),
     practice: [{ l: 'Exercise: all five pentatonic boxes', d: 'Linked boxes, any key.', a: () => openEx('pentall') }, { l: 'Scales explorer: minor pentatonic', d: 'See each box with degree colors.', a: () => { S.ui.xscale = 'minPent'; S.ui.xchord = true; S.ui.xlab = 'iv'; save(); switchTab('explorer'); } }] },
-  { id: 'u6', title: 'The major scale', sum: 'The formula, five positions, and the scale as a line along the strings.',
+  { id: 'u6', title: 'The major scale', sum: 'The formula, five positions, three-notes-per-string patterns, and the scale as a line along the strings.',
     cards: [
       { t: 'The formula', body: ['The major scale is <b>whole, whole, half, whole, whole, whole, half</b>. On one string that\'s 2, 2, 1, 2, 2, 2, 1 frets.', 'The half steps fall between degrees 3 and 4, and 7 and 1. Every other scale and mode is described by how it differs from this one.', 'Here is G major along the low E string.'],
         show: () => board(degCells(7, pcsOf(7, MAJ), 0, 15, [5])), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
       { t: 'Five positions', body: ['Inside each CAGED shape, the major scale fits in one hand position of four or five frets.', 'Learn one position at a time by its roots. The shaded area is the E-shape position of G major (frets 2 to 5).'],
         show: () => { const w = cagedWins(7, 'maj')[1]; return Object.assign(board(degCells(7, pcsOf(7, MAJ), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
+      { t: 'Three notes per string', body: ['Another way to arrange the same notes: exactly three on every string. These patterns climb diagonally, which makes even picking and fast legato easier.', 'There are seven, one starting on each scale degree. Here is the one starting on the root of G major.'],
+        show: () => board(nps(7, MAJ, 7, [5, 4, 3, 2, 1, 0], 3).map(([s, f]) => { const rel = (pcOf(s, f) - 7 + 12) % 12; return mk(s, f, degKind(rel), IVL[rel]); })), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
       { t: 'Lines, not just boxes', body: ['Boxes keep your hand in one place. Riffs and melodies often run along one or two strings instead, sliding between positions.', 'Here is G major across the whole neck on the G and B strings. Follow it up one string and you can link all five positions. The same pairs of strings carry the 3rds you\'ll play in the two-note riff exercise.'],
         show: () => board(degCells(7, pcsOf(7, MAJ), 0, 15, [2, 1])), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] } ],
     quiz: () => rep10([[() => qDegree('maj'), 4], [() => qFindDegree('maj', ['3', '4', '5', '7']), 3], [qScaleNote, 3]]),
-    practice: [{ l: 'Exercise: major scale in five positions', d: 'Any key.', a: () => openEx('majcaged') }, { l: 'Exercise: scales on one string', d: 'See the formula along the neck.', a: () => openEx('onestring') }, { l: 'Exercise: 3rds and 6ths', d: 'The scale in pairs, the basis of two-note riffs.', a: () => openEx('dstops') }] },
+    practice: [{ l: 'Exercise: major scale in five positions', d: 'Any key.', a: () => openEx('majcaged') }, { l: 'Exercise: three notes per string', d: 'Patterns, legato and sixes.', a: () => openEx('nps3') }, { l: 'Exercise: scale sequences', d: 'Threes, fours, 3rds and 4ths.', a: () => openEx('seqs') }, { l: 'Exercise: scales on one string', d: 'See the formula along the neck.', a: () => openEx('onestring') }, { l: 'Exercise: 3rds and 6ths', d: 'The scale in pairs, the basis of two-note riffs.', a: () => openEx('dstops') }] },
   { id: 'u7', title: 'Triads and inversions', sum: 'Three-note chords on each string set, and how to move between them smoothly.',
     cards: [
       { t: 'Three notes', body: ['A triad is the <b>root, 3rd and 5th</b>. Major has a major 3rd (4 half steps above the root). Minor has a minor 3rd (3 half steps). Every bigger chord is a triad with notes added.', 'Here is every G major triad on the G, B and high e strings.'],
@@ -2654,18 +2742,22 @@ const UNITS = [
         show: () => board([mk(2, 7, 'd5', 'D'), mk(1, 8, 'root', 'G'), mk(0, 7, 'd3', 'B'), mk(2, 9, 'd7', 'E'), mk(0, 8, 'd7', 'C')]), legend: [['root', 'Common tone (G)'], ['d5', 'G chord'], ['d3', 'G chord'], ['d7', 'C chord: notes that move']] } ],
     quiz: () => rep10([[qInversion, 5], [qTriadQuality, 3], [qTriadRoot, 2]]),
     practice: [{ l: 'Exercise: triad inversions', d: 'Every string set, voice-led progressions.', a: () => openEx('triads') }, { l: 'Ear trainer: chord types', d: 'Hear major vs minor.', a: () => { switchTab('ear'); S.ui.emode = 'chord'; save(); renderEar(); } }] },
-  { id: 'u8', title: 'Chords in a key', sum: 'The chords each key gives you, the progressions songs lean on, and the borrowed chords behind the bittersweet sound.',
+  { id: 'u8', title: 'Chords in a key', sum: 'The chords of a key, the progressions songs lean on, borrowed chords, the ii–V–I and guide tones.',
     cards: [
       { t: 'Chords from the scale', body: ['Build a chord on each note of the major scale using only notes from the key and you get <b>I, ii, iii, IV, V, vi and vii°</b>. Uppercase is major, lowercase is minor.', 'In G that\'s G, Am, Bm, C, D, Em and F#°. Add one more scale note on top and I and IV become <b>maj7</b> chords, the soft, open color of emo and indie.', 'All of these chords live inside every scale position. Here is the E-shape position of G major.'],
         show: () => { const w = cagedWins(7, 'maj')[1]; return Object.assign(board(degCells(7, pcsOf(7, MAJ), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
       { t: 'Progressions that carry songs', body: ['A handful of progressions show up again and again: <b>I–V–vi–IV</b> (G, D, Em, C), <b>vi–IV–I–V</b> (Em, C, G, D), and the two-chord sway <b>Imaj7–IVmaj7</b> (Gmaj7, Cmaj7).', 'Because they\'re numbers, they work in any key. Here are the roots of I, V, vi and IV in G, all within reach of one hand.'],
         show: () => board([mk(5, 3, 'root', 'I'), mk(4, 5, 'd5', 'V'), mk(4, 7, 'd3', 'vi'), mk(4, 3, 'd7', 'IV')]), legend: [['root', 'I (G)'], ['d5', 'V (D)'], ['d3', 'vi (Em)'], ['d7', 'IV (C)']] },
       { t: 'Borrowed chords', body: ['Alternative, emo and shoegaze songs often borrow chords from the minor key with the same root. The three most common are <b>iv</b> (the IV chord made minor), <b>bVII</b> and <b>bVI</b>.', 'In G: Cm, F and Eb. Going from C to Cm before landing on G is the classic bittersweet move. Here are their roots next to the home chord.'],
-        show: () => board([mk(5, 3, 'root', 'I'), mk(4, 3, 'd7', 'iv'), mk(5, 1, 'd5', 'bVII'), mk(4, 6, 'd3', 'bVI')]), legend: [['root', 'I (G)'], ['d7', 'iv (Cm)'], ['d5', 'bVII (F)'], ['d3', 'bVI (Eb)']] } ],
-    quiz: () => rep10([[qChordIn3, 3], [qProg, 4], [qBorrow, 3]]),
-    practice: [{ l: 'Exercise: triad progressions', d: 'I–vi–IV–V and I–V–vi–IV, voice-led.', a: () => openEx('triads', 4) }, { l: 'Exercise: CAGED arpeggios with maj7', d: 'The maj7 sound in all five shapes.', a: () => openEx('cagedarp', 4) }, { l: 'Voicings', d: 'Real riff shapes built from these chords.', a: () => switchTab('voicings') }] }
+        show: () => board([mk(5, 3, 'root', 'I'), mk(4, 3, 'd7', 'iv'), mk(5, 1, 'd5', 'bVII'), mk(4, 6, 'd3', 'bVI')]), legend: [['root', 'I (G)'], ['d7', 'iv (Cm)'], ['d5', 'bVII (F)'], ['d3', 'bVI (Eb)']] },
+      { t: 'The ii–V–I', body: ['ii–V–I is the most common progression in jazz, and V to I is the strongest resolution in Western music. In C it\'s Dm7, G7, Cmaj7.', 'Here is G7, the V chord, inside the same position, colored by its own chord tones. Its 3rd (B) and 7th (F) are the tension that wants to resolve to C.'],
+        show: () => { const w = cagedWins(0, 'maj')[1]; return Object.assign(board(degCells(7, pcsOf(7, [0, 4, 7, 10]), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'G (root)'], ['d3', 'B (3rd)'], ['d5', 'D (5th)'], ['d7', 'F (b7)']] },
+      { t: 'Guide tones', body: ['The 3rd and 7th of each chord carry its sound. In a ii–V–I, the 7th of each chord falls a half step to the 3rd of the next.', 'In C: C (7th of Dm7) falls to B (3rd of G7), and F (7th of G7) falls to E (3rd of Cmaj7). Play only those notes and the changes are clear even without a band.'],
+        show: () => board([mk(3, 10, 'd7', 'C'), mk(3, 9, 'd3', 'B'), mk(2, 10, 'd7', 'F'), mk(2, 9, 'd3', 'E')]), legend: [['d7', '7th of the chord'], ['d3', '3rd of the next chord']] } ],
+    quiz: () => rep10([[qChordIn3, 2], [qProg, 2], [qBorrow, 2], [qQuality, 2], [qGuide, 2]]),
+    practice: [{ l: 'Exercise: triad progressions', d: 'I–vi–IV–V and I–V–vi–IV, voice-led.', a: () => openEx('triads', 4) }, { l: 'Exercise: CAGED arpeggios with maj7', d: 'The maj7 sound in all five shapes.', a: () => openEx('cagedarp', 4) }, { l: 'Exercise: diatonic 7th arpeggios', d: 'All seven chords in one position.', a: () => openEx('dia7') }, { l: 'Exercise: ii–V–I and guide tones', d: 'Arpeggios, then the guide-tone line.', a: () => openEx('twofive') }, { l: 'Voicings', d: 'Real riff shapes built from these chords.', a: () => switchTab('voicings') }] }
 ];
-const EX_UNIT = { pentall: 'u5', legato: 'u5', octaves: 'u2', majcaged: 'u6', onestring: 'u6', dstops: 'u6', cagedarp: 'u4', triads: 'u7', cycle4: 'u1', notemap: 'u2' };
+const EX_UNIT = { nps3: 'u6', seqs: 'u6', dia7: 'u8', twofive: 'u8', sweeps: 'u7', pentall: 'u5', legato: 'u5', octaves: 'u2', majcaged: 'u6', onestring: 'u6', dstops: 'u6', cagedarp: 'u4', triads: 'u7', cycle4: 'u1', notemap: 'u2' };
 
 /* ---------- learn path: UI ---------- */
 const LN = { unit: null, card: 0, tab: 'lesson' };
@@ -3043,15 +3135,17 @@ const ROUTINES = {
     { tool: 'exercises', ex: 'triads', m: 3, t: 'Triads', d: 'Spot the root in every shape.' },
     { tool: 'ear', m: 2, t: 'Ear training', d: 'Scale degrees. Sing it back first.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
   deep: { n: 'Deep · 45', blocks: [
-    { tool: 'exercises', ex: 'legato', m: 4, t: 'Warm-up: legato and slides', d: 'Connect the boxes with slides.' },
-    { tool: 'fretboard', m: 4, t: 'Fretboard notes', d: 'Your slow and missed notes come up more often.' },
-    { tool: 'exercises', ex: 'cycle4', m: 3, t: 'Cycle of fourths', d: 'One string per day.' },
-    { tool: 'exercises', ex: 'pentall', m: 5, t: 'All five pentatonic boxes', d: 'Turn on the key change each loop.' },
-    { tool: 'exercises', ex: 'majcaged', m: 5, t: 'Major scale positions', d: 'One position, then link it to the next.' },
-    { tool: 'exercises', ex: 'cagedarp', m: 5, t: 'CAGED arpeggios', d: 'Know where every 3rd is.' },
-    { tool: 'exercises', ex: 'triads', m: 5, t: 'Triad inversions', d: 'Voice-led progressions.' },
-    { tool: 'exercises', ex: 'dstops', m: 5, t: '3rds and 6ths', d: 'Then make a riff from them.' },
-    { tool: 'exercises', ex: 'octaves', m: 4, t: 'Octave riffs', d: 'Mute the string in between.' },
+    { tool: 'exercises', ex: 'legato', m: 3, t: 'Warm-up: legato and slides', d: 'Connect the boxes with slides.' },
+    { tool: 'fretboard', m: 3, t: 'Fretboard notes', d: 'Your slow and missed notes come up more often.' },
+    { tool: 'exercises', ex: 'pentall', m: 4, t: 'All five pentatonic boxes', d: 'Turn on the key change each loop.' },
+    { tool: 'exercises', ex: 'majcaged', m: 4, t: 'Major scale positions', d: 'One position, then link it to the next.' },
+    { tool: 'exercises', ex: 'nps3', m: 4, t: 'Three notes per string', d: 'Legato or groups of six.' },
+    { tool: 'exercises', ex: 'seqs', m: 3, t: 'Scale sequences', d: 'Fours and thirds.' },
+    { tool: 'exercises', ex: 'cagedarp', m: 4, t: 'CAGED arpeggios', d: 'Know where every 3rd is.' },
+    { tool: 'exercises', ex: 'twofive', m: 4, t: 'ii–V–I', d: 'Arpeggios, then guide tones.' },
+    { tool: 'exercises', ex: 'triads', m: 4, t: 'Triad inversions', d: 'Voice-led progressions.' },
+    { tool: 'exercises', ex: 'dstops', m: 4, t: '3rds and 6ths', d: 'Then make a riff from them.' },
+    { tool: 'exercises', ex: 'octaves', m: 3, t: 'Octave riffs', d: 'Mute the string in between.' },
     { tool: 'learn', m: 5, t: 'Lesson', d: 'Next lesson card or unit check.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
     { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Strum every move of a few voicings. Pick the one that fits the song in your head.' },
