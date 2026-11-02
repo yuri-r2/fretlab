@@ -266,6 +266,13 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 
 
 
+/* research-based practice */
+.pfocus{margin:0;color:var(--ink)} .pfocus b{color:var(--accent)}
+.pnew{display:block;background:var(--surface-2);border-radius:10px;padding:8px 12px;margin:0}
+.qtag{display:block;font:600 12px var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.duecard{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.jnote{width:100%;min-height:58px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);font:inherit}
+.revres{margin:4px 0 0;padding-left:18px}
 /* voicings */
 .vogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
 .vocard{display:flex;gap:12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink);min-width:0}
@@ -428,7 +435,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <section class="view" id="view-today">
   <div class="vhead">
     <div class="stack" style="gap:4px"><span class="label" id="todayDate">Today</span><h2>Your practice</h2></div>
-    <p class="muted small">Pick a routine and press start. Each block opens the right tool and times it for you. Practice time counts whenever you're actively using a tool.</p>
+    <p class="muted small">Today's plan builds itself from where you are: one new step, any reviews that are due, a lesson and a riff of your own. Each block opens the right tool and times it for you. Practice time counts whenever you're actively using a tool.</p>
   </div>
   <div class="stats">
     <div class="stat"><svg width="46" height="46" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-2)" stroke-width="4.5"/><circle id="bigRing" cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg><div><div class="v" id="stToday">0</div><div class="k">minutes today</div></div></div>
@@ -442,10 +449,12 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       <div class="seg" id="rtSeg"></div>
       <ul class="blocks" id="rtBlocks"></ul>
       <div class="row"><button class="btn primary big" id="rtStart" type="button">Start routine</button><span class="small muted" id="rtHint"></span></div>
+      <div id="jBox" class="stack" style="gap:6px"></div>
     </div>
     <div class="card stack">
       <h3>Continue learning</h3>
       <div id="continueLearn" class="stack"></div>
+      <div id="dueBox" class="stack" style="gap:8px"></div>
     </div>
     <div class="card stack">
       <div class="row" style="justify-content:space-between"><h3>Exercises up next</h3><button class="btn" type="button" data-go="exercises">All exercises</button></div>
@@ -462,10 +471,13 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   <div class="card">
     <h3>How Fretlab trains you</h3>
     <ul class="method small">
-      <li><b>Short, daily sessions.</b> A daily goal and streak keep practice consistent. Set your goal in settings.</li>
-      <li><b>Mixed practice blocks.</b> Routines switch skills every few minutes instead of drilling one thing for an hour. In a study of advanced musicians, interleaved practice beat blocked practice on later performance (<a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2016.01251/full" target="_blank" rel="noopener">Carter and Grahn, 2016</a>).</li>
-      <li><b>Drills that find your weak spots.</b> The fretboard and ear trainers ask more often about the notes you miss or answer slowly, like spaced repetition flashcards.</li>
-      <li><b>Real numbers.</b> Every exercise step has a goal tempo, and the tempo log tracks your best clean speeds week to week.</li>
+      <li><b>New material in one block, review mixed together.</b> Today's plan gives one new exercise step a solid block of repetition, then mixes short reviews of different skills. In studies with clarinetists, mixing exercises held up better than repeating one at a time when players were tested later, even though most players preferred blocked practice (<a href="https://digitalcommons.georgiasouthern.edu/music-facpubs/2" target="_blank" rel="noopener">Stambaugh, 2011</a>; <a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2016.01251/full" target="_blank" rel="noopener">Carter and Grahn, 2016</a>). The benefit is modest outside the lab, so new material still gets its own focused block.</li>
+      <li><b>Clean runs, not just more runs.</b> In a study of advanced pianists, total practice time and repetitions didn't predict next-day performance. The best players fixed errors on the spot, changed tempo on purpose and repeated a passage until it stayed right (<a href="https://cml.music.utexas.edu/research/music-teaching-and-learning" target="_blank" rel="noopener">Duke, Simmons and Cash, 2009</a>). So the tempo only rises after two clean runs in a row, a messy run slows it by about 10%, and "Practice" lets you loop just the bar that breaks, then put it back into the whole step.</li>
+      <li><b>Listen before you play.</b> Musicians who heard a model before practicing improved more during practice and overnight (<a href="https://scholars.ttu.edu/en/publications/effects-of-model-performances-on-music-skill-acquisition-and-over-5" target="_blank" rel="noopener">Cash and colleagues</a>). New steps suggest one "Listen first" pass.</li>
+      <li><b>Spaced, cold reviews.</b> How you play during practice is a poor guide to what you'll keep (<a href="https://pubmed.ncbi.nlm.nih.gov/25910388/" target="_blank" rel="noopener">Soderstrom and Bjork, 2015</a>). Finished steps and passed units come back after 1, 3, 7, 16 and 35 days, and the first run of the day is the one that counts. Spacing reviews out helps long-term memory, and the best gap grows the longer you want to remember something (<a href="https://pubmed.ncbi.nlm.nih.gov/19076480/" target="_blank" rel="noopener">Cepeda et al., 2008</a>). Recalling from memory also beats re-reading (<a href="https://applied-science-cisdev.sites.olt.ubc.ca/files/2018/06/retrieval-and-spacing.pdf" target="_blank" rel="noopener">Karpicke and Roediger</a>).</li>
+      <li><b>Focus on the sound.</b> Musicians played more expressively, and no less accurately, when they focused on the sound they were making instead of their finger movements (<a href="https://oasis.library.unlv.edu/kns_fac_articles/224" target="_blank" rel="noopener">Mornell and Wulf, 2018</a>). Each exercise gives one listening cue.</li>
+      <li><b>Write your own, inside limits.</b> Popular musicians learn by ear and by making their own music alongside practice (<a href="https://www.ucl.ac.uk/ioe/research-projects/2017/jun/adapting-popular-musicians-practices-classroom" target="_blank" rel="noopener">Lucy Green</a>). Every voicing ends with a "Your riff" step, and a small constraint helps you avoid falling back on old habits.</li>
+      <li><b>Plan, then reflect.</b> Musicians who were taught to set a goal and check their own progress improved more in the same practice time (<a href="https://bulletproofmusician.com/research-tested-practice-strategies-that-will-help-you-learn-new-&" target="_blank" rel="noopener">Miksza</a>). After a routine, write one line about what to fix next time; it shows up at the start of your next session.</li>
       <li><b>Ears in context.</b> Scale-degree training plays a cadence first, then the note, then resolves it home. It's the approach popularized by the <a href="https://apps.apple.com/app/id1088761926" target="_blank" rel="noopener">Functional Ear Trainer</a> app.</li>
     </ul>
   </div>
@@ -476,7 +488,8 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <!-- LEARN -->
 <section class="view" id="view-learn" hidden>
   <div id="lnPath" class="stack" style="gap:16px">
-    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Fretboard mastery path</span><h2>Learn</h2></div><p class="muted small">Nine units that build on each other, from naming every note to voicings for writing your own riffs. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer), and the drills and exercises that make it automatic.</p></div>
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Fretboard mastery path</span><h2>Learn</h2></div><p class="muted small">Nine units that build on each other, from naming every note to voicings for writing your own riffs. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer, and a couple of questions from earlier units), and the drills and exercises that make it automatic. Passed units come back as short mixed reviews, spaced further apart each time you get them right.</p></div>
+    <div id="lnReview"></div>
     <ol class="path" id="lnUnits"></ol>
   </div>
   <div id="lnUnit" class="stack" hidden>
@@ -521,8 +534,10 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       <p class="small"><b id="pStepName"></b> <span class="muted" id="pStepDesc"></span></p>
       <div class="hw"><canvas id="pCanvas" role="img" aria-label="Scrolling tab. The orange line marks now; notes move left toward it."></canvas></div>
       <div class="pstatus small muted" id="pStatus"></div>
+      <p class="small pfocus" id="pFocus"></p>
       <div class="ptrans">
         <button class="btn primary big" id="pPlay" type="button">Play</button>
+        <button class="btn" id="pListen" type="button" title="Hear and watch one pass without playing">Listen first</button>
         <button class="btn" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀ Note</button>
         <button class="btn" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">Note ▶</button>
         <div class="ptempo"><button class="round sm" id="pSlower" type="button" aria-label="Slower">−</button><div><div><b class="mono" id="pBpm">60</b> <span class="small muted">bpm · goal <b class="mono" id="pGoal">90</b></span></div><div class="tbar"><i id="pTempoBar"></i></div></div><button class="round sm" id="pFaster" type="button" aria-label="Faster">+</button></div>
@@ -533,6 +548,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <label class="toggle"><input type="checkbox" id="pGuide"> Hear the notes</label>
         <label class="toggle"><input type="checkbox" id="pClick"> Click</label>
         <label class="toggle"><input type="checkbox" id="pLadder"> Speed up 4 bpm each loop</label>
+        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Practice</span><select id="pSpot"><option value="">Whole step</option></select></label>
         <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select></label>
       </div>
       <div class="scroll-x"><div id="pBoard"></div></div>
@@ -545,6 +561,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <button class="btn primary" id="pNextStep" type="button" hidden>Next step →</button>
         <span class="small muted" id="pBest"></span>
       </div>
+      <p class="small muted" id="pCrit"><b>Clean</b>: no stops, every note lands with the click (one tiny slip is fine). <b>Almost</b>: kept going, a few notes off. <b>Messy</b>: stopped or lost the beat. Two clean runs in a row move the tempo up.</p>
       <p class="small"><b>Tip:</b> <span id="pTip"></span></p>
     </div>
   </div>
@@ -815,7 +832,7 @@ const DEF = {
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
-  routines: {}, rtPick: 'standard',
+  routines: {}, rtPick: 'auto', journal: {},
   ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
@@ -2066,6 +2083,29 @@ const EX = [
 
 /* ---------- guided exercises: player ---------- */
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', SANS = '"IBM Plex Sans", system-ui, sans-serif', DISP = '"Barlow Condensed", "Arial Narrow", sans-serif';
+/* ---------- spacing and review (research-based) ---------- */
+const REV_IV = [1, 3, 7, 16, 35, 75];
+function dayAdd(n, from) { const d = from ? new Date(from + 'T12:00:00') : new Date(); d.setDate(d.getDate() + n); return dayKey(d); }
+function dayDiff(a, b) { return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 864e5); }
+function exRevOf(e, i) {
+  const st = exStat(e.id); if (!st.done[i]) return null;
+  st.rev = st.rev || {};
+  if (!st.rev[i]) st.rev[i] = { k: 1, due: dayAdd(1 + (i + e.id.length) % 6) };
+  return st.rev[i];
+}
+function exDueList() {
+  const t = dayKey(), out = [];
+  for (const e of EX) e.steps.forEach((_, i) => { const r = exRevOf(e, i); if (r && r.due <= t) out.push({ e, i, due: r.due }); });
+  return out.sort((a, b) => a.due.localeCompare(b.due));
+}
+const FOCUS = {
+  'Warm-up': 'every note landing exactly with the click, all at the same volume.',
+  'Positions and scales': 'an even string of notes, like beads of the same size. No note louder or longer than the others.',
+  'Arpeggios and chords': 'each chord tone ringing clearly on its own, then the next one taking over without a gap.',
+  'Technique': 'one smooth sound per pick direction, like a slow strum that happens to be one note at a time.',
+  'Fretboard fluency': 'the note name in your head just before it sounds. Say it, then play it.',
+  'Voicing riffs': 'the open strings ringing under the moving notes. Keep that shimmer going between shapes.'
+};
 const P = { ex: null, step: 0, ev: [], L: 4, bpm: 60, swing: 0, running: false, bus: null, timer: null, startT: 0, k: 0, i: 0, cb: 0, endBeat: Infinity, loops: 0, cursor: 0, viewPos: 0, lastIdx: -2, ppb: 100, bf: 0, bt: 12, labels: 'finger', status: '' };
 const pBoard = makeBoard($('#pBoard'), (s, f) => pluck((P.tun || OPEN)[s] + f, 0, null, 0.65, 1.4));
 function exStat(id) { return S.ex[id] || (S.ex[id] = { done: [], best: {}, bpm: {}, last: '' }); }
@@ -2086,6 +2126,7 @@ function keyName(pc, e) { e = e || P.ex; const t = e && e.keyed; return nn(pc) +
 function exLoad(i) {
   exStop();
   const e = P.ex; P.step = clamp(i, 0, e.steps.length - 1);
+  P.spot = null; P.spotClean = 0;
   exRebuild();
   P.bpm = exStat(e.id).bpm[P.step] || e.steps[P.step].bpm;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
@@ -2094,6 +2135,11 @@ function exRebuild() {
   const sd = P.ex.steps[P.step]; P.keyPc = exKey();
   const b = sd.build(P.keyPc);
   P.ev = b.ev; P.L = b.L; P.swing = sd.swing || 0; P.bar = sd.bar || 4;
+  if (P.spot) {
+    const a0 = P.spot[0] * P.bar, b0 = (P.spot[1] + 1) * P.bar;
+    const sub = P.ev.filter(e => e.t >= a0 - 1e-6 && e.t < b0 - 1e-6).map(e => Object.assign({}, e, { t: e.t - a0, d: Math.min(e.d, b0 - e.t) }));
+    if (b0 <= P.L + 1e-6 && sub.length) { P.ev = sub; P.L = b0 - a0; } else P.spot = null;
+  }
   const tk = sd.tuning || P.ex.tuning || 'std'; P.tun = TUNE[tk].m; P.names = tuneNames(tk); P.tuneKey = tk;
   let gap = 1; for (let k = 1; k < P.ev.length; k++) { const g = P.ev[k].t - P.ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
   P.ppb = clamp(42 / gap, 90, 190);
@@ -2133,18 +2179,42 @@ function exStart() {
 }
 function exStop() {
   if (P.running) { clearInterval(P.timer); killBus(P.bus); P.bus = null; P.running = false; }
+  P.preview = false;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
   if (P.ev.length && !$('#exPlayer').hidden) { exDraw(0); exBoard(0); exStatus(0, true); }
   renderExTransport();
 }
 function exToggle() { P.running ? exStop() : exStart(); }
+function exListen() {
+  if (!P.ex) return; if (P.running) { exStop(); return; }
+  const o = S.ui.exopts, keep = [o.loop, o.count, o.keycycle]; o.loop = false; o.count = false; o.keycycle = false;
+  exStart(); P.preview = true; o.loop = keep[0]; o.count = keep[1]; o.keycycle = keep[2];
+  P.endBeat = P.L; renderExTransport();
+}
+function exSpotOptions() {
+  const sd = P.ex.steps[P.step], b = sd.build(P.keyPc), bar = sd.bar || 4, nb = Math.round(b.L / bar), opts = ['<option value="">Whole step</option>'];
+  const has = k => b.ev.some(e => e.t >= k * bar - 1e-6 && e.t < (k + 1) * bar - 1e-6);
+  if (nb > 1) {
+    for (let k = 0; k < nb; k++) if (has(k)) opts.push(`<option value="${k}-${k}">Loop bar ${k + 1} only</option>`);
+    if (nb > 2) for (let k = 0; k < nb - 1; k++) if (has(k) && has(k + 1)) opts.push(`<option value="${k}-${k + 1}">Loop bars ${k + 1} and ${k + 2}</option>`);
+  }
+  $('#pSpot').innerHTML = opts.join(''); $('#pSpot').value = P.spot ? P.spot.join('-') : ''; $('#pSpot').disabled = nb <= 1;
+}
+function exSetSpot(v) {
+  const run = P.running; exStop();
+  if (v) { if (!P.spot) P.wholeBpm = P.bpm; P.spot = v.split('-').map(Number); P.spotClean = 0; P.bpm = Math.max(40, Math.round((P.wholeBpm || P.bpm) * 0.9)); toast('Part practice: loop just this spot, a little slower. After three clean runs, go back to the whole step.'); }
+  else { P.spot = null; P.bpm = exStat(P.ex.id).bpm[P.step] || P.wholeBpm || P.bpm; }
+  exRebuild(); P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
+  renderExMeta(); requestAnimationFrame(() => { exColors(true); exDraw(0); exBoard(0); exStatus(0, true); });
+  if (run) exStart();
+}
 function exSched() {
   const c = AU.ctx, spb = 60 / P.bpm, hz = c.currentTime + 0.15, cs = exClickSnd();
   for (let guard = 0; guard < 400; guard++) {
     const e = P.ev[P.i], ab = P.k * P.L + swingT(e.t);
     if (ab >= P.endBeat - 1e-6) break;
     const tt = P.startT + ab * spb; if (tt > hz) break;
-    if (tt >= c.currentTime - 0.03 && S.ui.exopts.guide) exPlayEv(e, tt, spb);
+    if (tt >= c.currentTime - 0.03 && (S.ui.exopts.guide || P.preview)) exPlayEv(e, tt, spb);
     P.i++; if (P.i >= P.ev.length) { P.i = 0; P.k++; }
   }
   for (let guard = 0; guard < 64; guard++) {
@@ -2173,7 +2243,7 @@ function exReanchor(nb) {
 function exFrame() {
   if (!P.running) return;
   const pos = exPos();
-  if (pos >= P.endBeat + 0.3) { exStop(); toast('Done. Rate how it went, then play it again.'); return; }
+  if (pos >= P.endBeat + 0.3) { const pv = P.preview; exStop(); toast(pv ? 'Now you play it. Press Play.' : 'Done. Rate how it went, then play it again.'); return; }
   const k = Math.floor(Math.max(0, pos) / P.L);
   if (k > P.loops) { P.loops = k; exLoopEnd(); }
   exDraw(pos);
@@ -2183,6 +2253,7 @@ function exFrame() {
   requestAnimationFrame(exFrame);
 }
 function exLoopEnd() {
+  if (P.preview) return;
   const goal = P.ex.steps[P.step].goal;
   if (S.ui.exopts.keycycle && P.ex.keyed) {
     const spb = 60 / P.bpm, tB = P.startT + P.loops * P.L * spb;
@@ -2196,9 +2267,10 @@ function exLoopEnd() {
 }
 function exStatus(pos, force) {
   let s;
-  if (!P.running) s = `${P.ev.length} ${P.ev[0] && P.ev[0].strum ? 'strums' : 'notes'} · ${P.L / P.bar} bar${P.L > P.bar ? 's' : ''}${P.bar === 7 ? ' of 7/8' : ''} · press Play or step through with the arrow keys`;
+  if (P.running && P.preview && pos >= 0) s = 'Listening: watch the tab and fretboard, hear the sound you are aiming for';
+  else if (!P.running) s = `${P.spot ? 'Part practice · ' : ''}${P.ev.length} ${P.ev[0] && P.ev[0].strum ? 'strums' : 'notes'} · ${P.L / P.bar} bar${P.L > P.bar ? 's' : ''}${P.bar === 7 ? ' of 7/8' : ''} · press Play or step through with the arrow keys`;
   else if (pos < 0) s = 'Count-in…';
-  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / P.bar) + 1} of ${P.L / P.bar} · ${P.bar === 7 ? '8th' : 'beat'} ${Math.floor(w % P.bar) + 1}`; }
+  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${P.spot ? 'Part practice · ' : ''}${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / P.bar) + 1} of ${P.L / P.bar} · ${P.bar === 7 ? '8th' : 'beat'} ${Math.floor(w % P.bar) + 1}`; }
   if (s !== P.status || force) { P.status = s; $('#pStatus').textContent = s; }
 }
 function exStepNote(dir) {
@@ -2307,7 +2379,8 @@ function renderExLib() {
 }
 function renderExTransport() {
   const b = $('#pPlay'); if (!b) return;
-  b.textContent = P.running ? 'Stop' : 'Play';
+  b.textContent = P.running && !P.preview ? 'Stop' : 'Play';
+  $('#pListen').textContent = P.running && P.preview ? 'Stop' : 'Listen first';
 }
 function renderExMeta() {
   if (!P.ex) return;
@@ -2324,6 +2397,11 @@ function renderExPlayer() {
   $('#pSteps').innerHTML = e.steps.map((s, i) => `<button type="button" data-step="${i}" aria-pressed="${i === P.step}" class="${st.done[i] ? 'done' : ''} ${i === ns && !st.done[i] ? 'next' : ''}">${st.done[i] ? '✓ ' : ''}Step ${i + 1}</button>`).join('');
   $('#pStepName').textContent = `Step ${P.step + 1}: ${sd.n}.`; $('#pStepDesc').textContent = sd.d + (sd.swing ? ' Swing feel.' : '');
   $('#pTip').textContent = e.tip;
+  const fresh = !st.done[P.step] && !st.bpm[P.step] && !sd.create, rv = exRevOf(e, P.step), due = rv && rv.due <= dayKey() && (st.rated || {})[P.step] !== dayKey();
+  $('#pFocus').innerHTML = due ? `<span class="pnew"><b>Review, cold:</b> play it once before warming up and rate that first run honestly. That's the real test of what stuck.</span>`
+    : fresh ? `<span class="pnew"><b>New step:</b> press Listen first to hear and watch one pass, then play along.</span>`
+    : `<b>Listen for</b> ${esc(sd.create ? 'a riff you would want to play again. Keep the tempo steady and let the chord on beat 1 anchor each bar.' : (FOCUS[e.cat] || FOCUS['Positions and scales']))}`;
+  exSpotOptions();
   const un = EX_UNIT[e.id] && UNITS.find(x => x.id === EX_UNIT[e.id]);
   $('#pLesson').innerHTML = un ? `<span class="lessonlink">Concept behind this: <button class="btn" type="button" data-openunit="${un.id}">Unit ${UNITS.indexOf(un) + 1} · ${esc(un.title)}</button></span>` : '';
   const o = S.ui.exopts;
@@ -2341,19 +2419,46 @@ function renderExKey() {
 function renderExercises() { if (P.ex && !$('#exPlayer').hidden) renderExPlayer(); else renderExLib(); }
 function exFeedback(kind) {
   if (!P.ex) return;
-  const sd = P.ex.steps[P.step], st = exStat(P.ex.id), was = P.bpm;
-  if (kind === 'clean') {
-    st.best[P.step] = Math.max(st.best[P.step] || 0, was);
+  const sd = P.ex.steps[P.step], st = exStat(P.ex.id), was = P.bpm, i = P.step, t = dayKey();
+  st.streak = st.streak || {}; st.rated = st.rated || {};
+  if (P.spot) {
+    if (kind === 'clean') { P.spotClean = (P.spotClean || 0) + 1; if (P.spotClean >= 3) toast('That spot is fixed for now. Switch Practice back to Whole step and play it in context.'); else { exReanchor(Math.min(P.wholeBpm || sd.goal, was + 4)); toast(`Clean (${P.spotClean} of 3). Up to ${P.bpm} bpm.`); } }
+    else if (kind === 'messy') { P.spotClean = 0; exReanchor(Math.max(40, Math.round(was * 0.9))); toast(`Slowed to ${P.bpm} bpm. Slow enough that it comes out right.`); }
+    else { P.spotClean = 0; toast('Stay at this tempo until it comes out clean.'); }
+    return;
+  }
+  const rv = exRevOf(P.ex, i), review = rv && rv.due <= t && st.rated[i] !== t;
+  st.rated[i] = t;
+  if (review) {
+    if (kind === 'clean') { rv.k = Math.min(REV_IV.length - 1, (rv.k || 0) + 1); rv.due = dayAdd(REV_IV[rv.k]); toast(`Clean on a cold run. It stuck. Next check in ${REV_IV[rv.k]} days.`); }
+    else if (kind === 'almost') { rv.due = dayAdd(1); toast('Close. Warm it up now; it comes back tomorrow.'); }
+    else { rv.k = 0; rv.due = dayAdd(1); exReanchor(Math.max(40, Math.round(was * 0.9))); toast(`Some of it faded since last time, which is normal. Slowed to ${P.bpm} bpm; it comes back tomorrow.`); }
+  } else if (kind === 'clean') {
+    st.best[i] = Math.max(st.best[i] || 0, was);
+    const n = st.streak[i] = (st.streak[i] || 0) + 1, last = i === P.ex.steps.length - 1;
     if (was >= sd.goal) {
-      const first = !st.done[P.step]; st.done[P.step] = true;
-      if (P.step < P.ex.steps.length - 1) { toast(first ? `Step ${P.step + 1} complete. Step ${P.step + 2} is next.` : `Clean at goal tempo again. Try step ${P.step + 2}.`); $('#pNextStep').hidden = false; }
-      else toast(first ? `${P.ex.title}: every step complete.` : 'Clean at goal tempo.');
-    } else { const nb = Math.min(sd.goal, was + 5); exReanchor(nb); toast(`Clean at ${was} bpm. Moving up to ${nb}.`); }
-  } else if (kind === 'messy') { const nb = Math.max(40, was - 5); exReanchor(nb); toast(`Slowed to ${nb} bpm. Clean beats fast.`); }
-  else toast(`Stay at ${was} bpm for a few more loops.`);
-  st.bpm[P.step] = P.bpm; st.last = dayKey(); save(); renderExMeta();
+      if (st.done[i]) { st.streak[i] = 0; toast(last ? 'Clean at goal tempo.' : `Clean at goal tempo again. Try step ${i + 2}.`); if (!last) $('#pNextStep').hidden = false; }
+      else if (n >= 2) {
+        st.done[i] = true; st.streak[i] = 0; st.rev = st.rev || {}; st.rev[i] = { k: 0, due: dayAdd(1) };
+        if (!last) { toast(`Step ${i + 1} locked in. It comes back tomorrow for a quick cold check. Step ${i + 2} is next.`); $('#pNextStep').hidden = false; }
+        else toast(`${P.ex.title}: every step complete. Each one comes back for spaced cold checks.`);
+      } else toast('Clean at goal tempo. One more clean run in a row locks it in.');
+    } else if (n >= 2) { const nb = Math.min(sd.goal, was + 5); st.streak[i] = 0; exReanchor(nb); toast(`Two clean runs in a row at ${was}. Moving up to ${nb} bpm.`); }
+    else toast(`Clean at ${was} bpm. One more clean run in a row and the tempo goes up.`);
+  } else if (kind === 'messy') { st.streak[i] = 0; const nb = Math.max(40, Math.min(was - 5, Math.round(was * 0.9))); exReanchor(nb); toast(`Slowed to ${nb} bpm. If one spot keeps breaking, use Practice to loop just that bar.`); }
+  else { st.streak[i] = 0; toast(`Stay at ${was} bpm. Aim for two clean runs in a row.`); }
+  st.bpm[i] = P.bpm; st.last = t; save(); renderExMeta();
   const ns = nextStep(P.ex);
-  $$('#pSteps button').forEach((b, i) => { b.classList.toggle('done', !!st.done[i]); b.classList.toggle('next', i === ns && !st.done[i]); b.textContent = (st.done[i] ? '✓ ' : '') + 'Step ' + (i + 1); });
+  $$('#pSteps button').forEach((b, k) => { b.classList.toggle('done', !!st.done[k]); b.classList.toggle('next', k === ns && !st.done[k]); b.textContent = (st.done[k] ? '✓ ' : '') + 'Step ' + (k + 1); });
+  if (review || kind === 'clean') { const e = P.ex; requestAnimationFrame(() => { if (P.ex === e) { const f = $('#pFocus'); if (f.querySelector('.pnew')) renderExPlayerFocus(); } }); }
+}
+function renderExPlayerFocus() { const e = P.ex, sd = e.steps[P.step]; $('#pFocus').innerHTML = `<b>Listen for</b> ${esc(sd.create ? 'a riff you would want to play again. Keep the tempo steady and let the chord on beat 1 anchor each bar.' : (FOCUS[e.cat] || FOCUS['Positions and scales']))}`; }
+function renderDue() {
+  const ex = exDueList(), lu = lnDue();
+  let h = '';
+  if (lu.length) h += `<div class="duecard"><div><b>Mixed review</b><div class="small muted">${lu.length} unit${lu.length > 1 ? 's' : ''} due: ${esc(lu.map(u => u.title).join(', '))}</div></div><button class="btn primary" type="button" data-review="1">Start review</button></div>`;
+  if (ex.length) h += `<div class="duecard"><div><b>Cold checks</b><div class="small muted">${ex.length} finished step${ex.length > 1 ? 's' : ''} due: ${esc(ex.slice(0, 3).map(x => `${x.e.title} step ${x.i + 1}`).join(', '))}${ex.length > 3 ? '…' : ''}</div></div><button class="btn" type="button" data-cold="0">Start</button></div>`;
+  $('#dueBox').innerHTML = h ? '<div class="hr"></div><h3>Due for review</h3>' + h : '';
 }
 function renderUpNext() {
   const list = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => x.e.steps.some((_, i) => !x.st.done[i]))
@@ -2606,11 +2711,34 @@ const QZ = { qs: [], i: 0, score: 0, answered: false, found: null, wrong: 0, don
 const lBoard = makeBoard($('#lnBoard'), (s, f) => pluck(OPEN[s] + f, 0, null, 0.6, 1.3));
 const qBoard = makeBoard($('#qzBoard'), (s, f) => qzTap(s, f));
 function lnStat(id) { return S.learn[id] || (S.learn[id] = { card: 0, best: 0, passed: false, last: '' }); }
+function lnRevOf(u) { const st = lnStat(u.id); if (!st.passed) return null; if (!st.rev) st.rev = { k: 1, due: dayAdd(1 + UNITS.indexOf(u) % 3) }; return st.rev; }
+function lnDue() { const t = dayKey(); return UNITS.filter(u => { const r = lnRevOf(u); return r && r.due <= t; }).sort((a, b) => lnRevOf(a).due.localeCompare(lnRevOf(b).due)); }
+function tagQ(q, u) { q._u = u.id; q.prompt = `<span class="qtag">From unit ${UNITS.indexOf(u) + 1} · ${esc(u.title)}</span>` + q.prompt; return q; }
+function mixedQs(units, n) {
+  const pools = units.map(u => ({ u, qs: u.quiz() })), out = [];
+  for (let r = 0; out.length < n && r < 10; r++) for (const p of pools) { if (out.length >= n) break; if (p.qs[r]) out.push(tagQ(p.qs[r], p.u)); }
+  return shuffle(out);
+}
+const REVIEW_UNIT = { id: 'review', title: 'Mixed review', sum: 'Questions from the units that are due, shuffled together. Pulling them from memory, with growing gaps between reviews, is what makes them stick.', cards: [], practice: [],
+  quiz() { let us = lnDue().slice(0, 5); if (!us.length) us = UNITS.filter(u => lnStat(u.id).passed); return mixedQs(us, 10); } };
+function openReview() {
+  if (!UNITS.some(u => lnStat(u.id).passed)) { toast('Pass a unit check first. Reviews start the day after.'); return; }
+  switchTab('learn'); LN.unit = REVIEW_UNIT; $('#lnPath').hidden = true; $('#lnUnit').hidden = false; setLnTab('quiz'); window.scrollTo({ top: 0 });
+}
+function renderLnReview() {
+  const due = lnDue(), passed = UNITS.filter(u => lnStat(u.id).passed);
+  if (!passed.length) { $('#lnReview').innerHTML = ''; return; }
+  const nx = passed.map(u => ({ u, d: lnRevOf(u).due })).sort((a, b) => a.d.localeCompare(b.d))[0];
+  $('#lnReview').innerHTML = due.length
+    ? `<div class="duecard"><div><b>${due.length} unit${due.length > 1 ? 's' : ''} due for review</b><div class="small muted">${esc(due.map(u => u.title).join(', '))}. Ten mixed questions, about five minutes.</div></div><button class="btn primary" type="button" data-review="1">Start mixed review</button></div>`
+    : `<div class="duecard"><div><b>No reviews due</b><div class="small muted">Next: ${esc(nx.u.title)} in ${Math.max(1, dayDiff(dayKey(), nx.d))} day${dayDiff(dayKey(), nx.d) > 1 ? 's' : ''}. You can still review early; it won't change the schedule.</div></div><button class="btn" type="button" data-review="1">Review now</button></div>`;
+}
 function nextUnit() { return UNITS.find(u => !lnStat(u.id).passed) || UNITS[UNITS.length - 1]; }
 function openEx(id, step) { switchTab('exercises'); exOpen(id, step); }
 function presetFret(mode, strings, range, nat) { const o = S.fret.opts; o.strings = strings; o.range = range; o.nat = nat; save(); switchTab('fretboard'); fSetMode(mode); }
 function legendHtml(items) { const col = { root: 'var(--root)', d3: 'var(--d3)', d5: 'var(--d5)', d7: 'var(--d7)', note: 'var(--surface)', dim: 'var(--wood-2)', hit: 'var(--good)' }; return items.map(([k, t]) => `<span><i style="background:${col[k]};${k === 'note' ? 'border:1.5px solid var(--ink)' : ''}"></i>${esc(t)}</span>`).join(''); }
 function renderPath() {
+  renderLnReview();
   const nu = nextUnit();
   $('#lnUnits').innerHTML = UNITS.map((u, i) => {
     const st = lnStat(u.id), cur = u === nu && !st.passed;
@@ -2624,7 +2752,8 @@ function openUnit(id, tab) {
 }
 function setLnTab(t) {
   LN.tab = t; const u = LN.unit, i = UNITS.indexOf(u);
-  $('#lnUnitNo').textContent = `Unit ${i + 1} of ${UNITS.length}`; $('#lnTitle').textContent = u.title; $('#lnSum').textContent = u.sum;
+  $('#lnUnitNo').textContent = i < 0 ? 'Spaced review' : `Unit ${i + 1} of ${UNITS.length}`;
+  $('#lnTabs').hidden = i < 0; $('#lnTitle').textContent = u.title; $('#lnSum').textContent = u.sum;
   $$('#lnTabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === t));
   $('#lnLesson').hidden = t !== 'lesson'; $('#lnQuiz').hidden = t !== 'quiz'; $('#lnPractice').hidden = t !== 'practice';
   if (t === 'lesson') renderCard();
@@ -2647,7 +2776,15 @@ function renderPractice() {
   const u = LN.unit;
   $('#lnPractice').innerHTML = `<p class="small muted">Lessons explain it, the check tests it, practice makes it automatic. Spend a few minutes on each of these, then come back to the next unit.</p>` + u.practice.map((p, i) => `<div class="weak"><div><div style="font-weight:500">${esc(p.l)}</div><div class="small muted">${esc(p.d)}</div></div><button class="btn" type="button" data-prac="${i}">Go</button></div>`).join('');
 }
-function qzStart() { QZ.qs = LN.unit.quiz(); QZ.i = 0; QZ.score = 0; QZ.done = false; qzShow(); }
+function qzStart() {
+  const u = LN.unit, i = UNITS.indexOf(u); QZ.res = [];
+  if (i < 0) QZ.qs = u.quiz();
+  else {
+    QZ.qs = u.quiz(); const prev = UNITS.slice(0, i).filter(x => lnStat(x.id).passed);
+    if (prev.length) { const old = mixedQs(shuffle(prev).slice(0, 2), 2); QZ.qs.splice(3, 1, old[0]); if (old[1]) QZ.qs.splice(7, 1, old[1]); }
+  }
+  QZ.i = 0; QZ.score = 0; QZ.done = false; qzShow();
+}
 function qzShow() {
   const q = QZ.qs[QZ.i]; QZ.answered = false; QZ.found = new Set(); QZ.wrong = 0;
   $('#qzQ').innerHTML = q.prompt;
@@ -2661,7 +2798,7 @@ function qzShow() {
 }
 function qzPlay(q) { if (!q.sound) return; ac(); const t = AU.ctx.currentTime + 0.05; if (q.strum) strum(q.sound, t, null, 0.03, 0.5, 1.5); else q.sound.forEach((m, i) => pluck(m, t + i * 0.45, null, 0.65, 1.3)); }
 function qzFinish(ok, extraMarkers) {
-  const q = QZ.qs[QZ.i]; QZ.answered = true; if (ok) QZ.score++;
+  const q = QZ.qs[QZ.i]; QZ.answered = true; if (ok) QZ.score++; (QZ.res = QZ.res || []).push({ u: q._u, ok });
   $('#qzFb').className = 'qzfb ' + (ok ? 'ok' : 'no');
   $('#qzFb').innerHTML = `<b>${ok ? 'Correct.' : 'Not quite.'}</b> ${q.explain}`;
   if (q.board && q.reveal) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.reveal.concat(extraMarkers || []), win: q.board.win || null, names: q.board.names });
@@ -2691,19 +2828,39 @@ function qzAnswer(i) {
   qzFinish(ok);
 }
 function qzNext() { if (!QZ.answered) return; QZ.i++; if (QZ.i >= QZ.qs.length) qzEnd(); else qzShow(); }
+function qzEndReview() {
+  QZ.done = true; const by = {}, t = dayKey();
+  QZ.res.forEach(r => { if (!r.u) return; const b = by[r.u] || (by[r.u] = { n: 0, c: 0 }); b.n++; if (r.ok) b.c++; });
+  const rows = Object.entries(by).map(([id, b]) => {
+    const u = UNITS.find(x => x.id === id), rv = lnRevOf(u), wasDue = rv.due <= t; let note;
+    if (!wasDue) note = 'early review, schedule unchanged';
+    else if (b.c === b.n) { rv.k = Math.min(REV_IV.length - 1, (rv.k || 0) + 1); rv.due = dayAdd(REV_IV[rv.k]); note = `next review in ${REV_IV[rv.k]} days`; }
+    else { rv.k = 0; rv.due = dayAdd(1); note = 'back tomorrow'; }
+    return `<li><b>${esc(u.title)}</b>: ${b.c} of ${b.n} · ${note}</li>`;
+  });
+  save();
+  $('#qzQ').innerHTML = `${QZ.score} out of ${QZ.qs.length}.`;
+  $('#qzScore').innerHTML = ''; $('#qzAns').innerHTML = ''; $('#qzBoardWrap').hidden = true; $('#qzHint').textContent = '';
+  $('#qzFb').className = 'qzfb ' + (QZ.score >= 8 ? 'ok' : '');
+  $('#qzFb').innerHTML = `Units you got fully right come back later; anything you missed comes back tomorrow. Missing a few is normal and useful: the effort of recalling is what strengthens the memory.<ul class="revres">${rows.join('')}</ul>`;
+  $('#qzNext').hidden = true; $('#qzSkip').hidden = true;
+  $('#qzEndBtns').innerHTML = `<button class="btn primary" type="button" data-qz="path">Back to the path</button>`;
+  chime();
+}
 function qzEnd() {
+  if (LN.unit === REVIEW_UNIT) { qzEndReview(); return; }
   QZ.done = true; const u = LN.unit, st = lnStat(u.id), pass = QZ.score >= 8, first = pass && !st.passed;
-  st.best = Math.max(st.best, QZ.score); if (pass) st.passed = true; st.last = dayKey(); save();
+  st.best = Math.max(st.best, QZ.score); if (pass) { st.passed = true; if (first) st.rev = { k: 0, due: dayAdd(1) }; } st.last = dayKey(); save();
   const idx = UNITS.indexOf(u), nxt = UNITS[idx + 1];
   $('#qzQ').innerHTML = pass ? `${QZ.score} out of 10. Unit passed.` : `${QZ.score} out of 10. You need 8 to pass.`;
   $('#qzScore').innerHTML = ''; $('#qzAns').innerHTML = ''; $('#qzBoardWrap').hidden = true; $('#qzHint').textContent = '';
   $('#qzFb').className = 'qzfb ' + (pass ? 'ok' : '');
-  $('#qzFb').innerHTML = pass ? `${first ? 'Nice work. ' : ''}Now make it automatic with the practice drills, then move on.` : 'Reread the lesson cards for the questions you missed, then try again. New questions are generated each time.';
+  $('#qzFb').innerHTML = pass ? `${first ? 'Nice work. ' : ''}Now make it automatic with the practice drills, then move on. This unit comes back tomorrow as part of a short mixed review.` : 'Reread the lesson cards for the questions you missed, then try again. New questions are generated each time.';
   $('#qzNext').hidden = true; $('#qzSkip').hidden = true;
   $('#qzEndBtns').innerHTML = `<button class="btn" type="button" data-qz="retry">Try again</button><button class="btn" type="button" data-qz="lesson">Review lesson</button><button class="btn ${pass ? '' : 'primary'}" type="button" data-qz="practice">Practice</button>${pass && nxt ? `<button class="btn primary" type="button" data-qz="next">Next unit: ${esc(nxt.title)} →</button>` : ''}`;
   if (pass) chime();
 }
-function renderLearn() { if (LN.unit && !$('#lnUnit').hidden) setLnTab(LN.tab === 'quiz' && !QZ.done ? 'quiz' : LN.tab); else renderPath(); }
+function renderLearn() { if (LN.unit === REVIEW_UNIT && QZ.done) { $('#lnBack').click(); return; } if (LN.unit && !$('#lnUnit').hidden) setLnTab(LN.tab === 'quiz' && !QZ.done ? 'quiz' : LN.tab); else renderPath(); }
 function renderContinue() {
   const u = nextUnit(), st = lnStat(u.id), i = UNITS.indexOf(u), done = UNITS.filter(x => lnStat(x.id).passed).length;
   $('#continueLearn').innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start"><div class="stack" style="gap:2px"><span class="label">Unit ${i + 1} of ${UNITS.length} · ${done} passed</span><b>${esc(u.title)}</b><span class="small muted">${esc(u.sum)}</span></div><button class="btn primary" type="button" data-openunit="${u.id}">${st.card || st.best ? 'Continue' : 'Start'}</button></div><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / UNITS.length * 100)}%"></i></span>`;
@@ -2806,10 +2963,15 @@ function vToEx(v) {
       { n: 'Hear the voicing', d: `${first.name}, one string at a time, then strummed. Labels show each note's role in the chord.` + tuneTxt, bpm: b0, goal: g0, tuning: v.tune, bar: 4,
         build: () => { const l = N.concat(N.slice(1, -1).reverse()).map((n, i) => Object.assign(one(n, '', i % 2 ? 'U' : 'D'), { d: 0.5, chord: first.name })); l.push(Object.assign(blk(N, 'D', 2), { chord: first.name })); return pad(seq(l, 0.5, 'none')); } },
       step('Riff: move the shape', `Move through ${v.moves.map(m => m.name).join(', ')} with a ${PATNAME[main]}. One bar each.`, main, b0, g0),
-      step('Variation', `The same moves as ${PATNAME[alt]}.${alt === 'odd7' ? ' The tempo counts 8th notes, grouped 2 + 2 + 3.' : ''}${alt === 'glide' ? ' The ~ mark means a gentle tremolo-arm dip while the chord rings (or a slow vibrato if your guitar has no arm).' : ''}`, alt, alt === 'odd7' ? b0 * 2 : b0, alt === 'odd7' ? g0 * 2 : g0)
+      step('Variation', `The same moves as ${PATNAME[alt]}.${alt === 'odd7' ? ' The tempo counts 8th notes, grouped 2 + 2 + 3.' : ''}${alt === 'glide' ? ' The ~ mark means a gentle tremolo-arm dip while the chord rings (or a slow vibrato if your guitar has no arm).' : ''}`, alt, alt === 'odd7' ? b0 * 2 : b0, alt === 'odd7' ? g0 * 2 : g0),
+      { n: 'Your riff', create: true, bpm: b0, goal: b0, tuning: v.tune, bar: 4,
+        get d() { return `Make up your own riff with these shapes. Today's constraint: ${vConstraint(v)}. Each chord sounds once on beat 1 as a cue; fill the rest of the bar yourself. Rate Clean when you play a version you'd keep, then record it on your phone.` + tuneTxt; },
+        build: () => pad(seq(v.moves.map(m => Object.assign(blk(vNotes(m, v.tune), 'D', 4), { chord: m.name })), 4, 'none')) }
     ]
   };
 }
+const V_CONSTRAINTS = ['use only two of the four shapes', 'keep at least one open string ringing the whole time', 'start every bar on the same note', 'play the same rhythm in every bar and change only the notes', 'no more than four notes in each bar', 'end the riff on a note that is not the root', 'repeat a three-note group so it lands on a different beat each time', 'leave a full beat of silence in every bar', 'only move one finger between shapes', 'play bar 1 twice, then change only its last two notes'];
+function vConstraint(v) { const d = new Date(), k = d.getFullYear() * 400 + d.getMonth() * 31 + d.getDate(); return V_CONSTRAINTS[(k + v.id.length * 7) % V_CONSTRAINTS.length]; }
 const VEX = VOICINGS.map(vToEx);
 EX.push(...VEX); EXCATS.push('Voicing riffs');
 VEX.forEach(e => { EX_UNIT[e.id] = 'u9'; });
@@ -2853,7 +3015,7 @@ function renderVoList() {
   const list = VOICINGS.filter(v => VO.style === 'all' || v.style === VO.style);
   $('#voGrid').innerHTML = list.map(v => `<button class="vocard" type="button" data-vo="${v.id}"><span class="vobox">${vBox(v.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small"><span class="tag">${STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span><span class="small muted">${v.moves.map(m => esc(m.name)).join(' → ')}</span></span></button>`).join('');
 }
-function openVoicing(id) { VO.id = id; VO.move = 0; $('#voList').hidden = true; $('#voDetail').hidden = false; renderVoDetail(); window.scrollTo({ top: 0 }); }
+function openVoicing(id) { VO.id = id; VO.move = 0; S.ui.lastVo = id; save(); $('#voList').hidden = true; $('#voDetail').hidden = false; renderVoDetail(); window.scrollTo({ top: 0 }); }
 function renderVoDetail() {
   const v = VOICINGS.find(x => x.id === VO.id); if (!v) return;
   const mv = v.moves[VO.move];
@@ -2911,6 +3073,7 @@ UNITS.push({ id: 'u9', title: 'Voicings for riffs', sum: 'Color tones, open-stri
 
 /* ---------- routines ---------- */
 const ROUTINES = {
+  auto: { n: "Today's plan", auto: true, blocks: [] },
   quick: { n: 'Quick · 15', blocks: [
     { tool: 'exercises', ex: 'permut', m: 3, t: 'Warm-up: finger permutations', d: 'Your current step. Relaxed hands first.' },
     { tool: 'exercises', ex: 'pentall', m: 4, t: 'Pentatonic boxes', d: 'Link two boxes. Try a new key.' },
@@ -2937,18 +3100,41 @@ const ROUTINES = {
     { tool: 'exercises', ex: 'sweeps', m: 5, t: 'Sweep picking', d: 'Slow and clean. One motion per direction.' },
     { tool: 'exercises', ex: 'notemap', m: 5, t: 'One note, the whole neck', d: 'Random key, every occurrence.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
-    { tool: 'exercises', ex: 'pentall', m: 5, t: 'Pentatonic boxes', d: 'Pick the key of your next song.' },
-    { tool: 'exercises', ex: 'notemap', m: 4, t: 'Power-chord shapes', d: 'Root and 5th everywhere in the key.' },
-    { tool: 'riffs', m: 8, t: 'Riff Dice', d: 'Roll, lock the best notes, roll again. Save two riffs.' },
-    { tool: 'exercises', ex: 'triads', m: 3, t: 'Triads', d: 'Add a triad part on top of your riff.' } ] }
+    { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Strum every move of a few voicings. Pick the one that fits the song in your head.' },
+    { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 1, m: 5, t: 'Play-along: move the shape', d: 'Two clean runs in a row, then try the variation.' },
+    { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 7, t: 'Your riff', d: 'Write two bars of your own inside the constraint. Record your favorite take on your phone.' },
+    { tool: 'riffs', m: 5, t: 'Riff Dice', d: 'Roll a riff in the same key, lock the notes you like and fit it to your voicing.' } ] }
 };
+function focusEx() {
+  const open = EX.filter(e => e.id !== 'permut' && !e.voicing && e.steps.some((_, i) => !exStat(e.id).done[i]));
+  const recent = open.filter(e => exStat(e.id).last && dayDiff(exStat(e.id).last, dayKey()) <= 7).sort((a, b) => exStat(b.id).last.localeCompare(exStat(a.id).last));
+  if (recent.length) return recent[0];
+  const nu = nextUnit(), linked = open.find(e => EX_UNIT[e.id] === nu.id);
+  return linked || open[0] || null;
+}
+function autoBlocks() {
+  const b = [], f = focusEx(), due = exDueList().slice(0, 3), ld = lnDue();
+  b.push({ tool: 'exercises', ex: 'permut', m: 3, t: 'Warm-up', d: 'Your current permutation step. Relaxed, even, with the click.' });
+  if (f) b.push({ tool: 'exercises', ex: f.id, m: 8, t: `New: ${f.title}`, d: `Step ${nextStep(f) + 1}. Stay on this one step: brand-new material sticks best with focused repetition. Listen first, then go for two clean runs in a row.` });
+  due.forEach(x => b.push({ tool: 'exercises', ex: x.e.id, step: x.i, m: 2, t: `Cold check: ${x.e.title}`, d: `Step ${x.i + 1}. Play it before warming it up and rate that first run honestly.` }));
+  b.push(ld.length ? { tool: 'learn', review: true, m: 4, t: 'Mixed review', d: `${ld.length} unit${ld.length > 1 ? 's' : ''} due. Answer from memory before looking anything up.` } : { tool: 'learn', m: 4, t: 'Lesson', d: 'Next lesson card or unit check on the Learn path.' });
+  b.push({ tool: 'fretboard', m: 3, t: 'Fretboard notes', d: 'Find the note. Your slow and missed notes come up more often.' });
+  if (!due.length) b.push({ tool: 'ear', m: 2, t: 'Ear training', d: 'Scale degrees. Sing it back before you answer.', setup: () => { S.ui.emode = 'deg'; renderEar(); } });
+  const vo = VEX[(new Date().getDate()) % VEX.length];
+  b.push({ tool: 'exercises', ex: vo.id, step: 3, m: 4, t: 'Create: your own riff', d: `${vo.title}. Two bars of your own, inside today's constraint.` });
+  if (f) b.push({ tool: 'exercises', ex: f.id, m: 1, t: 'Replay the new step', d: 'One clean run of today\'s new step to finish. In one study, practicing a similar melody afterward erased the overnight gain, and replaying the first one before sleep brought it back.' });
+  return b;
+}
+function rtBlocks(key) { const r = ROUTINES[key]; return r.auto ? autoBlocks() : r.blocks; }
 const R = { key: null, idx: 0, rem: 0, running: false, paused: false };
 function routineStart() {
-  const key = S.rtPick; R.key = key; R.idx = 0; R.running = true; R.paused = false; routineBlock(); renderRoutine();
+  const key = S.rtPick; R.key = key; R.blocks = rtBlocks(key); R.idx = 0; R.running = true; R.paused = false; routineBlock(); renderRoutine();
 }
 function routineBlock() {
-  const b = ROUTINES[R.key].blocks[R.idx]; R.rem = b.m * 60;
-  switchTab(b.tool); if (b.ex) exOpen(b.ex); if (b.tool === 'learn') openUnit(nextUnit().id); if (b.setup) b.setup();
+  const b = R.blocks[R.idx]; R.rem = b.m * 60;
+  if (b.review) { openReview(); }
+  else { switchTab(b.tool); if (b.ex) exOpen(typeof b.ex === 'function' ? b.ex() : b.ex, b.step); if (b.tool === 'learn') openUnit(nextUnit().id); }
+  if (b.setup) b.setup();
   toast(`${b.t}: ${b.d}`); renderPill();
 }
 function routineTick() {
@@ -2956,9 +3142,9 @@ function routineTick() {
   R.rem--;
   if (R.rem <= 0) {
     chime(); R.idx++;
-    if (R.idx >= ROUTINES[R.key].blocks.length) {
+    if (R.idx >= R.blocks.length) {
       const k = dayKey(); (S.routines[k] = S.routines[k] || []).push(R.key); save();
-      R.running = false; renderPill(); renderRoutine(); toast('Routine complete. Nice work.'); switchTab('today'); return;
+      R.running = false; R.reflect = true; renderPill(); renderRoutine(); toast('Routine complete. Nice work. One line for next time?'); switchTab('today'); return;
     }
     routineBlock();
   }
@@ -2968,20 +3154,29 @@ function routineStop() { R.running = false; renderPill(); renderRoutine(); }
 function renderPill() {
   const p = $('#routinePill');
   if (!R.running) { p.hidden = true; updateHdrH(); return; }
-  const b = ROUTINES[R.key].blocks[R.idx];
-  p.hidden = false; $('#rpText').textContent = `${R.idx + 1}/${ROUTINES[R.key].blocks.length} ${b.t} · ${fmtTime(Math.max(0, R.rem))}`;
+  const b = R.blocks[R.idx];
+  p.hidden = false; $('#rpText').textContent = `${R.idx + 1}/${R.blocks.length} ${b.t} · ${fmtTime(Math.max(0, R.rem))}`;
   $('#rpPause').textContent = R.paused ? 'Resume' : 'Pause';
   updateHdrH();
 }
 function renderRoutine() {
-  $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.n} min</button>`).join('');
-  const key = R.running ? R.key : S.rtPick, r = ROUTINES[key];
+  if (!ROUTINES[S.rtPick]) S.rtPick = 'auto';
+  $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.auto ? r.n : r.n + ' min'}</button>`).join('');
+  const key = R.running ? R.key : S.rtPick, r = { n: ROUTINES[key].n, blocks: R.running ? R.blocks : rtBlocks(key) };
   const toolName = { learn: 'Learn', exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', voicings: 'Voicings', explorer: 'Scales', riffs: 'Riff Dice' };
   $('#rtBlocks').innerHTML = r.blocks.map((b, i) => `<li class="${R.running && i === R.idx ? 'cur' : ''} ${R.running && i < R.idx ? 'done' : ''}"><span class="m">${R.running && i === R.idx ? fmtTime(R.rem) : b.m + ' min'}</span><div><div style="font-weight:500">${esc(b.t)} <span class="tool">· ${toolName[b.tool]}</span></div><div class="small muted">${esc(b.d)}</div></div><span></span></li>`).join('');
   $('#rtStart').textContent = R.running ? 'Go to current block' : 'Start routine';
   $('#rtHint').textContent = R.running ? 'Running. Use the bar at the top to pause or skip.' : `${r.blocks.reduce((a, b) => a + b.m, 0)} minutes, ${r.blocks.length} blocks`;
   const done = S.routines[dayKey()] || [];
   $('#rtDone').textContent = done.length ? `Done today: ${done.map(k => ROUTINES[k]?.n.split(' ·')[0] || k).join(', ')}` : '';
+  renderJournal(); renderDue();
+}
+function renderJournal() {
+  const days = Object.keys(S.journal || {}).sort(), lastK = days[days.length - 1], t = dayKey();
+  let h = '';
+  if (R.reflect || (S.routines[t] && !S.journal[t])) h += `<label class="f"><span>Before you go: what improved, and what will you fix next time?</span><textarea class="jnote" id="jNote" placeholder="e.g. Pentatonic box 2 clean at 96. Bar 3 shift still late."></textarea></label><div><button class="btn" type="button" id="jSave">Save note</button></div>`;
+  else if (lastK) h += `<p class="small"><b>Your note from ${lastK === t ? 'today' : esc(new Date(lastK + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'long' }))}:</b> ${esc(S.journal[lastK])}</p>`;
+  $('#jBox').innerHTML = h;
 }
 
 /* ---------- today ---------- */
@@ -3137,7 +3332,8 @@ $('#lnNext').onclick = () => { if (LN.card < LN.unit.cards.length - 1) { LN.card
 $('#qzAns').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) qzAnswer(+b.dataset.i); });
 $('#qzNext').onclick = qzNext;
 $('#qzSkip').onclick = () => { if (!QZ.answered && !QZ.done) { const q = QZ.qs[QZ.i]; if (q.type === 'mc') $$('#qzAns button').forEach((b, k) => b.classList.toggle('ok', k === q.answer)); qzFinish(false); } };
-$('#qzEndBtns').addEventListener('click', e => { const b = e.target.closest('[data-qz]'); if (!b) return; const a = b.dataset.qz; if (a === 'retry') qzStart(); else if (a === 'lesson') { LN.card = 0; setLnTab('lesson'); } else if (a === 'practice') setLnTab('practice'); else if (a === 'next') { const i = UNITS.indexOf(LN.unit); openUnit(UNITS[i + 1].id); } });
+$('#qzEndBtns').addEventListener('click', e => { const b = e.target.closest('[data-qz]'); if (!b) return; const a = b.dataset.qz; if (a === 'retry') qzStart(); else if (a === 'lesson') { LN.card = 0; setLnTab('lesson'); } else if (a === 'practice') setLnTab('practice'); else if (a === 'next') { const i = UNITS.indexOf(LN.unit); openUnit(UNITS[i + 1].id); } else if (a === 'path') { $('#lnBack').click(); } });
+document.addEventListener('click', e => { const b = e.target.closest('[data-review]'); if (b) { openReview(); return; } const c = e.target.closest('[data-cold]'); if (c) { const x = exDueList()[0]; if (x) openEx(x.e.id, x.i); } });
 $('#lnPractice').addEventListener('click', e => { const b = e.target.closest('[data-prac]'); if (b) LN.unit.practice[+b.dataset.prac].a(); });
 document.addEventListener('click', e => { const b = e.target.closest('[data-openunit]'); if (!b) return; switchTab('learn'); openUnit(b.dataset.openunit); });
 // exercises
@@ -3150,6 +3346,7 @@ $('#pSlower').onclick = () => { exReanchor(P.bpm - 2); exStat(P.ex.id).bpm[P.ste
 $('#pFaster').onclick = () => { exReanchor(P.bpm + 2); exStat(P.ex.id).bpm[P.step] = P.bpm; save(); };
 [['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop' && P.running) exStart(); if (k === 'loop' && !P.running) exDraw(P.viewPos); }; });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
+$('#pListen').onclick = exListen; $('#pSpot').onchange = e => exSetSpot(e.target.value);
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
 $('#pKey').onchange = e => { exStat(P.ex.id).key = +e.target.value; save(); exLoad(P.step); renderExPlayer(); };
 $('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= cur) k++; exStat(P.ex.id).key = k; save(); exLoad(P.step); renderExPlayer(); toast(`Key: ${keyName(k)}`); };
@@ -3167,8 +3364,9 @@ $('#tnReset').onclick = () => { T.done.clear(); T.sel = 0; tnSetTarget(); render
 $('#drGo').onclick = drToggle;
 ['#drNote', '#drOct', '#drType'].forEach(id => $(id).addEventListener('change', () => { if (T.drone) { drToggle(); drToggle(); } }));
 // today
+$('#jBox').addEventListener('click', e => { if (!e.target.closest('#jSave')) return; const v = $('#jNote').value.trim(); if (!v) return; S.journal[dayKey()] = v.slice(0, 400); R.reflect = false; save(); renderRoutine(); toast('Saved. You will see it at the start of your next session.'); });
 $('#rtSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || R.running) return; S.rtPick = b.dataset.k; save(); renderRoutine(); });
-$('#rtStart').onclick = () => { if (R.running) switchTab(ROUTINES[R.key].blocks[R.idx].tool); else routineStart(); };
+$('#rtStart').onclick = () => { if (R.running) switchTab(R.blocks[R.idx].tool); else routineStart(); };
 $('#weakList').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) switchTab(b.dataset.go); });
 $('#view-today').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) { switchTab('exercises'); exOpen(o.dataset.openex); return; } const g = e.target.closest('.card [data-go]'); if (g && !g.closest('#weakList')) switchTab(g.dataset.go); });
 $('#rpPause').onclick = () => { R.paused = !R.paused; renderPill(); };
