@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Guitar practice app with play-along exercises, metronome, fretboard and ear trainers.">
+<meta name="description" content="Fretboard practice app for intermediate and advanced guitarists: play-along exercises in any key.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -387,13 +387,14 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <!-- EXERCISES -->
 <section class="view" id="view-exercises" hidden>
   <div id="exLib" class="stack" style="gap:16px">
-    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Each exercise shows exactly what to play, note by note, in time. Start each step slow and rate every run; the tempo climbs toward the goal. Hit the goal cleanly and the next step is ready.</p></div>
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Fretboard workouts for intermediate and advanced players. Each one shows exactly what to play, note by note, in time. Most work in any key: pick one, or let it move up a 4th every loop until you've played it in all 12. Rate every run and the tempo climbs toward the goal.</p></div>
     <div id="exList" class="stack" style="gap:18px"></div>
   </div>
   <div id="exPlayer" class="stack" hidden>
     <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="small muted" id="pCat"></span></div>
     <div class="card stack">
       <div class="stack" style="gap:2px"><h2 id="pTitle">Exercise</h2><p class="small muted" id="pAbout"></p></div>
+      <div class="row" id="pKeyRow" hidden><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Key</span><select id="pKey"></select></label><button class="btn" id="pRandKey" type="button">Random key</button><label class="toggle"><input type="checkbox" id="pKeyCycle"> Up a 4th every loop (all 12 keys)</label></div>
       <div class="steps" id="pSteps"></div>
       <p class="small"><b id="pStepName"></b> <span class="muted" id="pStepDesc"></span></p>
       <div class="hw"><canvas id="pCanvas" role="img" aria-label="Scrolling tab. The orange line marks now; notes move left toward it."></canvas></div>
@@ -410,7 +411,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <label class="toggle"><input type="checkbox" id="pGuide"> Hear the notes</label>
         <label class="toggle"><input type="checkbox" id="pClick"> Click</label>
         <label class="toggle"><input type="checkbox" id="pLadder"> Speed up 4 bpm each loop</label>
-        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="note">Note names</option></select></label>
+        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="note">Note names</option></select></label>
       </div>
       <div class="scroll-x"><div id="pBoard"></div></div>
       <div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute</span></div>
@@ -680,7 +681,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {},
   routines: {}, rtPick: 'standard',
-  ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false } }
+  ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -1016,7 +1017,7 @@ function makeBoard(host, onTap) {
       let [lo, hi] = b.win; lo = Math.max(lo, from); hi = Math.min(hi, to);
       if (hi >= lo) { const xa = lo === 0 ? G + 2 : cx(lo) - fw / 2 + 2, xb = cx(hi) + fw / 2 - 2; s += `<rect class="fb-win" x="${rx(xa, xb)}" y="${y0 - 6}" width="${Math.abs(xb - xa)}" height="${y1 - y0 + 12}" rx="9"/>`; }
     }
-    for (const f of [3, 5, 7, 9, 12, 15, 17]) {
+    for (const f of [3, 5, 7, 9, 12, 15, 17, 19]) {
       if (f < startF || f > to) continue; const x = X(cx(f));
       if (f === 12) s += `<circle class="fb-inlay" cx="${x}" cy="${top + 1.5 * sh}" r="5"/><circle class="fb-inlay" cx="${x}" cy="${top + 3.5 * sh}" r="5"/>`;
       else s += `<circle class="fb-inlay" cx="${x}" cy="${top + 2.5 * sh}" r="5"/>`;
@@ -1025,7 +1026,7 @@ function makeBoard(host, onTap) {
     if (from === 0) s += `<rect class="fb-nut" x="${X(base) - 3}" y="${y0}" width="6" height="${y1 - y0}" rx="1"/>`;
     else s += `<line class="fb-edge" x1="${X(base)}" y1="${y0}" x2="${X(base)}" y2="${y1}"/>`;
     for (let i = 0; i < 6; i++) { const y = top + i * sh; s += `<line class="fb-str" x1="${X(from === 0 ? G + 4 : base)}" y1="${y}" x2="${X(endX)}" y2="${y}" stroke-width="${(0.7 + i * 0.38).toFixed(2)}"/><text class="fb-lab" x="${X(9)}" y="${y + 4}">${SNAME[i]}</text>`; }
-    const nums = new Set([startF, 3, 5, 7, 9, 12, 15, 17].filter(f => f >= startF && f <= to));
+    const nums = new Set([startF, 3, 5, 7, 9, 12, 15, 17, 19].filter(f => f >= startF && f <= to));
     if (from === 0) nums.add(0);
     nums.forEach(f => { s += `<text class="fb-num" x="${X(cx(f))}" y="${H - 9}">${f}</text>`; });
     for (const m of b.markers) {
@@ -1624,114 +1625,227 @@ function seq(list, d, pick = 'alt') {
   return { ev, len: t };
 }
 function pad(r, mult = 4) { const L = Math.ceil(r.len / mult - 1e-6) * mult; if (L > r.len + 1e-6 && r.ev.length) r.ev[r.ev.length - 1].d += L - r.len; return { ev: r.ev, L }; }
-function chordNotes(name) { return [...CHORDS[name]].map((c, i) => c === 'x' ? null : nt(5 - i, +c, 0)).filter(Boolean); }
-function strums(chords, pat) {
-  const ev = [];
-  chords.forEach((c, bi) => pat.forEach(([t, dir], k) => { const nx = k + 1 < pat.length ? pat[k + 1][0] : 4; ev.push({ t: bi * 4 + t, d: nx - t, p: dir, chord: c, strum: true, n: chordNotes(c), x: '' }); }));
-  return { ev, L: chords.length * 4 };
+const MAJ = [0, 2, 4, 5, 7, 9, 11];
+const MINP = [0, 3, 5, 7, 10];
+const QUAL7 = ['maj7', 'm7', 'm7', 'maj7', '7', 'm7', 'm7b5'];
+const QUAL3 = ['', 'm', 'm', '', '', 'm', 'dim'];
+const pcsOf = (key, ivs) => ivs.map(i => ((key + i) % 12 + 12) % 12);
+const loopUD = a => a.length < 3 ? a.slice() : a.concat(rev(a).slice(1, a.length - 1));
+const zigUp = lists => lists.flatMap((l, i) => i % 2 ? rev(l) : l);
+const zigDown = lists => lists.flatMap((l, i) => i % 2 ? l : rev(l));
+function fit(arr, n) { if (!arr.length) return []; const cyc = arr.length > 2 ? arr.concat(rev(arr).slice(1, -1)) : arr; const out = []; for (let i = 0; i < n; i++) out.push(cyc[i % cyc.length]); return out; }
+function fingerFor(f, lo, hi) { if (f === 0) return 0; const base = lo <= 0 ? 1 : (hi - lo >= 4 ? lo + 1 : lo); return clamp(f - base + 1, 1, 4); }
+function winNotes(lo, hi, pcs) {
+  const out = [];
+  for (let s = 5; s >= 0; s--) for (let f = Math.max(0, lo); f <= hi; f++) if (pcs.includes((OPEN[s] + f) % 12)) out.push({ s, f, m: OPEN[s] + f });
+  out.sort((a, b) => a.m - b.m || b.s - a.s);
+  const seen = new Set(), res = [];
+  for (const n of out) { if (seen.has(n.m)) continue; seen.add(n.m); res.push([n.s, n.f, fingerFor(n.f, lo, hi)]); }
+  return res;
 }
-const DDUUDU = [[0, 'D'], [1, 'D'], [1.5, 'U'], [2.5, 'U'], [3, 'D'], [3.5, 'U']];
-function pw(name, x = 'PM') {
-  const R = { E5: [5, 0], F5: [5, 1], G5: [5, 3], A5: [5, 5], C5: [4, 3], D5: [4, 5] }[name];
-  const open = R[1] === 0;
-  return { n: [nt(R[0], R[1], open ? 0 : 1), nt(R[0] - 1, R[1] + 2, open ? 1 : 3)], x, chord: name };
+function cagedWins(key, ton) {
+  const minorPc = ton === 'maj' ? (key + 9) % 12 : key, r = (minorPc - 4 + 12) % 12;
+  return POS.map((p, i) => {
+    let w = null;
+    for (const o of [0, 12, -12]) { const lo = r + p.a + o, hi = r + p.b + o; if (lo >= -1 && hi <= 15) { w = { lo: Math.max(0, lo), hi }; break; } }
+    if (!w) w = { lo: Math.max(0, r + p.a), hi: Math.min(15, r + p.b) };
+    return Object.assign(w, { i, c: p.c });
+  });
 }
-const BOOG = { A: [4, 3], D: [3, 2], E: [5, 4] };
-function boog(chords) {
-  const l = [];
-  chords.forEach(c => { const [r, u] = BOOG[c]; for (let b = 0; b < 4; b++) for (let k = 0; k < 2; k++) { const f = b % 2 ? 4 : 2; l.push({ n: [nt(r, 0, 0), nt(u, f, f === 2 ? 1 : 3)], x: 'PM', chord: c }); } });
+const sortedWins = (key, ton) => cagedWins(key, ton).slice().sort((a, b) => a.lo - b.lo);
+function npsFingers(list) {
+  const by = new Map(); list.forEach(n => { if (!by.has(n.s)) by.set(n.s, []); by.get(n.s).push(n); });
+  by.forEach(g => {
+    g.sort((a, b) => a.f - b.f);
+    if (g.length === 3) { const d1 = g[1].f - g[0].f, d2 = g[2].f - g[1].f; const fs = d1 === 1 ? [1, 2, 4] : d2 === 1 ? [1, 3, 4] : [1, 2, 4]; g.forEach((n, k) => { n.fg = n.f === 0 ? 0 : fs[k]; }); }
+    else g.forEach((n, k) => { n.fg = n.f === 0 ? 0 : [1, 3, 4, 4][k]; });
+  });
+}
+function nps(key, scale, startPc, strings, per) {
+  const first = npsRaw(key, scale, startPc, strings, per);
+  if (Math.max(...first.map(n => n[1])) <= 17) return first;
+  const pcs = pcsOf(key, scale).slice().sort((x, y) => ((x - 4 + 12) % 12) - ((y - 4 + 12) % 12));
+  for (const pc of pcs) { const alt = npsRaw(key, scale, pc, strings, per); if (Math.max(...alt.map(n => n[1])) <= 17) return alt; }
+  return first;
+}
+function npsRaw(key, scale, startPc, strings, per) {
+  const pcs = pcsOf(key, scale);
+  let f0 = ((startPc - 4) % 12 + 12) % 12;
+  let m = OPEN[5] + f0; const out = [];
+  for (const s of strings) for (let k = 0; k < per; k++) { out.push({ s, f: m - OPEN[s], m }); do { m++; } while (!pcs.includes(m % 12)); }
+  if (out.some(n => n.f < 0)) out.forEach(n => { n.f += 12; });
+  npsFingers(out);
+  return out.map(n => [n.s, n.f, n.fg]);
+}
+function seqPattern(N, offs) {
+  const mx = Math.max(...offs), up = [], dn = [];
+  for (let i = 0; i + mx < N.length; i++) offs.forEach(o => up.push(N[i + o]));
+  for (let i = N.length - 1; i - mx >= 0; i--) offs.forEach(o => dn.push(N[i - o]));
+  return up.concat(dn);
+}
+function chordPcs7(key, deg) { return [0, 2, 4, 6].map(k => (key + MAJ[(deg + k) % 7]) % 12); }
+function chordPcs3(key, deg) { return [0, 2, 4].map(k => (key + MAJ[(deg + k) % 7]) % 12); }
+const chordName7 = (key, deg) => nn((key + MAJ[deg]) % 12) + QUAL7[deg];
+const chordName3 = (key, deg) => nn((key + MAJ[deg]) % 12) + QUAL3[deg];
+function arpBar(key, deg, w, dir) {
+  const tones = winNotes(w.lo, w.hi, chordPcs7(key, deg)), name = chordName7(key, deg);
+  return fit(dir === 'down' ? rev(tones) : tones, 8).map(([s, f, fg]) => ({ n: [nt(s, f, fg)], chord: name }));
+}
+function guideLine(key, w) {
+  const steps = [[1, 2], [1, 6], [4, 2], [4, 6], [0, 2], [0, 6], [0, 0]];
+  let prev = null; const out = [];
+  steps.forEach(([deg, k], i) => {
+    const pc = (key + MAJ[(deg + k) % 7]) % 12;
+    const cands = winNotes(w.lo, w.hi, [pc]);
+    let best = cands[0];
+    if (cands.length) {
+      if (prev == null) best = cands.slice().sort((a, b) => Math.abs(a[0] - 2.5) - Math.abs(b[0] - 2.5))[0];
+      else best = cands.slice().sort((a, b) => Math.abs(OPEN[a[0]] + a[1] - prev) - Math.abs(OPEN[b[0]] + b[1] - prev))[0];
+      prev = OPEN[best[0]] + best[1];
+      out.push({ n: [nt(best[0], best[1], best[2])], d: i === 6 ? 4 : 2, chord: chordName7(key, deg) });
+    }
+  });
+  return out;
+}
+const SETS = { gbe: [2, 1, 0], dgb: [3, 2, 1], adg: [4, 3, 2], ead: [5, 4, 3] };
+function voicings(set, pcs) {
+  const out = [];
+  for (let a = 0; a <= 15; a++) for (let b = 0; b <= 15; b++) for (let c = 0; c <= 15; c++) {
+    const fr = [a, b, c], ps = fr.map((f, i) => (OPEN[set[i]] + f) % 12);
+    if (new Set(ps).size !== 3 || !ps.every(p => pcs.includes(p))) continue;
+    const nz = fr.filter(f => f > 0);
+    if (nz.length && Math.max(...nz) - Math.min(...nz) > 3) continue;
+    if (fr.includes(0) && nz.length && Math.max(...nz) > 4) continue;
+    out.push(fr);
+  }
+  out.sort((x, y) => Math.max(...x) - Math.max(...y) || Math.min(...x) - Math.min(...y));
+  return out;
+}
+function voicingEvents(set, fr, name) {
+  const nz = fr.filter(f => f > 0), mn = nz.length ? Math.min(...nz) : 0;
+  const N = fr.map((f, i) => nt(set[i], f, f === 0 ? 0 : clamp(f - mn + 1, 1, 4)));
+  const l = [{ n: N, d: 1, p: 'D', chord: name }];
+  [0, 1, 2, 1, 0, 1].forEach(i => l.push({ n: [N[i]], chord: name }));
   return l;
 }
-function triadProg(chs) {
-  const l = [];
-  chs.forEach(([name, ns]) => {
-    const N = ns.map(([s, f, fg]) => nt(s, f, fg));
-    l.push({ n: N, d: 1, p: 'D', chord: name });
-    [0, 1, 2, 1, 0, 1].forEach(i => l.push({ n: [N[i]], chord: name }));
+function triadNeck(key, set) { const v = voicings(set, chordPcs3(key, 0)), name = chordName3(key, 0); return pad(seq(v.flatMap(fr => voicingEvents(set, fr, name)), 0.5)); }
+function triadProgVL(key, set, degs) {
+  let prev = null; const l = [];
+  degs.forEach(deg => {
+    const vs = voicings(set, chordPcs3(key, deg)); if (!vs.length) return;
+    let pickV;
+    if (!prev) pickV = vs.find(v => Math.min(...v) >= 3) || vs[0];
+    else pickV = vs.slice().sort((a, b) => a.reduce((t, f, i) => t + Math.abs(f - prev[i]), 0) - b.reduce((t, f, i) => t + Math.abs(f - prev[i]), 0))[0];
+    prev = pickV; l.push(...voicingEvents(set, pickV, chordName3(key, deg)));
   });
   return pad(seq(l, 0.5));
 }
-const chromUp = p => [5, 4, 3, 2, 1, 0].flatMap(s => [0, 1, 2, 3].map(k => [s, p + k, k + 1]));
-const chromDn = p => [0, 1, 2, 3, 4, 5].flatMap(s => [3, 2, 1, 0].map(k => [s, p + k, k + 1]));
-const spUp = p => [5, 4, 3, 2, 1].flatMap(s => [[s, p, 1], [s - 1, p + 2, 3], [s, p + 1, 2], [s - 1, p + 3, 4]]);
-const spDn = p => [0, 1, 2, 3, 4].flatMap(s => [[s, p + 3, 4], [s + 1, p + 1, 2], [s, p + 2, 3], [s + 1, p, 1]]);
-const BOX1 = [[5, 5, 1], [5, 8, 4], [4, 5, 1], [4, 7, 3], [3, 5, 1], [3, 7, 3], [2, 5, 1], [2, 7, 3], [1, 5, 1], [1, 8, 4], [0, 5, 1], [0, 8, 4]];
-const BOX2D = [[0, 10, 4, '/'], [0, 8, 2], [1, 10, 4], [1, 8, 2], [2, 9, 3], [2, 7, 1], [3, 10, 4], [3, 7, 1], [4, 10, 4], [4, 7, 1], [5, 10, 4], [5, 8, 2]];
-const GMAJ = [[5, 3, 2], [5, 5, 4], [4, 2, 1], [4, 3, 2], [4, 5, 4], [3, 2, 1], [3, 4, 3], [3, 5, 4], [2, 2, 1], [2, 4, 3], [2, 5, 4], [1, 3, 2], [1, 5, 4], [0, 2, 1], [0, 3, 2]];
-const PED = [[5, 0, 0, 'PM'], [4, 2, 1], [5, 0, 0, 'PM'], [4, 3, 2], [5, 0, 0, 'PM'], [4, 5, 3], [5, 0, 0, 'PM'], [4, 7, 4], [5, 0, 0, 'PM'], [4, 5, 3], [5, 0, 0, 'PM'], [4, 3, 2], [5, 0, 0, 'PM'], [4, 2, 1], [5, 0, 0, 'PM'], [4, 0, 0]];
-const SIXP = [[2, 1], [4, 3], [5, 5], [7, 7], [9, 8], [10, 10], [12, 12]];
-const six = (g, e, x = '') => ({ n: [nt(2, g, 2), nt(0, e, e < g ? 1 : 3)], x });
-const oneNote = (list) => list.map(([s, f]) => [s, f, 1]);
-const C_ALL = [[0, 8], [1, 1], [2, 5], [3, 10], [4, 3], [5, 8]];
-const G_ALL = [[0, 3], [1, 8], [2, 12], [3, 5], [4, 10], [5, 3]];
-const F_ALL = [[0, 1], [1, 6], [2, 10], [3, 3], [4, 8], [5, 1]];
-const EXCATS = ['Warm-up', 'Technique', 'Scales', 'Chords and rhythm', 'Riffs', 'Fretboard'];
+function transposeShape(list, key, ref) {
+  const o0 = ((key - ref) % 12 + 12) % 12;
+  const cands = [o0, o0 - 12].map(o => ({ o, fr: list.map(it => it[1] + o) }));
+  const ok = cands.filter(c => Math.min(...c.fr) >= 1 && Math.max(...c.fr) <= 17);
+  const best = (ok.length ? ok : cands).sort((a, b) => Math.abs(a.o) - Math.abs(b.o))[0];
+  return list.map(it => [it[0], it[1] + best.o, it[2], it[3], it[4]]);
+}
+const withPicks = list => list.map(([s, f, fg, x, p]) => ({ n: [nt(s, f, fg)], x: x || '', p: p || '' }));
+const rep = (a, n) => Array.from({ length: n }, () => a).flat();
+const SW3m = [[2, 14, 3, '', 'D'], [1, 13, 2, '', 'D'], [0, 12, 1, '', 'D'], [1, 13, 2, '', 'U']];
+const SW3M = [[2, 14, 3, '', 'D'], [1, 14, 4, '', 'D'], [0, 12, 1, '', 'D'], [1, 14, 4, '', 'U']];
+const SW5m = [[4, 12, 1, '', 'D'], [3, 14, 3, '', 'D'], [2, 14, 3, '', 'D'], [1, 13, 2, '', 'D'], [0, 12, 1, '', 'D'], [1, 13, 2, '', 'U'], [2, 14, 3, '', 'U'], [3, 14, 3, '', 'U']];
+const SW5M = [[4, 12, 1, '', 'D'], [3, 14, 3, '', 'D'], [2, 14, 3, '', 'D'], [1, 14, 4, '', 'D'], [0, 12, 1, '', 'D'], [1, 14, 4, '', 'U'], [2, 14, 3, '', 'U'], [3, 14, 3, '', 'U']];
+const sweep = (shape, key, n) => pad(seq(withPicks(rep(transposeShape(shape, key, 9), n)), 0.25));
+const PERMS = [[1, 3, 2, 4], [1, 4, 2, 3], [2, 4, 1, 3], [3, 1, 4, 2]];
+const permUp = (perm, p) => [5, 4, 3, 2, 1, 0].flatMap(s => perm.map(fg => [s, p + fg - 1, fg]));
+const permDn = (perm, p) => [0, 1, 2, 3, 4, 5].flatMap(s => rev(perm).map(fg => [s, p + fg - 1, fg]));
+const permMixUp = p => [5, 4, 3, 2, 1, 0].flatMap((s, i) => PERMS[i % 4].map(fg => [s, p + fg - 1, fg]));
+const permMixDn = p => [0, 1, 2, 3, 4, 5].flatMap((s, i) => rev(PERMS[i % 4]).map(fg => [s, p + fg - 1, fg]));
+const CYC4 = [0, 5, 10, 3, 8, 1, 6, 11, 4, 9, 2, 7];
+function onStr(s, pc) { let f = ((pc - OPEN[s]) % 12 + 12) % 12; if (f === 0) f = 12; return [s, f, 0]; }
+function inWindow(pc, lo, hi) { for (let s = 5; s >= 0; s--) for (let f = lo; f <= hi; f++) if ((OPEN[s] + f) % 12 === pc) return [s, f, clamp(f - lo + 1, 1, 4)]; return null; }
+function allPos(pc, maxF = 15) { const o = []; for (let f = 0; f <= maxF; f++) for (let s = 5; s >= 0; s--) if ((OPEN[s] + f) % 12 === pc) o.push([s, f, 0]); return o; }
+function octavePairs(pc) {
+  const l = [];
+  allPos(pc, 15).filter(([s]) => s >= 2).forEach(([s, f]) => { const of = f + (s >= 4 ? 2 : 3); if (of <= 17) l.push([s, f, 1], [s - 2, of, s >= 4 ? 3 : 4]); });
+  return l;
+}
+function powerShapes(pc) { return allPos(pc, 15).filter(([s]) => s >= 3).map(([s, f]) => ({ n: [nt(s, f, f ? 1 : 0), nt(s - 1, f + 2, f ? 3 : 2)] })); }
+function oneStr(key, s) { const pcs = pcsOf(key, MAJ), l = []; for (let f = 0; f <= 14; f++) if (pcs.includes((OPEN[s] + f) % 12)) l.push([s, f, 0]); return l; }
+function legato3(list) {
+  const up = list.map((n, i) => { const first = i === 0 || list[i - 1][0] !== n[0]; return [n[0], n[1], n[2], first ? '' : 'h']; });
+  const d = rev(list);
+  const dn = d.map((n, i) => { const first = i === 0 || d[i - 1][0] !== n[0]; return [n[0], n[1], n[2], first ? '' : 'p']; });
+  return up.concat(dn);
+}
+const pentBox = (key, i) => { const w = cagedWins(key, 'min')[i]; return winNotes(w.lo, w.hi, pcsOf(key, MINP)); };
+const triTones = (key, w, ivs) => winNotes(w.lo, w.hi, pcsOf(key, ivs));
+const EXCATS = ['Warm-up', 'Positions and scales', 'Arpeggios and chords', 'Technique', 'Fretboard fluency'];
 const EX = [
-  { id: 'chromatic', cat: 'Warm-up', title: 'Chromatic 1-2-3-4', lvl: 'Beginner', about: 'One finger per fret. Builds finger independence and gets both hands working in sync.', tip: 'Keep each finger hovering close to the string after it lifts. Press just behind the fret wire, with only as much pressure as a clean note needs.', steps: [
-    { n: 'One string', d: 'Frets 1 to 4 on the low E, up and back. Finger numbers match fret numbers.', bpm: 60, goal: 90, build: () => pad(seq([[5, 1, 1], [5, 2, 2], [5, 3, 3], [5, 4, 4], [5, 4, 4], [5, 3, 3], [5, 2, 2], [5, 1, 1]], 1)) },
-    { n: 'All six strings', d: 'Four notes on every string, low E to high e, in 8th notes.', bpm: 60, goal: 100, build: () => pad(seq(chromUp(1), 0.5)) },
-    { n: 'Up and back', d: 'Climb to the high e, then come back down with 4-3-2-1.', bpm: 60, goal: 110, build: () => pad(seq(chromUp(1).concat(chromDn(1)), 0.5)) },
-    { n: 'Move up the neck', d: 'Each pass starts one fret higher: frets 1-4, then 2-5, 3-6 and 4-7.', bpm: 70, goal: 120, build: () => pad(seq(chromUp(1).concat(chromDn(2), chromUp(3), chromDn(4)), 0.5)) },
-    { n: '16th notes', d: 'Up and back in 16th notes. Keep the picking strictly down-up.', bpm: 50, goal: 100, build: () => pad(seq(chromUp(1).concat(chromDn(1)), 0.25)) } ] },
-  { id: 'spider', cat: 'Warm-up', title: 'Spider walk', lvl: 'Beginner', about: 'Fingers 1 and 3, then 2 and 4, walking across pairs of strings. Trains finger independence and clean string changes.', tip: 'Only the finger that plays should move. Keep the others hovering over their frets.', steps: [
-    { n: 'One string pair', d: 'Low E and A strings, fingers 1-3-2-4.', bpm: 60, goal: 90, build: () => pad(seq(spUp(1).slice(0, 4).concat(spUp(1).slice(0, 4)), 1)) },
-    { n: 'Across all strings', d: 'Walk the pattern up through every string pair in 8th notes.', bpm: 60, goal: 100, build: () => pad(seq(spUp(1), 0.5)) },
-    { n: 'Up and back', d: 'Walk up, then come back down with 4-2-3-1.', bpm: 60, goal: 110, build: () => pad(seq(spUp(1).concat(spDn(1)), 0.5)) },
-    { n: 'Up the neck', d: 'Each pass starts one fret higher.', bpm: 70, goal: 110, build: () => pad(seq(spUp(1).concat(spDn(2), spUp(3), spDn(4)), 0.5)) } ] },
-  { id: 'altpick', cat: 'Technique', title: 'Alternate picking', lvl: 'Beginner to intermediate', about: 'Strict down-up picking is the base of fast, even single-note playing.', tip: 'Use small motions from the wrist. Downstrokes fall on the beat and upstrokes in between. Follow the down (⊓) and up (V) marks above the tab.', steps: [
-    { n: '8th notes on one note', d: 'D on the A string, fret 5. Down on the beat, up in between.', bpm: 70, goal: 130, build: () => pad(seq(Array(8).fill([4, 5, 1]), 0.5)) },
-    { n: '16th notes on one note', d: 'The same note, twice as many strokes.', bpm: 60, goal: 110, build: () => pad(seq(Array(16).fill([4, 5, 1]), 0.25)) },
-    { n: 'String crossing', d: 'G and B strings in A minor pentatonic. The pick has to jump strings on both down and up strokes.', bpm: 60, goal: 110, build: () => { const c = [[2, 5, 1], [2, 7, 3], [1, 5, 1], [1, 8, 4]], b = rev(c); return pad(seq([...c, ...c, ...b, ...b], 0.5)); } },
-    { n: 'Three notes per string', d: 'G major across four strings in triplets. Each string change flips between a down and an up stroke.', bpm: 50, goal: 100, build: () => { const up = [[5, 3, 1], [5, 5, 2], [5, 7, 4], [4, 3, 1], [4, 5, 2], [4, 7, 4], [3, 4, 1], [3, 5, 2], [3, 7, 4], [2, 4, 1], [2, 5, 2], [2, 7, 4]]; return pad(seq(up.concat(rev(up)), 1 / 3)); } } ] },
-  { id: 'legato', cat: 'Technique', title: 'Hammer-ons and pull-offs', lvl: 'Intermediate', about: 'Legato builds fretting-hand strength and smooth, flowing lines. Only the first note on each string is picked.', tip: 'Hammer with the fingertip, close to the fret. For pull-offs, flick the string slightly downward instead of lifting straight off.', steps: [
-    { n: 'Hammer-ons', d: 'Pick the first note, hammer on the second (h).', bpm: 60, goal: 100, build: () => pad(seq([[2, 5, 1], [2, 7, 3, 'h'], [2, 5, 1], [2, 7, 3, 'h'], [1, 5, 1], [1, 8, 4, 'h'], [1, 5, 1], [1, 8, 4, 'h']], 0.5)) },
-    { n: 'Pull-offs', d: 'Pick the first note, pull off to the second (p).', bpm: 60, goal: 100, build: () => pad(seq([[2, 7, 3], [2, 5, 1, 'p'], [2, 7, 3], [2, 5, 1, 'p'], [1, 8, 4], [1, 5, 1, 'p'], [1, 8, 4], [1, 5, 1, 'p']], 0.5)) },
-    { n: 'Trills', d: 'Pick once per beat, then hammer and pull in triplets.', bpm: 50, goal: 90, build: () => pad(seq([0, 1, 2, 3].flatMap(() => [[2, 5, 1], [2, 7, 3, 'h'], [2, 5, 1, 'p']]), 1 / 3)) },
-    { n: 'Pentatonic legato run', d: 'Up box 1 with hammer-ons, back down with pull-offs.', bpm: 50, goal: 100, build: () => { const up = [[5, 5, 1], [5, 8, 4, 'h'], [4, 5, 1], [4, 7, 3, 'h'], [3, 5, 1], [3, 7, 3, 'h'], [2, 5, 1], [2, 7, 3, 'h'], [1, 5, 1], [1, 8, 4, 'h'], [0, 5, 1], [0, 8, 4, 'h']]; const dn = [[0, 8, 4], [0, 5, 1, 'p'], [1, 8, 4], [1, 5, 1, 'p'], [2, 7, 3], [2, 5, 1, 'p'], [3, 7, 3], [3, 5, 1, 'p'], [4, 7, 3], [4, 5, 1, 'p'], [5, 8, 4], [5, 5, 1, 'p']]; return pad(seq(up.concat(dn), 1 / 3)); } } ] },
-  { id: 'pent1', cat: 'Scales', title: 'A minor pentatonic, box 1', lvl: 'Beginner', about: 'The most-used scale shape in rock and blues. The root, A, is on the low E, D and high e strings.', tip: 'One finger per fret: index on 5, ring on 7, pinky on 8. Say "A" out loud every time you hit a root.', steps: [
-    { n: 'Going up', d: 'Low to high in quarter notes.', bpm: 60, goal: 100, build: () => pad(seq(BOX1, 1)) },
-    { n: 'Up and down', d: 'Up and back in 8th notes.', bpm: 60, goal: 110, build: () => pad(seq(BOX1.concat(rev(BOX1)), 0.5)) },
-    { n: 'Groups of three', d: '1-2-3, 2-3-4, 3-4-5 and so on, in triplets. This breaks the habit of running scales straight up.', bpm: 50, goal: 100, build: () => { const l = []; for (let i = 0; i < 10; i++) l.push(BOX1[i], BOX1[i + 1], BOX1[i + 2]); return pad(seq(l, 1 / 3)); } },
-    { n: '16th notes', d: 'Up and down in 16ths.', bpm: 50, goal: 100, build: () => pad(seq(BOX1.concat(rev(BOX1)), 0.25)) },
-    { n: 'Connect to box 2', d: 'Up box 1, slide up to fret 10 on the high e, then come down box 2.', bpm: 60, goal: 110, build: () => pad(seq(BOX1.concat(BOX2D), 0.5)) } ] },
-  { id: 'gmajor', cat: 'Scales', title: 'G major scale', lvl: 'Beginner to intermediate', about: 'The major scale is the reference for every other scale and mode. This two-octave shape starts on G at the 3rd fret.', tip: 'Fingers follow the frets: index on 2, middle on 3, ring on 4, pinky on 5. Sing do-re-mi as you play the first octave.', steps: [
-    { n: 'One octave', d: 'G to G and back, in quarter notes.', bpm: 60, goal: 100, build: () => { const up = GMAJ.slice(0, 8); return pad(seq(up.concat(rev(up.slice(0, 7))), 1)); } },
-    { n: 'Two octaves', d: 'Up and down in 8th notes.', bpm: 60, goal: 110, build: () => pad(seq(GMAJ.concat(rev(GMAJ.slice(0, 14))), 0.5)) },
-    { n: 'In thirds', d: 'G-B, A-C, B-D and so on. Thirds are the sound of most melodies.', bpm: 50, goal: 100, build: () => { const l = []; for (let i = 0; i < 13; i++) l.push(GMAJ[i], GMAJ[i + 2]); return pad(seq(l, 0.5)); } },
-    { n: '16th notes', d: 'Two octaves up and down in 16ths.', bpm: 50, goal: 100, build: () => pad(seq(GMAJ.concat(rev(GMAJ.slice(0, 14))), 0.25)) } ] },
-  { id: 'strum', cat: 'Chords and rhythm', title: 'Strumming patterns', lvl: 'Beginner', about: 'Your strumming hand moves down and up in steady 8th notes the whole time. A pattern is just a choice of which strokes hit the strings.', tip: 'Keep the arm moving even on the strokes you skip. Downstrokes (↓) land on the numbers, upstrokes (↑) on the "and".', steps: [
-    { n: 'Quarter-note downs', d: 'G, then C, with four down strums per bar.', bpm: 70, goal: 110, build: () => strums(['G', 'C'], [[0, 'D'], [1, 'D'], [2, 'D'], [3, 'D']]) },
-    { n: 'Down-up 8ths', d: 'Down on the beat, up in between.', bpm: 60, goal: 100, build: () => strums(['G', 'C'], [[0, 'D'], [0.5, 'U'], [1, 'D'], [1.5, 'U'], [2, 'D'], [2.5, 'U'], [3, 'D'], [3.5, 'U']]) },
-    { n: 'Down, down-up, up-down-up', d: 'The most common pop and folk pattern. Your hand still moves down on beat 3, it just misses the strings.', bpm: 60, goal: 100, build: () => strums(['G', 'Em', 'C', 'D'], DDUUDU) },
-    { n: 'Same pattern, new chords', d: 'C, G, Am and F with the same pattern.', bpm: 60, goal: 100, build: () => strums(['C', 'G', 'Am', 'F'], DDUUDU) } ] },
-  { id: 'triads', cat: 'Chords and rhythm', title: 'Triads on the top strings', lvl: 'Intermediate', about: 'Three-note chord shapes on the G, B and high e strings. They make clean, small chord parts that sit well in a band mix.', tip: 'Let the notes ring into each other. The finger numbers are a suggestion; use what feels comfortable.', steps: [
-    { n: 'C major up the neck', d: 'Pick through the three C shapes and come back.', bpm: 60, goal: 100, build: () => { const C1 = [[2, 5, 3], [1, 5, 4], [0, 3, 1]], C2 = [[2, 9, 2], [1, 8, 1], [0, 8, 1]], C3 = [[2, 12, 1], [1, 13, 2], [0, 12, 1]]; const arp = c => [c[0], c[1], c[2], c[1]]; return pad(seq([...arp(C1), ...arp(C2), ...arp(C3), ...arp(C2)], 0.5)); } },
-    { n: 'C, Am, F, G near fret 5', d: 'Strum each triad, then pick it. Your hand barely moves between chords.', bpm: 60, goal: 100, build: () => triadProg([['C', [[2, 5, 3], [1, 5, 4], [0, 3, 1]]], ['Am', [[2, 5, 1], [1, 5, 1], [0, 5, 1]]], ['F', [[2, 5, 1], [1, 6, 2], [0, 5, 1]]], ['G', [[2, 4, 2], [1, 3, 1], [0, 3, 1]]]]) },
-    { n: 'Same chords, higher up', d: 'The same progression around the 8th fret.', bpm: 60, goal: 100, build: () => triadProg([['C', [[2, 9, 2], [1, 8, 1], [0, 8, 1]]], ['Am', [[2, 9, 2], [1, 10, 3], [0, 8, 1]]], ['F', [[2, 10, 3], [1, 10, 4], [0, 8, 1]]], ['G', [[2, 7, 1], [1, 8, 2], [0, 7, 1]]]]) } ] },
-  { id: 'power', cat: 'Riffs', title: 'Palm-muted power chords', lvl: 'Beginner', about: 'Two-note power chords with the edge of your picking hand resting on the strings near the bridge. The core of rock and punk rhythm guitar.', tip: 'All downstrokes. PM means palm mute: rest the edge of your hand lightly on the strings right where they leave the bridge.', steps: [
-    { n: 'Quarter notes', d: 'E5, then G5 and A5.', bpm: 80, goal: 120, build: () => pad(seq([pw('E5'), pw('E5'), pw('E5'), pw('E5'), pw('G5'), pw('G5'), pw('A5'), pw('A5')], 1, 'down')) },
-    { n: '8th notes', d: 'The same chords, twice as many strums.', bpm: 80, goal: 140, build: () => pad(seq([...Array(8).fill(0).map(() => pw('E5')), ...Array(4).fill(0).map(() => pw('G5')), ...Array(4).fill(0).map(() => pw('A5'))], 0.5, 'down')) },
-    { n: 'Riff with accents', d: 'Let the unmuted chords ring out against the chugging E5.', bpm: 80, goal: 140, build: () => pad(seq(['E5', 'E5', 'E5', 'G5*', 'E5', 'E5', 'A5*', 'G5*', 'E5', 'E5', 'E5', 'E5', 'C5*', 'C5*', 'D5*', 'D5*'].map(n => pw(n.replace('*', ''), n.endsWith('*') ? '' : 'PM')), 0.5, 'down')) } ] },
-  { id: 'shuffle', cat: 'Riffs', title: 'Blues shuffle in A', lvl: 'Beginner to intermediate', about: 'The boogie pattern behind countless blues and rock songs, played over the 12-bar blues.', tip: 'Swing the 8ths: long-short, long-short. Keep the open string ringing and rock your ring finger between frets 2 and 4.', steps: [
-    { n: 'A chord only', d: 'One bar on the A and D strings, looped.', bpm: 70, goal: 110, swing: 1, build: () => pad(seq(boog(['A']), 0.5, 'down')) },
-    { n: 'The 12-bar blues', d: 'A, D and E shapes through the whole form. Watch the chord names above the tab.', bpm: 70, goal: 110, swing: 1, build: () => pad(seq(boog(['A', 'A', 'A', 'A', 'D', 'D', 'A', 'A', 'E', 'D', 'A', 'E']), 0.5, 'down')) },
-    { n: 'Up to speed', d: 'The full form at a real band tempo.', bpm: 100, goal: 150, swing: 1, build: () => pad(seq(boog(['A', 'A', 'A', 'A', 'D', 'D', 'A', 'A', 'E', 'D', 'A', 'E']), 0.5, 'down')) } ] },
-  { id: 'pedal', cat: 'Riffs', title: 'Pedal-tone riff in E minor', lvl: 'Intermediate', about: 'The open low E bounces against a melody on the A string. A big sound that\'s very common in rock and metal.', tip: 'Palm-mute the open E lightly and let the melody notes ring a little more.', steps: [
-    { n: '8th notes', d: 'Slow and even. The melody is B, C, D, E and back.', bpm: 70, goal: 120, build: () => pad(seq(PED, 0.5)) },
-    { n: '16th notes', d: 'Twice as fast. Strict down-up picking.', bpm: 60, goal: 100, build: () => pad(seq(PED, 0.25)) },
-    { n: 'Up to speed', d: 'The full riff at a heavy rock tempo.', bpm: 90, goal: 130, build: () => pad(seq(PED, 0.25)) } ] },
-  { id: 'sixths', cat: 'Riffs', title: 'Sixths double-stops in C', lvl: 'Intermediate', about: 'Two notes a sixth apart on the G and high e strings, with the B string silent. The backbone of soul and country fills.', tip: 'Mute the B string with the underside of the finger on the G string. Pick with pick and middle finger, or fingers only.', steps: [
-    { n: 'Up and down', d: 'Seven shapes up the C major scale, then back down.', bpm: 60, goal: 100, build: () => { const u = SIXP.map(([g, e]) => six(g, e)); return pad(seq(u.concat(rev(u.slice(0, 6))), 1, 'down')); } },
-    { n: 'With slides', d: 'Slide between neighboring shapes instead of picking each one.', bpm: 60, goal: 100, build: () => { const u = SIXP.map(([g, e], i) => six(g, e, i ? '/' : '')); const d = rev(SIXP.slice(0, 6)).map(([g, e]) => six(g, e, '/')); return pad(seq(u.concat(d), 0.5, 'down')); } },
-    { n: '8th notes', d: 'Picked in 8th notes, up and down.', bpm: 70, goal: 120, build: () => { const u = SIXP.map(([g, e]) => six(g, e)); return pad(seq(u.concat(rev(u.slice(0, 6))), 0.5, 'down')); } } ] },
-  { id: 'octaves', cat: 'Fretboard', title: 'Octave shapes', lvl: 'Beginner', about: 'Two shapes connect every note to its twin an octave higher. Once you see them, you can find any note fast.', tip: 'Root on the low E or A string: the octave is two strings up and two frets higher. Root on D or G: two strings up and three frets higher.', steps: [
-    { n: 'A across the neck', d: 'Each A, then its octave.', bpm: 60, goal: 100, build: () => pad(seq([[5, 5, 1], [3, 7, 3], [4, 12, 1], [2, 14, 3], [3, 7, 1], [1, 10, 4], [2, 2, 1], [0, 5, 4]], 1)) },
-    { n: 'Octave walk on E and D', d: 'Both notes together. Mute the A string with the underside of your index finger.', bpm: 60, goal: 110, build: () => pad(seq([5, 6, 7, 8, 8, 7, 6, 5].map(f => ({ n: [nt(5, f, 1), nt(3, f + 2, 3)] })), 1, 'down')) },
-    { n: 'Octave walk on A and G', d: 'C up to E and back.', bpm: 60, goal: 110, build: () => pad(seq([3, 4, 5, 6, 7, 6, 5, 4].map(f => ({ n: [nt(4, f, 1), nt(2, f + 2, 3)] })), 1, 'down')) } ] },
-  { id: 'findnotes', cat: 'Fretboard', title: 'One note on every string', lvl: 'Beginner', labels: 'note', about: 'Play the same note on all six strings. Builds the mental map you need to move riffs anywhere on the neck.', tip: 'Say the note name each time. Glance at the fretboard below only when you need to.', steps: [
-    { n: 'Every C', d: 'High e down to low E and back.', bpm: 50, goal: 90, build: () => pad(seq(oneNote(C_ALL.concat(rev(C_ALL))), 1)) },
-    { n: 'Every G', d: 'High e down to low E and back.', bpm: 50, goal: 90, build: () => pad(seq(oneNote(G_ALL.concat(rev(G_ALL))), 1)) },
-    { n: 'Every F', d: 'High e down to low E and back.', bpm: 50, goal: 90, build: () => pad(seq(oneNote(F_ALL.concat(rev(F_ALL))), 1)) } ] }
+  { id: 'permut', cat: 'Warm-up', title: 'Finger permutations', lvl: 'Intermediate', about: 'Four-finger patterns in every order, across all strings and up the neck. Builds independence beyond the usual 1-2-3-4.', tip: 'Keep fingers low and relaxed. Each finger stays over its own fret even when it isn\'t playing.', steps: [
+    { n: '1-3-2-4', d: 'Up all six strings at fret 5, down at fret 6, in 16th notes.', bpm: 60, goal: 120, build: () => pad(seq(permUp(PERMS[0], 5).concat(permDn(PERMS[0], 6)), 0.25)) },
+    { n: '1-4-2-3', d: 'Same route, new order.', bpm: 60, goal: 120, build: () => pad(seq(permUp(PERMS[1], 5).concat(permDn(PERMS[1], 6)), 0.25)) },
+    { n: '2-4-1-3', d: 'Starts on the middle finger.', bpm: 60, goal: 120, build: () => pad(seq(permUp(PERMS[2], 5).concat(permDn(PERMS[2], 6)), 0.25)) },
+    { n: '3-1-4-2', d: 'The awkward one. Go slow.', bpm: 55, goal: 115, build: () => pad(seq(permUp(PERMS[3], 5).concat(permDn(PERMS[3], 6)), 0.25)) },
+    { n: 'Mixed and climbing', d: 'A different order on every string, moving up a fret each pass.', bpm: 60, goal: 120, build: () => pad(seq(permMixUp(5).concat(permMixDn(6), permMixUp(7), permMixDn(8)), 0.25)) } ] },
+  { id: 'pentall', cat: 'Positions and scales', title: 'Minor pentatonic: all five boxes', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Intermediate', about: 'Link the five pentatonic boxes until the whole neck feels like one scale. Works in any key.', tip: 'Shift on the string where the boxes overlap. Watch the scale-degree labels: know where every root (1) and b3 is.', steps: [
+    { n: 'Boxes 1 and 2', d: 'Up box 1, down box 2, in 8th notes.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 0).concat(rev(pentBox(k, 1))), 0.5)) },
+    { n: 'Boxes 2 and 3', d: 'Up box 2, down box 3.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 1).concat(rev(pentBox(k, 2))), 0.5)) },
+    { n: 'Boxes 3, 4 and 5', d: 'Up 3, down 4, up 5, down 5.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 2).concat(rev(pentBox(k, 3)), pentBox(k, 4), rev(pentBox(k, 4))), 0.5)) },
+    { n: 'All five, climbing', d: 'Up one box, down the next, all the way up the neck and back down.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'min').map(w => winNotes(w.lo, w.hi, pcsOf(k, MINP))); return pad(seq(zigUp(l).concat(zigDown(rev(l))), 0.5)); } },
+    { n: 'Diagonal, three notes per string', d: 'Three notes on each string climbs the neck on a diagonal. Up four strings and back, in triplets.', bpm: 60, goal: 120, build: k => { const l = nps(k, MINP, k, [5, 4, 3, 2], 3); return pad(seq(l.concat(rev(l)), 1 / 3)); } } ] },
+  { id: 'majcaged', cat: 'Positions and scales', title: 'Major scale in five positions', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate', about: 'The major scale in each CAGED position, then connected across the neck.', tip: 'Before each run, find the root (1) in the position and say its name. Positions overlap by a fret or two.', steps: [
+    ...[0, 1, 2, 3, 4].map(i => ({ n: `Position ${i + 1} (${POS[i].c})`, d: 'Up and down in 8th notes.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[i]; return pad(seq(loopUD(winNotes(w.lo, w.hi, pcsOf(k, MAJ))), 0.5)); } })),
+    { n: 'All five, climbing', d: 'Up one position, down the next, up the neck and back.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'maj').map(w => winNotes(w.lo, w.hi, pcsOf(k, MAJ))); return pad(seq(zigUp(l).concat(zigDown(rev(l))), 0.5)); } } ] },
+  { id: 'nps3', cat: 'Positions and scales', title: 'Major scale, three notes per string', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate to advanced', about: 'Three notes on every string gives even picking and legato patterns that move diagonally across the neck.', tip: 'Fingers 1-2-4 for whole steps, 1-3-4 when there is a half step at the top. Keep the thumb behind the neck for the stretches.', steps: [
+    { n: 'Pattern from the root', d: 'Six strings up and back, in triplets.', bpm: 60, goal: 120, build: k => pad(seq(loopUD(nps(k, MAJ, k, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Pattern from the 3rd', d: 'Start on the 3rd of the key.', bpm: 60, goal: 120, build: k => pad(seq(loopUD(nps(k, MAJ, (k + 4) % 12, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Pattern from the 5th', d: 'Start on the 5th of the key.', bpm: 60, goal: 120, build: k => pad(seq(loopUD(nps(k, MAJ, (k + 7) % 12, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Legato', d: 'Pick only the first note on each string. Hammer up, pull off down.', bpm: 60, goal: 120, build: k => pad(seq(legato3(nps(k, MAJ, k, [5, 4, 3, 2, 1, 0], 3)), 1 / 3)) },
+    { n: 'Groups of six', d: 'Two strings at a time, moving across: strings 6-5, 5-4, 4-3, 3-2, 2-1. 16th notes.', bpm: 60, goal: 120, build: k => { const u = nps(k, MAJ, k, [5, 4, 3, 2, 1, 0], 3), l = []; for (let i = 0; i < 5; i++) l.push(...u.slice(i * 3, i * 3 + 6)); return pad(seq(l, 0.25)); } } ] },
+  { id: 'seqs', cat: 'Positions and scales', title: 'Scale sequences', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate to advanced', about: 'Sequences break the up-and-down habit and make scales sound like music. All in the E-shape position of the key.', tip: 'Say the pattern in your head ("1-2-3, 2-3-4"). Sequences are where your picking hand learns to cross strings on both strokes.', steps: [
+    { n: 'Groups of three', d: '1-2-3, 2-3-4 and so on, up and back, in triplets.', bpm: 60, goal: 120, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 1, 2]), 1 / 3)); } },
+    { n: 'Groups of four', d: '1-2-3-4, 2-3-4-5, in 16th notes.', bpm: 60, goal: 110, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 1, 2, 3]), 0.25)); } },
+    { n: 'Descending fours', d: '4-3-2-1, 5-4-3-2, climbing up. 16th notes.', bpm: 60, goal: 110, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [3, 2, 1, 0]), 0.25)); } },
+    { n: 'Thirds', d: '1-3, 2-4, 3-5, in 8th notes.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 2]), 0.5)); } },
+    { n: 'Fourths', d: '1-4, 2-5, 3-6. Wider leaps, a modern sound.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq(seqPattern(winNotes(w.lo, w.hi, pcsOf(k, MAJ)), [0, 3]), 0.5)); } } ] },
+  { id: 'cagedarp', cat: 'Arpeggios and chords', title: 'CAGED arpeggios', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate', about: 'The tonic chord as an arpeggio in all five CAGED shapes. These are the targets your solos should land on.', tip: 'Watch the 3rds. They tell the listener whether a chord is major or minor, so know exactly where they are in every shape.', steps: [
+    { n: 'E shape', d: 'Root, 3rd and 5th in the E-shape position, up and down.', bpm: 70, goal: 130, build: k => pad(seq(loopUD(triTones(k, cagedWins(k, 'maj')[1], [0, 4, 7])), 0.5)) },
+    { n: 'A shape', d: 'The same chord in the A-shape position.', bpm: 70, goal: 130, build: k => pad(seq(loopUD(triTones(k, cagedWins(k, 'maj')[4], [0, 4, 7])), 0.5)) },
+    { n: 'Two shapes linked', d: 'Up the lowest shape, down the next one.', bpm: 70, goal: 130, build: k => { const s = sortedWins(k, 'maj'); return pad(seq(triTones(k, s[0], [0, 4, 7]).concat(rev(triTones(k, s[1], [0, 4, 7]))), 0.5)); } },
+    { n: 'All five, climbing', d: 'Up one shape, down the next, all the way up and back.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'maj').map(w => triTones(k, w, [0, 4, 7])); return pad(seq(zigUp(l).concat(zigDown(rev(l))), 0.5)); } },
+    { n: 'Dominant 7, all five', d: 'Add the b7. This is the arpeggio for blues and V chords.', bpm: 70, goal: 130, build: k => { const l = sortedWins(k, 'maj').map(w => triTones(k, w, [0, 4, 7, 10])); return pad(seq(zigUp(l), 0.5)); } } ] },
+  { id: 'dia7', cat: 'Arpeggios and chords', title: 'Diatonic 7th arpeggios', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Advanced', about: 'Every 7th chord in the key, arpeggiated in one position. Seeing all seven chords inside one shape is how you play over changes without moving around.', tip: 'Chord names show above the tab. Labels show each note\'s scale degree in the key, so you can see which chord tones the arpeggios share.', steps: [
+    { n: 'I to IV in the E shape', d: 'Imaj7, ii7, iii7, IVmaj7. One bar each, up.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([0, 1, 2, 3].flatMap(d => arpBar(k, d, w, 'up')), 0.5)); } },
+    { n: 'V to I in the E shape', d: 'V7, vi7, viim7b5, back to Imaj7.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([4, 5, 6, 0].flatMap(d => arpBar(k, d, w, 'up')), 0.5)); } },
+    { n: 'All seven, up and down', d: 'Up one chord, down the next, through the whole key.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([0, 1, 2, 3, 4, 5, 6, 0].flatMap((d, i) => arpBar(k, d, w, i % 2 ? 'down' : 'up')), 0.5)); } },
+    { n: 'All seven in the A shape', d: 'The same idea in a different position.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[4]; return pad(seq([0, 1, 2, 3, 4, 5, 6, 0].flatMap((d, i) => arpBar(k, d, w, i % 2 ? 'down' : 'up')), 0.5)); } } ] },
+  { id: 'twofive', cat: 'Arpeggios and chords', title: 'ii–V–I arpeggios and guide tones', keyed: 'maj', key0: 0, labels: 'degree', lvl: 'Advanced', about: 'The most important progression in jazz and much of pop. Outline each chord, then connect them with guide tones: the 3rds and 7ths.', tip: 'In the guide-tone step, notice how the 7th of each chord falls by a half step to the 3rd of the next. That move is the sound of a chord change.', steps: [
+    { n: 'Arpeggios in the E shape', d: 'ii7, V7, Imaj7, one bar each.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[1]; return pad(seq([...arpBar(k, 1, w, 'up'), ...arpBar(k, 4, w, 'up'), ...arpBar(k, 0, w, 'up'), ...arpBar(k, 0, w, 'down')], 0.5)); } },
+    { n: 'Guide tones', d: 'Only the 3rd and 7th of each chord, in half notes, moving to the nearest note each time.', bpm: 70, goal: 120, build: k => pad(seq(guideLine(k, cagedWins(k, 'maj')[1]), 2)) },
+    { n: 'Arpeggios in the A shape', d: 'Same progression, new position.', bpm: 70, goal: 130, build: k => { const w = cagedWins(k, 'maj')[4]; return pad(seq([...arpBar(k, 1, w, 'up'), ...arpBar(k, 4, w, 'up'), ...arpBar(k, 0, w, 'up'), ...arpBar(k, 0, w, 'down')], 0.5)); } },
+    { n: 'Up ii, down V, up I', d: 'Alternate direction so each chord connects smoothly to the next.', bpm: 70, goal: 140, build: k => { const w = cagedWins(k, 'maj')[1]; const root = winNotes(w.lo, w.hi, [k])[0]; return pad(seq([...arpBar(k, 1, w, 'up'), ...arpBar(k, 4, w, 'down'), ...arpBar(k, 0, w, 'up'), { n: [nt(root[0], root[1], root[2])], d: 4, chord: chordName7(k, 0) }], 0.5)); } } ] },
+  { id: 'triads', cat: 'Arpeggios and chords', title: 'Triad inversions on every string set', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate to advanced', about: 'Every inversion of the tonic triad on each group of three strings, then real progressions where each chord moves to the closest shape.', tip: 'Each shape has the root (1) in a different place. Learn to spot it instantly; that\'s what makes these usable in a band.', steps: [
+    { n: 'G-B-e strings', d: 'Every inversion up the neck: strum, then pick.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.gbe) },
+    { n: 'D-G-B strings', d: 'Same chord, next string set down.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.dgb) },
+    { n: 'A-D-G strings', d: 'Middle strings. Fuller sound.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.adg) },
+    { n: 'E-A-D strings', d: 'Low strings. Useful for riffs.', bpm: 60, goal: 110, build: k => triadNeck(k, SETS.ead) },
+    { n: 'I–vi–IV–V on G-B-e', d: 'Each chord takes the nearest shape, so your hand barely moves.', bpm: 60, goal: 110, build: k => triadProgVL(k, SETS.gbe, [0, 5, 3, 4]) },
+    { n: 'I–vi–IV–V on D-G-B', d: 'The same progression on the next set down.', bpm: 60, goal: 110, build: k => triadProgVL(k, SETS.dgb, [0, 5, 3, 4]) } ] },
+  { id: 'sweeps', cat: 'Technique', title: 'Sweep-picked arpeggios', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Advanced', about: 'One continuous pick motion across the strings, like a slow strum where each note sounds separately.', tip: 'Let the pick fall through the strings in one motion. Lift each fretting finger as soon as its note has sounded, so notes don\'t ring together.', steps: [
+    { n: '3-string minor', d: 'Down-down-down, up. Minor triad on the G, B and high e strings.', bpm: 50, goal: 110, build: k => sweep(SW3m, k, 4) },
+    { n: '3-string major', d: 'The same motion, major triad.', bpm: 50, goal: 110, build: k => sweep(SW3M, k, 4) },
+    { n: '5-string minor', d: 'From the A string to the high e and back.', bpm: 50, goal: 100, build: k => sweep(SW5m, k, 2) },
+    { n: '5-string major', d: 'Same shape with a major 3rd.', bpm: 50, goal: 100, build: k => sweep(SW5M, k, 2) },
+    { n: 'Minor to major', d: 'One bar minor, one bar major. Only the 3rd moves.', bpm: 50, goal: 100, build: k => pad(seq(withPicks(rep(transposeShape(SW5m, k, 9), 2).concat(rep(transposeShape(SW5M, k, 9), 2))), 0.25)) } ] },
+  { id: 'cycle4', cat: 'Fretboard fluency', title: 'Cycle of fourths on every string', labels: 'note', lvl: 'Intermediate', about: 'Play all 12 notes in the order musicians use most: C, F, Bb, Eb and so on. One string at a time, then across strings.', tip: 'Say each note name before you play it. Aim to know where it is before the click, not after.', steps: [
+    ...[5, 4, 3, 2, 1, 0].map(s => ({ n: `${SLONG[s][0].toUpperCase() + SLONG[s].slice(1)} string`, d: 'All 12 notes in cycle-of-fourths order, one per beat.', bpm: 50, goal: 100, build: () => pad(seq(CYC4.map(pc => onStr(s, pc)), 1)) })),
+    { n: 'Low E and A together', d: 'Each note on the low E, then on the A string.', bpm: 50, goal: 100, build: () => pad(seq(CYC4.flatMap(pc => [onStr(5, pc), onStr(4, pc)]), 0.5)) },
+    { n: 'One position, frets 5 to 9', d: 'Find each note without leaving the position.', bpm: 50, goal: 100, build: () => pad(seq(CYC4.map(pc => inWindow(pc, 5, 9)), 1)) } ] },
+  { id: 'notemap', cat: 'Fretboard fluency', title: 'One note, the whole neck', keyed: 'note', key0: 9, labels: 'note', lvl: 'Intermediate', about: 'Every place one note lives, from the nut to fret 15. Change the key to drill any note.', tip: 'Connect them with octave shapes. Two strings up, two frets higher, with a three-fret jump when you cross onto the B string.', steps: [
+    { n: 'Every occurrence', d: 'Left to right across the neck and back.', bpm: 50, goal: 100, build: k => pad(seq(loopUD(allPos(k, 15)), 1)) },
+    { n: 'With octave shapes', d: 'Each note, then its octave two strings up.', bpm: 60, goal: 110, build: k => pad(seq(octavePairs(k), 0.5)) },
+    { n: 'Every 5th', d: 'Every place the 5th of the note lives.', bpm: 50, goal: 100, build: k => pad(seq(loopUD(allPos((k + 7) % 12, 15)), 1)) },
+    { n: 'Power-chord shapes', d: 'Root and 5th together, everywhere on the low strings.', bpm: 60, goal: 110, build: k => pad(seq(powerShapes(k), 1, 'down')) } ] },
+  { id: 'onestring', cat: 'Fretboard fluency', title: 'Scales on one string', keyed: 'maj', key0: 7, labels: 'degree', lvl: 'Intermediate', about: 'The major scale along a single string. This is how you see the scale as a line of whole and half steps instead of a box.', tip: 'Half steps fall between 3-4 and 7-1. Watch the degree labels and you will see the pattern repeat on every string.', steps: [5, 4, 3, 2, 1].map(s => ({ n: `${SLONG[s][0].toUpperCase() + SLONG[s].slice(1)} string`, d: 'Up to fret 14 and back, in 8th notes. Shift with your first finger.', bpm: 60, goal: 110, build: k => pad(seq(loopUD(oneStr(k, s)), 0.5)) })) }
 ];
 
 /* ---------- guided exercises: player ---------- */
@@ -1745,24 +1859,30 @@ function evIndexAt(w) { let lo = 0; for (let i = 0; i < P.ev.length; i++) { if (
 function exOpen(id, step) {
   const e = EX.find(x => x.id === id); if (!e) return;
   exStop(); P.ex = e; S.ui.exid = id;
-  P.labels = e.labels || S.ui.exlabels;
+  P.labels = e.labels || 'finger';
   exLoad(step == null ? nextStep(e) : step);
   $('#exLib').hidden = true; $('#exPlayer').hidden = false;
   renderExPlayer();
   window.scrollTo({ top: 0 });
 }
+function exKey() { const e = P.ex; if (!e || !e.keyed) return 0; const st = exStat(e.id); return st.key != null ? st.key : e.key0; }
+function keyName(pc, e) { e = e || P.ex; const t = e && e.keyed; return nn(pc) + (t === 'maj' ? ' major' : t === 'min' ? ' minor' : ''); }
 function exLoad(i) {
   exStop();
   const e = P.ex; P.step = clamp(i, 0, e.steps.length - 1);
-  const sd = e.steps[P.step], b = sd.build();
-  P.ev = b.ev; P.L = b.L; P.swing = sd.swing || 0;
-  P.bpm = exStat(e.id).bpm[P.step] || sd.bpm;
+  exRebuild();
+  P.bpm = exStat(e.id).bpm[P.step] || e.steps[P.step].bpm;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
+}
+function exRebuild() {
+  const sd = P.ex.steps[P.step]; P.keyPc = exKey();
+  const b = sd.build(P.keyPc);
+  P.ev = b.ev; P.L = b.L; P.swing = sd.swing || 0;
   let gap = 1; for (let k = 1; k < P.ev.length; k++) { const g = P.ev[k].t - P.ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
   P.ppb = clamp(42 / gap, 90, 190);
   const frets = P.ev.flatMap(x => x.n.map(n => n.f)), nz = frets.filter(f => f > 0);
   const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...frets);
-  P.bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1; P.bt = Math.min(17, Math.max(P.bf + 5, mx + 1));
+  P.bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1; P.bt = Math.min(20, Math.max(P.bf + 5, mx + 1));
 }
 function exPlayEv(e, t, spb, dest) {
   const d = dest || P.bus;
@@ -1842,14 +1962,21 @@ function exFrame() {
 }
 function exLoopEnd() {
   const goal = P.ex.steps[P.step].goal;
-  if (S.ui.exopts.ladder && P.bpm < goal) { exReanchor(Math.min(goal, P.bpm + 4)); }
+  if (S.ui.exopts.keycycle && P.ex.keyed) {
+    const spb = 60 / P.bpm, tB = P.startT + P.loops * P.L * spb;
+    let nb = P.bpm; if (S.ui.exopts.ladder && nb < goal) nb = Math.min(goal, nb + 4);
+    const st = exStat(P.ex.id); st.key = (exKey() + 5) % 12; save();
+    exRebuild(); P.bpm = nb;
+    killBus(P.bus); P.bus = bus(); P.startT = tB; P.k = 0; P.i = 0; P.cb = 0; P.loops = 0; P.endBeat = S.ui.exopts.loop ? Infinity : P.L; P.lastIdx = -2;
+    renderExKey(); renderExMeta();
+  } else if (S.ui.exopts.ladder && P.bpm < goal) { exReanchor(Math.min(goal, P.bpm + 4)); }
   if (P.loops % 3 === 0) { const f = $('#pFeedback'); f.classList.remove('nudge'); void f.offsetWidth; f.classList.add('nudge'); }
 }
 function exStatus(pos, force) {
   let s;
   if (!P.running) s = `${P.ev.length} ${P.ev[0] && P.ev[0].strum ? 'strums' : 'notes'} · ${P.L / 4} bar${P.L > 4 ? 's' : ''} · press Play or step through with the arrow keys`;
   else if (pos < 0) s = 'Count-in…';
-  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / 4) + 1} of ${P.L / 4} · beat ${Math.floor(w % 4) + 1}`; }
+  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / 4) + 1} of ${P.L / 4} · beat ${Math.floor(w % 4) + 1}`; }
   if (s !== P.status || force) { P.status = s; $('#pStatus').textContent = s; }
 }
 function exStepNote(dir) {
@@ -1862,7 +1989,7 @@ function exStepNote(dir) {
   exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor);
   const s = `Note ${P.cursor + 1} of ${P.ev.length} · step-through mode`; P.status = s; $('#pStatus').textContent = s;
 }
-function exLabel(n) { return P.labels === 'note' ? nn((OPEN[n.s] + n.f) % 12) : (n.fg ? String(n.fg) : (n.f === 0 ? '0' : '')); }
+function exLabel(n) { const pc = (OPEN[n.s] + n.f) % 12; if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return n.fg ? String(n.fg) : (n.f === 0 ? '0' : ''); }
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
@@ -1934,7 +2061,8 @@ function exDraw(pos) {
           rrect(g, x - w / 2, y - 10, w, 20, 6); g.fillStyle = cur ? C.warn : C.bg; g.fill();
           g.lineWidth = 1.5; g.strokeStyle = cur ? C.warn : C.ink; g.stroke();
           g.fillStyle = cur ? C.onSem : C.ink; g.font = '600 12px ' + MONO; g.textAlign = 'center'; g.fillText(txt, x, y + 0.5);
-          if (P.labels === 'finger' && n.fg) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 9.5px ' + SANS; g.fillText(String(n.fg), x + w / 2 + 6, y + 9); }
+          const sub = P.labels === 'finger' ? (n.fg ? String(n.fg) : '') : exLabel(n);
+          if (sub) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 9.5px ' + SANS; g.textAlign = 'left'; g.fillText(sub, x + w / 2 + 2, y + 9); }
         });
         if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
         if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30); }
@@ -1951,7 +2079,7 @@ function renderExLib() {
     const items = EX.filter(e => e.cat === cat); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(e => {
       const st = exStat(e.id), done = e.steps.filter((_, i) => st.done[i]).length, ns = nextStep(e), bests = Object.values(st.best), best = bests.length ? Math.max(...bests) : 0;
-      return `<button class="excard" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}</span></span><span class="small muted">${esc(e.about)}</span><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}</span></button>`;
+      return `<button class="excard" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed ? ' · any key' : ''}</span></span><span class="small muted">${esc(e.about)}</span><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}</span></button>`;
     }).join('')}</div></div>`;
   }).join('');
 }
@@ -1976,9 +2104,15 @@ function renderExPlayer() {
   $('#pTip').textContent = e.tip;
   const o = S.ui.exopts;
   $('#pLoop').checked = o.loop; $('#pCount').checked = o.count; $('#pGuide').checked = o.guide; $('#pClick').checked = o.click; $('#pLadder').checked = o.ladder;
-  $('#pLab').value = P.labels;
+  $('#pLab').value = P.labels; renderExKey();
   renderExMeta(); renderExTransport();
   requestAnimationFrame(() => { exColors(true); exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); });
+}
+function renderExKey() {
+  const e = P.ex, row = $('#pKeyRow'); if (!e) return;
+  row.hidden = !e.keyed; if (!e.keyed) return;
+  $('#pKey').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(pc => `<option value="${pc}">${esc(keyName(pc))}</option>`).join('');
+  $('#pKey').value = exKey(); $('#pKeyCycle').checked = !!S.ui.exopts.keycycle;
 }
 function renderExercises() { if (P.ex && !$('#exPlayer').hidden) renderExPlayer(); else renderExLib(); }
 function exFeedback(kind) {
@@ -2006,36 +2140,34 @@ function renderUpNext() {
 /* ---------- routines ---------- */
 const ROUTINES = {
   quick: { n: 'Quick · 15', blocks: [
-    { tool: 'exercises', ex: 'chromatic', m: 3, t: 'Warm-up: chromatic', d: 'Play along at the current step. Rate each run.' },
-    { tool: 'exercises', ex: 'pent1', m: 4, t: 'Scale: A minor pentatonic', d: 'Work on your current step of box 1.' },
-    { tool: 'fretboard', m: 3, t: 'Fretboard notes', d: 'One find-the-note round. Your weak spots come up more.', setup: () => { if (S.ui.fmode === 'heat' || S.ui.fmode === 'all') fSetMode('find'); } },
-    { tool: 'exercises', ex: 'strum', m: 3, t: 'Rhythm: strumming', d: 'Play along with the strum pattern for your current step.' },
-    { tool: 'ear', m: 2, t: 'Ear training', d: 'Scale degrees. Sing the note back before you answer.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
+    { tool: 'exercises', ex: 'permut', m: 3, t: 'Warm-up: finger permutations', d: 'Your current step. Relaxed hands first.' },
+    { tool: 'exercises', ex: 'pentall', m: 4, t: 'Pentatonic boxes', d: 'Link two boxes. Try a new key.' },
+    { tool: 'exercises', ex: 'cycle4', m: 3, t: 'Cycle of fourths', d: 'Name each note before you play it.' },
+    { tool: 'exercises', ex: 'cagedarp', m: 3, t: 'CAGED arpeggios', d: 'Know where every 3rd is.' },
+    { tool: 'ear', m: 2, t: 'Ear training', d: 'Scale degrees. Sing it back first.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
   standard: { n: 'Standard · 30', blocks: [
-    { tool: 'exercises', ex: 'chromatic', m: 3, t: 'Warm-up: chromatic', d: 'Play along at the current step.' },
-    { tool: 'exercises', ex: 'spider', m: 3, t: 'Warm-up: spider walk', d: 'Fingers 1-3, 2-4. Only the playing finger moves.' },
-    { tool: 'exercises', ex: 'altpick', m: 4, t: 'Technique: alternate picking', d: 'Follow the pick marks exactly.' },
-    { tool: 'exercises', ex: 'pent1', m: 5, t: 'Scale: A minor pentatonic', d: 'Current step of box 1. Rate every run.' },
-    { tool: 'fretboard', m: 4, t: 'Fretboard notes', d: 'Find-the-note round.', setup: () => { if (S.ui.fmode === 'heat') fSetMode('find'); } },
-    { tool: 'exercises', ex: 'triads', m: 4, t: 'Chords: triads', d: 'Small chord shapes on the top strings.' },
-    { tool: 'ear', m: 4, t: 'Ear training', d: 'Scale degrees, then a few intervals.', setup: () => { S.ui.emode = 'deg'; renderEar(); } },
-    { tool: 'exercises', ex: 'shuffle', m: 3, t: 'Riff: blues shuffle', d: 'Swing it. Long-short, long-short.' } ] },
+    { tool: 'exercises', ex: 'permut', m: 3, t: 'Warm-up: finger permutations', d: 'Your current step.' },
+    { tool: 'exercises', ex: 'majcaged', m: 5, t: 'Major scale positions', d: 'One position, then link it to the next.' },
+    { tool: 'exercises', ex: 'nps3', m: 4, t: 'Three notes per string', d: 'Follow the pick marks exactly.' },
+    { tool: 'exercises', ex: 'cycle4', m: 3, t: 'Cycle of fourths', d: 'One string per day.' },
+    { tool: 'exercises', ex: 'triads', m: 5, t: 'Triad inversions', d: 'Spot the root in every shape.' },
+    { tool: 'exercises', ex: 'dia7', m: 5, t: 'Diatonic 7th arpeggios', d: 'All seven chords inside one position.' },
+    { tool: 'ear', m: 5, t: 'Ear training', d: 'Scale degrees, then chord types.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
   deep: { n: 'Deep · 45', blocks: [
-    { tool: 'exercises', ex: 'chromatic', m: 3, t: 'Warm-up: chromatic', d: 'Play along at the current step.' },
-    { tool: 'exercises', ex: 'spider', m: 3, t: 'Warm-up: spider walk', d: 'Slow and relaxed.' },
-    { tool: 'exercises', ex: 'altpick', m: 5, t: 'Technique: alternate picking', d: 'Turn on Speed up each loop.' },
-    { tool: 'exercises', ex: 'legato', m: 4, t: 'Technique: legato', d: 'Hammer-ons and pull-offs.' },
-    { tool: 'exercises', ex: 'gmajor', m: 6, t: 'Scale: G major', d: 'Current step. Sing along with the first octave.' },
-    { tool: 'exercises', ex: 'pent1', m: 5, t: 'Scale: A minor pentatonic', d: 'Current step of box 1.' },
-    { tool: 'fretboard', m: 5, t: 'Fretboard notes and intervals', d: 'Find-the-note round, then Intervals.', setup: () => { if (S.ui.fmode === 'heat') fSetMode('find'); } },
-    { tool: 'exercises', ex: 'triads', m: 4, t: 'Chords: triads', d: 'Let the notes ring together.' },
-    { tool: 'ear', m: 5, t: 'Ear training', d: 'Scale degrees, then chord types.', setup: () => { S.ui.emode = 'deg'; renderEar(); } },
-    { tool: 'exercises', ex: 'power', m: 5, t: 'Riff: power chords', d: 'All downstrokes, tight palm mutes.' } ] },
+    { tool: 'exercises', ex: 'permut', m: 4, t: 'Warm-up: finger permutations', d: 'Mixed and climbing.' },
+    { tool: 'exercises', ex: 'pentall', m: 6, t: 'All five pentatonic boxes', d: 'Turn on the key change each loop.' },
+    { tool: 'exercises', ex: 'nps3', m: 5, t: 'Three notes per string', d: 'Legato or groups of six.' },
+    { tool: 'exercises', ex: 'seqs', m: 5, t: 'Scale sequences', d: 'Fours and thirds.' },
+    { tool: 'exercises', ex: 'cagedarp', m: 5, t: 'CAGED arpeggios', d: 'All five shapes, climbing.' },
+    { tool: 'exercises', ex: 'twofive', m: 5, t: 'ii–V–I', d: 'Arpeggios, then guide tones.' },
+    { tool: 'exercises', ex: 'triads', m: 5, t: 'Triad inversions', d: 'Voice-led progressions.' },
+    { tool: 'exercises', ex: 'sweeps', m: 5, t: 'Sweep picking', d: 'Slow and clean. One motion per direction.' },
+    { tool: 'exercises', ex: 'notemap', m: 5, t: 'One note, the whole neck', d: 'Random key, every occurrence.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
-    { tool: 'exercises', ex: 'pedal', m: 4, t: 'Riff: pedal tone', d: 'Get the open-string bounce in your hands.' },
-    { tool: 'exercises', ex: 'power', m: 4, t: 'Riff: power chords', d: 'Accents against palm mutes.' },
-    { tool: 'riffs', m: 9, t: 'Riff Dice', d: 'Roll, lock the best notes, roll again. Save two riffs.' },
-    { tool: 'exercises', ex: 'shuffle', m: 3, t: 'Riff: blues shuffle', d: 'Finish with the 12-bar form.' } ] }
+    { tool: 'exercises', ex: 'pentall', m: 5, t: 'Pentatonic boxes', d: 'Pick the key of your next song.' },
+    { tool: 'exercises', ex: 'notemap', m: 4, t: 'Power-chord shapes', d: 'Root and 5th everywhere in the key.' },
+    { tool: 'riffs', m: 8, t: 'Riff Dice', d: 'Roll, lock the best notes, roll again. Save two riffs.' },
+    { tool: 'exercises', ex: 'triads', m: 3, t: 'Triads', d: 'Add a triad part on top of your riff.' } ] }
 };
 const R = { key: null, idx: 0, rem: 0, running: false, paused: false };
 function routineStart() {
@@ -2232,6 +2364,9 @@ $('#pFaster').onclick = () => { exReanchor(P.bpm + 2); exStat(P.ex.id).bpm[P.ste
 [['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop' && P.running) exStart(); if (k === 'loop' && !P.running) exDraw(P.viewPos); }; });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
+$('#pKey').onchange = e => { exStat(P.ex.id).key = +e.target.value; save(); exLoad(P.step); renderExPlayer(); };
+$('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= cur) k++; exStat(P.ex.id).key = k; save(); exLoad(P.step); renderExPlayer(); toast(`Key: ${keyName(k)}`); };
+$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; } };
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
 // tuner
