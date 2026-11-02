@@ -4,17 +4,18 @@ A fretboard practice app for intermediate and advanced guitarists, in a single H
 
 ## Learn path
 
-Nine units that build on each other: notes on the low strings, octave shapes, intervals as shapes, the CAGED system, pentatonic boxes, the major scale, triads and inversions, harmony in a key (diatonic 7ths, ii–V–I, guide tones), and voicings for riffs (color tones, open-string drones, alternate tunings). Each unit has short lesson cards with color-coded fretboard diagrams (root, 3rd, 5th, 7th), a 10-question check with an explanation after every answer (8 to pass, new questions each attempt), and links to the drills and exercises that make it automatic. From unit 2 on, each check includes two questions from earlier units. Passed units come back as a mixed 10-question review after 1, 3, 7, 16 and 35 days; a unit you get fully right moves to the next gap, and a miss brings it back the next day. Question types include naming and finding notes, finding every place a note lives, octave shapes, naming and finding intervals, identifying CAGED shapes and roots, scale degrees inside a position, triad inversions and quality, and key harmony.
+Nine units that build on each other: notes on the low strings, octave shapes, intervals as shapes, the CAGED system, pentatonic boxes, the major scale (positions and lines along the strings), triads and inversions, chords in a key (diatonic chords, the progressions songs lean on, and borrowed iv, bVII and bVI chords), and voicings for riffs (color tones, open-string drones, alternate tunings). Each unit has short lesson cards with color-coded fretboard diagrams (root, 3rd, 5th, 7th), a 10-question check with an explanation after every answer (8 to pass, new questions each attempt), and links to the drills and exercises that make it automatic. From unit 2 on, each check includes two questions from earlier units. Passed units come back as a mixed 10-question review after 1, 3, 7, 16 and 35 days; a unit you get fully right moves to the next gap, and a miss brings it back the next day. Question types include naming and finding notes, finding every place a note lives, octave shapes, naming and finding intervals, identifying CAGED shapes and roots, scale degrees inside a position, triad inversions and quality, and key harmony.
 
 ## Exercises
 
 Play-along workouts that show exactly what to play, note by note, in time. A scrolling tab with a fixed playhead shows pick direction, technique marks and labels (finger, note name or scale degree), while a live fretboard shows the note to play now, the next one, and the rest of the shape. Most exercises work in any key: pick one, roll a random key, or move up a 4th every loop to play through all 12.
 
-- **Warm-up**: finger permutations across the neck
-- **Positions and scales**: all five minor pentatonic boxes linked, the major scale in five CAGED positions, three-notes-per-string patterns (including legato and groups of six), and scale sequences in 3s, 4s, 3rds and 4ths
-- **Arpeggios and chords**: CAGED triad and dominant 7 arpeggios, diatonic 7th arpeggios in one position, ii–V–I arpeggios and guide tones, and triad inversions on every string set with voice-led progressions
-- **Technique**: 3- and 5-string sweep-picked arpeggios
-- **Fretboard fluency**: cycle of fourths on every string, one note across the whole neck, and scales on one string
+Ten core workouts, chosen for knowing the neck in any key and turning it into riffs (drills that don't look like real music, like chromatic finger permutations, sweeps, shred patterns and jazz ii–V–I studies, were cut, since practice transfers best when it resembles what you actually play):
+
+- **Fretboard fluency**: cycle of fourths on every string, one note across the whole neck (with octaves, 5ths and power chords), and scales on one string
+- **Positions and scales**: all five minor pentatonic boxes linked, and the major scale in five CAGED positions
+- **Arpeggios and chords**: CAGED triad and major 7 arpeggios, and triad inversions on every string set with voice-led I–vi–IV–V and I–V–vi–IV
+- **Riff building**: hammer-ons, pull-offs and slides between pentatonic boxes (the warm-up), octave riffs through the key, and 3rds and 6ths as two-note riffs, ending with a pedal-tone riff
 
 Each exercise has 4 to 8 steps with a goal tempo. Rate each run (Clean, Almost, Messy): two clean runs in a row raise the tempo by 5 bpm, a messy run lowers it by about 10%, and two clean runs at the goal lock the step in. Locked-in steps come back as cold checks on the same 1, 3, 7, 16, 35 day schedule, and the first run of the day is the one that counts. New steps suggest a **Listen first** pass, **Practice** loops a single bar or pair of bars a little slower (part practice, then back to the whole step), and each exercise shows one listening cue. Count-in, looping, guide audio, a click, a step-through mode (arrow keys) and an automatic speed ladder are built in.
 
