@@ -266,6 +266,20 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 
 
 
+/* exercise history */
+.rstrip{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px}
+.rcard{display:flex;flex-direction:column;gap:3px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);min-width:0}
+.rcard:hover{border-color:var(--accent)} .rcard b{font-weight:600} .rcard .go{color:var(--accent);font-weight:600;font-size:13px;margin-top:2px}
+.rchip{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.rchip.clean{background:var(--good-soft);color:var(--good)} .rchip.almost{background:var(--warn-soft);color:var(--warn)} .rchip.messy{background:var(--bad-soft);color:var(--bad)}
+.hday{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.hrow{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-radius:10px;padding:7px 8px;color:var(--ink)}
+.hrow:hover{background:var(--surface-2)} .hrow .t{font:500 12.5px var(--font-mono);color:var(--muted)} .hrow .m{min-width:0} .hrow .m div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phist{border-top:1px solid var(--line);padding-top:10px} .phist summary{cursor:pointer}
+.psrow{display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}
+.psrow:last-child{border-bottom:0} .psrow svg{display:block}
+@media (max-width:560px){.psrow{grid-template-columns:minmax(0,1fr) auto}.psrow svg{display:none}}
+.favbtn[aria-pressed="true"]{color:var(--warn);border-color:var(--warn)}
 /* research-based practice */
 .pfocus{margin:0;color:var(--ink)} .pfocus b{color:var(--accent)}
 .pnew{display:block;background:var(--surface-2);border-radius:10px;padding:8px 12px;margin:0}
@@ -523,10 +537,13 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <section class="view" id="view-exercises" hidden>
   <div id="exLib" class="stack" style="gap:16px">
     <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Workouts for knowing the neck in any key, connecting it with technique and chord tones, and turning it into riffs, plus a play-along for every voicing. Each one shows exactly what to play, note by note, in time. Most work in any key: pick one, or let it move up a 4th every loop until you've played it in all 12. Rate every run and the tempo climbs toward the goal.</p></div>
+    <div class="row" style="justify-content:space-between"><div class="seg" id="exView"><button type="button" data-v="lib">Library</button><button type="button" data-v="hist">History</button></div><span class="small muted" id="exHistSum"></span></div>
+    <div id="exRecent" class="stack" style="gap:14px"></div>
     <div id="exList" class="stack" style="gap:18px"></div>
+    <div id="exHist" class="stack" style="gap:14px" hidden></div>
   </div>
   <div id="exPlayer" class="stack" hidden>
-    <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="small muted" id="pCat"></span></div>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="row" style="gap:10px"><span class="small muted" id="pCat"></span><button class="btn favbtn" id="pFav" type="button" aria-pressed="false">☆ Favorite</button></span></div>
     <div class="card stack">
       <div class="stack" style="gap:2px"><h2 id="pTitle">Exercise</h2><p class="small muted" id="pAbout"></p><div id="pLesson"></div></div>
       <div class="row" id="pKeyRow" hidden><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Key</span><select id="pKey"></select></label><button class="btn" id="pRandKey" type="button">Random key</button><label class="toggle"><input type="checkbox" id="pKeyCycle"> Up a 4th every loop (all 12 keys)</label></div>
@@ -563,6 +580,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       </div>
       <p class="small muted" id="pCrit"><b>Clean</b>: no stops, every note lands with the click (one tiny slip is fine). <b>Almost</b>: kept going, a few notes off. <b>Messy</b>: stopped or lost the beat. Two clean runs in a row move the tempo up.</p>
       <p class="small"><b>Tip:</b> <span id="pTip"></span></p>
+      <details class="phist" id="pHistWrap"><summary><b>Your history</b> <span class="small muted" id="pHistSum"></span></summary><div id="pHist" class="stack" style="gap:6px;margin-top:8px"></div></details>
     </div>
   </div>
 </section>
@@ -832,7 +850,7 @@ const DEF = {
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
-  routines: {}, rtPick: 'auto', journal: {},
+  routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
   ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
@@ -2206,6 +2224,7 @@ function exStart() {
   requestAnimationFrame(exFrame); renderExTransport();
 }
 function exStop() {
+  if (P.running && !P.preview && exPos() >= P.L - 0.05) { logRun('played', P.bpm); if (!$('#exPlayer').hidden) setTimeout(renderExHistPanel, 0); }
   if (P.running) { clearInterval(P.timer); killBus(P.bus); P.bus = null; P.running = false; }
   P.preview = false;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
@@ -2396,12 +2415,91 @@ function exDraw(pos) {
   g.fillStyle = C.warn; g.beginPath(); g.moveTo(ph - 6, top - 22); g.lineTo(ph + 6, top - 22); g.lineTo(ph, top - 14); g.closePath(); g.fill();
   if (pos < 0) { g.fillStyle = C.warn; g.font = '700 60px ' + DISP; g.textAlign = 'center'; g.fillText(String(Math.max(1, Math.ceil(-pos - 1e-6))), ph + (W - ph) / 2, top + 2.5 * sh); }
 }
+/* ---------- exercise history ---------- */
+const RLAB = { clean: 'Clean', almost: 'Almost', messy: 'Messy', played: 'Played' };
+function ago(t) {
+  const sec = (Date.now() - t) / 1000; if (sec < 60) return 'just now'; if (sec < 3600) return Math.round(sec / 60) + ' min ago';
+  if (sec < 86400) return Math.round(sec / 3600) + ' h ago'; const d = dayDiff(dayKey(new Date(t)), dayKey());
+  return d <= 1 ? 'yesterday' : d < 7 ? d + ' days ago' : new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+function logRun(r, bpm) {
+  if (!P.ex || P.spot || P.preview) return;
+  const L = S.exlog, now = Date.now(), k = P.ex.keyed ? exKey() : null, last = L[L.length - 1];
+  if (last && last.id === P.ex.id && last.s === P.step && last.k === k && last.r === 'played' && r !== 'played' && now - last.t < 15 * 60e3) { last.r = r; last.b = bpm; last.t = now; }
+  else if (!(r === 'played' && last && last.id === P.ex.id && last.s === P.step && now - last.t < 60e3)) L.push({ id: P.ex.id, s: P.step, k, b: bpm, r, t: now });
+  if (L.length > 600) L.splice(0, L.length - 600);
+  save();
+}
+function exResume(id, step, k) {
+  const e = EX.find(x => x.id === id); if (!e) return;
+  if (k != null && k !== '' && e.keyed) { exStat(id).key = +k; save(); }
+  switchTab('exercises'); exOpen(id, step == null || step === '' ? undefined : +step);
+}
+function resAttr(x) { return `data-res="${x.id}" data-step="${x.s}" data-key="${x.k == null ? '' : x.k}"`; }
+function runLine(x, e) { return [e.keyed && x.k != null ? keyName(x.k, e) : '', x.b ? x.b + ' bpm' : ''].filter(Boolean).join(' · '); }
+function recentRuns(n) {
+  const seen = new Set(), out = [];
+  for (let i = S.exlog.length - 1; i >= 0 && out.length < n; i--) { const x = S.exlog[i], e = EX.find(q => q.id === x.id); if (!e || !e.steps[x.s]) continue; const k = x.id + ':' + x.s; if (seen.has(k)) continue; seen.add(k); out.push({ x, e }); }
+  return out;
+}
+function rcard(x, e) { return `<button class="rcard" type="button" ${resAttr(x)}><b>${esc(e.title)}</b><span class="small">Step ${x.s + 1}: ${esc(e.steps[x.s].n)}</span><span class="small muted">${esc(runLine(x, e))}${runLine(x, e) ? ' · ' : ''}<span class="rchip ${x.r}">${RLAB[x.r]}</span> · ${ago(x.t)}</span><span class="go">Resume →</span></button>`; }
+function renderExRecent() {
+  const rec = recentRuns(4), favs = S.exfav.map(id => EX.find(e => e.id === id)).filter(Boolean);
+  let h = '';
+  if (rec.length) h += `<div class="stack" style="gap:8px"><span class="label">Pick up where you left off</span><div class="rstrip">${rec.map(({ x, e }) => rcard(x, e)).join('')}</div></div>`;
+  if (favs.length) h += `<div class="stack" style="gap:8px"><span class="label">Favorites</span><div class="rstrip">${favs.map(e => { const ns = nextStep(e), st = exStat(e.id); return `<button class="rcard" type="button" data-ex="${e.id}"><b>★ ${esc(e.title)}</b><span class="small">Step ${ns + 1}: ${esc(e.steps[ns].n)}</span><span class="small muted">${e.keyed ? esc(keyName(st.key != null ? st.key : e.key0, e)) + ' · ' : ''}${st.bpm[ns] || e.steps[ns].bpm} bpm</span><span class="go">Open →</span></button>`; }).join('')}</div></div>`;
+  $('#exRecent').innerHTML = h;
+  const days = new Set(S.exlog.map(x => dayKey(new Date(x.t))));
+  $('#exHistSum').textContent = S.exlog.length ? `${S.exlog.length} run${S.exlog.length > 1 ? 's' : ''} logged over ${days.size} day${days.size > 1 ? 's' : ''}` : 'Your runs will be logged here';
+}
+function renderExHist() {
+  const f = S.ui.histFilter || '', L = S.exlog.filter(x => (!f || x.id === f) && EX.some(e => e.id === x.id));
+  const ids = [...new Set(S.exlog.map(x => x.id))].map(id => EX.find(e => e.id === id)).filter(Boolean);
+  let h = `<label class="f" style="flex-direction:row;align-items:center;gap:8px;max-width:420px"><span>Show</span><select id="exHistFilter"><option value="">All exercises</option>${ids.map(e => `<option value="${e.id}" ${f === e.id ? 'selected' : ''}>${esc(e.title)}</option>`).join('')}</select></label>`;
+  if (!L.length) { $('#exHist').innerHTML = h + '<p class="small muted">Nothing yet. Every run you play or rate is saved here with its step, key and tempo, so you can jump straight back to it.</p>'; return; }
+  const groups = new Map();
+  for (let i = L.length - 1; i >= 0; i--) { const d = dayKey(new Date(L[i].t)); if (!groups.has(d)) groups.set(d, []); groups.get(d).push(L[i]); }
+  let n = 0;
+  for (const [d, rows] of groups) {
+    if (n++ >= 45) break;
+    const dd = dayDiff(d, dayKey()), lbl = dd === 0 ? 'Today' : dd === 1 ? 'Yesterday' : new Date(d + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+    const clean = rows.filter(x => x.r === 'clean').length, exs = new Set(rows.map(x => x.id)).size;
+    h += `<div class="stack" style="gap:2px"><div class="hday"><b>${lbl}</b><span class="small muted">${rows.length} run${rows.length > 1 ? 's' : ''} · ${exs} exercise${exs > 1 ? 's' : ''}${clean ? ` · ${clean} clean` : ''}</span></div>` +
+      rows.map(x => { const e = EX.find(q => q.id === x.id), st = e.steps[x.s]; return `<button class="hrow" type="button" ${resAttr(x)} title="Resume this step"><span class="t">${new Date(x.t).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span><span class="m"><div><b>${esc(e.title)}</b></div><div class="small muted">Step ${x.s + 1}${st ? ': ' + esc(st.n) : ''}${runLine(x, e) ? ' · ' + esc(runLine(x, e)) : ''}</div></span><span class="rchip ${x.r}">${RLAB[x.r]}</span></button>`; }).join('') + '</div>';
+  }
+  $('#exHist').innerHTML = h;
+}
+function setExView(v) {
+  S.ui.exview = v; save();
+  $$('#exView button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+  $('#exList').hidden = v !== 'lib'; $('#exRecent').hidden = v !== 'lib'; $('#exHist').hidden = v !== 'hist';
+  renderExRecent(); if (v === 'hist') renderExHist();
+}
+function spark(vals, rs, goal) {
+  if (!vals.length) return '<svg width="120" height="26"></svg>';
+  const W = 120, H = 26, mx = Math.max(goal, ...vals), mn = Math.min(...vals, goal) - 5, x = i => vals.length === 1 ? W / 2 : 4 + i * (W - 8) / (vals.length - 1), y = v => H - 4 - (v - mn) / (mx - mn || 1) * (H - 8);
+  const col = { clean: 'var(--good)', almost: 'var(--warn)', messy: 'var(--bad)', played: 'var(--muted)' };
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tempo over the last ${vals.length} runs"><line x1="0" x2="${W}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--accent)" stroke-dasharray="3 3" stroke-width="1"/><polyline fill="none" stroke="var(--muted)" stroke-width="1.5" points="${vals.map((v, i) => `${x(i)},${y(v)}`).join(' ')}"/>${vals.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="2.6" fill="${col[rs[i]]}"/>`).join('')}</svg>`;
+}
+function renderExHistPanel() {
+  const e = P.ex; if (!e) return; const st = exStat(e.id), L = S.exlog.filter(x => x.id === e.id);
+  $('#pFav').setAttribute('aria-pressed', S.exfav.includes(e.id)); $('#pFav').textContent = S.exfav.includes(e.id) ? '★ Favorite' : '☆ Favorite';
+  $('#pHistSum').textContent = L.length ? `${L.length} run${L.length > 1 ? 's' : ''} · last ${ago(L[L.length - 1].t)}` : 'no runs yet';
+  if (S.ui.histOpen !== false && L.length) $('#pHistWrap').open = true;
+  $('#pHist').innerHTML = e.steps.map((sd, i) => {
+    const R = L.filter(x => x.s === i), last = R[R.length - 1], tail = R.filter(x => x.b).slice(-14);
+    const keys = [...new Set(R.filter(x => x.k != null).map(x => x.k))];
+    return `<div class="psrow"><div style="min-width:0"><div><b>${st.done[i] ? '✓ ' : ''}Step ${i + 1}</b> <span class="small">${esc(sd.n)}</span></div><div class="small muted">${last ? `${ago(last.t)} · ${R.length} run${R.length > 1 ? 's' : ''}${st.best[i] ? ` · best ${st.best[i]} bpm` : ''}${e.keyed && keys.length ? ` · ${keys.length} key${keys.length > 1 ? 's' : ''}` : ''}` : 'not played yet'}</div></div>${spark(tail.map(x => x.b), tail.map(x => x.r), sd.goal)}<button class="btn" type="button" data-gostep="${i}" ${i === P.step ? 'disabled' : ''}>${i === P.step ? 'Here' : 'Go'}</button></div>`;
+  }).join('');
+}
 function renderExLib() {
+  setExView(S.ui.exview || 'lib');
   $('#exList').innerHTML = EXCATS.map(cat => {
     const items = EX.filter(e => e.cat === cat); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(e => {
       const st = exStat(e.id), done = e.steps.filter((_, i) => st.done[i]).length, ns = nextStep(e), bests = Object.values(st.best), best = bests.length ? Math.max(...bests) : 0;
-      return `<button class="excard" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed ? ' · any key' : ''}</span></span><span class="small muted">${esc(e.about)}</span><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}</span></button>`;
+      const lr = S.exlog.findLast ? S.exlog.findLast(x => x.id === e.id) : [...S.exlog].reverse().find(x => x.id === e.id);
+      return `<button class="excard" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed ? ' · any key' : ''}</span></span><span class="small muted">${esc(e.about)}</span><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
     }).join('')}</div></div>`;
   }).join('');
 }
@@ -2429,7 +2527,7 @@ function renderExPlayer() {
   $('#pFocus').innerHTML = due ? `<span class="pnew"><b>Review, cold:</b> play it once before warming up and rate that first run honestly. That's the real test of what stuck.</span>`
     : fresh ? `<span class="pnew"><b>New step:</b> press Listen first to hear and watch one pass, then play along.</span>`
     : `<b>Listen for</b> ${esc(sd.create ? 'a riff you would want to play again. Keep the tempo steady and let the chord on beat 1 anchor each bar.' : (FOCUS[e.cat] || FOCUS['Positions and scales']))}`;
-  exSpotOptions();
+  exSpotOptions(); renderExHistPanel();
   const un = EX_UNIT[e.id] && UNITS.find(x => x.id === EX_UNIT[e.id]);
   $('#pLesson').innerHTML = un ? `<span class="lessonlink">Concept behind this: <button class="btn" type="button" data-openunit="${un.id}">Unit ${UNITS.indexOf(un) + 1} · ${esc(un.title)}</button></span>` : '';
   const o = S.ui.exopts;
@@ -2455,6 +2553,7 @@ function exFeedback(kind) {
     else { P.spotClean = 0; toast('Stay at this tempo until it comes out clean.'); }
     return;
   }
+  logRun(kind, was);
   const rv = exRevOf(P.ex, i), review = rv && rv.due <= t && st.rated[i] !== t;
   st.rated[i] = t;
   if (review) {
@@ -2475,7 +2574,7 @@ function exFeedback(kind) {
     else toast(`Clean at ${was} bpm. One more clean run in a row and the tempo goes up.`);
   } else if (kind === 'messy') { st.streak[i] = 0; const nb = Math.max(40, Math.min(was - 5, Math.round(was * 0.9))); exReanchor(nb); toast(`Slowed to ${nb} bpm. If one spot keeps breaking, use Practice to loop just that bar.`); }
   else { st.streak[i] = 0; toast(`Stay at ${was} bpm. Aim for two clean runs in a row.`); }
-  st.bpm[i] = P.bpm; st.last = t; save(); renderExMeta();
+  st.bpm[i] = P.bpm; st.last = t; save(); renderExMeta(); renderExHistPanel();
   const ns = nextStep(P.ex);
   $$('#pSteps button').forEach((b, k) => { b.classList.toggle('done', !!st.done[k]); b.classList.toggle('next', k === ns && !st.done[k]); b.textContent = (st.done[k] ? '✓ ' : '') + 'Step ' + (k + 1); });
   if (review || kind === 'clean') { const e = P.ex; requestAnimationFrame(() => { if (P.ex === e) { const f = $('#pFocus'); if (f.querySelector('.pnew')) renderExPlayerFocus(); } }); }
@@ -2491,7 +2590,8 @@ function renderDue() {
 function renderUpNext() {
   const list = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => x.e.steps.some((_, i) => !x.st.done[i]))
     .sort((a, b) => (a.st.last || '').localeCompare(b.st.last || '')).slice(0, 4);
-  $('#upNext').innerHTML = list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>';
+  const rr = recentRuns(1)[0], resume = rr && Date.now() - rr.x.t < 14 * 864e5 ? `<div class="weak"><div><div style="font-weight:500">Last time: ${esc(rr.e.title)}</div><div class="small muted">Step ${rr.x.s + 1}: ${esc(rr.e.steps[rr.x.s].n)}${runLine(rr.x, rr.e) ? ' · ' + esc(runLine(rr.x, rr.e)) : ''} · ${ago(rr.x.t)}</div></div><button class="btn primary" type="button" ${resAttr(rr.x)}>Resume</button></div>` : '';
+  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>');
 }
 
 /* ---------- learn path: helpers ---------- */
@@ -3386,6 +3486,13 @@ $('#lnPractice').addEventListener('click', e => { const b = e.target.closest('[d
 document.addEventListener('click', e => { const b = e.target.closest('[data-openunit]'); if (!b) return; switchTab('learn'); openUnit(b.dataset.openunit); });
 // exercises
 $('#exList').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
+$('#exRecent').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
+$('#exView').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setExView(b.dataset.v); });
+$('#exHist').addEventListener('change', e => { if (e.target.id === 'exHistFilter') { S.ui.histFilter = e.target.value; save(); renderExHist(); } });
+document.addEventListener('click', e => { const r = e.target.closest('[data-res]'); if (r) { e.stopPropagation(); exResume(r.dataset.res, r.dataset.step, r.dataset.key); } }, true);
+$('#pFav').onclick = () => { const id = P.ex && P.ex.id; if (!id) return; const i = S.exfav.indexOf(id); if (i >= 0) S.exfav.splice(i, 1); else S.exfav.unshift(id); save(); renderExHistPanel(); toast(i >= 0 ? 'Removed from favorites.' : 'Added to favorites. It shows at the top of the library.'); };
+$('#pHist').addEventListener('click', e => { const b = e.target.closest('[data-gostep]'); if (!b) return; exLoad(+b.dataset.gostep); renderExPlayer(); });
+$('#pHistWrap').addEventListener('toggle', () => { S.ui.histOpen = $('#pHistWrap').open; save(); });
 $('#pBack').onclick = () => { exStop(); $('#exPlayer').hidden = true; $('#exLib').hidden = false; renderExLib(); };
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pPlay').onclick = exToggle;
