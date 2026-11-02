@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Fretboard practice app for intermediate and advanced guitarists: play-along exercises in any key.">
+<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, metronome, ear and fretboard trainers.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -20,6 +20,7 @@
   --root:#C05B28; --root-ink:#FFFFFF; --root-soft:#F5E1D5;
   --good:#2E8653; --warn:#B07D12; --bad:#BC4034; --on-sem:#FFFFFF; --good-soft:#DCEEE2; --bad-soft:#F5DCD8;
   --wood:#3A2A20; --wood-2:#57422F; --fret:#BDB5A8; --string:#E4DACA; --inlay:#EAE2D4;
+  --d3:#2F6DB5; --d5:#2C786A; --d7:#7A4CB8;
   --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
   --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -29,13 +30,13 @@
   --accent:#5DBEA8; --accent-ink:#0B1E1A; --accent-soft:#1D3530;
   --root:#E3874F; --root-ink:#1A0E07; --root-soft:#3A2416;
   --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B;
-  --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; color-scheme:dark;}}
+  --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#131210; --surface:#1C1A18; --surface-2:#282521; --ink:#EEE9E2; --muted:#A39A8F; --line:#36322D;
   --accent:#5DBEA8; --accent-ink:#0B1E1A; --accent-soft:#1D3530;
   --root:#E3874F; --root-ink:#1A0E07; --root-soft:#3A2416;
   --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B;
-  --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; color-scheme:dark;}
+  --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--ink)}
 body{font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -263,6 +264,34 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 .sync i{width:8px;height:8px;border-radius:50%;background:var(--warn);display:inline-block}
 .sync.acct i{background:var(--good)}
 
+
+/* learn */
+.path{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;position:relative}
+.path li{position:relative;padding-left:0}
+.path li:not(:last-child)::after{content:"";position:absolute;left:23px;top:52px;bottom:-6px;width:3px;background:var(--line);border-radius:2px}
+.path li.done:not(:last-child)::after{background:var(--good)}
+.pnode{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;padding:8px 0 16px;color:var(--ink)}
+.pnum{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-size:22px;font-weight:700;background:var(--surface);border:2px solid var(--line);color:var(--muted)}
+.path li.done .pnum{background:var(--good);border-color:var(--good);color:var(--on-sem)}
+.path li.cur .pnum{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ptext{display:flex;flex-direction:column;gap:2px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;flex:1}
+.pnode:hover .ptext{border-color:var(--accent)}
+.path li.cur .ptext{border-color:var(--accent);border-width:2px}
+.lnbody{display:flex;flex-direction:column;gap:8px;max-width:68ch;font-size:15px}
+.lndots{display:flex;gap:6px}
+.lndots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.lndots i.seen{background:var(--muted)}
+.lndots i.on{background:var(--accent)}
+#qzQ{font-size:clamp(20px,3.4vw,27px);max-width:30ch}
+.qzfb{min-height:24px;font-size:14.5px;line-height:1.5;padding:10px 12px;border-radius:10px;max-width:70ch;margin:0 auto;width:100%}
+.qzfb:empty{padding:0}
+.qzfb.ok{background:var(--good-soft)}
+.qzfb.no{background:var(--bad-soft)}
+.mk-d3 circle{fill:var(--d3);stroke:var(--d3)} .mk-d3 text{fill:var(--on-sem)}
+.mk-d5 circle{fill:var(--d5);stroke:var(--d5)} .mk-d5 text{fill:var(--on-sem)}
+.mk-d7 circle{fill:var(--d7);stroke:var(--d7)} .mk-d7 text{fill:var(--on-sem)}
+.lessonlink{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+
 /* exercises */
 .excards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:12px}
 .excard{text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;color:var(--ink);min-width:0}
@@ -326,6 +355,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <nav class="tabs pad" aria-label="Tools">
   <div class="inner" role="tablist">
     <button class="tab" role="tab" data-tab="today">Today</button>
+    <button class="tab" role="tab" data-tab="learn">Learn</button>
     <button class="tab" role="tab" data-tab="exercises">Exercises</button>
     <button class="tab" role="tab" data-tab="metronome">Metronome</button>
     <button class="tab" role="tab" data-tab="fretboard">Fretboard</button>
@@ -360,6 +390,10 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       <div class="row"><button class="btn primary big" id="rtStart" type="button">Start routine</button><span class="small muted" id="rtHint"></span></div>
     </div>
     <div class="card stack">
+      <h3>Continue learning</h3>
+      <div id="continueLearn" class="stack"></div>
+    </div>
+    <div class="card stack">
       <div class="row" style="justify-content:space-between"><h3>Exercises up next</h3><button class="btn" type="button" data-go="exercises">All exercises</button></div>
       <div id="upNext"></div>
     </div>
@@ -384,6 +418,40 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 </section>
 
 
+
+<!-- LEARN -->
+<section class="view" id="view-learn" hidden>
+  <div id="lnPath" class="stack" style="gap:16px">
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Fretboard mastery path</span><h2>Learn</h2></div><p class="muted small">Eight units that build on each other, from naming every note to playing through chord changes. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer), and the drills and exercises that make it automatic.</p></div>
+    <ol class="path" id="lnUnits"></ol>
+  </div>
+  <div id="lnUnit" class="stack" hidden>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="lnBack" type="button">← All units</button><span class="small muted" id="lnUnitNo"></span></div>
+    <div class="card stack">
+      <div class="stack" style="gap:2px"><h2 id="lnTitle">Unit</h2><p class="small muted" id="lnSum"></p></div>
+      <div class="seg" id="lnTabs"><button type="button" data-v="lesson">Lesson</button><button type="button" data-v="quiz">Check</button><button type="button" data-v="practice">Practice</button></div>
+      <div id="lnLesson" class="stack">
+        <div class="row" style="justify-content:space-between"><span class="label" id="lnCardNo"></span><span class="lndots" id="lnDots"></span></div>
+        <h3 id="lnCardTitle"></h3>
+        <div class="lnbody" id="lnCardBody"></div>
+        <div class="scroll-x"><div id="lnBoard"></div></div>
+        <div class="legend" id="lnLegend"></div>
+        <div class="row"><button class="btn" id="lnPrev" type="button">Back</button><button class="btn primary" id="lnNext" type="button">Next</button></div>
+      </div>
+      <div id="lnQuiz" class="stack" hidden>
+        <div class="prompt"><div class="q" id="qzQ"></div><div class="scorebar" id="qzScore"></div></div>
+        <div class="scroll-x" id="qzBoardWrap"><div id="qzBoard"></div></div>
+        <p class="small muted" id="qzHint" style="text-align:center"></p>
+        <div class="ansbtns" id="qzAns"></div>
+        <div class="qzfb" id="qzFb"></div>
+        <div class="row" style="justify-content:center"><button class="btn" id="qzSkip" type="button">Show me</button><button class="btn primary" id="qzNext" type="button" hidden>Next question</button></div>
+        <div class="row" style="justify-content:center" id="qzEndBtns"></div>
+      </div>
+      <div id="lnPractice" class="stack" hidden></div>
+    </div>
+  </div>
+</section>
+
 <!-- EXERCISES -->
 <section class="view" id="view-exercises" hidden>
   <div id="exLib" class="stack" style="gap:16px">
@@ -393,7 +461,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   <div id="exPlayer" class="stack" hidden>
     <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="small muted" id="pCat"></span></div>
     <div class="card stack">
-      <div class="stack" style="gap:2px"><h2 id="pTitle">Exercise</h2><p class="small muted" id="pAbout"></p></div>
+      <div class="stack" style="gap:2px"><h2 id="pTitle">Exercise</h2><p class="small muted" id="pAbout"></p><div id="pLesson"></div></div>
       <div class="row" id="pKeyRow" hidden><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Key</span><select id="pKey"></select></label><button class="btn" id="pRandKey" type="button">Random key</button><label class="toggle"><input type="checkbox" id="pKeyCycle"> Up a 4th every loop (all 12 keys)</label></div>
       <div class="steps" id="pSteps"></div>
       <p class="small"><b id="pStepName"></b> <span class="muted" id="pStepDesc"></span></p>
@@ -565,11 +633,11 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       <label class="f"><span>Key</span><select id="xKey"></select></label>
       <label class="f"><span>Scale</span><select id="xScale"></select></label>
       <label class="f"><span>Labels</span><select id="xLab"><option value="notes">Note names</option><option value="iv">Intervals</option><option value="none">None</option></select></label>
-      <label class="toggle" style="margin-top:18px"><input type="checkbox" id="xChord" checked> Show chord tones</label>
+      <label class="toggle" style="margin-top:18px"><input type="checkbox" id="xChord" checked> Color by degree</label>
     </div>
     <div class="seg" id="xPos"></div>
     <div class="scroll-x"><div id="xBoard"></div></div>
-    <div class="legend"><span><i style="background:var(--root)"></i>Root</span><span><i style="background:var(--accent)"></i>Chord tone (3rd and 5th)</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Other scale note</span></div>
+    <div class="legend"><span><i style="background:var(--root)"></i>Root</span><span><i style="background:var(--d3)"></i>3rd</span><span><i style="background:var(--d5)"></i>5th</span><span><i style="background:var(--d7)"></i>7th</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Other scale notes</span></div>
     <p class="small" id="xInfo"></p>
     <div class="row"><button class="btn primary" id="xPlay" type="button">Play this position</button><button class="btn" id="xDrone" type="button">Root drone</button><span class="small muted">Plays at the metronome tempo, in 8th notes.</span></div>
   </div>
@@ -679,7 +747,7 @@ const DEF = {
   ear: { deg: { lv: 1, ans: {}, recent: [] }, iv: { lv: 1, ans: {}, recent: [] }, chord: { lv: 1, ans: {}, recent: [] } },
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
-  riffs: [], ex: {},
+  riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'standard',
   ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
@@ -1480,7 +1548,7 @@ function xNotes() {
 function drawExplorer(playing) {
   const { list, win } = xNotes();
   const mk = list.map(n => {
-    let k = n.rel === 0 ? 'root' : (S.ui.xchord && n.chord) ? 'chord' : 'note';
+    let k = n.rel === 0 ? 'root' : S.ui.xchord ? degKind(n.rel) : 'note';
     if (!n.inWin) k = 'dim';
     if (playing && playing.s === n.s && playing.f === n.f) k = 'play';
     const l = S.ui.xlab === 'notes' ? nn(n.m % 12) : S.ui.xlab === 'iv' ? xLabel(n.rel) : '';
@@ -2102,6 +2170,8 @@ function renderExPlayer() {
   $('#pSteps').innerHTML = e.steps.map((s, i) => `<button type="button" data-step="${i}" aria-pressed="${i === P.step}" class="${st.done[i] ? 'done' : ''} ${i === ns && !st.done[i] ? 'next' : ''}">${st.done[i] ? '✓ ' : ''}Step ${i + 1}</button>`).join('');
   $('#pStepName').textContent = `Step ${P.step + 1}: ${sd.n}.`; $('#pStepDesc').textContent = sd.d + (sd.swing ? ' Swing feel.' : '');
   $('#pTip').textContent = e.tip;
+  const un = EX_UNIT[e.id] && UNITS.find(x => x.id === EX_UNIT[e.id]);
+  $('#pLesson').innerHTML = un ? `<span class="lessonlink">Concept behind this: <button class="btn" type="button" data-openunit="${un.id}">Unit ${UNITS.indexOf(un) + 1} · ${esc(un.title)}</button></span>` : '';
   const o = S.ui.exopts;
   $('#pLoop').checked = o.loop; $('#pCount').checked = o.count; $('#pGuide').checked = o.guide; $('#pClick').checked = o.click; $('#pLadder').checked = o.ladder;
   $('#pLab').value = P.labels; renderExKey();
@@ -2137,6 +2207,354 @@ function renderUpNext() {
   $('#upNext').innerHTML = list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>';
 }
 
+/* ---------- learn path: helpers ---------- */
+const ORD = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th'];
+function degKind(rel) { return rel === 0 ? 'root' : (rel === 3 || rel === 4) ? 'd3' : rel === 7 ? 'd5' : (rel === 10 || rel === 11) ? 'd7' : 'note'; }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function mcOpts(correct, distractors, n = 4) {
+  const pool = [...new Set(distractors.filter(d => d !== correct))];
+  const opts = shuffle([correct, ...shuffle(pool).slice(0, n - 1)]);
+  return { options: opts, answer: opts.indexOf(correct) };
+}
+function rangeOf(cells, minSpan = 5) {
+  const fs = cells.map(c => c.f), nz = fs.filter(f => f > 0);
+  const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...fs);
+  const from = (fs.includes(0) || mn <= 3) ? 0 : mn - 1;
+  return { from, to: Math.min(17, Math.max(from + minSpan, mx + 1)) };
+}
+function degCells(key, pcs, lo, hi, strings = [0, 1, 2, 3, 4, 5], lab = 'deg') {
+  const out = [];
+  for (const s of strings) for (let f = lo; f <= hi; f++) { const pc = (OPEN[s] + f) % 12; if (!pcs.includes(pc)) continue; const rel = (pc - key + 12) % 12; out.push({ s, f, k: degKind(rel), l: lab === 'deg' ? IVL[rel] : lab === 'note' ? nn(pc) : '' }); }
+  return out;
+}
+const mk = (s, f, k, l) => ({ s, f, k, l: l == null ? nn((OPEN[s] + f) % 12) : l });
+function board(markers, extra = {}) { return Object.assign(rangeOf(markers), { markers }, extra); }
+const LANDMARKS = [0, 5, 7, 12];
+function anchorHint(s, f) {
+  const L = LANDMARKS.slice().sort((a, b) => Math.abs(a - f) - Math.abs(b - f))[0], d = f - L, note = nn((OPEN[s] + f) % 12), ln = nn((OPEN[s] + L) % 12);
+  if (d === 0) return `Fret ${f} on the ${SLONG[s]} string is a landmark: ${note}.`;
+  return `${L === 0 ? `The open ${SLONG[s]} string is ${ln}` : `Fret ${L} on the ${SLONG[s]} string is ${ln}`}, so fret ${f} is ${Math.abs(d)} fret${Math.abs(d) > 1 ? 's' : ''} ${d > 0 ? 'higher' : 'lower'}: ${note}.`;
+}
+function shapeDesc(rs, rf, s, f) {
+  const ds = rs - s, df = f - rf;
+  const strs = ds === 0 ? 'same string' : `${ds} string${ds > 1 ? 's' : ''} up`;
+  const frs = df === 0 ? 'same fret' : `${Math.abs(df)} fret${Math.abs(df) > 1 ? 's' : ''} ${df > 0 ? 'higher' : 'lower'}`;
+  const bshift = rs >= 2 && s <= 1 ? ' (one extra fret because the shape crosses onto the B string)' : '';
+  return `${strs}, ${frs}${bshift}`;
+}
+const CAGED_SHAPES = { C: { rs: 4, off: [null, 0, -1, -3, -2, -3], need: 3 }, A: { rs: 4, off: [null, 0, 2, 2, 2, 0], need: 0 }, G: { rs: 5, off: [0, -1, -3, -3, -3, 0], need: 3 }, E: { rs: 5, off: [0, 2, 2, 1, 0, 0], need: 0 }, D: { rs: 3, off: [null, null, 0, 2, 3, 2], need: 0 } };
+function cagedChord(key, shape) {
+  const sh = CAGED_SHAPES[shape];
+  let r = ((key - OPEN[sh.rs]) % 12 + 12) % 12; if (r < sh.need) r += 12;
+  let fr = sh.off.map(o => o == null ? null : r + o);
+  if (Math.max(...fr.filter(x => x != null)) > 15 && Math.min(...fr.filter(x => x != null)) >= 12) fr = fr.map(x => x == null ? null : x - 12);
+  return fr.map((f, i) => f == null ? null : { s: 5 - i, f }).filter(Boolean);
+}
+const ROOT_STR = { C: 'A string', A: 'A string', G: 'low E string', E: 'low E string', D: 'D string' };
+
+/* ---------- learn path: question generators ---------- */
+function qNameNote(strings, lo, hi, nat) {
+  let s, f, pc;
+  do { s = pick(strings); f = lo + rnd(hi - lo + 1); pc = pcOf(s, f); } while (nat && !NATURAL.includes(pc));
+  const names = nat ? NATURAL : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  const options = names.map(p => nn(p));
+  return { type: 'mc', prompt: 'Name the orange note', board: { from: Math.min(lo, 0), to: Math.max(hi, 5), markers: [mk(s, f, 'ask', '?')] }, options, answer: names.indexOf(pc), explain: anchorHint(s, f), reveal: [mk(s, f, 'hit')], sound: [OPEN[s] + f] };
+}
+function qFindNote(strings, lo, hi, nat) {
+  let s, f, pc;
+  do { s = pick(strings); f = lo + rnd(hi - lo + 1); pc = pcOf(s, f); } while (nat && !NATURAL.includes(pc));
+  const spots = []; for (let ff = lo; ff <= hi; ff++) if (pcOf(s, ff) === pc) spots.push(ff);
+  return { type: 'tap', prompt: `Tap <em>${nn(pc)}</em> on the ${SLONG[s]} string`, board: { from: Math.min(lo, 0), to: Math.max(hi, 5), markers: [] }, accept: (ts, tf) => ts === s && pcOf(ts, tf) === pc, explain: anchorHint(s, spots[0]), reveal: spots.map(ff => mk(s, ff, 'hit')), sound: [OPEN[s] + spots[0]] };
+}
+function qEvery(pc, lo = 0, hi = 12) {
+  const targets = []; for (let s = 0; s < 6; s++) for (let f = lo; f <= hi; f++) if (pcOf(s, f) === pc) targets.push([s, f]);
+  return { type: 'every', prompt: `Tap every <em>${nn(pc)}</em> from fret ${lo} to ${hi}`, board: { from: lo, to: hi, markers: [] }, targets, explain: `There are ${targets.length}. Use octave shapes: two strings up and two frets higher (three when you cross onto the B string), and the 12th fret repeats the open strings.`, reveal: targets.map(([s, f]) => mk(s, f, 'hit')), sound: [OPEN[targets[0][0]] + targets[0][1]] };
+}
+function qOctave() {
+  const s = 2 + rnd(4), f = 1 + rnd(9), pc = pcOf(s, f), up = s - 2, of = f + (s >= 4 ? 2 : 3);
+  return { type: 'tap', prompt: `Tap the octave of this ${nn(pc)}, two strings higher`, board: { from: 0, to: 14, markers: [mk(s, f, 'root')] }, accept: (ts, tf) => ts === up && tf === of, explain: `From the ${SLONG[s]} string the octave is ${shapeDesc(s, f, up, of)}.`, reveal: [mk(s, f, 'root'), mk(up, of, 'hit')], sound: [OPEN[s] + f, OPEN[up] + of] };
+}
+const IVSEMI = { b3: 3, '3': 4, '4': 5, '5': 7, b7: 10, '8': 12, '2': 2, '6': 9, '7': 11 };
+function ivTarget(rs, rf, iv) {
+  const rm = OPEN[rs] + rf, tm = rm + IVSEMI[iv], c = [];
+  for (let s = rs; s >= Math.max(0, rs - 2); s--) { const f = tm - OPEN[s]; if (f >= 0 && f <= 17) c.push({ s, f }); }
+  c.sort((a, b) => Math.abs(a.f - rf) - Math.abs(b.f - rf));
+  return c[0];
+}
+function qNameInterval(set) {
+  const rs = 2 + rnd(4), rf = 2 + rnd(7), iv = pick(set), t = ivTarget(rs, rf, iv);
+  const { options, answer } = mcOpts(iv, set);
+  return { type: 'mc', prompt: 'What interval is the blue note above the orange root?', board: { from: 0, to: 14, markers: [mk(rs, rf, 'root', 'R'), mk(t.s, t.f, 'd3', '?')] }, options, answer, explain: `${IVNAME[iv] ? IVNAME[iv][0].toUpperCase() + IVNAME[iv].slice(1) : iv} (${iv}): ${shapeDesc(rs, rf, t.s, t.f)}.`, reveal: [mk(rs, rf, 'root', 'R'), mk(t.s, t.f, 'hit', iv)], sound: [OPEN[rs] + rf, OPEN[t.s] + t.f] };
+}
+function qFindInterval(set) {
+  const rs = 2 + rnd(4), rf = 2 + rnd(7), iv = pick(set), rm = OPEN[rs] + rf, sem = IVSEMI[iv];
+  const ok = []; for (let s = 0; s < 6; s++) for (let f = Math.max(0, rf - 5); f <= rf + 5; f++) { const m = OPEN[s] + f; if (iv === '8' ? Math.abs(m - rm) === 12 : ((m - rm - sem) % 12 + 12) % 12 === 0 && !(s === rs && f === rf)) ok.push([s, f]); }
+  const t = ivTarget(rs, rf, iv);
+  return { type: 'tap', prompt: `Tap a <em>${iv}</em> (${IVNAME[iv]}) of the orange root, within 5 frets`, board: { from: 0, to: 14, markers: [mk(rs, rf, 'root', 'R')] }, accept: (s, f) => ok.some(([a, b]) => a === s && b === f), explain: `The closest one is ${shapeDesc(rs, rf, t.s, t.f)}. Green dots show every ${iv} nearby.`, reveal: [mk(rs, rf, 'root', 'R'), ...ok.map(([s, f]) => mk(s, f, 'hit', iv))], sound: [rm, OPEN[t.s] + t.f] };
+}
+function qCagedShape() {
+  const key = rnd(12), shape = pick(['C', 'A', 'G', 'E', 'D']), cells = cagedChord(key, shape);
+  const { options, answer } = mcOpts(shape, ['C', 'A', 'G', 'E', 'D'], 5);
+  return { type: 'mc', prompt: 'Which CAGED shape is this chord?', board: board(cells.map(c => mk(c.s, c.f, 'note', ''))), options: options.map(o => o + ' shape'), answer, explain: `It's the ${shape} shape (${nn(key)} major). The root sits on the ${ROOT_STR[shape]}, and the grip looks like an open ${shape} chord moved up the neck.`, reveal: cells.map(c => mk(c.s, c.f, degKind((pcOf(c.s, c.f) - key + 12) % 12), IVL[(pcOf(c.s, c.f) - key + 12) % 12])), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b), strum: true };
+}
+function qFindRoot() {
+  const key = rnd(12), shape = pick(['C', 'A', 'G', 'E', 'D']), cells = cagedChord(key, shape);
+  return { type: 'tap', prompt: `This is a major chord. Tap a root.`, board: board(cells.map(c => mk(c.s, c.f, 'note', ''))), accept: (s, f) => cells.some(c => c.s === s && c.f === f) && pcOf(s, f) === key, explain: `${shape} shape, so the main root is on the ${ROOT_STR[shape]}. The roots are ${nn(key)}, which makes this ${nn(key)} major.`, reveal: cells.map(c => mk(c.s, c.f, degKind((pcOf(c.s, c.f) - key + 12) % 12), IVL[(pcOf(c.s, c.f) - key + 12) % 12])), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b), strum: true };
+}
+function qChordName() {
+  const key = rnd(12), shape = pick(['E', 'A']), cells = cagedChord(key, shape), root = cells.find(c => c.s === CAGED_SHAPES[shape].rs);
+  const { options, answer } = mcOpts(nn(key), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(nn));
+  return { type: 'mc', prompt: `Name this ${shape}-shape major chord`, board: board(cells.map(c => mk(c.s, c.f, 'note', ''))), options: options.map(o => o + ' major'), answer, explain: `The root is on the ${ROOT_STR[shape]} at fret ${root.f}. ${anchorHint(root.s, root.f)}`, reveal: cells.map(c => mk(c.s, c.f, degKind((pcOf(c.s, c.f) - key + 12) % 12), IVL[(pcOf(c.s, c.f) - key + 12) % 12])), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b), strum: true };
+}
+function qDegree(ton) {
+  const key = rnd(12), scale = ton === 'min' ? MINP : MAJ, w = pick(cagedWins(key, ton)), pcs = pcsOf(key, scale);
+  const cells = degCells(key, pcs, w.lo, w.hi, [0, 1, 2, 3, 4, 5], ''), pool = cells.filter(c => c.f > 0), t = pick(pool.length ? pool : cells), rel = (pcOf(t.s, t.f) - key + 12) % 12;
+  const opts = scale.map(i => IVL[i]);
+  return { type: 'mc', prompt: `${nn(key)} ${ton === 'min' ? 'minor pentatonic' : 'major scale'}. Which degree is the orange note?`, board: Object.assign(rangeOf(cells), { markers: cells.map(c => c.s === t.s && c.f === t.f ? mk(c.s, c.f, 'ask', '?') : mk(c.s, c.f, pcOf(c.s, c.f) === key ? 'root' : 'note', pcOf(c.s, c.f) === key ? '1' : '')), win: [w.lo, w.hi] }), options: opts, answer: opts.indexOf(IVL[rel]), explain: `It's ${nn(pcOf(t.s, t.f))}, the ${IVL[rel]} of ${nn(key)}. Count from the nearest root (orange 1).`, reveal: degCells(key, pcs, w.lo, w.hi), sound: [OPEN[t.s] + t.f] };
+}
+function qFindDegree(ton, degs) {
+  const key = rnd(12), scale = ton === 'min' ? MINP : MAJ, w = pick(cagedWins(key, ton)), pcs = pcsOf(key, scale), d = pick(degs), pc = (key + IVSEMI[d] % 12) % 12;
+  const cells = degCells(key, pcs, w.lo, w.hi, [0, 1, 2, 3, 4, 5], '');
+  return { type: 'tap', prompt: `${nn(key)} ${ton === 'min' ? 'minor pentatonic' : 'major'}: tap a <em>${d}</em> inside the box`, board: Object.assign(rangeOf(cells), { markers: cells.map(c => mk(c.s, c.f, pcOf(c.s, c.f) === key ? 'root' : 'dim', pcOf(c.s, c.f) === key ? '1' : '')), win: [w.lo, w.hi] }), accept: (s, f) => f >= w.lo && f <= w.hi && pcOf(s, f) === pc, explain: `The ${d} of ${nn(key)} is ${nn(pc)}. Find it relative to the roots: ${d === 'b3' ? 'three frets above a root, or one string up and two frets lower' : d === '5' ? 'one string up and two frets higher than a root' : d === 'b7' ? 'two frets below a root, or two strings up at the same fret' : d === '3' ? 'one string up and one fret lower than a root' : d === '4' ? 'one string up at the same fret as a root' : d === '7' ? 'one fret below a root' : 'count up from the nearest root'}.`, reveal: degCells(key, pcs, w.lo, w.hi), sound: [key + 48] };
+}
+function qInversion() {
+  const key = rnd(12), v = pick(voicings(SETS.gbe, chordPcs3(key, 0))), rel = (pcOf(2, v[0]) - key + 12) % 12;
+  const ans = rel === 0 ? 'Root position' : rel === 4 ? '1st inversion' : '2nd inversion';
+  const opts = ['Root position', '1st inversion', '2nd inversion'];
+  const cells = v.map((f, i) => ({ s: SETS.gbe[i], f }));
+  return { type: 'mc', prompt: `${nn(key)} major on the G, B and high e strings. Which inversion?`, board: board(cells.map(c => mk(c.s, c.f, 'note', ''))), options: opts, answer: opts.indexOf(ans), explain: `The lowest note (on the G string) is the ${IVL[rel] === '1' ? 'root' : IVL[rel] === '3' ? '3rd' : '5th'}, so it's ${ans.toLowerCase()}.`, reveal: cells.map(c => mk(c.s, c.f, degKind((pcOf(c.s, c.f) - key + 12) % 12), IVL[(pcOf(c.s, c.f) - key + 12) % 12])), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b) };
+}
+function qTriadQuality() {
+  const key = rnd(12), minor = Math.random() < 0.5, pcs = pcsOf(key, minor ? [0, 3, 7] : [0, 4, 7]);
+  const set = pick([SETS.gbe, SETS.dgb]), v = pick(voicings(set, pcs)), cells = v.map((f, i) => ({ s: set[i], f }));
+  const opts = ['Major', 'Minor'];
+  return { type: 'mc', prompt: 'The orange note is the root. Major or minor?', board: board(cells.map(c => pcOf(c.s, c.f) === key ? mk(c.s, c.f, 'root', 'R') : mk(c.s, c.f, 'note', ''))), options: opts, answer: minor ? 1 : 0, explain: `The 3rd is ${minor ? '3' : '4'} half steps above the root (${minor ? 'minor' : 'major'} 3rd), so this is ${nn(key)} ${minor ? 'minor' : 'major'}.`, reveal: cells.map(c => { const rel = (pcOf(c.s, c.f) - key + 12) % 12; return mk(c.s, c.f, degKind(rel), IVL[rel]); }), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b) };
+}
+function qTriadRoot() {
+  const key = rnd(12), set = pick([SETS.gbe, SETS.dgb]), v = pick(voicings(set, chordPcs3(key, 0))), cells = v.map((f, i) => ({ s: set[i], f }));
+  return { type: 'tap', prompt: `This is ${nn(key)} major. Tap the root.`, board: board(cells.map(c => mk(c.s, c.f, 'note', ''))), accept: (s, f) => cells.some(c => c.s === s && c.f === f) && pcOf(s, f) === key, explain: `The root is ${nn(key)}. Look for the note a 4th above the 5th, or a major 3rd below the 3rd.`, reveal: cells.map(c => { const rel = (pcOf(c.s, c.f) - key + 12) % 12; return mk(c.s, c.f, degKind(rel), IVL[rel]); }), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b) };
+}
+function qRelative() {
+  const k = rnd(12), ans = nn((k + 3) % 12);
+  const { options, answer } = mcOpts(ans, [nn((k + 7) % 12), nn((k + 5) % 12), nn((k + 9) % 12), nn((k + 2) % 12)]);
+  return { type: 'mc', prompt: `${nn(k)} minor pentatonic has the same five notes as which major pentatonic?`, options: options.map(o => o + ' major'), answer, explain: `The relative major is three half steps (a minor 3rd) above the minor root: ${nn(k)} to ${ans}.` };
+}
+function qScaleNote() {
+  const k = rnd(12), d = 1 + rnd(6), ans = nn((k + MAJ[d]) % 12);
+  const { options, answer } = mcOpts(ans, MAJ.map(i => nn((k + i) % 12)).concat([nn((k + MAJ[d] + 1) % 12), nn((k + MAJ[d] + 11) % 12)]));
+  return { type: 'mc', prompt: `What is the ${ORD[d]} note of ${nn(k)} major?`, options, answer, explain: `${nn(k)} major: ${MAJ.map(i => nn((k + i) % 12)).join(' ')}. The ${ORD[d]} note is ${ans}.` };
+}
+function qQuality() {
+  const k = rnd(12), d = rnd(7), opts = ['maj7', 'm7', '7', 'm7b5'];
+  return { type: 'mc', prompt: `In ${nn(k)} major, what kind of 7th chord is built on the ${ORD[d]} degree (${nn((k + MAJ[d]) % 12)})?`, options: opts, answer: opts.indexOf(QUAL7[d]), explain: `The chords of ${nn(k)} major are ${[0, 1, 2, 3, 4, 5, 6].map(i => chordName7(k, i)).join(', ')}.` };
+}
+function qChordIn() {
+  const k = rnd(12), d = pick([1, 4, 5, 3]), rn = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii'][d], ans = chordName7(k, d);
+  const { options, answer } = mcOpts(ans, [0, 1, 2, 3, 4, 5, 6].filter(i => i !== d).map(i => chordName7(k, i)));
+  return { type: 'mc', prompt: `What is the ${rn} chord in ${nn(k)} major?`, options, answer, explain: `Count up the ${nn(k)} major scale to the ${ORD[d]} note (${nn((k + MAJ[d]) % 12)}). Built from the scale, it's ${ans}.` };
+}
+function qGuide() {
+  const k = rnd(12), d = pick([1, 4, 0]), pcs = chordPcs7(k, d), name = chordName7(k, d);
+  const pair = (a, b) => `${nn(pcs[a])} and ${nn(pcs[b])}`;
+  const { options, answer } = mcOpts(pair(1, 3), [pair(0, 2), pair(1, 2), pair(0, 3), pair(0, 1)]);
+  return { type: 'mc', prompt: `Which two notes are the guide tones (3rd and 7th) of ${name}?`, options, answer, explain: `${name} is ${pcs.map(nn).join(' ')} (1, 3, 5, 7). The 3rd and 7th are ${pair(1, 3)}. They decide the chord's quality.` };
+}
+const rep10 = (gens) => shuffle(gens.flatMap(([g, n]) => Array.from({ length: n }, () => g()))).slice(0, 10);
+
+/* ---------- learn path: units ---------- */
+const UNITS = [
+  { id: 'u1', title: 'Notes on the low strings', sum: 'The musical alphabet, half steps and landmark frets on the low E and A strings.',
+    cards: [
+      { t: 'Twelve notes, then it repeats', body: ['Music uses 12 notes. Each fret raises a note by one half step, and two frets make a whole step.', 'The natural notes are A B C D E F G. Most pairs have a sharp or flat between them (A# is the same note as Bb). Two pairs don\'t: <b>E to F</b> and <b>B to C</b> are only one fret apart.', 'Know those two half steps and you can work out any fret from any note you already know.'],
+        show: () => board([...Array(13).keys()].map(f => { const pc = pcOf(5, f); return mk(5, f, [4, 5, 11, 0].includes(pc) ? 'd3' : NATURAL.includes(pc) ? 'note' : 'dim'); })), legend: [['d3', 'Half-step pairs (E–F, B–C)'], ['note', 'Other natural notes'], ['dim', 'Sharps and flats']] },
+      { t: 'Learn landmarks, not every fret', body: ['Counting up from the nut every time is slow. Memorize a few landmarks instead.', 'On the low E string: open E, fret 3 G, fret 5 A, fret 7 B, fret 8 C, fret 12 E. On the A string: open A, fret 3 C, fret 5 D, fret 7 E, fret 8 F, fret 12 A.', 'Frets 5, 7 and 12 sit under the fret markers, so you can see them without counting. From any landmark, count a fret or two.'],
+        show: () => board([5, 4].flatMap(s => [0, 3, 5, 7, 8, 12].map(f => mk(s, f, [0, 5, 7, 12].includes(f) ? 'root' : 'note')))), legend: [['root', 'Landmarks under the fret markers'], ['note', 'Extra landmarks']] },
+      { t: 'Why these two strings first', body: ['Almost every movable shape has its root on the low E or A string: barre chords, power chords and scale boxes.', 'If you can name those two strings instantly, you can play any of those shapes in any key. Here is C major as an E-shape barre (root on the low E, fret 8) and an A-shape barre (root on the A string, fret 3).'],
+        show: () => board(cagedChord(0, 'E').concat(cagedChord(0, 'A')).map(c => mk(c.s, c.f, pcOf(c.s, c.f) === 0 ? 'root' : 'note', pcOf(c.s, c.f) === 0 ? 'C' : ''))), legend: [['root', 'Root (C)'], ['note', 'Other chord tones']] } ],
+    quiz: () => rep10([[() => qNameNote([5, 4], 0, 12, true), 4], [() => qFindNote([5, 4], 0, 12, true), 3], [() => qNameNote([5, 4], 0, 12, false), 3]]),
+    practice: [{ l: 'Fretboard trainer: find the note', d: 'Low E and A strings, natural notes.', a: () => presetFret('find', [false, false, false, false, true, true], '0-12', true) }, { l: 'Exercise: cycle of fourths on the low E', d: 'All 12 notes in time.', a: () => openEx('cycle4', 0) }, { l: 'Exercise: cycle of fourths on the A string', d: 'Same drill, A string.', a: () => openEx('cycle4', 1) }] },
+  { id: 'u2', title: 'Octaves: one note, many places', sum: 'Octave shapes and the B-string shift connect every note across all six strings.',
+    cards: [
+      { t: 'The octave shape', body: ['From a note on the low E or A string, the same note an octave higher is <b>two strings up and two frets higher</b>. Mute the string in between and you have the classic octave shape.', 'Here: A on the low E at fret 5 and its octave on the D string at fret 7. C on the A string at fret 3 and its octave on the G string at fret 5.'],
+        show: () => board([mk(5, 5, 'root'), mk(3, 7, 'root'), mk(4, 3, 'd3'), mk(2, 5, 'd3')]), legend: [['root', 'A and its octave'], ['d3', 'C and its octave']] },
+      { t: 'The B-string shift', body: ['Every pair of neighboring strings is tuned a 4th apart except G to B, which is a major 3rd. So any shape that crosses onto the B string moves <b>one fret higher</b>.', 'From the D or G string, the octave is two strings up and <b>three</b> frets higher. Here: A on the D string (fret 7) to the B string (fret 10), and D on the G string (fret 7) to the high e (fret 10).'],
+        show: () => board([mk(3, 7, 'root'), mk(1, 10, 'root'), mk(2, 7, 'd3'), mk(0, 10, 'd3')]), legend: [['root', 'A and its octave'], ['d3', 'D and its octave']] },
+      { t: 'Chain them together', body: ['Combine octave shapes with unisons: the same pitch on the next string down is five frets higher (four when moving from the B to the G string).', 'Chained together, every note connects across the neck. Learn the low E and A strings first, then find notes on the D, G, B and high e strings by octave.', 'Here is every A from the nut to fret 15.'],
+        show: () => board(allPos(9, 15).map(([s, f]) => mk(s, f, 'root'))), legend: [['root', 'Every A']] } ],
+    quiz: () => rep10([[() => qEvery(pick(NATURAL)), 3], [() => qOctave(), 4], [() => qNameNote([3, 2, 1, 0], 0, 12, true), 3]]),
+    practice: [{ l: 'Fretboard trainer: find them all', d: 'Every place a note lives, timed.', a: () => presetFret('all', [true, true, true, true, true, true], '0-12', false) }, { l: 'Exercise: one note, the whole neck', d: 'With octave shapes, in any key.', a: () => openEx('notemap', 1) }, { l: 'Fretboard trainer: name the note', d: 'D, G, B and high e strings.', a: () => presetFret('name', [true, true, true, true, false, false], '0-12', true) }] },
+  { id: 'u3', title: 'Intervals as shapes', sum: 'Every interval is a fixed shape, so it works from any root.',
+    cards: [
+      { t: 'Intervals are shapes', body: ['An interval is the distance between two notes. On guitar each interval is a fixed shape, so once you know it from one root, you know it from every root.', 'Here are the most important ones from a C on the A string (fret 3).'],
+        show: () => board([mk(4, 3, 'root', 'R'), mk(4, 6, 'd3', 'b3'), mk(3, 2, 'd3', '3'), mk(3, 3, 'note', '4'), mk(3, 5, 'd5', '5'), mk(2, 3, 'd7', 'b7'), mk(2, 5, 'root', '8')]), legend: [['root', 'Root and octave'], ['d3', '3rds'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] },
+      { t: 'The shapes to know', body: ['From a root on the low E, A or D string:', '<b>Minor 3rd (b3):</b> 3 frets up on the same string. <b>Major 3rd (3):</b> next string, 1 fret lower. <b>Perfect 4th:</b> next string, same fret. <b>Perfect 5th:</b> next string, 2 frets higher (the power chord). <b>Minor 7th (b7):</b> two strings up, same fret. <b>Octave:</b> two strings up, 2 frets higher.', 'Here they are from an A on the low E string.'],
+        show: () => board([mk(5, 5, 'root', 'R'), mk(5, 8, 'd3', 'b3'), mk(4, 4, 'd3', '3'), mk(4, 5, 'note', '4'), mk(4, 7, 'd5', '5'), mk(3, 5, 'd7', 'b7'), mk(3, 7, 'root', '8')]), legend: [['root', 'Root and octave'], ['d3', '3rds'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] },
+      { t: 'Watch the B string', body: ['Any shape that crosses from the G string onto the B string needs <b>one extra fret</b>.', 'From a C on the G string (fret 5), the major 3rd is on the B string at the <b>same</b> fret, not one lower. The 5th is three frets higher, not two. The octave on the high e is three frets higher.'],
+        show: () => board([mk(2, 5, 'root', 'R'), mk(1, 5, 'd3', '3'), mk(1, 8, 'd5', '5'), mk(0, 8, 'root', '8')]), legend: [['root', 'Root and octave'], ['d3', 'Major 3rd'], ['d5', '5th']] } ],
+    quiz: () => rep10([[() => qNameInterval(['b3', '3', '4', '5', 'b7', '8']), 6], [() => qFindInterval(['b3', '3', '5', 'b7']), 4]]),
+    practice: [{ l: 'Fretboard trainer: intervals', d: 'Find any interval from a random root.', a: () => presetFret('iv', [true, true, true, true, true, true], '0-12', false) }, { l: 'Ear trainer: intervals', d: 'Hear the same intervals.', a: () => { switchTab('ear'); S.ui.emode = 'iv'; save(); renderEar(); } }] },
+  { id: 'u4', title: 'The CAGED system', sum: 'Five chord shapes that tile the whole neck in every key.',
+    cards: [
+      { t: 'Five shapes, one chord', body: ['The open C, A, G, E and D chords are the only five major chord shapes on the guitar. Slide any of them up the neck, with your index finger acting as the nut, and it becomes movable.', 'Played together, the five shapes cover the whole neck. Here is every C, E and G (the notes of C major) from the nut to fret 15, colored by role in the chord.'],
+        show: () => board(degCells(0, [0, 4, 7], 0, 15)), legend: [['root', 'Root (1)'], ['d3', '3rd'], ['d5', '5th']] },
+      { t: 'Find the root', body: ['Each shape is named after the open chord it comes from. The chord\'s name comes from its root.', '<b>E and G shapes:</b> root on the low E string. <b>A and C shapes:</b> root on the A string. <b>D shape:</b> root on the D string.', 'Move a shape until its root sits on the note you want. Here is the E shape as A major at the 5th fret, with roots on the low E, D and high e strings.'],
+        show: () => board(cagedChord(9, 'E').map(c => { const rel = (pcOf(c.s, c.f) - 9 + 12) % 12; return mk(c.s, c.f, degKind(rel), IVL[rel]); })), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th']] },
+      { t: 'The order repeats', body: ['Moving up the neck, the shapes always follow the same order: <b>C, A, G, E, D</b>, then C again an octave higher. Start from any shape and continue the cycle.', 'Neighboring shapes share notes, so you can shift from one to the next without losing your place. The shaded area is the E shape of C major (frets 7 to 10). The D shape starts right where it ends.'],
+        show: () => { const w = cagedWins(0, 'maj'); return Object.assign(board(degCells(0, [0, 4, 7], w[1].lo, w[2].hi)), { win: [w[1].lo, w[1].hi] }); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th']] } ],
+    quiz: () => rep10([[qCagedShape, 4], [qFindRoot, 3], [qChordName, 3]]),
+    practice: [{ l: 'Exercise: CAGED arpeggios', d: 'All five shapes, any key.', a: () => openEx('cagedarp') }, { l: 'Scales explorer', d: 'Step through the five positions.', a: () => switchTab('explorer') }] },
+  { id: 'u5', title: 'Pentatonic boxes', sum: 'The five-note scale behind most rock and blues, and how its boxes fit CAGED.',
+    cards: [
+      { t: 'Five notes', body: ['Minor pentatonic uses the <b>1, b3, 4, 5 and b7</b> of the minor scale. Major pentatonic uses 1, 2, 3, 5 and 6.', 'A minor pentatonic and C major pentatonic share all five notes. Only the home note changes. That pairing is called <b>relative</b> minor and major; the relative major is three frets above the minor root.', 'Here is A minor pentatonic across the neck, colored by degree.'],
+        show: () => board(degCells(9, pcsOf(9, MINP), 0, 15)), legend: [['root', 'Root'], ['d3', 'b3'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] },
+      { t: 'Five boxes, five CAGED shapes', body: ['The pentatonic boxes are the CAGED shapes with notes removed. Box 1 in A minor sits around the 5th fret, inside the G shape of C major (the same area as the A minor barre chord).', 'Learn each box by its roots first. Then link neighboring boxes the same way CAGED shapes link.'],
+        show: () => { const w = cagedWins(9, 'min')[0]; return Object.assign(board(degCells(9, pcsOf(9, MINP), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', 'b3'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] },
+      { t: 'Play the targets', body: ['The root sounds resolved. The b3 says minor. The b7 gives the bluesy pull. The 5th is strong and stable.', 'When you improvise, aim phrases at those colored notes instead of running the box up and down. Over a chord change, move your target to that chord\'s root or 3rd.'],
+        show: () => { const w = cagedWins(9, 'min')[1]; return Object.assign(board(degCells(9, pcsOf(9, MINP), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', 'b3'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] } ],
+    quiz: () => rep10([[() => qDegree('min'), 4], [() => qFindDegree('min', ['b3', '5', 'b7']), 4], [qRelative, 2]]),
+    practice: [{ l: 'Exercise: all five pentatonic boxes', d: 'Linked boxes, any key.', a: () => openEx('pentall') }, { l: 'Scales explorer: minor pentatonic', d: 'See each box with degree colors.', a: () => { S.ui.xscale = 'minPent'; S.ui.xchord = true; S.ui.xlab = 'iv'; save(); switchTab('explorer'); } }] },
+  { id: 'u6', title: 'The major scale', sum: 'The formula, five positions and three-notes-per-string patterns.',
+    cards: [
+      { t: 'The formula', body: ['The major scale is <b>whole, whole, half, whole, whole, whole, half</b>. On one string that\'s 2, 2, 1, 2, 2, 2, 1 frets.', 'The half steps fall between degrees 3 and 4, and 7 and 1. Every other scale and mode is described by how it differs from this one.', 'Here is G major along the low E string.'],
+        show: () => board(degCells(7, pcsOf(7, MAJ), 0, 15, [5])), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
+      { t: 'Five positions', body: ['Inside each CAGED shape, the major scale fits in one hand position of four or five frets.', 'Learn one position at a time by its roots. The shaded area is the E-shape position of G major (frets 2 to 5).'],
+        show: () => { const w = cagedWins(7, 'maj')[1]; return Object.assign(board(degCells(7, pcsOf(7, MAJ), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
+      { t: 'Three notes per string', body: ['Another way to arrange the same notes: exactly three on every string. These patterns climb diagonally, which makes even picking and fast legato easier.', 'There are seven, one starting on each scale degree. Here is the one starting on the root of G major.'],
+        show: () => board(nps(7, MAJ, 7, [5, 4, 3, 2, 1, 0], 3).map(([s, f]) => { const rel = (pcOf(s, f) - 7 + 12) % 12; return mk(s, f, degKind(rel), IVL[rel]); })), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] } ],
+    quiz: () => rep10([[() => qDegree('maj'), 4], [() => qFindDegree('maj', ['3', '4', '5', '7']), 3], [qScaleNote, 3]]),
+    practice: [{ l: 'Exercise: major scale in five positions', d: 'Any key.', a: () => openEx('majcaged') }, { l: 'Exercise: three notes per string', d: 'Patterns, legato and sixes.', a: () => openEx('nps3') }, { l: 'Exercise: scales on one string', d: 'See the formula along the neck.', a: () => openEx('onestring') }] },
+  { id: 'u7', title: 'Triads and inversions', sum: 'Three-note chords on each string set, and how to move between them smoothly.',
+    cards: [
+      { t: 'Three notes', body: ['A triad is the <b>root, 3rd and 5th</b>. Major has a major 3rd (4 half steps above the root). Minor has a minor 3rd (3 half steps). Every bigger chord is a triad with notes added.', 'Here is every G major triad on the G, B and high e strings.'],
+        show: () => board(voicings(SETS.gbe, chordPcs3(7, 0)).flatMap(v => v.map((f, i) => { const s = SETS.gbe[i], rel = (pcOf(s, f) - 7 + 12) % 12; return mk(s, f, degKind(rel), IVL[rel]); }))), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th']] },
+      { t: 'Inversions', body: ['The lowest note decides the inversion. <b>Root position:</b> root on the bottom. <b>1st inversion:</b> 3rd on the bottom. <b>2nd inversion:</b> 5th on the bottom.', 'On three neighboring strings each triad has three shapes, one per inversion, and the cycle repeats every 12 frets. Here are the G major triads on the D, G and B strings. Read the label on the D string (the lowest note) of each shape to name its inversion.'],
+        show: () => board(voicings(SETS.dgb, chordPcs3(7, 0)).flatMap(v => v.map((f, i) => { const s = SETS.dgb[i], rel = (pcOf(s, f) - 7 + 12) % 12; return mk(s, f, degKind(rel), IVL[rel]); }))), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th']] },
+      { t: 'Voice leading', body: ['When the chord changes, move each note to the nearest note of the next chord. With triads on one string set, a whole progression can stay inside four frets.', 'Here: G major (frets 7-8-7) moves to C major (frets 9-8-8). The G on the B string stays put; the other two notes move one or two frets.'],
+        show: () => board([mk(2, 7, 'd5', 'D'), mk(1, 8, 'root', 'G'), mk(0, 7, 'd3', 'B'), mk(2, 9, 'd7', 'E'), mk(0, 8, 'd7', 'C')]), legend: [['root', 'Common tone (G)'], ['d5', 'G chord'], ['d3', 'G chord'], ['d7', 'C chord: notes that move']] } ],
+    quiz: () => rep10([[qInversion, 5], [qTriadQuality, 3], [qTriadRoot, 2]]),
+    practice: [{ l: 'Exercise: triad inversions', d: 'Every string set, voice-led progressions.', a: () => openEx('triads') }, { l: 'Ear trainer: chord types', d: 'Hear major vs minor.', a: () => { switchTab('ear'); S.ui.emode = 'chord'; save(); renderEar(); } }] },
+  { id: 'u8', title: 'Harmony in a key', sum: 'The seven chords of a major key, the ii–V–I, and guide tones.',
+    cards: [
+      { t: 'Chords from the scale', body: ['Stack every other note of the major scale and you get seven 7th chords: <b>Imaj7, ii7, iii7, IVmaj7, V7, vi7 and viim7b5</b>.', 'In C that\'s Cmaj7, Dm7, Em7, Fmaj7, G7, Am7 and Bm7b5. Roman numerals let you think about any key the same way.', 'All seven chords live inside every scale position. Here is the E-shape position of C major.'],
+        show: () => { const w = cagedWins(0, 'maj')[1]; return Object.assign(board(degCells(0, pcsOf(0, MAJ), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] },
+      { t: 'The ii–V–I', body: ['ii–V–I is the most common progression in jazz, and V to I is the strongest resolution in Western music. In C it\'s Dm7, G7, Cmaj7.', 'Here is G7, the V chord, inside the same position, colored by its own chord tones. Its 3rd (B) and 7th (F) are the tension that wants to resolve to C.'],
+        show: () => { const w = cagedWins(0, 'maj')[1]; return Object.assign(board(degCells(7, pcsOf(7, [0, 4, 7, 10]), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'G (root)'], ['d3', 'B (3rd)'], ['d5', 'D (5th)'], ['d7', 'F (b7)']] },
+      { t: 'Guide tones', body: ['The 3rd and 7th of each chord carry its sound. In a ii–V–I, the 7th of each chord falls a half step to the 3rd of the next.', 'In C: C (7th of Dm7) falls to B (3rd of G7), and F (7th of G7) falls to E (3rd of Cmaj7). Play only those notes and the changes are clear even without a band.'],
+        show: () => board([mk(3, 10, 'd7', 'C'), mk(3, 9, 'd3', 'B'), mk(2, 10, 'd7', 'F'), mk(2, 9, 'd3', 'E')]), legend: [['d7', '7th of the chord'], ['d3', '3rd of the next chord']] } ],
+    quiz: () => rep10([[qQuality, 4], [qChordIn, 3], [qGuide, 3]]),
+    practice: [{ l: 'Exercise: diatonic 7th arpeggios', d: 'All seven chords in one position.', a: () => openEx('dia7') }, { l: 'Exercise: ii–V–I and guide tones', d: 'Arpeggios, then the guide-tone line.', a: () => openEx('twofive') }] }
+];
+const EX_UNIT = { pentall: 'u5', majcaged: 'u6', nps3: 'u6', seqs: 'u6', onestring: 'u6', cagedarp: 'u4', dia7: 'u8', twofive: 'u8', triads: 'u7', sweeps: 'u7', cycle4: 'u1', notemap: 'u2' };
+
+/* ---------- learn path: UI ---------- */
+const LN = { unit: null, card: 0, tab: 'lesson' };
+const QZ = { qs: [], i: 0, score: 0, answered: false, found: null, wrong: 0, done: false };
+const lBoard = makeBoard($('#lnBoard'), (s, f) => pluck(OPEN[s] + f, 0, null, 0.6, 1.3));
+const qBoard = makeBoard($('#qzBoard'), (s, f) => qzTap(s, f));
+function lnStat(id) { return S.learn[id] || (S.learn[id] = { card: 0, best: 0, passed: false, last: '' }); }
+function nextUnit() { return UNITS.find(u => !lnStat(u.id).passed) || UNITS[UNITS.length - 1]; }
+function openEx(id, step) { switchTab('exercises'); exOpen(id, step); }
+function presetFret(mode, strings, range, nat) { const o = S.fret.opts; o.strings = strings; o.range = range; o.nat = nat; save(); switchTab('fretboard'); fSetMode(mode); }
+function legendHtml(items) { const col = { root: 'var(--root)', d3: 'var(--d3)', d5: 'var(--d5)', d7: 'var(--d7)', note: 'var(--surface)', dim: 'var(--wood-2)', hit: 'var(--good)' }; return items.map(([k, t]) => `<span><i style="background:${col[k]};${k === 'note' ? 'border:1.5px solid var(--ink)' : ''}"></i>${esc(t)}</span>`).join(''); }
+function renderPath() {
+  const nu = nextUnit();
+  $('#lnUnits').innerHTML = UNITS.map((u, i) => {
+    const st = lnStat(u.id), cur = u === nu && !st.passed;
+    return `<li class="${st.passed ? 'done' : ''} ${cur ? 'cur' : ''}"><button type="button" class="pnode" data-unit="${u.id}"><span class="pnum">${st.passed ? '✓' : i + 1}</span><span class="ptext"><b>${esc(u.title)}</b><span class="small muted">${esc(u.sum)}</span><span class="small">${st.passed ? `Passed · best ${st.best}/10` : st.best ? `Best check ${st.best}/10 · 8 to pass` : cur ? 'Start here' : `${u.cards.length} lesson cards · 10-question check`}</span></span></button></li>`;
+  }).join('');
+}
+function openUnit(id, tab) {
+  const u = UNITS.find(x => x.id === id); if (!u) return;
+  LN.unit = u; LN.card = 0; $('#lnPath').hidden = true; $('#lnUnit').hidden = false;
+  setLnTab(tab || 'lesson'); window.scrollTo({ top: 0 });
+}
+function setLnTab(t) {
+  LN.tab = t; const u = LN.unit, i = UNITS.indexOf(u);
+  $('#lnUnitNo').textContent = `Unit ${i + 1} of ${UNITS.length}`; $('#lnTitle').textContent = u.title; $('#lnSum').textContent = u.sum;
+  $$('#lnTabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === t));
+  $('#lnLesson').hidden = t !== 'lesson'; $('#lnQuiz').hidden = t !== 'quiz'; $('#lnPractice').hidden = t !== 'practice';
+  if (t === 'lesson') renderCard();
+  if (t === 'quiz') qzStart();
+  if (t === 'practice') renderPractice();
+}
+function renderCard() {
+  const u = LN.unit, c = u.cards[LN.card];
+  $('#lnCardNo').textContent = `Lesson ${LN.card + 1} of ${u.cards.length}`;
+  $('#lnDots').innerHTML = u.cards.map((_, i) => `<i class="${i === LN.card ? 'on' : i < LN.card ? 'seen' : ''}"></i>`).join('');
+  $('#lnCardTitle').textContent = c.t;
+  $('#lnCardBody').innerHTML = c.body.map(p => `<p>${p}</p>`).join('');
+  const b = c.show(); lBoard.draw({ from: b.from, to: b.to, markers: b.markers, win: b.win || null });
+  $('#lnLegend').innerHTML = legendHtml(c.legend || []) + '<span class="muted">Tap any dot to hear it.</span>';
+  $('#lnPrev').disabled = LN.card === 0;
+  $('#lnNext').textContent = LN.card === u.cards.length - 1 ? 'Take the check →' : 'Next';
+  const st = lnStat(u.id); st.card = Math.max(st.card, LN.card); save();
+}
+function renderPractice() {
+  const u = LN.unit;
+  $('#lnPractice').innerHTML = `<p class="small muted">Lessons explain it, the check tests it, practice makes it automatic. Spend a few minutes on each of these, then come back to the next unit.</p>` + u.practice.map((p, i) => `<div class="weak"><div><div style="font-weight:500">${esc(p.l)}</div><div class="small muted">${esc(p.d)}</div></div><button class="btn" type="button" data-prac="${i}">Go</button></div>`).join('');
+}
+function qzStart() { QZ.qs = LN.unit.quiz(); QZ.i = 0; QZ.score = 0; QZ.done = false; qzShow(); }
+function qzShow() {
+  const q = QZ.qs[QZ.i]; QZ.answered = false; QZ.found = new Set(); QZ.wrong = 0;
+  $('#qzQ').innerHTML = q.prompt;
+  $('#qzScore').innerHTML = `<span>Question <b>${QZ.i + 1}</b> of ${QZ.qs.length}</span><span>Correct <b>${QZ.score}</b></span><span>Pass mark <b>8</b></span>`;
+  $('#qzFb').innerHTML = ''; $('#qzFb').className = 'qzfb';
+  $('#qzBoardWrap').hidden = !q.board;
+  if (q.board) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.board.markers, win: q.board.win || null });
+  $('#qzAns').innerHTML = q.type === 'mc' ? q.options.map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join('') : '';
+  $('#qzHint').textContent = q.type === 'tap' ? 'Tap the fretboard.' : q.type === 'every' ? `Tap every one you can find. ${q.targets.length} to find.` : '';
+  $('#qzNext').hidden = true; $('#qzSkip').hidden = false; $('#qzEndBtns').innerHTML = '';
+}
+function qzPlay(q) { if (!q.sound) return; ac(); const t = AU.ctx.currentTime + 0.05; if (q.strum) strum(q.sound, t, null, 0.03, 0.5, 1.5); else q.sound.forEach((m, i) => pluck(m, t + i * 0.45, null, 0.65, 1.3)); }
+function qzFinish(ok, extraMarkers) {
+  const q = QZ.qs[QZ.i]; QZ.answered = true; if (ok) QZ.score++;
+  $('#qzFb').className = 'qzfb ' + (ok ? 'ok' : 'no');
+  $('#qzFb').innerHTML = `<b>${ok ? 'Correct.' : 'Not quite.'}</b> ${q.explain}`;
+  if (q.board && q.reveal) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.reveal.concat(extraMarkers || []), win: q.board.win || null });
+  qzPlay(q);
+  $('#qzScore').innerHTML = `<span>Question <b>${QZ.i + 1}</b> of ${QZ.qs.length}</span><span>Correct <b>${QZ.score}</b></span><span>Pass mark <b>8</b></span>`;
+  $('#qzNext').hidden = false; $('#qzSkip').hidden = true; $('#qzNext').textContent = QZ.i === QZ.qs.length - 1 ? 'See result' : 'Next question';
+  $('#qzNext').focus();
+}
+function qzTap(s, f) {
+  const q = QZ.qs[QZ.i]; if (!q || QZ.answered || QZ.done) { pluck(OPEN[s] + f, 0, null, 0.55, 1.1); return; }
+  if (q.type === 'tap') { const ok = q.accept(s, f); qzFinish(ok, ok ? [] : [mk(s, f, 'miss')]); }
+  else if (q.type === 'every') {
+    pluck(OPEN[s] + f, 0, null, 0.55, 1.1);
+    const k = s + ',' + f, isT = q.targets.some(([a, b]) => a === s && b === f);
+    if (isT) QZ.found.add(k); else QZ.wrong++;
+    const marks = [...QZ.found].map(x => { const [a, b] = x.split(',').map(Number); return mk(a, b, 'hit'); });
+    if (!isT) marks.push(mk(s, f, 'miss'));
+    qBoard.draw({ from: q.board.from, to: q.board.to, markers: marks, win: null });
+    $('#qzHint').textContent = `${QZ.found.size} of ${q.targets.length} found${QZ.wrong ? ` · ${QZ.wrong} wrong tap${QZ.wrong > 1 ? 's' : ''}` : ''}`;
+    if (QZ.found.size === q.targets.length) qzFinish(QZ.wrong <= 1, []);
+  } else pluck(OPEN[s] + f, 0, null, 0.55, 1.1);
+}
+function qzAnswer(i) {
+  const q = QZ.qs[QZ.i]; if (!q || q.type !== 'mc' || QZ.answered) return;
+  const ok = i === q.answer;
+  $$('#qzAns button').forEach((b, k) => { b.classList.toggle('ok', k === q.answer); b.classList.toggle('no', !ok && k === i); });
+  qzFinish(ok);
+}
+function qzNext() { if (!QZ.answered) return; QZ.i++; if (QZ.i >= QZ.qs.length) qzEnd(); else qzShow(); }
+function qzEnd() {
+  QZ.done = true; const u = LN.unit, st = lnStat(u.id), pass = QZ.score >= 8, first = pass && !st.passed;
+  st.best = Math.max(st.best, QZ.score); if (pass) st.passed = true; st.last = dayKey(); save();
+  const idx = UNITS.indexOf(u), nxt = UNITS[idx + 1];
+  $('#qzQ').innerHTML = pass ? `${QZ.score} out of 10. Unit passed.` : `${QZ.score} out of 10. You need 8 to pass.`;
+  $('#qzScore').innerHTML = ''; $('#qzAns').innerHTML = ''; $('#qzBoardWrap').hidden = true; $('#qzHint').textContent = '';
+  $('#qzFb').className = 'qzfb ' + (pass ? 'ok' : '');
+  $('#qzFb').innerHTML = pass ? `${first ? 'Nice work. ' : ''}Now make it automatic with the practice drills, then move on.` : 'Reread the lesson cards for the questions you missed, then try again. New questions are generated each time.';
+  $('#qzNext').hidden = true; $('#qzSkip').hidden = true;
+  $('#qzEndBtns').innerHTML = `<button class="btn" type="button" data-qz="retry">Try again</button><button class="btn" type="button" data-qz="lesson">Review lesson</button><button class="btn ${pass ? '' : 'primary'}" type="button" data-qz="practice">Practice</button>${pass && nxt ? `<button class="btn primary" type="button" data-qz="next">Next unit: ${esc(nxt.title)} →</button>` : ''}`;
+  if (pass) chime();
+}
+function renderLearn() { if (LN.unit && !$('#lnUnit').hidden) setLnTab(LN.tab === 'quiz' && !QZ.done ? 'quiz' : LN.tab); else renderPath(); }
+function renderContinue() {
+  const u = nextUnit(), st = lnStat(u.id), i = UNITS.indexOf(u), done = UNITS.filter(x => lnStat(x.id).passed).length;
+  $('#continueLearn').innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start"><div class="stack" style="gap:2px"><span class="label">Unit ${i + 1} of ${UNITS.length} · ${done} passed</span><b>${esc(u.title)}</b><span class="small muted">${esc(u.sum)}</span></div><button class="btn primary" type="button" data-openunit="${u.id}">${st.card || st.best ? 'Continue' : 'Start'}</button></div><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / UNITS.length * 100)}%"></i></span>`;
+}
+
 /* ---------- routines ---------- */
 const ROUTINES = {
   quick: { n: 'Quick · 15', blocks: [
@@ -2147,11 +2565,12 @@ const ROUTINES = {
     { tool: 'ear', m: 2, t: 'Ear training', d: 'Scale degrees. Sing it back first.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
   standard: { n: 'Standard · 30', blocks: [
     { tool: 'exercises', ex: 'permut', m: 3, t: 'Warm-up: finger permutations', d: 'Your current step.' },
-    { tool: 'exercises', ex: 'majcaged', m: 5, t: 'Major scale positions', d: 'One position, then link it to the next.' },
+    { tool: 'learn', m: 4, t: 'Lesson', d: 'Next lesson card or unit check on the Learn path.' },
+    { tool: 'exercises', ex: 'majcaged', m: 4, t: 'Major scale positions', d: 'One position, then link it to the next.' },
     { tool: 'exercises', ex: 'nps3', m: 4, t: 'Three notes per string', d: 'Follow the pick marks exactly.' },
-    { tool: 'exercises', ex: 'cycle4', m: 3, t: 'Cycle of fourths', d: 'One string per day.' },
-    { tool: 'exercises', ex: 'triads', m: 5, t: 'Triad inversions', d: 'Spot the root in every shape.' },
-    { tool: 'exercises', ex: 'dia7', m: 5, t: 'Diatonic 7th arpeggios', d: 'All seven chords inside one position.' },
+    { tool: 'exercises', ex: 'cycle4', m: 2, t: 'Cycle of fourths', d: 'One string per day.' },
+    { tool: 'exercises', ex: 'triads', m: 4, t: 'Triad inversions', d: 'Spot the root in every shape.' },
+    { tool: 'exercises', ex: 'dia7', m: 4, t: 'Diatonic 7th arpeggios', d: 'All seven chords inside one position.' },
     { tool: 'ear', m: 5, t: 'Ear training', d: 'Scale degrees, then chord types.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
   deep: { n: 'Deep · 45', blocks: [
     { tool: 'exercises', ex: 'permut', m: 4, t: 'Warm-up: finger permutations', d: 'Mixed and climbing.' },
@@ -2175,7 +2594,7 @@ function routineStart() {
 }
 function routineBlock() {
   const b = ROUTINES[R.key].blocks[R.idx]; R.rem = b.m * 60;
-  switchTab(b.tool); if (b.ex) exOpen(b.ex); if (b.setup) b.setup();
+  switchTab(b.tool); if (b.ex) exOpen(b.ex); if (b.tool === 'learn') openUnit(nextUnit().id); if (b.setup) b.setup();
   toast(`${b.t}: ${b.d}`); renderPill();
 }
 function routineTick() {
@@ -2203,7 +2622,7 @@ function renderPill() {
 function renderRoutine() {
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.n} min</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = ROUTINES[key];
-  const toolName = { exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', changes: 'Changes', explorer: 'Scales', riffs: 'Riff Dice' };
+  const toolName = { learn: 'Learn', exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', changes: 'Changes', explorer: 'Scales', riffs: 'Riff Dice' };
   $('#rtBlocks').innerHTML = r.blocks.map((b, i) => `<li class="${R.running && i === R.idx ? 'cur' : ''} ${R.running && i < R.idx ? 'done' : ''}"><span class="m">${R.running && i === R.idx ? fmtTime(R.rem) : b.m + ' min'}</span><div><div style="font-weight:500">${esc(b.t)} <span class="tool">· ${toolName[b.tool]}</span></div><div class="small muted">${esc(b.d)}</div></div><span></span></li>`).join('');
   $('#rtStart').textContent = R.running ? 'Go to current block' : 'Start routine';
   $('#rtHint').textContent = R.running ? 'Running. Use the bar at the top to pause or skip.' : `${r.blocks.reduce((a, b) => a + b.m, 0)} minutes, ${r.blocks.length} blocks`;
@@ -2239,10 +2658,10 @@ function renderWeak() {
   if (tl) items.push({ t: 'Tempo', d: tl.log.length ? `${tl.name}: best ${Math.max(...tl.log.map(e => e.bpm))} bpm. Try 4 bpm faster.` : `${tl.name}: find your clean tempo and log it.`, tab: 'metronome' });
   $('#weakList').innerHTML = items.map(i => `<div class="weak"><div><div style="font-weight:500">${i.t}</div><div class="small muted">${esc(i.d)}</div></div><button class="btn" type="button" data-go="${i.tab}">Practice</button></div>`).join('');
 }
-function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); }
+function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
 /* ---------- tabs ---------- */
-const TABS = ['today', 'exercises', 'metronome', 'fretboard', 'ear', 'changes', 'explorer', 'riffs', 'tuner'];
+const TABS = ['today', 'learn', 'exercises', 'metronome', 'fretboard', 'ear', 'changes', 'explorer', 'riffs', 'tuner'];
 function switchTab(t, fromHash) {
   if (!TABS.includes(t)) t = 'today';
   if (curTab === 'ear' && t !== 'ear') { clearTimeout(E.nextT); killBus(E.bus); }
@@ -2252,7 +2671,7 @@ function switchTab(t, fromHash) {
   $$('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.replaceState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ today: renderToday, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, changes: renderChanges, explorer: renderExplorer, riffs: renderRiffs, tuner: renderTuner })[t]();
+  ({ today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, changes: renderChanges, explorer: renderExplorer, riffs: renderRiffs, tuner: renderTuner })[t]();
   const tb = $(`.tab[data-tab="${t}"]`); if (tb && tb.scrollIntoView) tb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 function refreshAll() { renderHeaderStats(); renderBpm(); switchTab(curTab, true); applySettingsUI(); }
@@ -2353,6 +2772,19 @@ $('#dSaved').addEventListener('click', e => {
   if (dl) { const id = dl.dataset.del; if (D.delArm === id) { S.riffs = S.riffs.filter(x => x.id !== id); D.delArm = null; save(); } else { D.delArm = id; setTimeout(() => { if (D.delArm === id) { D.delArm = null; renderSaved(); } }, 3000); } renderSaved(); }
 });
 
+
+// learn
+$('#lnUnits').addEventListener('click', e => { const b = e.target.closest('[data-unit]'); if (b) openUnit(b.dataset.unit); });
+$('#lnBack').onclick = () => { $('#lnUnit').hidden = true; $('#lnPath').hidden = false; LN.unit = null; renderPath(); };
+$('#lnTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setLnTab(b.dataset.v); });
+$('#lnPrev').onclick = () => { if (LN.card > 0) { LN.card--; renderCard(); } };
+$('#lnNext').onclick = () => { if (LN.card < LN.unit.cards.length - 1) { LN.card++; renderCard(); } else setLnTab('quiz'); };
+$('#qzAns').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) qzAnswer(+b.dataset.i); });
+$('#qzNext').onclick = qzNext;
+$('#qzSkip').onclick = () => { if (!QZ.answered && !QZ.done) { const q = QZ.qs[QZ.i]; if (q.type === 'mc') $$('#qzAns button').forEach((b, k) => b.classList.toggle('ok', k === q.answer)); qzFinish(false); } };
+$('#qzEndBtns').addEventListener('click', e => { const b = e.target.closest('[data-qz]'); if (!b) return; const a = b.dataset.qz; if (a === 'retry') qzStart(); else if (a === 'lesson') { LN.card = 0; setLnTab('lesson'); } else if (a === 'practice') setLnTab('practice'); else if (a === 'next') { const i = UNITS.indexOf(LN.unit); openUnit(UNITS[i + 1].id); } });
+$('#lnPractice').addEventListener('click', e => { const b = e.target.closest('[data-prac]'); if (b) LN.unit.practice[+b.dataset.prac].a(); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-openunit]'); if (!b) return; switchTab('learn'); openUnit(b.dataset.openunit); });
 // exercises
 $('#exList').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#pBack').onclick = () => { exStop(); $('#exPlayer').hidden = true; $('#exLib').hidden = false; renderExLib(); };
@@ -2408,6 +2840,7 @@ document.addEventListener('keydown', e => {
     mToggle(); return;
   }
   if (curTab === 'exercises' && !$('#exPlayer').hidden && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { e.preventDefault(); exStepNote(e.key === 'ArrowRight' ? 1 : -1); return; }
+  if (curTab === 'learn' && LN.unit && LN.tab === 'quiz') { if (/^[1-9]$/.test(e.key)) { qzAnswer(+e.key - 1); return; } if (e.key === 'Enter' && QZ.answered) { e.preventDefault(); qzNext(); return; } }
   if (curTab === 'ear' && /^[1-9]$/.test(e.key)) { eAnswer(+e.key - 1); return; }
   if (curTab === 'ear' && e.key === '0') { eAnswer(9); return; }
   if (curTab === 'fretboard' && S.ui.fmode === 'name') { const m = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[e.key.toLowerCase()]; if (m !== undefined) fName(m); }
