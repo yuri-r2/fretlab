@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, metronome, ear and fretboard trainers.">
+<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, riff voicings, tuner, metronome, ear and fretboard trainers.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -18,7 +18,7 @@
   --bg:#F2F0EB; --surface:#FFFFFF; --surface-2:#E8E4DC; --ink:#1C1A17; --muted:#6A635A; --line:#D8D2C7;
   --accent:#2C786A; --accent-ink:#FFFFFF; --accent-soft:#D8EBE6;
   --root:#C05B28; --root-ink:#FFFFFF; --root-soft:#F5E1D5;
-  --good:#2E8653; --warn:#B07D12; --bad:#BC4034; --on-sem:#FFFFFF; --good-soft:#DCEEE2; --bad-soft:#F5DCD8;
+  --good:#2E8653; --warn:#B07D12; --bad:#BC4034; --on-sem:#FFFFFF; --good-soft:#DCEEE2; --bad-soft:#F5DCD8; --warn-soft:#F5E7C6;
   --wood:#3A2A20; --wood-2:#57422F; --fret:#BDB5A8; --string:#E4DACA; --inlay:#EAE2D4;
   --d3:#2F6DB5; --d5:#2C786A; --d7:#7A4CB8;
   --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
@@ -29,13 +29,13 @@
   --bg:#131210; --surface:#1C1A18; --surface-2:#282521; --ink:#EEE9E2; --muted:#A39A8F; --line:#36322D;
   --accent:#5DBEA8; --accent-ink:#0B1E1A; --accent-soft:#1D3530;
   --root:#E3874F; --root-ink:#1A0E07; --root-soft:#3A2416;
-  --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B;
+  --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B; --warn-soft:#3A2F16;
   --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#131210; --surface:#1C1A18; --surface-2:#282521; --ink:#EEE9E2; --muted:#A39A8F; --line:#36322D;
   --accent:#5DBEA8; --accent-ink:#0B1E1A; --accent-soft:#1D3530;
   --root:#E3874F; --root-ink:#1A0E07; --root-soft:#3A2416;
-  --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B;
+  --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B; --warn-soft:#3A2F16;
   --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--ink)}
@@ -265,6 +265,60 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 .sync.acct i{background:var(--good)}
 
 
+
+/* voicings */
+.vogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.vocard{display:flex;gap:12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink);min-width:0}
+.vocard:hover{border-color:var(--accent)}
+.vobox{flex:none}
+.votext{display:flex;flex-direction:column;gap:5px;min-width:0}
+.tag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-right:4px}
+.vodetail{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.vobig{flex:none}
+.vodetail>.stack{flex:1 1 300px}
+.vbox{display:block;max-width:100%;height:auto}
+/* tuner (gauge adapted from KotoLab) */
+.tuner{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:720px){.tuner{grid-template-columns:1fr}}
+.gauge{width:100%;max-width:400px}
+.gauge-svg{display:block;width:100%;height:auto}
+.g-zone{fill:none;stroke-width:12}
+.g-far{stroke:var(--bad-soft)} .g-near{stroke:var(--warn-soft)} .g-in{stroke:var(--good-soft)}
+.g-tick{stroke:var(--fret);stroke-width:1.4} .g-tick.major{stroke:var(--muted);stroke-width:2}
+.g-scale{font:10px var(--font-mono);fill:var(--muted)} .g-side{font:11px var(--font-body);fill:var(--muted)}
+.g-needle-line{stroke:var(--ink);stroke-width:3;stroke-linecap:round} .g-needle-tip{fill:var(--ink)}
+.g-ring-bg{fill:none;stroke:var(--surface-2);stroke-width:6}
+.g-ring{fill:none;stroke:var(--good);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .12s linear}
+.g-hub{fill:var(--surface);stroke:var(--line);stroke-width:1.5;transition:fill .2s,stroke .2s}
+.g-note{font:700 24px var(--font-display);fill:var(--ink)} .g-cents{font:600 11px var(--font-mono);fill:var(--muted)}
+.g-check{fill:none;stroke:var(--on-sem);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:46;stroke-dashoffset:46;opacity:0}
+.gauge-svg[data-state='idle'] .g-needle{opacity:.35}
+.gauge-svg[data-state='near'] .g-needle-line{stroke:var(--warn)} .gauge-svg[data-state='near'] .g-needle-tip{fill:var(--warn)} .gauge-svg[data-state='near'] .g-hub{stroke:var(--warn)}
+.gauge-svg[data-state='far'] .g-needle-line{stroke:var(--bad)} .gauge-svg[data-state='far'] .g-needle-tip{fill:var(--bad)} .gauge-svg[data-state='far'] .g-hub{stroke:var(--bad)}
+.gauge-svg[data-state='in'] .g-needle-line{stroke:var(--good)} .gauge-svg[data-state='in'] .g-needle-tip{fill:var(--good)} .gauge-svg[data-state='in'] .g-hub{stroke:var(--good);fill:var(--good-soft)} .gauge-svg[data-state='in'] .g-note{fill:var(--good)}
+.gauge-svg[data-state='done'] .g-hub{fill:var(--good);stroke:var(--good);animation:g-pop .45s cubic-bezier(.2,1.6,.4,1);transform-origin:160px 150px}
+.gauge-svg[data-state='done'] .g-note,.gauge-svg[data-state='done'] .g-cents{opacity:0}
+.gauge-svg[data-state='done'] .g-check{opacity:1;animation:g-draw .35s .1s ease-out forwards}
+.gauge-svg[data-state='done'] .g-needle-line{stroke:var(--good)} .gauge-svg[data-state='done'] .g-zone.g-in{stroke:var(--good)}
+@keyframes g-pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+@keyframes g-draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.gauge-svg[data-state='done'] .g-hub,.gauge-svg[data-state='done'] .g-check{animation:none;stroke-dashoffset:0}}
+.tn-read{font:600 18px var(--font-body);min-height:1.5em;text-align:center;color:var(--muted)}
+.tn-read[data-state='in'],.tn-read[data-state='done']{color:var(--good)} .tn-read[data-state='near']{color:var(--warn)} .tn-read[data-state='far']{color:var(--bad)}
+.tn-mic{background:var(--surface-2);border-radius:10px;padding:10px 12px;max-width:52ch}
+.tn-head{width:100%;max-width:300px}
+.headstock{display:block;width:100%;height:auto}
+.peg{cursor:pointer}
+.peg circle{fill:var(--surface);stroke:var(--line);stroke-width:2}
+.peg:hover circle{stroke:var(--accent)}
+.peg .peg-n{font:700 18px var(--font-display);fill:var(--ink)}
+.peg .peg-s{font:500 9.5px var(--font-mono);fill:var(--muted)}
+.peg.sel .peg-s{fill:var(--accent-ink)}
+.peg.sel circle{fill:var(--accent);stroke:var(--accent)} .peg.sel .peg-n{fill:var(--accent-ink)}
+.peg.done circle{fill:var(--good);stroke:var(--good)} .peg.done .peg-n{fill:var(--on-sem)}
+.peg.done.sel circle{stroke:var(--accent);stroke-width:4}
+.peg:focus-visible circle{stroke:var(--accent);stroke-width:4}
+
 /* learn */
 .path{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;position:relative}
 .path li{position:relative;padding-left:0}
@@ -357,10 +411,10 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
     <button class="tab" role="tab" data-tab="today">Today</button>
     <button class="tab" role="tab" data-tab="learn">Learn</button>
     <button class="tab" role="tab" data-tab="exercises">Exercises</button>
+    <button class="tab" role="tab" data-tab="voicings">Voicings</button>
     <button class="tab" role="tab" data-tab="metronome">Metronome</button>
     <button class="tab" role="tab" data-tab="fretboard">Fretboard</button>
     <button class="tab" role="tab" data-tab="ear">Ear</button>
-    <button class="tab" role="tab" data-tab="changes">Changes</button>
     <button class="tab" role="tab" data-tab="explorer">Scales</button>
     <button class="tab" role="tab" data-tab="riffs">Riff Dice</button>
     <button class="tab" role="tab" data-tab="tuner">Tuner</button>
@@ -411,7 +465,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       <li><b>Short, daily sessions.</b> A daily goal and streak keep practice consistent. Set your goal in settings.</li>
       <li><b>Mixed practice blocks.</b> Routines switch skills every few minutes instead of drilling one thing for an hour. In a study of advanced musicians, interleaved practice beat blocked practice on later performance (<a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2016.01251/full" target="_blank" rel="noopener">Carter and Grahn, 2016</a>).</li>
       <li><b>Drills that find your weak spots.</b> The fretboard and ear trainers ask more often about the notes you miss or answer slowly, like spaced repetition flashcards.</li>
-      <li><b>Real numbers.</b> One-minute changes (as taught by <a href="https://justinguitar.com/guitar-lessons/one-minute-changes-exercise-b1-110" target="_blank" rel="noopener">JustinGuitar</a>) and the tempo log show measurable progress week to week.</li>
+      <li><b>Real numbers.</b> Every exercise step has a goal tempo, and the tempo log tracks your best clean speeds week to week.</li>
       <li><b>Ears in context.</b> Scale-degree training plays a cadence first, then the note, then resolves it home. It's the approach popularized by the <a href="https://apps.apple.com/app/id1088761926" target="_blank" rel="noopener">Functional Ear Trainer</a> app.</li>
     </ul>
   </div>
@@ -422,7 +476,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <!-- LEARN -->
 <section class="view" id="view-learn" hidden>
   <div id="lnPath" class="stack" style="gap:16px">
-    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Fretboard mastery path</span><h2>Learn</h2></div><p class="muted small">Eight units that build on each other, from naming every note to playing through chord changes. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer), and the drills and exercises that make it automatic.</p></div>
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Fretboard mastery path</span><h2>Learn</h2></div><p class="muted small">Nine units that build on each other, from naming every note to voicings for writing your own riffs. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer), and the drills and exercises that make it automatic.</p></div>
     <ol class="path" id="lnUnits"></ol>
   </div>
   <div id="lnUnit" class="stack" hidden>
@@ -479,10 +533,10 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <label class="toggle"><input type="checkbox" id="pGuide"> Hear the notes</label>
         <label class="toggle"><input type="checkbox" id="pClick"> Click</label>
         <label class="toggle"><input type="checkbox" id="pLadder"> Speed up 4 bpm each loop</label>
-        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="note">Note names</option></select></label>
+        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select></label>
       </div>
       <div class="scroll-x"><div id="pBoard"></div></div>
-      <div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute</span></div>
+      <div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div>
       <div class="feedback" id="pFeedback">
         <span style="font-weight:500">How did that run go?</span>
         <button class="btn" id="pClean" type="button">Clean</button>
@@ -492,6 +546,36 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <span class="small muted" id="pBest"></span>
       </div>
       <p class="small"><b>Tip:</b> <span id="pTip"></span></p>
+    </div>
+  </div>
+</section>
+
+
+<!-- VOICINGS -->
+<section class="view" id="view-voicings" hidden>
+  <div id="voList" class="stack" style="gap:16px">
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Riff writing</span><h2>Voicings</h2></div><p class="muted small">Chord shapes that alternative, midwest emo and shoegaze players build riffs from. Each one shows what every note does in the chord, how to move it, and a three-step play-along that turns it into a riff. All original shapes, many using open strings and alternate tunings.</p></div>
+    <div class="seg" id="voStyle"><button type="button" data-v="all">All</button><button type="button" data-v="alt">Alternative</button><button type="button" data-v="emo">Midwest emo</button><button type="button" data-v="gaze">Shoegaze</button></div>
+    <div class="vogrid" id="voGrid"></div>
+    <p class="small muted">New to color tones and open-string drones? <button class="btn" type="button" data-openunit="u9">Read the lesson: Voicings for riffs</button></p>
+  </div>
+  <div id="voDetail" class="stack" hidden>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="voBack" type="button">← All voicings</button><span class="row" id="voTags" style="gap:6px"></span></div>
+    <div class="card stack">
+      <h2 id="voTitle">Voicing</h2>
+      <p class="small" id="voWhy" style="max-width:70ch"></p>
+      <div class="seg" id="voMoves"></div>
+      <div class="vodetail">
+        <div id="voBox" class="vobig"></div>
+        <div class="stack" style="min-width:0">
+          <div class="scroll-x"><div id="voBoard"></div></div>
+          <p class="small" id="voNotes"></p>
+          <div class="row"><button class="btn" id="voStrum" type="button">▶ Strum</button><button class="btn" id="voArp" type="button">▶ Arpeggio</button><button class="btn primary" id="voPlayAlong" type="button">Play along: make it a riff</button></div>
+        </div>
+      </div>
+      <h3>Riff ideas</h3>
+      <ul class="method small" id="voIdeas"></ul>
+      <div class="legend"><span><i style="background:var(--root)"></i>Root</span><span><i style="background:var(--d3)"></i>3rd</span><span><i style="background:var(--d5)"></i>5th</span><span><i style="background:var(--d7)"></i>7th</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Color tones (9, 11, 6, #11)</span></div>
     </div>
   </div>
 </section>
@@ -599,32 +683,6 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   <div class="card stack"><h3>Accuracy by answer</h3><div class="bars" id="eStats"></div></div>
 </section>
 
-<!-- CHANGES -->
-<section class="view" id="view-changes" hidden>
-  <div class="vhead"><h2>One-minute changes</h2><p class="muted small">Switch between two chords as many times as you can in 60 seconds. Tap the pad or press space for each change. Do it daily and watch the number climb.</p></div>
-  <div class="grid">
-    <div class="card stack">
-      <div class="chpair">
-        <div class="stack" style="align-items:center"><select id="chA" aria-label="First chord"></select><div id="boxA" style="width:100%"></div></div>
-        <button class="iconbtn" id="chSwap" type="button" aria-label="Swap chords">⇄</button>
-        <div class="stack" style="align-items:center"><select id="chB" aria-label="Second chord"></select><div id="boxB" style="width:100%"></div></div>
-      </div>
-      <div class="row" id="chSuggest"></div>
-    </div>
-    <div class="card stack" style="align-items:stretch">
-      <div class="timer"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface-2)" stroke-width="7"/><circle id="chRing" cx="50" cy="50" r="44" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="276.5 276.5"/></svg><div class="tc"><b id="chSec">60</b><span class="small muted" id="chPhase">Ready</span></div></div>
-      <button class="tap" id="chTap" type="button" disabled>Changes: <span id="chCount">0</span></button>
-      <div class="row" style="justify-content:center"><button class="btn primary big" id="chStart" type="button">Start 60 seconds</button></div>
-      <div class="row" style="justify-content:center"><label class="toggle"><input type="checkbox" id="chClick"> Click at</label><input type="number" id="chBpm" min="40" max="200" value="60"><span class="small muted">bpm</span></div>
-      <div class="row" id="chManual" hidden style="justify-content:center"><span class="small muted">Counted out loud instead?</span><input type="number" id="chManN" min="0" max="200" placeholder="0"><button class="btn" id="chManSave" type="button">Save</button></div>
-    </div>
-  </div>
-  <div class="grid">
-    <div class="card stack"><h3 id="chHistTitle">History</h3><div id="chHist"></div></div>
-    <div class="card stack"><h3>All pairs</h3><div id="chAll" class="scroll-x"></div></div>
-  </div>
-</section>
-
 <!-- EXPLORER -->
 <section class="view" id="view-explorer" hidden>
   <div class="vhead"><h2>Scales and positions</h2><p class="muted small">Pick a key and scale, then step through the five CAGED positions. Tap any note to hear it.</p></div>
@@ -669,13 +727,22 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 
 <!-- TUNER -->
 <section class="view" id="view-tuner" hidden>
-  <div class="vhead"><h2>Tuner and drone</h2><p class="muted small">Tap a string to hear its reference pitch. Pluck your string with it. If you hear a slow wobble, turn the peg slowly until the wobble stops.</p></div>
+  <div class="vhead"><h2>Tuner</h2><p class="muted small">Press Start listening and play a string. Auto mode finds the string for you; Manual tunes the one you tap and moves to the next when it's in tune; Chromatic shows any note. Tap a peg anytime to hear its reference note.</p></div>
   <div class="card stack">
-    <div class="row">
+    <div class="row" style="justify-content:space-between">
       <label class="f"><span>Tuning</span><select id="tTuning"></select></label>
-      <div class="f"><span class="small muted" style="font-weight:500">Tone</span><div class="seg" id="tMode"><button data-v="pluck" type="button">Plucked, repeating</button><button data-v="tone" type="button">Steady tone</button></div></div>
+      <div class="seg" id="tnMode"><button data-v="auto" type="button">Auto</button><button data-v="manual" type="button">Manual</button><button data-v="chromatic" type="button">Chromatic</button></div>
     </div>
-    <div class="strings" id="tStrings"></div>
+    <div class="tuner">
+      <div class="stack" style="gap:6px;align-items:center;min-width:0">
+        <div class="gauge" id="tnGauge"></div>
+        <div class="tn-read" id="tnRead"></div>
+        <div class="small muted mono" id="tnHz"></div>
+        <div class="row" style="justify-content:center"><button class="btn primary big" id="tnListen" type="button">Start listening</button><button class="btn" id="tnRef" type="button">Play reference</button></div>
+        <p class="small tn-mic" id="tnMic" hidden></p>
+      </div>
+      <div class="stack" style="align-items:center;gap:4px"><div id="tnHead" class="tn-head"></div><span class="small muted" id="tnProgress"></span><button class="btn" id="tnReset" type="button">Start over</button></div>
+    </div>
   </div>
   <div class="card stack">
     <h3>Drone</h3>
@@ -749,7 +816,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'standard',
-  ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -1070,7 +1137,7 @@ function makeBoard(host, onTap) {
   const b = { host, onTap, from: 0, to: 12, markers: [], win: null };
   host.addEventListener('click', e => { const r = e.target.closest('[data-s]'); if (!r) return; b.onTap && b.onTap(+r.dataset.s, +r.dataset.f); });
   b.draw = function (o = {}) {
-    Object.assign(b, o);
+    Object.assign(b, o); b.names = o.names || null;
     const lefty = S.settings.lefty, from = b.from, to = b.to, startF = Math.max(from, 1);
     const G = 18, padL = from === 0 ? 36 : 8, fw = 50, sh = 27, top = 20;
     const base = G + padL, endX = base + (to - startF + 1) * fw;
@@ -1093,7 +1160,7 @@ function makeBoard(host, onTap) {
     for (let f = startF; f <= to; f++) { const x = X(base + (f - startF + 1) * fw); s += `<line class="fb-fret" x1="${x}" y1="${y0}" x2="${x}" y2="${y1}"/>`; }
     if (from === 0) s += `<rect class="fb-nut" x="${X(base) - 3}" y="${y0}" width="6" height="${y1 - y0}" rx="1"/>`;
     else s += `<line class="fb-edge" x1="${X(base)}" y1="${y0}" x2="${X(base)}" y2="${y1}"/>`;
-    for (let i = 0; i < 6; i++) { const y = top + i * sh; s += `<line class="fb-str" x1="${X(from === 0 ? G + 4 : base)}" y1="${y}" x2="${X(endX)}" y2="${y}" stroke-width="${(0.7 + i * 0.38).toFixed(2)}"/><text class="fb-lab" x="${X(9)}" y="${y + 4}">${SNAME[i]}</text>`; }
+    for (let i = 0; i < 6; i++) { const y = top + i * sh; s += `<line class="fb-str" x1="${X(from === 0 ? G + 4 : base)}" y1="${y}" x2="${X(endX)}" y2="${y}" stroke-width="${(0.7 + i * 0.38).toFixed(2)}"/><text class="fb-lab" x="${X(9)}" y="${y + 4}">${(b.names || SNAME)[i]}</text>`; }
     const nums = new Set([startF, 3, 5, 7, 9, 12, 15, 17, 19].filter(f => f >= startF && f <= to));
     if (from === 0) nums.add(0);
     nums.forEach(f => { s += `<text class="fb-num" x="${X(cx(f))}" y="${H - 9}">${f}</text>`; });
@@ -1426,88 +1493,6 @@ function eResolve() {
   return 0.25 + seq.length * 0.32;
 }
 
-/* ---------- chord changes ---------- */
-const CHORDS = { A: 'x02220', Am: 'x02210', A7: 'x02020', Asus2: 'x02200', B7: 'x21202', Bm: 'x24432', C: 'x32010', C7: 'x32310', Cadd9: 'x32033', D: 'xx0232', Dm: 'xx0231', D7: 'xx0212', Dsus4: 'xx0233', E: '022100', Em: '022000', E7: '020100', F: '133211', Fmaj7: 'xx3210', G: '320003', G7: '320001' };
-const PAIRS = [['A', 'D'], ['D', 'E'], ['A', 'E'], ['Am', 'Em'], ['Am', 'E'], ['C', 'G'], ['G', 'D'], ['C', 'Am'], ['Em', 'G'], ['C', 'F'], ['Dm', 'Am'], ['G', 'Cadd9']];
-const CH = { phase: 'idle', count: 0, t0: 0, timer: null, startedMetro: false, saved: false };
-function chordBox(name) {
-  const arr = [...CHORDS[name]].map(c => c === 'x' ? -1 : parseInt(c, 10));
-  const nums = arr.filter(v => v > 0), mx = nums.length ? Math.max(...nums) : 0;
-  const base = mx <= 4 ? 1 : Math.min(...nums);
-  const left = 24, top = 28, sp = 16, fs = 20, W = 120, H = 150;
-  let s = `<svg class="cbox" viewBox="0 0 ${W} ${H}" role="img" aria-label="${name} chord diagram">`;
-  for (let i = 0; i < 6; i++) s += `<line class="cl" x1="${left + i * sp}" y1="${top}" x2="${left + i * sp}" y2="${top + 4 * fs}" stroke-width="1"/>`;
-  for (let j = 0; j <= 4; j++) s += `<line class="cl" x1="${left}" y1="${top + j * fs}" x2="${left + 5 * sp}" y2="${top + j * fs}" stroke-width="${j === 0 && base === 1 ? 4 : 1}"/>`;
-  if (base > 1) s += `<text x="${left - 8}" y="${top + fs / 2 + 4}" text-anchor="end">${base}</text>`;
-  arr.forEach((f, i) => { const x = left + i * sp; if (f < 0) s += `<text x="${x}" y="${top - 8}" text-anchor="middle">×</text>`; else if (f === 0) s += `<circle class="co" cx="${x}" cy="${top - 11}" r="4" stroke-width="1.3"/>`; else s += `<circle class="cd" cx="${x}" cy="${top + (f - base) * fs + fs / 2}" r="6.5"/>`; });
-  s += `<text class="ct" x="${W / 2}" y="${H - 12}" text-anchor="middle">${name}</text></svg>`;
-  return s;
-}
-const pairKey = (a, b) => [a, b].sort().join(' · ');
-function renderChanges() {
-  const opts = Object.keys(CHORDS).map(c => `<option>${c}</option>`).join('');
-  $('#chA').innerHTML = opts; $('#chB').innerHTML = opts;
-  $('#chA').value = S.changes.a; $('#chB').value = S.changes.b;
-  $('#boxA').innerHTML = chordBox(S.changes.a); $('#boxB').innerHTML = chordBox(S.changes.b);
-  $('#chSuggest').innerHTML = '<span class="small muted">Common pairs:</span>' + PAIRS.map(([a, b]) => `<button class="chip" type="button" data-a="${a}" data-b="${b}" aria-pressed="${pairKey(a, b) === pairKey(S.changes.a, S.changes.b)}">${a} · ${b}</button>`).join('');
-  renderChHist();
-}
-function renderChHist() {
-  const k = pairKey(S.changes.a, S.changes.b), h = S.changes.hist[k] || [];
-  $('#chHistTitle').textContent = `History: ${k}`;
-  if (!h.length) $('#chHist').innerHTML = '<p class="small muted">No runs yet for this pair. A good first target is 30 changes. Aim for 60.</p>';
-  else {
-    const last = h.slice(-14), mx = Math.max(60, ...last.map(e => e.n)), W = 320, Hh = 130, bw = (W - 30) / 14;
-    let svg = `<svg viewBox="0 0 ${W} ${Hh}" width="100%" role="img" aria-label="Changes per minute, last runs">`;
-    [0, 30, 60].forEach(v => { const y = Hh - 20 - v / mx * (Hh - 34); svg += `<line x1="26" x2="${W}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="22" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="var(--font-mono)">${v}</text>`; });
-    last.forEach((e, i) => { const bh = e.n / mx * (Hh - 34); const x = 30 + i * bw; svg += `<rect x="${x}" y="${Hh - 20 - bh}" width="${bw - 4}" height="${bh}" rx="3" fill="${i === last.length - 1 ? 'var(--accent)' : 'var(--surface-2)'}" stroke="var(--accent)" stroke-width="${i === last.length - 1 ? 0 : 1}"/><text x="${x + (bw - 4) / 2}" y="${Hh - 24 - bh}" text-anchor="middle" font-size="10" fill="var(--ink)" font-family="var(--font-mono)">${e.n}</text>`; });
-    svg += '</svg>';
-    const best = Math.max(...h.map(e => e.n));
-    $('#chHist').innerHTML = `<div class="row small"><span>Best <b class="mono">${best}</b></span><span class="muted">· ${h.length} runs · last on ${esc(h[h.length - 1].d)}</span></div>${svg}`;
-  }
-  const rows = Object.entries(S.changes.hist).map(([k, v]) => ({ k, best: Math.max(...v.map(e => e.n)), last: v[v.length - 1] })).sort((a, b) => a.last.d.localeCompare(b.last.d));
-  $('#chAll').innerHTML = rows.length ? `<table class="t"><thead><tr><th>Pair</th><th>Best</th><th>Last</th><th>Last practiced</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r.k)}</td><td class="mono">${r.best}</td><td class="mono">${r.last.n}</td><td class="small muted">${esc(r.last.d)}</td></tr>`).join('')}</tbody></table><p class="small muted" style="margin-top:6px">Oldest first, so the top row is the one to practice next.</p>` : '<p class="small muted">Pairs you practice show up here.</p>';
-}
-function chSetPhase(p) {
-  CH.phase = p;
-  $('#chTap').disabled = p !== 'run';
-  $('#chStart').textContent = p === 'idle' || p === 'done' ? 'Start 60 seconds' : 'Stop';
-  $('#chPhase').textContent = { idle: 'Ready', count: 'Get ready', run: 'Go!', done: 'Done' }[p];
-  $('#chManual').hidden = p !== 'done';
-}
-function chStart() {
-  if (CH.phase === 'count' || CH.phase === 'run') { chFinish(true); return; }
-  ac(); CH.count = 0; CH.saved = false; $('#chCount').textContent = 0; chSetPhase('count'); $('#chSec').textContent = 3; $('#chRing').setAttribute('stroke-dasharray', '276.5 276.5');
-  const t0 = performance.now(); const c = AU.ctx.currentTime;
-  [0, 1, 2].forEach(i => SND.beep(c + 0.05 + i, 1, AU.master)); SND.beep(c + 3.05, 3, AU.master);
-  clearInterval(CH.timer);
-  CH.timer = setInterval(() => {
-    const e = (performance.now() - t0) / 1000;
-    if (CH.phase === 'count') {
-      $('#chSec').textContent = Math.max(1, 3 - Math.floor(e));
-      if (e >= 3) { CH.phase = 'run'; chSetPhase('run'); CH.t0 = performance.now(); if ($('#chClick').checked) { const b = clamp(+$('#chBpm').value || 60, 40, 200); S.metro.bpm = b; renderBpm(); if (!M.running) { mStart(); CH.startedMetro = true; } } }
-      return;
-    }
-    const r = 60 - (performance.now() - CH.t0) / 1000;
-    $('#chSec').textContent = Math.max(0, Math.ceil(r));
-    $('#chRing').setAttribute('stroke-dasharray', `${Math.max(0, r / 60) * 276.5} 276.5`);
-    if (r <= 0) chFinish(false);
-  }, 100);
-}
-function chFinish(aborted) {
-  clearInterval(CH.timer);
-  if (CH.startedMetro) { mStop(); CH.startedMetro = false; }
-  if (aborted) { chSetPhase('idle'); $('#chSec').textContent = 60; $('#chRing').setAttribute('stroke-dasharray', '276.5 276.5'); return; }
-  chSetPhase('done'); chime();
-  if (CH.count > 0) chSave(CH.count);
-}
-function chSave(n) {
-  const k = pairKey(S.changes.a, S.changes.b); const h = S.changes.hist[k] || (S.changes.hist[k] = []);
-  const prevBest = h.length ? Math.max(...h.map(e => e.n)) : 0;
-  h.push({ d: dayKey(), n }); CH.saved = true; save(); renderChHist();
-  toast(n > prevBest ? (prevBest ? `New best: ${n} changes (was ${prevBest})` : `${n} changes saved`) : `${n} changes saved. Best is ${prevBest}.`);
-}
-
 /* ---------- scale explorer ---------- */
 const SCALES = {
   majPent: { n: 'Major pentatonic', iv: [0, 2, 4, 7, 9], t: 'maj' }, minPent: { n: 'Minor pentatonic', iv: [0, 3, 5, 7, 10], t: 'min' },
@@ -1645,27 +1630,190 @@ function dPlay() {
   renderRiffPlay();
 }
 
-/* ---------- tuner ---------- */
-const TUNINGS = [ ['Standard (E A D G B E)', [40, 45, 50, 55, 59, 64]], ['Drop D', [38, 45, 50, 55, 59, 64]], ['Half step down (Eb)', [39, 44, 49, 54, 58, 63]], ['Whole step down (D)', [38, 43, 48, 53, 57, 62]], ['DADGAD', [38, 45, 50, 55, 57, 62]], ['Open G', [38, 43, 50, 55, 59, 62]], ['Open D', [38, 45, 50, 54, 57, 62]] ];
-const T = { active: -1, loop: null, tone: null, drone: null };
+/* ---------- tuner ----------
+   Pitch detection and the gauge are adapted from KotoLab (https://github.com/yuri-r2/kotolab),
+   MIT License, Copyright (c) 2026 yuri-r2. */
+const TUNINGS = [ ['Standard (E A D G B E)', [40, 45, 50, 55, 59, 64]], ['Drop D', [38, 45, 50, 55, 59, 64]], ['Half step down (Eb)', [39, 44, 49, 54, 58, 63]], ['Whole step down (D)', [38, 43, 48, 53, 57, 62]], ['DADGAD', [38, 45, 50, 55, 57, 62]], ['Open G', [38, 43, 50, 55, 59, 62]], ['Open D', [38, 45, 50, 54, 57, 62]], ['FACGCE (midwest emo)', [41, 45, 48, 55, 60, 64]] ];
+const PAGES_URL = 'https://yuri-r2.github.io/fretlab/#tuner';
+const T = { drone: null, refTone: null, listening: false, stream: null, src: null, an: null, buf: null, hist: [], timer: null, sel: 0, done: new Set(), holdMs: 0, lastTs: 0, gauge: null, wake: null, advT: null, celebrated: false };
+function detectPitch(buf, sampleRate, minHz = 38, maxHz = 1400) {
+  const n = buf.length; let rms = 0;
+  for (let i = 0; i < n; i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / n); if (rms < 0.008) return null;
+  const minLag = Math.floor(sampleRate / maxHz), maxLag = Math.min(Math.floor(sampleRate / minHz), Math.floor(n / 2)), size = n - maxLag;
+  const corr = new Float32Array(maxLag + 2); let e0 = 0;
+  for (let i = 0; i < size; i++) e0 += buf[i] * buf[i];
+  for (let lag = minLag; lag <= maxLag + 1; lag++) { let sum = 0, en = 0; for (let i = 0; i < size; i++) { sum += buf[i] * buf[i + lag]; en += buf[i + lag] * buf[i + lag]; } corr[lag] = sum / Math.sqrt(e0 * en || 1); }
+  let best = -1, bestLag = -1;
+  for (let lag = minLag; lag <= maxLag; lag++) if (corr[lag] > best) { best = corr[lag]; bestLag = lag; }
+  if (best < 0.8) return null;
+  const th = best * 0.92;
+  for (let lag = minLag + 1; lag <= maxLag; lag++) if (corr[lag] >= th && corr[lag] >= corr[lag - 1] && corr[lag] >= corr[lag + 1]) { bestLag = lag; break; }
+  const a = corr[bestLag - 1] || 0, b = corr[bestLag], c = corr[bestLag + 1] || 0, sh = (a - c) / (2 * (a - 2 * b + c) || 1);
+  return sampleRate / (bestLag + (Number.isFinite(sh) ? sh : 0));
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function svgEl(name, attrs = {}, parent) { const node = document.createElementNS(SVGNS, name); for (const [k, v] of Object.entries(attrs)) { if (v == null) continue; if (k === 'text') node.textContent = v; else node.setAttribute(k, v); } if (parent) parent.appendChild(node); return node; }
+const G_CX = 160, G_CY = 150, G_R = 118, G_SPAN = 62;
+const gAngle = c => (Math.max(-50, Math.min(50, c)) / 50) * G_SPAN;
+const gPolar = (deg, r) => { const a = ((deg - 90) * Math.PI) / 180; return [G_CX + r * Math.cos(a), G_CY + r * Math.sin(a)]; };
+const gArc = (from, to, r) => { const [x1, y1] = gPolar(from, r), [x2, y2] = gPolar(to, r); return `M ${x1} ${y1} A ${r} ${r} 0 ${Math.abs(to - from) > 180 ? 1 : 0} 1 ${x2} ${y2}`; };
+class TunerGauge {
+  constructor(container, tolerance = 5) { this.c = container; this.tol = tolerance; this.angle = 0; this.vel = 0; this.target = 0; this.active = false; this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; this.build(); }
+  build() {
+    this.c.innerHTML = '';
+    const svg = svgEl('svg', { class: 'gauge-svg', viewBox: '0 0 320 214', role: 'img', 'aria-label': 'Tuning meter' }, this.c);
+    const tol = gAngle(this.tol), amb = gAngle(20);
+    svgEl('path', { d: gArc(-G_SPAN, -amb, G_R), class: 'g-zone g-far' }, svg); svgEl('path', { d: gArc(-amb, -tol, G_R), class: 'g-zone g-near' }, svg);
+    svgEl('path', { d: gArc(-tol, tol, G_R), class: 'g-zone g-in' }, svg);
+    svgEl('path', { d: gArc(tol, amb, G_R), class: 'g-zone g-near' }, svg); svgEl('path', { d: gArc(amb, G_SPAN, G_R), class: 'g-zone g-far' }, svg);
+    for (let c = -50; c <= 50; c += 5) { const a = gAngle(c), major = c % 25 === 0; const [x1, y1] = gPolar(a, G_R - 14), [x2, y2] = gPolar(a, G_R - (major ? 30 : c % 10 === 0 ? 24 : 19)); svgEl('line', { x1, y1, x2, y2, class: 'g-tick' + (major ? ' major' : '') }, svg); }
+    const lab = (c, t) => { const [x, y] = gPolar(gAngle(c), G_R + 14); svgEl('text', { x, y: y + 4, class: 'g-scale', 'text-anchor': 'middle', text: t }, svg); };
+    lab(-50, '−50'); lab(-25, '−25'); lab(0, '0'); lab(25, '+25'); lab(50, '+50');
+    svgEl('text', { x: G_CX - G_R + 6, y: G_CY + 30, class: 'g-side', 'text-anchor': 'start', text: '♭ low' }, svg);
+    svgEl('text', { x: G_CX + G_R - 6, y: G_CY + 30, class: 'g-side', 'text-anchor': 'end', text: 'high ♯' }, svg);
+    this.needle = svgEl('g', { class: 'g-needle' }, svg);
+    svgEl('line', { x1: G_CX, y1: G_CY, x2: G_CX, y2: G_CY - G_R + 8, class: 'g-needle-line' }, this.needle);
+    svgEl('circle', { cx: G_CX, cy: G_CY - G_R + 8, r: 4, class: 'g-needle-tip' }, this.needle);
+    svgEl('circle', { cx: G_CX, cy: G_CY, r: 40, class: 'g-ring-bg' }, svg);
+    this.ring = svgEl('circle', { cx: G_CX, cy: G_CY, r: 40, class: 'g-ring', transform: `rotate(-90 ${G_CX} ${G_CY})` }, svg);
+    this.ringLen = 2 * Math.PI * 40; this.ring.setAttribute('stroke-dasharray', `${this.ringLen}`); this.ring.setAttribute('stroke-dashoffset', `${this.ringLen}`);
+    svgEl('circle', { cx: G_CX, cy: G_CY, r: 34, class: 'g-hub' }, svg);
+    this.note = svgEl('text', { x: G_CX, y: G_CY + 2, class: 'g-note', 'text-anchor': 'middle', text: '' }, svg);
+    this.cents = svgEl('text', { x: G_CX, y: G_CY + 20, class: 'g-cents', 'text-anchor': 'middle', text: '' }, svg);
+    svgEl('path', { d: `M ${G_CX - 15} ${G_CY + 1} l 10 10 l 20 -22`, class: 'g-check' }, svg);
+    this.svg = svg; this.setState('idle');
+  }
+  setState(s) { this.svg.dataset.state = s; }
+  setTarget(label) { this.targetLabel = label; this.reset(); }
+  reset() { this.active = false; this.target = 0; this.note.textContent = this.targetLabel || ''; this.cents.textContent = 'target'; this.setHold(0); this.setState('idle'); this.kick(); }
+  update(r) {
+    if (!r) { if (this.active) { this.active = false; this.setState('idle'); this.note.textContent = this.targetLabel || ''; this.cents.textContent = 'target'; } this.target = 0; this.kick(); return; }
+    this.active = true; const { cents, heard, wrong } = r, abs = Math.abs(cents);
+    this.target = wrong ? (cents < 0 ? -G_SPAN - 6 : G_SPAN + 6) : gAngle(cents);
+    this.note.textContent = heard; const rc = Math.round(cents);
+    this.cents.textContent = wrong ? (cents < 0 ? 'way low' : 'way high') : `${rc > 0 ? '+' : rc < 0 ? '−' : '±'}${Math.abs(rc)}¢`;
+    this.setState(wrong ? 'far' : abs <= this.tol ? 'in' : abs <= 20 ? 'near' : 'far'); this.kick();
+  }
+  setHold(f) { f = Math.max(0, Math.min(1, f)); this.ring.setAttribute('stroke-dashoffset', `${this.ringLen * (1 - f)}`); }
+  celebrate() { this.setHold(1); this.target = 0; this.cents.textContent = ''; this.setState('done'); this.kick(); }
+  kick() {
+    if (this.raf) return;
+    const step = () => {
+      if (this.reduced) { this.angle = this.target; this.vel = 0; } else { this.vel += (this.target - this.angle) * 0.18; this.vel *= 0.62; this.angle += this.vel; }
+      this.needle.setAttribute('transform', `rotate(${this.angle.toFixed(2)} ${G_CX} ${G_CY})`);
+      if (Math.abs(this.target - this.angle) > 0.05 || Math.abs(this.vel) > 0.05) this.raf = requestAnimationFrame(step); else this.raf = null;
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+}
+const tnMs = () => TUNINGS[S.ui.tuning][1];
+const tnLabel = (m) => nn(m % 12) + (Math.floor(m / 12) - 1);
+function renderHeadstock() {
+  const ms = tnMs(), pos = [[0, 2], [0, 1], [0, 0], [1, 0], [1, 1], [1, 2]];
+  const W = 280, H = 300, post = i => { const [side, row] = pos[i]; return [side ? 186 : 94, 70 + (side ? row : 2 - row) * 62]; }, peg = i => { const [side, row] = pos[i]; return [side ? 246 : 34, 70 + (side ? row : 2 - row) * 62]; };
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="headstock" role="group" aria-label="Strings">`;
+  s += `<path d="M 80 290 L 72 40 Q 70 18 96 14 L 184 14 Q 210 18 208 40 L 200 290 Z" fill="var(--wood)"/><rect x="104" y="284" width="72" height="8" rx="2" fill="var(--inlay)"/>`;
+  for (let i = 0; i < 6; i++) { const [px, py] = post(i), nx = 112 + i * 11.2; s += `<line x1="${px}" y1="${py}" x2="${nx}" y2="288" stroke="var(--string)" stroke-width="${(2.4 - i * 0.3).toFixed(1)}"/><circle cx="${px}" cy="${py}" r="7" fill="var(--fret)"/>`; }
+  for (let i = 0; i < 6; i++) {
+    const [x, y] = peg(i), [px, py] = post(i), done = T.done.has(i), selected = T.sel === i;
+    s += `<line x1="${x}" y1="${y}" x2="${px}" y2="${py}" stroke="var(--fret)" stroke-width="5"/>`;
+    s += `<g class="peg ${done ? 'done' : ''} ${selected ? 'sel' : ''}" data-i="${i}" tabindex="0" role="button" aria-label="String ${6 - i}, ${nn(ms[i] % 12)}${done ? ', in tune' : ''}"><circle cx="${x}" cy="${y}" r="25"/><text x="${x}" y="${done ? y + 1 : y - 3}" class="peg-n" text-anchor="middle" dominant-baseline="central">${done ? '✓' : nn(ms[i] % 12)}</text>${done ? '' : `<text x="${x}" y="${y + 17}" class="peg-s" text-anchor="middle">${6 - i}</text>`}</g>`;
+  }
+  return s + '</svg>';
+}
 function renderTuner() {
   $('#tTuning').innerHTML = TUNINGS.map((t, i) => `<option value="${i}">${t[0]}</option>`).join('');
   $('#tTuning').value = S.ui.tuning;
-  $$('#tMode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.ui.tmode));
-  const ms = TUNINGS[S.ui.tuning][1];
-  $('#tStrings').innerHTML = ms.map((m, i) => `<button class="sbtn ${T.active === i ? 'on' : ''}" type="button" data-i="${i}"><b>${nn(m % 12)}</b><small>${6 - i}${['th', 'th', 'th', 'rd', 'nd', 'st'][i]} string · ${mtof(m).toFixed(1)} Hz</small></button>`).join('');
+  $$('#tnMode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.ui.tnmode));
+  $('#tnHead').innerHTML = renderHeadstock();
+  if (!T.gauge) T.gauge = new TunerGauge($('#tnGauge'));
+  tnSetTarget();
+  $('#tnListen').textContent = T.listening ? 'Stop listening' : 'Start listening';
+  $('#tnListen').classList.toggle('primary', !T.listening);
+  $('#tnRef').textContent = T.refTone ? 'Stop reference' : `Play reference (${tnLabel(tnMs()[T.sel])})`;
+  $('#tnProgress').textContent = S.ui.tnmode === 'chromatic' ? 'Chromatic: any note' : `${T.done.size} of 6 strings in tune`;
   const curDr = $('#drNote').dataset.set ? $('#drNote').value : '9';
   $('#drNote').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(pc => `<option value="${pc}">${nn(pc)}</option>`).join('');
   $('#drNote').value = curDr; $('#drNote').dataset.set = '1';
 }
-function tStopRef() { clearInterval(T.loop); T.loop = null; if (T.tone) { T.tone.stop(); T.tone = null; } T.active = -1; }
-function tString(i) {
-  const was = T.active; tStopRef();
-  if (was === i) { renderTuner(); return; }
-  T.active = i; const m = TUNINGS[S.ui.tuning][1][i];
-  if (S.ui.tmode === 'tone') T.tone = tone(m, null, 'pure');
-  else { pluck(m, 0, null, 0.85, 2.2); T.loop = setInterval(() => pluck(m, 0, null, 0.85, 2.2), 2300); }
-  renderTuner();
+function tnSetTarget() { if (!T.gauge) return; T.gauge.setTarget(S.ui.tnmode === 'chromatic' ? '' : nn(tnMs()[T.sel] % 12)); T.holdMs = 0; T.celebrated = false; }
+function tnRead(text, state) { const r = $('#tnRead'); r.textContent = text; r.dataset.state = state || ''; }
+async function tnStart() {
+  if (T.listening) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { tnMicHelp(); return; }
+  try {
+    const ctx = ac();
+    T.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    T.src = ctx.createMediaStreamSource(T.stream); T.an = ctx.createAnalyser(); T.an.fftSize = 4096; T.src.connect(T.an);
+    T.buf = new Float32Array(T.an.fftSize); T.listening = true; T.hist = []; T.lastTs = performance.now();
+    $('#tnMic').hidden = true; tnRead('Play a string', '');
+    try { T.wake = await navigator.wakeLock?.request('screen'); } catch (e) {}
+    tnLoop(); renderTuner();
+  } catch (e) { tnMicHelp(); }
+}
+function tnMicHelp() {
+  $('#tnMic').hidden = false;
+  $('#tnMic').innerHTML = `<b>The microphone isn't available here.</b> Open Fretlab on its own page to tune by listening: <a href="${PAGES_URL}" target="_blank" rel="noopener">${PAGES_URL.replace('https://', '')}</a>. Allow microphone access when the browser asks. Until then, tap a peg to hear its reference note and tune by ear.`;
+}
+function tnStop() {
+  T.listening = false; clearTimeout(T.timer);
+  try { T.src && T.src.disconnect(); } catch (e) {}
+  if (T.stream) T.stream.getTracks().forEach(t => t.stop());
+  T.stream = null; T.hist = [];
+  try { T.wake && T.wake.release(); } catch (e) {} T.wake = null;
+  if (T.gauge) T.gauge.reset();
+  tnRead('', ''); if (curTab === 'tuner') renderTuner();
+}
+function tnLoop() {
+  if (!T.listening) return;
+  T.an.getFloatTimeDomainData(T.buf);
+  const f = detectPitch(T.buf, AU.ctx.sampleRate);
+  if (f) { const last = T.hist[T.hist.length - 1]; if (last && Math.abs(1200 * Math.log2(f / last)) > 60) T.hist = []; T.hist.push(f); if (T.hist.length > 5) T.hist.shift(); const sorted = T.hist.slice().sort((a, b) => a - b); tnPitch(sorted[Math.floor(sorted.length / 2)]); }
+  else { T.hist = []; tnPitch(null); }
+  T.timer = setTimeout(tnLoop, 50);
+}
+function tnPitch(f) {
+  const now = performance.now(), dt = now - T.lastTs; T.lastTs = now;
+  if (!f) { if (!T.celebrated) { T.gauge.update(null); T.holdMs = 0; T.gauge.setHold(0); } $('#tnHz').textContent = ''; return; }
+  $('#tnHz').textContent = `${f.toFixed(1)} Hz`;
+  const mf = 69 + 12 * Math.log2(f / S.settings.a4), ms = tnMs();
+  let target, label, idx = T.sel;
+  if (S.ui.tnmode === 'chromatic') { target = Math.round(mf); label = tnLabel(target); }
+  else {
+    if (S.ui.tnmode === 'auto') { idx = ms.reduce((bi, m, i) => Math.abs(mf - m) < Math.abs(mf - ms[bi]) ? i : bi, 0); if (idx !== T.sel) { T.sel = idx; T.holdMs = 0; T.celebrated = false; T.gauge.setTarget(nn(ms[idx] % 12)); $('#tnHead').innerHTML = renderHeadstock(); $('#tnRef').textContent = `Play reference (${tnLabel(ms[idx])})`; } }
+    target = ms[idx]; label = nn(target % 12);
+    if (Math.abs(mf - target) > 9 && Math.abs(mf - 12 - target) < Math.abs(mf - target)) target += 12;
+    if (Math.abs(mf - target) > 9 && Math.abs(mf + 12 - target) < Math.abs(mf - target)) target -= 12;
+  }
+  const cents = (mf - target) * 100, wrong = Math.abs(cents) > 60;
+  if (T.celebrated && Math.abs(cents) <= 12) return;
+  T.celebrated = false;
+  T.gauge.update({ cents, heard: label, wrong });
+  if (Math.abs(cents) <= 5) {
+    T.holdMs += dt; T.gauge.setHold(T.holdMs / 900); tnRead('In tune. Hold it…', 'in');
+    if (T.holdMs >= 900) {
+      T.celebrated = true; T.gauge.celebrate(); tnRead(S.ui.tnmode === 'chromatic' ? `${label} is in tune` : `String ${6 - idx} (${label}) is in tune`, 'done');
+      if (S.ui.tnmode !== 'chromatic') {
+        T.done.add(idx); $('#tnHead').innerHTML = renderHeadstock(); $('#tnProgress').textContent = `${T.done.size} of 6 strings in tune`;
+        if (T.done.size === 6) { tnRead('All six strings are in tune', 'done'); chime(); }
+        else if (S.ui.tnmode === 'manual') { clearTimeout(T.advT); T.advT = setTimeout(() => { const next = [0, 1, 2, 3, 4, 5].find(i => !T.done.has(i)); if (next != null) { T.sel = next; tnSetTarget(); renderTuner(); tnRead(`Now string ${6 - next} (${nn(ms[next] % 12)})`, ''); } }, 900); }
+      }
+    }
+  } else {
+    T.holdMs = 0; T.gauge.setHold(0);
+    tnRead(wrong ? (cents < 0 ? 'Way too low: tune up' : 'Way too high: tune down') : cents < 0 ? `Tune up ↑ (${Math.round(-cents)}¢ flat)` : `Tune down ↓ (${Math.round(cents)}¢ sharp)`, wrong ? 'far' : Math.abs(cents) <= 20 ? 'near' : 'far');
+  }
+}
+function tnRefToggle() {
+  if (T.refTone) { clearInterval(T.refTone); T.refTone = null; renderTuner(); return; }
+  const m = tnMs()[T.sel]; pluck(m, 0, null, 0.85, 2.2); T.refTone = setInterval(() => pluck(m, 0, null, 0.85, 2.2), 2300); renderTuner();
+}
+function tnPeg(i) {
+  T.sel = i; tnSetTarget();
+  if (S.ui.tnmode === 'auto' && !T.listening) S.ui.tnmode = 'manual';
+  if (T.refTone) { clearInterval(T.refTone); T.refTone = null; }
+  pluck(tnMs()[i], 0, null, 0.85, 2.2); renderTuner();
 }
 function drToggle() {
   if (T.drone) { T.drone.stop(); T.drone = null; $('#drGo').textContent = 'Start drone'; return; }
@@ -1919,7 +2067,7 @@ const EX = [
 /* ---------- guided exercises: player ---------- */
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', SANS = '"IBM Plex Sans", system-ui, sans-serif', DISP = '"Barlow Condensed", "Arial Narrow", sans-serif';
 const P = { ex: null, step: 0, ev: [], L: 4, bpm: 60, swing: 0, running: false, bus: null, timer: null, startT: 0, k: 0, i: 0, cb: 0, endBeat: Infinity, loops: 0, cursor: 0, viewPos: 0, lastIdx: -2, ppb: 100, bf: 0, bt: 12, labels: 'finger', status: '' };
-const pBoard = makeBoard($('#pBoard'), (s, f) => pluck(OPEN[s] + f, 0, null, 0.65, 1.4));
+const pBoard = makeBoard($('#pBoard'), (s, f) => pluck((P.tun || OPEN)[s] + f, 0, null, 0.65, 1.4));
 function exStat(id) { return S.ex[id] || (S.ex[id] = { done: [], best: {}, bpm: {}, last: '' }); }
 function nextStep(e) { const st = exStat(e.id); const i = e.steps.findIndex((_, k) => !st.done[k]); return i < 0 ? e.steps.length - 1 : i; }
 function swingT(t) { if (!P.swing) return t; const b = Math.floor(t + 1e-6), fr = t - b; return Math.abs(fr - 0.5) < 1e-3 ? b + 0.5 + P.swing / 6 : t; }
@@ -1945,7 +2093,8 @@ function exLoad(i) {
 function exRebuild() {
   const sd = P.ex.steps[P.step]; P.keyPc = exKey();
   const b = sd.build(P.keyPc);
-  P.ev = b.ev; P.L = b.L; P.swing = sd.swing || 0;
+  P.ev = b.ev; P.L = b.L; P.swing = sd.swing || 0; P.bar = sd.bar || 4;
+  const tk = sd.tuning || P.ex.tuning || 'std'; P.tun = TUNE[tk].m; P.names = tuneNames(tk); P.tuneKey = tk;
   let gap = 1; for (let k = 1; k < P.ev.length; k++) { const g = P.ev[k].t - P.ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
   P.ppb = clamp(42 / gap, 90, 190);
   const frets = P.ev.flatMap(x => x.n.map(n => n.f)), nz = frets.filter(f => f > 0);
@@ -1954,15 +2103,20 @@ function exRebuild() {
 }
 function exPlayEv(e, t, spb, dest) {
   const d = dest || P.bus;
+  if (e.roll) {
+    const ns = e.n.map(n => P.tun[n.s] + n.f).sort((a, b) => a - b), order = e.p === 'U' ? rev(ns) : ns;
+    strum(order, t, d, e.p === 'U' ? 0.013 : 0.018, e.p === 'U' ? 0.36 : 0.48, e.x === 'PM' ? 0.2 : Math.min(2.6, Math.max(0.3, e.d * spb * 1.15)));
+    return;
+  }
   if (e.strum) {
-    const ns = e.n.map(n => OPEN[n.s] + n.f).sort((a, b) => a - b);
+    const ns = e.n.map(n => P.tun[n.s] + n.f).sort((a, b) => a - b);
     const order = e.p === 'U' ? rev(ns).slice(0, 4) : ns;
     strum(order, t, d, e.p === 'U' ? 0.012 : 0.018, e.p === 'U' ? 0.32 : 0.48, Math.min(1.3, Math.max(0.3, e.d * spb * 1.2)));
     return;
   }
   const dur = e.x === 'PM' ? 0.16 : Math.min(1.6, Math.max(0.28, e.d * spb * 1.15));
   const gain = (e.x === 'h' || e.x === 'p' || e.x === '/') ? 0.5 : 0.72;
-  e.n.forEach(n => pluck(OPEN[n.s] + n.f, t, d, gain / (e.n.length > 1 ? 1.35 : 1), dur));
+  e.n.forEach(n => pluck(P.tun[n.s] + n.f, t, d, gain / (e.n.length > 1 ? 1.35 : 1), dur));
 }
 function exClickSnd() { const s = S.metro.sound; return (s === 'drums' || s === 'none') ? 'wood' : s; }
 function exStart() {
@@ -1997,7 +2151,7 @@ function exSched() {
     if (P.cb >= P.endBeat - 1e-6) break;
     const tt = P.startT + P.cb * spb; if (tt > hz) break;
     const rel = P.cb % P.L;
-    if (S.ui.exopts.click && tt >= c.currentTime - 0.03) SND[cs](tt, rel === 0 ? 3 : rel % 4 === 0 ? 2 : 1, P.bus);
+    if (S.ui.exopts.click && tt >= c.currentTime - 0.03) SND[cs](tt, rel === 0 ? 3 : rel % P.bar === 0 ? 2 : (P.bar === 7 && (rel % 7 === 2 || rel % 7 === 4)) ? 2 : 1, P.bus);
     P.cb++;
   }
 }
@@ -2042,9 +2196,9 @@ function exLoopEnd() {
 }
 function exStatus(pos, force) {
   let s;
-  if (!P.running) s = `${P.ev.length} ${P.ev[0] && P.ev[0].strum ? 'strums' : 'notes'} · ${P.L / 4} bar${P.L > 4 ? 's' : ''} · press Play or step through with the arrow keys`;
+  if (!P.running) s = `${P.ev.length} ${P.ev[0] && P.ev[0].strum ? 'strums' : 'notes'} · ${P.L / P.bar} bar${P.L > P.bar ? 's' : ''}${P.bar === 7 ? ' of 7/8' : ''} · press Play or step through with the arrow keys`;
   else if (pos < 0) s = 'Count-in…';
-  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / 4) + 1} of ${P.L / 4} · beat ${Math.floor(w % 4) + 1}`; }
+  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / P.bar) + 1} of ${P.L / P.bar} · ${P.bar === 7 ? '8th' : 'beat'} ${Math.floor(w % P.bar) + 1}`; }
   if (s !== P.status || force) { P.status = s; $('#pStatus').textContent = s; }
 }
 function exStepNote(dir) {
@@ -2057,7 +2211,7 @@ function exStepNote(dir) {
   exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor);
   const s = `Note ${P.cursor + 1} of ${P.ev.length} · step-through mode`; P.status = s; $('#pStatus').textContent = s;
 }
-function exLabel(n) { const pc = (OPEN[n.s] + n.f) % 12; if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return n.fg ? String(n.fg) : (n.f === 0 ? '0' : ''); }
+function exLabel(n) { const pc = (P.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return n.fg ? String(n.fg) : (n.f === 0 ? '0' : ''); }
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
@@ -2067,7 +2221,7 @@ function exBoard(idx, preview) {
     if (nx && nx !== cur && !nx.strum) nx.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n) }));
     cur.n.forEach(n => { const k = key(n); map.delete(k); map.set(k, { s: n.s, f: n.f, k: cur.strum ? 'chord' : 'play', l: cur.strum ? '' : exLabel(n) }); });
   }
-  pBoard.draw({ from: P.bf, to: P.bt, markers: [...map.values()], win: null });
+  pBoard.draw({ from: P.bf, to: P.bt, markers: [...map.values()], win: null, names: P.names });
 }
 let exC = null, exCF = 0;
 function exColors(force) {
@@ -2095,15 +2249,15 @@ function exDraw(pos) {
   for (let b = Math.max(0, b0); b <= b1; b++) {
     if (!S.ui.exopts.loop && b > P.L) break;
     const x = ph + (b - pos) * ppb; if (x < left) continue;
-    const rel = b % P.L, bar = rel % 4 === 0;
+    const rel = b % P.L, bar = rel % P.bar === 0;
     g.strokeStyle = bar ? C.muted : C.line; g.lineWidth = bar ? 1.4 : 1; g.globalAlpha = bar ? 0.6 : 1;
     g.beginPath(); g.moveTo(x, top - 10); g.lineTo(x, bot + 10); g.stroke(); g.globalAlpha = 1;
-    if (bar) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / 4 + 1), x + 4, bot + 22); }
+    if (bar) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / P.bar + 1), x + 4, bot + 22); }
   }
   for (let s = 0; s < 6; s++) {
     const y = top + s * sh; g.strokeStyle = C.muted; g.globalAlpha = 0.45; g.lineWidth = 0.8 + s * 0.3;
     g.beginPath(); g.moveTo(left, y); g.lineTo(W, y); g.stroke(); g.globalAlpha = 1;
-    g.fillStyle = C.muted; g.font = '500 11px ' + MONO; g.textAlign = 'center'; g.fillText(SNAME[s], 10, y);
+    g.fillStyle = C.muted; g.font = '500 11px ' + MONO; g.textAlign = 'center'; g.fillText(P.names[s], 10, y);
   }
   let curK = -1, curIdx = -1;
   if (pos >= 0) { curK = Math.floor(pos / P.L); curIdx = evIndexAt(pos - curK * P.L); }
@@ -2483,7 +2637,7 @@ function renderCard() {
   $('#lnDots').innerHTML = u.cards.map((_, i) => `<i class="${i === LN.card ? 'on' : i < LN.card ? 'seen' : ''}"></i>`).join('');
   $('#lnCardTitle').textContent = c.t;
   $('#lnCardBody').innerHTML = c.body.map(p => `<p>${p}</p>`).join('');
-  const b = c.show(); lBoard.draw({ from: b.from, to: b.to, markers: b.markers, win: b.win || null });
+  const b = c.show(); lBoard.draw({ from: b.from, to: b.to, markers: b.markers, win: b.win || null, names: b.names });
   $('#lnLegend').innerHTML = legendHtml(c.legend || []) + '<span class="muted">Tap any dot to hear it.</span>';
   $('#lnPrev').disabled = LN.card === 0;
   $('#lnNext').textContent = LN.card === u.cards.length - 1 ? 'Take the check →' : 'Next';
@@ -2500,7 +2654,7 @@ function qzShow() {
   $('#qzScore').innerHTML = `<span>Question <b>${QZ.i + 1}</b> of ${QZ.qs.length}</span><span>Correct <b>${QZ.score}</b></span><span>Pass mark <b>8</b></span>`;
   $('#qzFb').innerHTML = ''; $('#qzFb').className = 'qzfb';
   $('#qzBoardWrap').hidden = !q.board;
-  if (q.board) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.board.markers, win: q.board.win || null });
+  if (q.board) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.board.markers, win: q.board.win || null, names: q.board.names });
   $('#qzAns').innerHTML = q.type === 'mc' ? q.options.map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join('') : '';
   $('#qzHint').textContent = q.type === 'tap' ? 'Tap the fretboard.' : q.type === 'every' ? `Tap every one you can find. ${q.targets.length} to find.` : '';
   $('#qzNext').hidden = true; $('#qzSkip').hidden = false; $('#qzEndBtns').innerHTML = '';
@@ -2510,7 +2664,7 @@ function qzFinish(ok, extraMarkers) {
   const q = QZ.qs[QZ.i]; QZ.answered = true; if (ok) QZ.score++;
   $('#qzFb').className = 'qzfb ' + (ok ? 'ok' : 'no');
   $('#qzFb').innerHTML = `<b>${ok ? 'Correct.' : 'Not quite.'}</b> ${q.explain}`;
-  if (q.board && q.reveal) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.reveal.concat(extraMarkers || []), win: q.board.win || null });
+  if (q.board && q.reveal) qBoard.draw({ from: q.board.from, to: q.board.to, markers: q.reveal.concat(extraMarkers || []), win: q.board.win || null, names: q.board.names });
   qzPlay(q);
   $('#qzScore').innerHTML = `<span>Question <b>${QZ.i + 1}</b> of ${QZ.qs.length}</span><span>Correct <b>${QZ.score}</b></span><span>Pass mark <b>8</b></span>`;
   $('#qzNext').hidden = false; $('#qzSkip').hidden = true; $('#qzNext').textContent = QZ.i === QZ.qs.length - 1 ? 'See result' : 'Next question';
@@ -2554,6 +2708,206 @@ function renderContinue() {
   const u = nextUnit(), st = lnStat(u.id), i = UNITS.indexOf(u), done = UNITS.filter(x => lnStat(x.id).passed).length;
   $('#continueLearn').innerHTML = `<div class="row" style="justify-content:space-between;align-items:flex-start"><div class="stack" style="gap:2px"><span class="label">Unit ${i + 1} of ${UNITS.length} · ${done} passed</span><b>${esc(u.title)}</b><span class="small muted">${esc(u.sum)}</span></div><button class="btn primary" type="button" data-openunit="${u.id}">${st.card || st.best ? 'Continue' : 'Start'}</button></div><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / UNITS.length * 100)}%"></i></span>`;
 }
+
+/* ---------- voicings: data ---------- */
+const TUNE = {
+  std: { name: 'Standard', m: [64, 59, 55, 50, 45, 40] },
+  dropd: { name: 'Drop D', m: [64, 59, 55, 50, 45, 38] },
+  facgce: { name: 'FACGCE', m: [64, 60, 55, 48, 45, 41] },
+  opend: { name: 'Open D', m: [62, 57, 54, 50, 45, 38] }
+};
+const tuneNames = k => TUNE[k].m.map(x => nn(x % 12));
+const tuneLowHigh = k => tuneNames(k).slice().reverse().join(' ');
+const VLAB = ['1', 'b9', '9', 'b3', '3', '11', '#11', '5', 'b6', '6', 'b7', '7'];
+const STYLE_NAME = { alt: 'Alternative', emo: 'Midwest emo', gaze: 'Shoegaze' };
+const NX = null;
+const VOICINGS = [
+  { id: 'alt_emdrone', style: 'alt', tune: 'std', name: 'Two-finger shape over open strings', pats: ['chug', 'strum'], bpm: [90, 130],
+    why: 'Two fretted notes on the A and D strings move while the open G, B and high E ring on top. Each move changes the chord\'s color with almost no new fingering. This open-string drone sound is all over 90s alternative rock.',
+    ideas: ['Chug the open low E with palm mutes between shape changes.', 'Hold one shape for a bar, then slide into the next on beat 4 so the change lands early.', 'Pick the fretted pair, then let the open strings ring out on the "and".'],
+    moves: [{ name: 'Em(add9)', root: 4, f: [0, 2, 4, 0, 0, 0] }, { name: 'Cmaj7/E', root: 0, f: [0, 3, 5, 0, 0, 0] }, { name: 'Em7(add11)', root: 4, f: [0, 5, 7, 0, 0, 0] }, { name: 'Em', root: 4, f: [0, 7, 9, 0, 0, 0] }] },
+  { id: 'alt_dropd', style: 'alt', tune: 'dropd', name: 'Drop D one-finger power chords', pats: ['chug', 'strum8'], bpm: [100, 150],
+    why: 'Tuning the low E down to D turns the bottom three strings into a power chord. One finger across all three plays any power chord, so riffs can jump around fast, and the open D works as a heavy drone between them.',
+    ideas: ['Alternate open D chugs with one quick chord stab.', 'Return to the open D between every chord so the riff never stops sounding.', 'Moving up three frets (D to F) gives a dark, minor feel. Up five (D to G) sounds bigger and brighter.'],
+    moves: [{ name: 'D5', root: 2, f: [0, 0, 0, NX, NX, NX] }, { name: 'F5', root: 5, f: [3, 3, 3, NX, NX, NX] }, { name: 'G5', root: 7, f: [5, 5, 5, NX, NX, NX] }, { name: 'C5', root: 0, f: [10, 10, 10, NX, NX, NX] }] },
+  { id: 'alt_sus2', style: 'alt', tune: 'std', name: 'Sus2 chords with open strings', pats: ['strum', 'arp'], bpm: [80, 120],
+    why: 'A sus2 chord swaps the 3rd for the 2nd, so it is neither major nor minor. It sounds open and unresolved, which suits big choruses and lets the same riff work under a major or minor melody.',
+    ideas: ['Strum on beat 1, then pick the top two strings as a hook.', 'Keep the open D and G ringing through every change.', 'Use the same sus2 sound over a new bass note to change the mood without changing the riff.'],
+    moves: [{ name: 'Csus2', root: 0, f: [NX, 3, 0, 0, 3, 3] }, { name: 'Asus2', root: 9, f: [NX, 0, 2, 2, 0, 0] }, { name: 'Gsus2', root: 7, f: [3, 0, 0, 0, 3, 3] }, { name: 'Dsus2', root: 2, f: [NX, NX, 0, 2, 3, 0] }] },
+  { id: 'alt_octdrone', style: 'alt', tune: 'std', name: 'Octaves over open B and E', pats: ['drone', 'strum8'], bpm: [80, 130],
+    why: 'An octave shape on the A and G strings (mute the D string with your index finger) carries the melody while the open B and high E drone on top. The open strings rub against each new octave and give every note its own chord color.',
+    ideas: ['Play a simple melody in octaves; the open strings make it sound like a full band.', 'Slide into each octave from a fret below.', 'Rake across the open B and E after each octave for a ringing tail.'],
+    moves: [{ name: 'E5', root: 4, f: [NX, 7, NX, 9, 0, 0] }, { name: 'D6/9 (no 3rd)', root: 2, f: [NX, 5, NX, 7, 0, 0] }, { name: 'Cmaj7', root: 0, f: [NX, 3, NX, 5, 0, 0] }, { name: 'Bsus4 (no 5th)', root: 11, f: [NX, 2, NX, 4, 0, 0] }] },
+  { id: 'emo_cmaj7', style: 'emo', tune: 'std', name: 'Major 7ths with open strings', pats: ['twinkle', 'odd7'], bpm: [80, 120],
+    why: 'A major 7th adds the note a half step below the root. It sounds bittersweet, happy and sad at once, which is the core of the midwest emo sound. Open strings keep ringing between chords so the arpeggios blur together.',
+    ideas: ['Fingerpick: thumb on the bass, fingers on the open strings.', 'Hold each chord for a bar of continuous 8th notes and let the notes overlap.', 'Play the same pattern in 7/8 by dropping the last 8th note of each bar.'],
+    moves: [{ name: 'Cmaj7', root: 0, f: [NX, 3, 2, 0, 0, 0] }, { name: 'Am7', root: 9, f: [NX, 0, 2, 0, 1, 0] }, { name: 'Fmaj7', root: 5, f: [NX, NX, 3, 2, 1, 0] }, { name: 'G6', root: 7, f: [3, 2, 0, 0, 0, 0] }] },
+  { id: 'emo_moving', style: 'emo', tune: 'std', name: 'Moving shape under open B and E', pats: ['hammer', 'odd7'], bpm: [80, 120],
+    why: 'Only two fingers move, on the D and G strings. The open B and high E stay put, but against each new bass note they become a new interval: the 9th of A, the 3rd and 6th of G, the 11th and b7 of F#m. That is how emo players get rich chords from tiny shapes.',
+    ideas: ['Hammer onto the G-string note instead of picking it.', 'Keep the open B and E as a steady 8th-note pulse.', 'Walk the bass note down one scale step at a time.'],
+    moves: [{ name: 'Aadd9', root: 9, f: [NX, NX, 7, 6, 0, 0] }, { name: 'G6', root: 7, f: [NX, NX, 5, 4, 0, 0] }, { name: 'F#m11', root: 6, f: [NX, NX, 4, 2, 0, 0] }, { name: 'E', root: 4, f: [NX, NX, 2, 1, 0, 0] }] },
+  { id: 'emo_facgce', style: 'emo', tune: 'facgce', name: 'FACGCE: Fmaj9 on open strings', pats: ['twinkle', 'odd7'], bpm: [80, 120],
+    why: 'In FACGCE tuning the open strings already form a lush Fmaj9 chord. Barring two strings with one finger and letting the rest ring gives a family of related chords. This tuning is closely tied to the twinkly midwest emo sound.',
+    ideas: ['Start with all six open strings, then barre frets 5, 7 and 2 on the middle strings.', 'Pick in a rolling pattern: bass, middle, top, middle.', 'Add a tapped note on the high E at fret 12 for sparkle.'],
+    moves: [{ name: 'Fmaj9', root: 5, f: [0, 0, 0, 0, 0, 0] }, { name: 'Fmaj7/A', root: 5, f: [NX, 0, 5, 5, 0, 0] }, { name: 'Cadd9/G', root: 0, f: [NX, NX, 7, 7, 0, 0] }, { name: 'Dm9/F', root: 2, f: [0, 0, 2, 2, 0, 0] }] },
+  { id: 'gaze_bloom', style: 'gaze', tune: 'std', name: 'A drone with a sliding shape', pats: ['glide', 'strum8'], bpm: [70, 100],
+    why: 'The open A string holds the bass while a two-note shape slides along the D and G strings. Every stop is a different color of A: the #11 shimmers, the 9 floats, the b7 pulls. Strum slowly with lots of reverb.',
+    ideas: ['Strum once per bar and let it ring; move the shape on beat 4.', 'If your guitar has a tremolo arm, rest your hand on it and dip it gently as you strum (the "glide" sound).', 'Play a slow melody on the G string while the rest of the chord rings.'],
+    moves: [{ name: 'Aadd9(#11)', root: 9, f: [NX, 0, 9, 8, 0, 0] }, { name: 'Aadd9', root: 9, f: [NX, 0, 7, 6, 0, 0] }, { name: 'A7sus2', root: 9, f: [NX, 0, 5, 4, 0, 0] }, { name: 'Amaj7sus2', root: 9, f: [NX, 0, 2, 1, 0, 0] }] },
+  { id: 'gaze_3rds', style: 'gaze', tune: 'std', name: 'Drone 3rds over open E', pats: ['drone', 'glide'], bpm: [70, 110],
+    why: 'Parallel 3rds on the G and B strings move down the E major scale while the open high E rings over everything. The drone glues the shapes into one wash of sound, the basis of a lot of shoegaze and dream-pop guitar.',
+    ideas: ['Pick the 3rd shape on the beat and the open E in between.', 'Slide between shapes instead of lifting off.', 'Tremolo-pick the 3rds with lots of reverb for a wall of sound.'],
+    moves: [{ name: 'E', root: 4, f: [NX, NX, NX, 9, 9, 0] }, { name: 'C#m', root: 1, f: [NX, NX, NX, 6, 5, 0] }, { name: 'Badd11', root: 11, f: [NX, NX, NX, 4, 4, 0] }, { name: 'A', root: 9, f: [NX, NX, NX, 2, 2, 0] }] },
+  { id: 'gaze_opend', style: 'gaze', tune: 'opend', name: 'Open D shimmer', pats: ['glide', 'strum8'], bpm: [70, 100],
+    why: 'Open D tuning (D A D F# A D) rings a full D major chord on the open strings. Fret two neighboring strings and everything else keeps droning, so even tiny shapes sound huge. Good for slow, wide, reverb-soaked parts.',
+    ideas: ['Strum the open strings, then fret only the F# and A strings.', 'Keep the low D ringing as a drone under everything.', 'Use only downstrokes for a heavy, even wash.'],
+    moves: [{ name: 'D', root: 2, f: [0, 0, 0, 0, 0, 0] }, { name: 'Dmaj9', root: 2, f: [0, 0, 0, 7, 7, 0] }, { name: 'D6', root: 2, f: [0, 0, 0, 5, 5, 0] }, { name: 'Dsus4(add9)', root: 2, f: [0, 0, 0, 10, 10, 0] }] },
+  { id: 'gaze_unison', style: 'gaze', tune: 'std', name: 'Unison shimmer', pats: ['strum8', 'glide'], bpm: [70, 110],
+    why: 'The same E on three strings (G string fret 9, B string fret 5, open high E) sounds slightly different on each. Strummed together they shimmer against each other like a 12-string. Change only the bass note to move the chord.',
+    ideas: ['Strum the four strings together and let the unisons beat against each other.', 'Change only the bass note: E, A, C, D.', 'Add a slow tremolo-arm dip on every strum.'],
+    moves: [{ name: 'E5', root: 4, f: [0, NX, NX, 9, 5, 0] }, { name: 'A5', root: 9, f: [NX, 0, NX, 9, 5, 0] }, { name: 'C(no 5th)', root: 0, f: [NX, 3, NX, 9, 5, 0] }, { name: 'Dsus2 (no 5th)', root: 2, f: [NX, NX, 0, 9, 5, 0] }] }
+];
+function vNotes(move, tune) {
+  const m = TUNE[tune].m, out = [];
+  move.f.forEach((f, i) => { if (f == null) return; const s = 5 - i, midi = m[s] + f; out.push({ s, f, fg: 0, lab: VLAB[((midi - move.root) % 12 + 12) % 12], midi }); });
+  return out.sort((a, b) => a.midi - b.midi || b.s - a.s);
+}
+const cleanN = N => N.map(({ s, f, fg, lab }) => ({ s, f, fg, lab }));
+const blk = (N, p, d, x) => ({ n: cleanN(N), p, d, roll: true, x: x || '' });
+const one = (n, x, p) => ({ n: cleanN([n]), x: x || '', p });
+function twinkleIdx(k) { return k >= 5 ? [0, 2, 1, 3, 2, 4, 3, k - 1] : k === 4 ? [0, 2, 1, 3, 0, 2, 1, 3] : k === 3 ? [0, 1, 2, 1, 0, 1, 2, 1] : [0, 1, 0, 1, 0, 1, 0, 1]; }
+const VPAT = {
+  arp: N => { const up = N, dn = N.slice(1, -1).reverse(), l = up.concat(dn); const out = []; for (let i = 0; i < 8; i++) out.push(one(l[i % l.length], '', i % 2 ? 'U' : 'D')); out.forEach(e => e.d = 0.5); return out; },
+  twinkle: N => twinkleIdx(N.length).map((i, k) => Object.assign(one(N[Math.min(i, N.length - 1)], '', k % 2 ? 'U' : 'D'), { d: 0.5 })),
+  hammer: N => {
+    const fr = N.filter(n => n.f > 0), op = N.filter(n => n.f === 0);
+    if (!fr.length || !op.length) return VPAT.twinkle(N);
+    const tgt = fr[fr.length - 1], src = Object.assign({}, tgt, { f: Math.max(0, tgt.f - 2), lab: '' }), low = fr[0], a = op[0], z = op[op.length - 1];
+    return [one(low, '', 'D'), one(src, '', 'U'), one(tgt, 'h', ''), one(a, '', 'U'), one(z, '', 'D'), one(a, '', 'U'), one(tgt, '', 'D'), one(src, 'p', '')].map(e => Object.assign(e, { d: 0.5 }));
+  },
+  odd7: N => twinkleIdx(N.length).slice(0, 7).map((i, k) => Object.assign(one(N[Math.min(i, N.length - 1)], '', k % 2 ? 'U' : 'D'), { d: 1 })),
+  strum: N => [blk(N, 'D', 2), blk(N, 'D', 1.5), blk(N, 'U', 0.5)],
+  strum8: N => Array.from({ length: 8 }, (_, k) => blk(N, k % 2 ? 'U' : 'D', 0.5)),
+  glide: N => [blk(N, 'D', 2, '~'), blk(N, 'D', 1, '~'), blk(N, 'U', 1)],
+  chug: N => { const L = N[0]; const C = N; return [one(L, 'PM', 'D'), one(L, 'PM', 'D'), blk(C, 'D', 0.5), one(L, 'PM', 'D'), one(L, 'PM', 'D'), blk(C, 'D', 0.5), one(L, 'PM', 'D'), blk(C, 'D', 0.5)].map(e => Object.assign(e, { d: e.d || 0.5 })); },
+  drone: N => { const fr = N.filter(n => n.f > 0), op = N.filter(n => n.f === 0); if (!fr.length || !op.length) return VPAT.strum8(N); return Array.from({ length: 8 }, (_, k) => k % 2 ? blk(op, 'U', 0.5) : blk(fr, 'D', 0.5)); }
+};
+const PATNAME = { arp: 'arpeggio', twinkle: 'twinkly 8th-note arpeggio', hammer: 'hammer-on arpeggio', odd7: 'arpeggio in 7/8', strum: 'big strums', strum8: '8th-note strumming', glide: 'slow glide strums', chug: 'palm-muted chugs with chord stabs', drone: 'shape and drone, alternating' };
+function vMoveEvents(v, pat) { return v.moves.flatMap(mv => { const N = vNotes(mv, v.tune); return VPAT[pat](N).map(e => Object.assign(e, { chord: mv.name })); }); }
+function vToEx(v) {
+  const [b0, g0] = v.bpm, main = v.pats[0], alt = v.pats[1];
+  const first = v.moves[0], N = vNotes(first, v.tune);
+  const tuneTxt = v.tune === 'std' ? '' : ` Tuning: ${TUNE[v.tune].name} (${tuneLowHigh(v.tune)}, low to high).`;
+  const step = (n, d, pat, bpm, goal) => ({ n, d: d + tuneTxt, bpm, goal, tuning: v.tune, bar: pat === 'odd7' ? 7 : 4, build: () => pad(seq(vMoveEvents(v, pat), 0.5, 'none'), pat === 'odd7' ? 7 : 4) });
+  return {
+    id: 'v_' + v.id, cat: 'Voicing riffs', title: v.name, lvl: STYLE_NAME[v.style], labels: 'chord', tuning: v.tune, voicing: v.id,
+    about: v.why, tip: v.ideas.join(' '),
+    steps: [
+      { n: 'Hear the voicing', d: `${first.name}, one string at a time, then strummed. Labels show each note's role in the chord.` + tuneTxt, bpm: b0, goal: g0, tuning: v.tune, bar: 4,
+        build: () => { const l = N.concat(N.slice(1, -1).reverse()).map((n, i) => Object.assign(one(n, '', i % 2 ? 'U' : 'D'), { d: 0.5, chord: first.name })); l.push(Object.assign(blk(N, 'D', 2), { chord: first.name })); return pad(seq(l, 0.5, 'none')); } },
+      step('Riff: move the shape', `Move through ${v.moves.map(m => m.name).join(', ')} with a ${PATNAME[main]}. One bar each.`, main, b0, g0),
+      step('Variation', `The same moves as ${PATNAME[alt]}.${alt === 'odd7' ? ' The tempo counts 8th notes, grouped 2 + 2 + 3.' : ''}${alt === 'glide' ? ' The ~ mark means a gentle tremolo-arm dip while the chord rings (or a slow vibrato if your guitar has no arm).' : ''}`, alt, alt === 'odd7' ? b0 * 2 : b0, alt === 'odd7' ? g0 * 2 : g0)
+    ]
+  };
+}
+const VEX = VOICINGS.map(vToEx);
+EX.push(...VEX); EXCATS.push('Voicing riffs');
+VEX.forEach(e => { EX_UNIT[e.id] = 'u9'; });
+
+/* ---------- voicings: chord diagram ---------- */
+function vBox(move, tune, big) {
+  const N = vNotes(move, tune), fr = move.f.filter(f => f != null && f > 0);
+  const mn = fr.length ? Math.min(...fr) : 1, mx = fr.length ? Math.max(...fr) : 1;
+  const base = mx <= 5 ? 1 : mn, rows = Math.max(5, mx - base + 1);
+  const sp = big ? 26 : 20, fs = big ? 26 : 20, left = big ? 30 : 24, top = big ? 34 : 28, W = left * 2 + sp * 5, H = top + rows * fs + (big ? 64 : 56);
+  const col = { root: 'var(--root)', d3: 'var(--d3)', d5: 'var(--d5)', d7: 'var(--d7)', note: 'var(--ink)' };
+  const kOf = lab => degKind(VLAB.indexOf(lab));
+  let s = `<svg class="vbox" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(move.name)} chord diagram">`;
+  for (let i = 0; i < 6; i++) s += `<line x1="${left + i * sp}" y1="${top}" x2="${left + i * sp}" y2="${top + rows * fs}" stroke="var(--muted)" stroke-width="1"/>`;
+  for (let j = 0; j <= rows; j++) s += `<line x1="${left}" y1="${top + j * fs}" x2="${left + 5 * sp}" y2="${top + j * fs}" stroke="var(--muted)" stroke-width="${j === 0 && base === 1 ? 4 : 1}"/>`;
+  if (base > 1) s += `<text x="${left - 8}" y="${top + fs / 2 + 4}" text-anchor="end" font-size="${big ? 13 : 11}" fill="var(--muted)" font-family="var(--font-mono)">${base}</text>`;
+  const names = tuneNames(tune).slice().reverse();
+  move.f.forEach((f, i) => {
+    const x = left + i * sp, n = N.find(q => q.s === 5 - i);
+    if (f == null) s += `<text x="${x}" y="${top - 9}" text-anchor="middle" font-size="12" fill="var(--muted)">×</text>`;
+    else if (f === 0) s += `<circle cx="${x}" cy="${top - 12}" r="${big ? 6 : 5}" fill="none" stroke="${col[kOf(n.lab)]}" stroke-width="2"/>`;
+    else { const y = top + (f - base) * fs + fs / 2; s += `<circle cx="${x}" cy="${y}" r="${big ? 10 : 8}" fill="${col[kOf(n.lab)]}"/>`; }
+    s += `<text x="${x}" y="${top + rows * fs + 16}" text-anchor="middle" font-size="${big ? 12 : 10.5}" font-weight="600" fill="${f == null ? 'var(--line)' : col[kOf(n.lab)]}" font-family="var(--font-mono)">${f == null ? '' : esc(n.lab)}</text>`;
+    s += `<text x="${x}" y="${top + rows * fs + (big ? 34 : 31)}" text-anchor="middle" font-size="${big ? 11 : 9.5}" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
+  });
+  s += `<text x="${W / 2}" y="${H - 6}" text-anchor="middle" font-size="${big ? 17 : 14}" font-weight="600" fill="var(--ink)" font-family="var(--font-display)">${esc(move.name)}</text></svg>`;
+  return s;
+}
+
+/* ---------- voicings: UI ---------- */
+const VO = { style: 'all', id: null, move: 0 };
+const vBoardEl = makeBoard($('#voBoard'), (s, f) => { const v = VOICINGS.find(x => x.id === VO.id); pluck(TUNE[v ? v.tune : 'std'].m[s] + f, 0, null, 0.6, 1.3); });
+function vSound(v, mv, mode) {
+  ac(); const N = vNotes(mv, v.tune), t = AU.ctx.currentTime + 0.05;
+  if (mode === 'arp') N.concat(N.slice(0, -1).reverse()).forEach((n, i) => pluck(n.midi, t + i * 0.2, null, 0.62, 1.6));
+  else strum(N.map(n => n.midi), t, null, 0.035, 0.5, 2.4);
+}
+function renderVoicings() { if (VO.id && !$('#voDetail').hidden) renderVoDetail(); else renderVoList(); }
+function renderVoList() {
+  $$('#voStyle button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === VO.style));
+  const list = VOICINGS.filter(v => VO.style === 'all' || v.style === VO.style);
+  $('#voGrid').innerHTML = list.map(v => `<button class="vocard" type="button" data-vo="${v.id}"><span class="vobox">${vBox(v.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small"><span class="tag">${STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span><span class="small muted">${v.moves.map(m => esc(m.name)).join(' → ')}</span></span></button>`).join('');
+}
+function openVoicing(id) { VO.id = id; VO.move = 0; $('#voList').hidden = true; $('#voDetail').hidden = false; renderVoDetail(); window.scrollTo({ top: 0 }); }
+function renderVoDetail() {
+  const v = VOICINGS.find(x => x.id === VO.id); if (!v) return;
+  const mv = v.moves[VO.move];
+  $('#voTitle').textContent = v.name;
+  $('#voTags').innerHTML = `<span class="tag">${STYLE_NAME[v.style]}</span><span class="tag">${TUNE[v.tune].name} tuning${v.tune !== 'std' ? ` (${tuneLowHigh(v.tune)})` : ''}</span>`;
+  $('#voWhy').textContent = v.why;
+  $('#voMoves').innerHTML = v.moves.map((m, i) => `<button type="button" data-mv="${i}" aria-pressed="${i === VO.move}">${esc(m.name)}</button>`).join('');
+  $('#voBox').innerHTML = vBox(mv, v.tune, true);
+  const N = vNotes(mv, v.tune);
+  const markers = N.map(n => ({ s: n.s, f: n.f, k: degKind(VLAB.indexOf(n.lab)), l: n.lab }));
+  const fr = mv.f.filter(f => f != null), mx = Math.max(...fr);
+  vBoardEl.draw({ from: 0, to: Math.max(7, mx + 2), markers, win: null, names: tuneNames(v.tune) });
+  $('#voNotes').innerHTML = `Notes, low to high: ${N.map(n => `<b>${nn(n.midi % 12)}</b> <span class="muted">(${esc(n.lab)})</span>`).join(' · ')}`;
+  $('#voIdeas').innerHTML = v.ideas.map(t => `<li>${esc(t)}</li>`).join('');
+  $('#voPlayAlong').dataset.ex = 'v_' + v.id;
+}
+
+/* ---------- voicings: learn unit ---------- */
+const QUALS = [{ q: 'maj7', iv: [0, 4, 7, 11], f: '1 3 5 7' }, { q: 'add9', iv: [0, 4, 7, 2], f: '1 3 5 9' }, { q: 'sus2', iv: [0, 2, 7], f: '1 2 5' }, { q: '6', iv: [0, 4, 7, 9], f: '1 3 5 6' }, { q: 'm7', iv: [0, 3, 7, 10], f: '1 b3 5 b7' }, { q: 'm9', iv: [0, 3, 7, 10, 2], f: '1 b3 5 b7 9' }, { q: 'maj7#11', iv: [0, 4, 7, 11, 6], f: '1 3 5 7 #11' }];
+function qChordColor() {
+  const r = rnd(12), Q = pick(QUALS), name = nn(r) + Q.q;
+  const { options, answer } = mcOpts(name, QUALS.map(x => nn(r) + x.q));
+  return { type: 'mc', prompt: `Which chord is spelled ${Q.iv.map(i => nn(r + i)).join(' – ')}?`, options, answer, explain: `${name} is ${Q.f}. ${Q.q === 'maj7' ? 'The 7th sits a half step below the root.' : Q.q === 'add9' ? 'A major triad plus the 9th (the 2nd, an octave up).' : Q.q === 'sus2' ? 'The 2nd replaces the 3rd, so it is neither major nor minor.' : Q.q === '6' ? 'A major triad plus the 6th.' : Q.q === 'm7' ? 'A minor triad plus the b7.' : Q.q === 'm9' ? 'A minor 7th plus the 9th.' : 'A major 7th plus the #11, the bright, floating Lydian note.'}` };
+}
+function qVoicingTone() {
+  const v = pick(VOICINGS), mv = pick(v.moves), N = vNotes(mv, v.tune), t = pick(N.filter(n => n.lab !== '1').length ? N.filter(n => n.lab !== '1') : N);
+  const labs = [...new Set(N.map(n => n.lab))];
+  const { options, answer } = mcOpts(t.lab, labs.concat(['3', 'b3', '5', '9', '7', 'b7', '6', '11', '#11']));
+  const markers = N.map(n => n === t ? mk(n.s, n.f, 'ask', '?') : mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab));
+  return { type: 'mc', prompt: `${mv.name}${v.tune !== 'std' ? ` in ${TUNE[v.tune].name} tuning` : ''}. What is the orange note's role in the chord?`, board: Object.assign(board(markers), { names: tuneNames(v.tune) }), options, answer, explain: `It's ${nn(t.midi % 12)}, the ${t.lab} of ${nn(mv.root)}. ${t.f === 0 ? 'It is an open string, so it stays the same while the shape moves; against a different root it becomes a different interval.' : ''}`, reveal: N.map(n => mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab)), sound: N.map(n => n.midi), strum: true };
+}
+const VPOOL = [
+  ['What chord do the open strings of FACGCE tuning make?', ['Fmaj9', 'Cadd9', 'F6', 'Am7'], 'F A C G C E contains F, A, C, E and G: the root, 3rd, 5th, 7th and 9th of F.'],
+  ['In Open D tuning (D A D F# A D), what do the open strings play?', ['D major', 'D minor', 'Dsus2', 'D7'], 'D, F# and A are the root, 3rd and 5th of D major.'],
+  ['How do you play a power chord in Drop D?', ['One finger across the bottom three strings', 'Fingers two frets apart on the A and D strings', 'Open strings only', 'A full barre across all six strings'], 'The bottom three strings are tuned D A D, a power chord, so one finger across them at any fret plays a power chord.'],
+  ['A bar of 7/8 is most often counted as…', ['2 + 2 + 3', '4 + 4', '3 + 3 + 3', '1 + 6'], 'Seven 8th notes are usually grouped 2 + 2 + 3 (or 3 + 2 + 2), which gives the stumbling, forward-leaning feel heard in math rock and emo.'],
+  ['What does a sus2 chord replace?', ['The 3rd with the 2nd', 'The 5th with the 6th', 'The root with the 9th', 'The 7th with the 6th'], 'Without a 3rd, a sus2 chord is neither major nor minor, so it sounds open and unresolved.'],
+  ['What creates the "glide guitar" sound?', ['Pressing the tremolo arm gently while strumming', 'Sliding one finger along a string', 'Using a capo', 'Playing only open strings'], 'Kevin Shields of My Bloody Valentine held the tremolo arm while strumming, bending whole chords slightly. Reverb smears the bends into a wash.'],
+  ['Why do open strings make a moving shape sound rich?', ['They stay the same while the bass changes, so they become new intervals', 'Open strings are louder', 'They are always the root', 'They remove the 3rd'], 'An open B over A is the 9th; over G it is the 3rd; over F#m it is the 11th. Same note, new color.'],
+  ['Which note gives a major 7th chord its bittersweet sound?', ['The note a half step below the root', 'The 4th', 'The b3', 'The b7'], 'The major 7th sits a half step below the root and pulls toward it, which gives the chord its longing sound.']
+];
+const qVPool = () => { const [p, opts, ex] = pick(VPOOL); const o = shuffle(opts); return { type: 'mc', prompt: p, options: o, answer: o.indexOf(opts[0]), explain: ex }; };
+UNITS.push({ id: 'u9', title: 'Voicings for riffs', sum: 'Color tones, open-string drones and alternate tunings: the raw material for alternative, midwest emo and shoegaze riffs.',
+  cards: [
+    { t: 'Color tones', body: ['Plain major and minor chords use the root, 3rd and 5th. Adding or swapping one note changes the mood: the <b>9th</b> (add9) floats, the <b>sus2</b> sounds open and unresolved, the <b>major 7th</b> is bittersweet, the <b>6th</b> is warm, and the <b>#11</b> shimmers.', 'These colors are the harmonic signature of midwest emo and shoegaze. Here is Cmaj7 with open strings: the open B is the 7th and the open high E is the 3rd.'],
+      show: () => { const v = VOICINGS.find(x => x.id === 'emo_cmaj7'); return board(vNotes(v.moves[0], v.tune).map(n => mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab))); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th']] },
+    { t: 'Open strings as drones', body: ['Fret two or three notes and let open strings ring with them. When you move the fretted shape, the open strings stay the same, but against a new bass note they become a new interval.', 'Here the open B and high E ring over A on the D string: they are the 9th and the 5th. Move the shape down to G and the same open strings become the 3rd and 6th.'],
+      show: () => { const v = VOICINGS.find(x => x.id === 'emo_moving'); return board(vNotes(v.moves[0], v.tune).map(n => mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab))); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['note', '9th']] },
+    { t: 'Alternate tunings', body: ['Changing the tuning changes which notes ring open. <b>Drop D</b> (D A D G B E) makes the bottom three strings a power chord. <b>FACGCE</b> rings an Fmaj9, a favorite of midwest emo. <b>Open D</b> (D A D F# A D) rings a D major chord for big, droning shoegaze parts.', 'The diagram shows FACGCE: every open string is part of Fmaj9. The string names on the left follow the tuning.'],
+      show: () => Object.assign(board([0, 1, 2, 3, 4, 5].map(s => { const m = TUNE.facgce.m[s], rel = (m - 5 + 120) % 12; return mk(s, 0, degKind(rel), VLAB[rel]); })), { names: tuneNames('facgce'), to: 5 }), legend: [['root', 'F (root)'], ['d3', 'A (3rd)'], ['d5', 'C (5th)'], ['d7', 'E (7th)'], ['note', 'G (9th)']] },
+    { t: 'From voicing to riff', body: ['A voicing becomes a riff when you give it movement and rhythm. Three tools cover most of it:', '<b>Pattern:</b> arpeggiate it (twinkly 8ths, hammer-ons onto one note, a rolling bass-middle-top pattern). <b>Movement:</b> slide the fretted part to two or three other spots while open strings ring. <b>Rhythm:</b> chug the bass with palm mutes and stab the chord, strum it slowly with a tremolo-arm glide, or play it in 7/8.', 'Every voicing in the Voicings tab comes with a three-step play-along that does exactly this.'],
+      show: () => { const v = VOICINGS.find(x => x.id === 'gaze_bloom'); return board(vNotes(v.moves[0], v.tune).map(n => mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab))); }, legend: [['root', 'Root'], ['d5', '5th'], ['note', '9th'], ['dim', '#11']] } ],
+  quiz: () => rep10([[qChordColor, 4], [qVoicingTone, 3], [qVPool, 3]]),
+  practice: [{ l: 'Browse the Voicings tab', d: 'Hear each voicing and its moves.', a: () => switchTab('voicings') }, { l: 'Play along: major 7ths with open strings', d: 'Midwest emo twinkle and 7/8.', a: () => openEx('v_emo_cmaj7') }, { l: 'Play along: two-finger shape over open strings', d: 'Alternative chugs and strums.', a: () => openEx('v_alt_emdrone') }, { l: 'Play along: A drone with a sliding shape', d: 'Shoegaze glide strums.', a: () => openEx('v_gaze_bloom') }] });
 
 /* ---------- routines ---------- */
 const ROUTINES = {
@@ -2622,7 +2976,7 @@ function renderPill() {
 function renderRoutine() {
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.n} min</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = ROUTINES[key];
-  const toolName = { learn: 'Learn', exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', changes: 'Changes', explorer: 'Scales', riffs: 'Riff Dice' };
+  const toolName = { learn: 'Learn', exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', voicings: 'Voicings', explorer: 'Scales', riffs: 'Riff Dice' };
   $('#rtBlocks').innerHTML = r.blocks.map((b, i) => `<li class="${R.running && i === R.idx ? 'cur' : ''} ${R.running && i < R.idx ? 'done' : ''}"><span class="m">${R.running && i === R.idx ? fmtTime(R.rem) : b.m + ' min'}</span><div><div style="font-weight:500">${esc(b.t)} <span class="tool">· ${toolName[b.tool]}</span></div><div class="small muted">${esc(b.d)}</div></div><span></span></li>`).join('');
   $('#rtStart').textContent = R.running ? 'Go to current block' : 'Start routine';
   $('#rtHint').textContent = R.running ? 'Running. Use the bar at the top to pause or skip.' : `${r.blocks.reduce((a, b) => a + b.m, 0)} minutes, ${r.blocks.length} blocks`;
@@ -2652,8 +3006,6 @@ function renderWeak() {
   else items.push({ t: 'Fretboard', d: 'No data yet. One round shows where your gaps are.', tab: 'fretboard' });
   const ea = S.ear.deg.ans; const worst = Object.entries(ea).filter(([, v]) => v.n >= 3).sort((a, b) => a[1].c / a[1].n - b[1].c / b[1].n)[0];
   items.push({ t: 'Ear', d: worst ? `Scale degree ${DEGL[worst[0]]} is your weakest (${Math.round(100 * worst[1].c / worst[1].n)}%).` : `Level ${S.ear.deg.lv} scale degrees. Try 20 questions.`, tab: 'ear' });
-  const ch = Object.entries(S.changes.hist).map(([k, v]) => ({ k, last: v[v.length - 1] })).sort((a, b) => a.last.d.localeCompare(b.last.d))[0];
-  items.push({ t: 'Changes', d: ch ? `${ch.k} was last practiced ${ch.last.d} (${ch.last.n} changes).` : 'Start with A and D. Count every change for one minute.', tab: 'changes' });
   const tl = S.tempo.find(t => !t.log.length) || S.tempo.slice().sort((a, b) => (a.log[a.log.length - 1]?.d || '').localeCompare(b.log[b.log.length - 1]?.d || ''))[0];
   if (tl) items.push({ t: 'Tempo', d: tl.log.length ? `${tl.name}: best ${Math.max(...tl.log.map(e => e.bpm))} bpm. Try 4 bpm faster.` : `${tl.name}: find your clean tempo and log it.`, tab: 'metronome' });
   $('#weakList').innerHTML = items.map(i => `<div class="weak"><div><div style="font-weight:500">${i.t}</div><div class="small muted">${esc(i.d)}</div></div><button class="btn" type="button" data-go="${i.tab}">Practice</button></div>`).join('');
@@ -2661,17 +3013,18 @@ function renderWeak() {
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
 /* ---------- tabs ---------- */
-const TABS = ['today', 'learn', 'exercises', 'metronome', 'fretboard', 'ear', 'changes', 'explorer', 'riffs', 'tuner'];
+const TABS = ['today', 'learn', 'exercises', 'voicings', 'metronome', 'fretboard', 'ear', 'explorer', 'riffs', 'tuner'];
 function switchTab(t, fromHash) {
   if (!TABS.includes(t)) t = 'today';
   if (curTab === 'ear' && t !== 'ear') { clearTimeout(E.nextT); killBus(E.bus); }
   if (curTab === 'exercises' && t !== 'exercises' && P.running) exStop();
+  if (curTab === 'tuner' && t !== 'tuner') { if (T.listening) tnStop(); if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } }
   if (curTab === 'explorer' && t !== 'explorer' && X.bus) { killBus(X.bus); X.bus = null; $('#xPlay').textContent = 'Play this position'; }
   curTab = t;
   $$('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.replaceState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, changes: renderChanges, explorer: renderExplorer, riffs: renderRiffs, tuner: renderTuner })[t]();
+  ({ today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, riffs: renderRiffs, tuner: renderTuner })[t]();
   const tb = $(`.tab[data-tab="${t}"]`); if (tb && tb.scrollIntoView) tb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
 function refreshAll() { renderHeaderStats(); renderBpm(); switchTab(curTab, true); applySettingsUI(); }
@@ -2733,13 +3086,6 @@ $('#eNext').onclick = () => eNew();
 $('#eReplay').onclick = () => { if (E.q) ePlayQ(false); else eNew(); };
 $('#eCad').onclick = () => { ac(); killBus(E.bus); E.bus = bus(); cadence(AU.ctx.currentTime + 0.05, E.bus); };
 // changes
-$('#chA').onchange = e => { S.changes.a = e.target.value; save(); renderChanges(); };
-$('#chB').onchange = e => { S.changes.b = e.target.value; save(); renderChanges(); };
-$('#chSwap').onclick = () => { [S.changes.a, S.changes.b] = [S.changes.b, S.changes.a]; save(); renderChanges(); };
-$('#chSuggest').addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (!b) return; S.changes.a = b.dataset.a; S.changes.b = b.dataset.b; save(); renderChanges(); });
-$('#chStart').onclick = chStart;
-$('#chTap').onclick = () => { if (CH.phase !== 'run') return; CH.count++; $('#chCount').textContent = CH.count; };
-$('#chManSave').onclick = () => { const n = Math.round(+$('#chManN').value); if (!n || n < 1) { toast('Enter how many changes you counted'); return; } if (CH.saved) { const h = S.changes.hist[pairKey(S.changes.a, S.changes.b)]; if (h && h.length) h.pop(); } chSave(n); $('#chManN').value = ''; };
 // explorer
 $('#xKey').onchange = e => { S.ui.xkey = +e.target.value; save(); renderExplorer(); };
 $('#xScale').onchange = e => { S.ui.xscale = e.target.value; save(); renderExplorer(); };
@@ -2773,6 +3119,15 @@ $('#dSaved').addEventListener('click', e => {
 });
 
 
+
+// voicings
+$('#voStyle').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; VO.style = b.dataset.v; renderVoList(); });
+$('#voGrid').addEventListener('click', e => { const b = e.target.closest('[data-vo]'); if (b) openVoicing(b.dataset.vo); });
+$('#voBack').onclick = () => { $('#voDetail').hidden = true; $('#voList').hidden = false; VO.id = null; renderVoList(); };
+$('#voMoves').addEventListener('click', e => { const b = e.target.closest('[data-mv]'); if (!b) return; VO.move = +b.dataset.mv; renderVoDetail(); const v = VOICINGS.find(x => x.id === VO.id); vSound(v, v.moves[VO.move], 'strum'); });
+$('#voStrum').onclick = () => { const v = VOICINGS.find(x => x.id === VO.id); vSound(v, v.moves[VO.move], 'strum'); };
+$('#voArp').onclick = () => { const v = VOICINGS.find(x => x.id === VO.id); vSound(v, v.moves[VO.move], 'arp'); };
+$('#voPlayAlong').onclick = () => openEx($('#voPlayAlong').dataset.ex);
 // learn
 $('#lnUnits').addEventListener('click', e => { const b = e.target.closest('[data-unit]'); if (b) openUnit(b.dataset.unit); });
 $('#lnBack').onclick = () => { $('#lnUnit').hidden = true; $('#lnPath').hidden = false; LN.unit = null; renderPath(); };
@@ -2802,9 +3157,13 @@ $('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
 // tuner
-$('#tTuning').onchange = e => { S.ui.tuning = +e.target.value; tStopRef(); save(); renderTuner(); };
-$('#tMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.tmode = b.dataset.v; const a = T.active; tStopRef(); save(); if (a >= 0) tString(a); else renderTuner(); });
-$('#tStrings').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) tString(+b.dataset.i); });
+$('#tTuning').onchange = e => { S.ui.tuning = +e.target.value; T.done.clear(); T.sel = 0; if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } save(); renderTuner(); };
+$('#tnMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.tnmode = b.dataset.v; save(); renderTuner(); });
+$('#tnHead').addEventListener('click', e => { const g = e.target.closest('[data-i]'); if (g) tnPeg(+g.dataset.i); });
+$('#tnHead').addEventListener('keydown', e => { const g = e.target.closest('[data-i]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); tnPeg(+g.dataset.i); } });
+$('#tnListen').onclick = () => { T.listening ? tnStop() : tnStart(); };
+$('#tnRef').onclick = tnRefToggle;
+$('#tnReset').onclick = () => { T.done.clear(); T.sel = 0; tnSetTarget(); renderTuner(); tnRead('', ''); };
 $('#drGo').onclick = drToggle;
 ['#drNote', '#drOct', '#drType'].forEach(id => $(id).addEventListener('change', () => { if (T.drone) { drToggle(); drToggle(); } }));
 // today
@@ -2835,7 +3194,6 @@ document.addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.code === 'Space') {
     e.preventDefault();
-    if (curTab === 'changes' && CH.phase === 'run') { CH.count++; $('#chCount').textContent = CH.count; return; }
     if (curTab === 'exercises' && !$('#exPlayer').hidden) { exToggle(); return; }
     mToggle(); return;
   }

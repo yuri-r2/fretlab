@@ -4,7 +4,7 @@ A fretboard practice app for intermediate and advanced guitarists, in a single H
 
 ## Learn path
 
-Eight units that build on each other: notes on the low strings, octave shapes, intervals as shapes, the CAGED system, pentatonic boxes, the major scale, triads and inversions, and harmony in a key (diatonic 7ths, ii–V–I, guide tones). Each unit has short lesson cards with color-coded fretboard diagrams (root, 3rd, 5th, 7th), a 10-question check with an explanation after every answer (8 to pass, new questions each attempt), and links to the drills and exercises that make it automatic. Question types include naming and finding notes, finding every place a note lives, octave shapes, naming and finding intervals, identifying CAGED shapes and roots, scale degrees inside a position, triad inversions and quality, and key harmony.
+Nine units that build on each other: notes on the low strings, octave shapes, intervals as shapes, the CAGED system, pentatonic boxes, the major scale, triads and inversions, harmony in a key (diatonic 7ths, ii–V–I, guide tones), and voicings for riffs (color tones, open-string drones, alternate tunings). Each unit has short lesson cards with color-coded fretboard diagrams (root, 3rd, 5th, 7th), a 10-question check with an explanation after every answer (8 to pass, new questions each attempt), and links to the drills and exercises that make it automatic. Question types include naming and finding notes, finding every place a note lives, octave shapes, naming and finding intervals, identifying CAGED shapes and roots, scale degrees inside a position, triad inversions and quality, and key harmony.
 
 ## Exercises
 
@@ -18,13 +18,18 @@ Play-along workouts that show exactly what to play, note by note, in time. A scr
 
 Each exercise has 4 to 8 steps with a goal tempo. Rate each run (Clean, Almost, Messy) and the tempo moves toward the goal. Count-in, looping, guide audio, a click, a step-through mode (arrow keys) and an automatic speed ladder are built in.
 
+## Voicings
+
+A library of chord shapes for writing riffs in alternative, midwest emo and shoegaze styles: two-finger shapes over open strings, drop D power chords, sus2 and major 7th chords with ringing open strings, moving shapes under open B and E, FACGCE and open D tunings, drone 3rds and unison shimmer. Each voicing shows a chord diagram and fretboard colored by what each note does (root, 3rd, 5th, 7th, color tones), plays as a strum or arpeggio, lists four moves of the shape with riff ideas, and opens a three-step play-along (hear it, move the shape, variation), including riffs in 7/8 and in alternate tunings. All shapes are original.
+
 ## Other tools
 
 - **Today**: guided routines (15, 20, 30 and 45 minutes), daily goal, streak and 7-day chart
 - **Metronome**: click, wood, beep or drum beats, swing, tap tempo, time signatures, accents, speed trainer, gap trainer and tempo log
 - **Fretboard trainer**: find the note, name the note, intervals, find them all, and a progress map
 - **Ear trainer**: scale degrees in a key, intervals and chord types
-- **One-minute changes**, **Scales** explorer, **Riff Dice**, and a **tuner and drone**
+- **Tuner**: listens through the microphone with Auto, Manual and Chromatic modes, a needle gauge, a headstock that marks each string green once it's in tune, reference tones, and eight tunings (standard, half and whole step down, Drop D, DADGAD, Open G, Open D and FACGCE). The pitch detector and gauge are adapted from [KotoLab](https://github.com/yuri-r2/kotolab) (MIT, © 2026 yuri-r2). The microphone needs the hosted page (GitHub Pages); embedded previews may block it.
+- **Drone**, **Scales** explorer and **Riff Dice**
 
 Progress is saved in your browser's local storage.
 
@@ -35,5 +40,4 @@ The Learn path's structure (guided units, "every place" questions, weak-spot rev
 ## Methods
 
 - Interleaved practice: [Carter and Grahn, 2016](https://www.frontiersin.org/articles/10.3389/fpsyg.2016.01251/full)
-- One-minute changes: [JustinGuitar](https://justinguitar.com/guitar-lessons/one-minute-changes-exercise-b1-110)
 - Functional ear training: [Functional Ear Trainer](https://apps.apple.com/app/id1088761926)
