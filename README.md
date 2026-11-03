@@ -50,6 +50,8 @@ Eight play-along workouts for time and feel, in their own Library section:
 - **Dotted-8th echo**: straight notes with a dotted-8th delay that turns 8ths into a 16th-note shimmer; dashed boxes show where the echoes fall
 - **Triplets and shuffle**: straight against swung 8ths, triplet strums and a shuffle boogie
 
+On the steps where the click thins out (only on 2 and 4, or dropping out every other bar) the guide notes stay silent, so you keep the time yourself instead of following the playback. Listen first still plays them once.
+
 Counts ("1 e & a") sit under every stroke. A faint dashed arrow is an air strum (move but miss), ✕ is a muted chuck, and > is an accent. Subdividing the beat reduces timing variability, especially at slow tempos ([Repp, 2010](https://labs.sonicfield.org/library/self-generated-interval-subdivision-reduces-variability-of-synchronization-with-)).
 
 ## Chord Shapes
@@ -66,6 +68,8 @@ The riff collections include:
 - **Shoegaze**: a drone with a sliding shape, drone 3rds, open D shimmer, unison shimmer, and big open add9 chords.
 
 Each collection shows a chord diagram and fretboard colored by what each note does (root, 3rd, 5th, 7th, color tones), plays as a strum or arpeggio, lists four moves with riff ideas, and opens a four-step play-along. Listening and creating have their own completion criteria and do not raise the tempo or enter the technical review queue. Daily constraints avoid open-string requirements when the collection has no open strings.
+
+Playback and display controls sit open in a bar above the tab, one tap each: Loop, Count-in, Click and Notes (each with its own volume), +4 bpm per loop, a new key per loop, the note labels (fingers, degrees, chord tones, notes), finger numbers, and the section to loop. The run rating and your history stay quietly in the side panel.
 
 Completion, best tempos, and review schedules for keyed exercises are stored separately for each key. Existing progress is retained in its saved key (or the exercise's default key when none was saved). Listening or stepping through a due exercise before rating it postpones that review to tomorrow rather than advancing its cold-review interval. Ratings remain self-reported; Fretlab does not assess the guitar performance automatically.
 
