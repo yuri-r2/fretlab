@@ -12,28 +12,36 @@ Play-along workouts that show exactly what to play, note by note, in time. A scr
 
 Workouts for knowing the neck in any key, connecting it with technique and chord tones, and turning it into riffs:
 
-- **Fretboard fluency**: cycle of fourths on every string, one note across the whole neck (with octaves, 5ths and power chords), and scales on one string
-- **Positions and scales**: all five minor pentatonic boxes linked, the major scale in five CAGED positions, three-notes-per-string patterns (including legato and groups of six), and scale sequences in 3s, 4s, 3rds and 4ths
+- **Fretboard fluency**: cycle of fourths on every string, and one note across the whole neck (with octaves, 5ths and power chords)
 - **Arpeggios and chords**: CAGED triad and major 7 arpeggios, diatonic 7th arpeggios in one position, ii–V–I arpeggios and guide tones, and triad inversions on every string set with voice-led I–vi–IV–V and I–V–vi–IV
 - **Technique**: 3- and 5-string sweep-picked arpeggios
 - **Riff building**: hammer-ons, pull-offs and slides between pentatonic boxes (the warm-up), octave riffs through the key, and 3rds and 6ths as two-note riffs, ending with a pedal-tone riff
 
-Each exercise has 4 to 8 steps with a goal tempo. Rate each run (Clean, Almost, Messy): two clean runs in a row raise the tempo by 5 bpm, a messy run lowers it by about 10%, and two clean runs at the goal lock the step in. After that the tempo keeps climbing past the goal (up to 260 bpm) with every two clean runs, and the per-loop speed ladder keeps going too. Tap the tempo to type one, or hold − / + to change it fast. Locked-in steps come back as cold checks on the same 1, 3, 7, 16, 35 day schedule, and the first run of the day is the one that counts. New steps suggest a **Listen first** pass, **Practice** loops a single bar or pair of bars a little slower (part practice, then back to the whole step), and each exercise shows one listening cue. Count-in, looping, guide audio, a click, a step-through mode (arrow keys) and an automatic speed ladder are built in.
+Each exercise has 3 to 8 steps with a goal tempo. Tap the goal to set your own, for one step or every step of the exercise (Default puts it back). Rate each run (Clean, Almost, Messy): two clean runs in a row raise the tempo by 5 bpm, a messy run lowers it by about 10%, and two clean runs at the goal lock the step in. After that the tempo keeps climbing past the goal (up to 260 bpm) with every two clean runs, and the per-loop speed ladder keeps going too. Tap the tempo to type one, or hold − / + to change it fast. Locked-in steps come back as cold checks on the same 1, 3, 7, 16, 35 day schedule, and the first run of the day is the one that counts. New steps suggest a **Listen first** pass, **Practice** loops a single bar or pair of bars a little slower (part practice, then back to the whole step), and each exercise shows one listening cue. Count-in, looping, guide audio, a click, a step-through mode (arrow keys) and an automatic speed ladder are built in.
 
 **History.** Every run you play or rate is logged with its step, key, tempo and rating. The library opens with *Pick up where you left off* (your last four steps, one tap to resume at the same step and key) and your **Favorites** (star any exercise). The **History** view lists runs day by day, filterable by exercise, and every row jumps straight back to that step. Inside an exercise, *Your history* shows each step's last session, run count, best tempo and a tempo sparkline colored by rating, with a button to jump to any step. Today shows a one-tap *Resume* for your last exercise.
 
+## Scales
+
+Pick a key and one of ten scales (major and minor pentatonic, blues, major, natural minor, Dorian, Mixolydian, Phrygian, Lydian, harmonic minor) and see it on the whole neck or one CAGED position at a time, then practice it with exercises built for that scale. They open right in the Scales tab, already in your key: five positions linked up the neck, three-notes-per-string patterns (diagonal patterns for pentatonic and blues), sequences in 3s, 4s, 3rds and 4ths, the scale along one string, and *Hear it over a drone*, which plays a held root under the scale and holds its color notes (the 6 in Dorian, the b7 in Mixolydian, the #4 in Lydian, and so on) so you hear what makes each scale sound like itself. Minor pentatonic uses the five-box exercise, and major uses the five positions, three notes per string, sequences and one-string exercises.
+
 ## Voicings
 
-A library of chord shapes for writing riffs in alternative, midwest emo and shoegaze styles: two-finger shapes over open strings, drop D power chords, sus2 and major 7th chords with ringing open strings, moving shapes under open B and E, FACGCE and open D tunings, drone 3rds and unison shimmer. Each voicing shows a chord diagram and fretboard colored by what each note does (root, 3rd, 5th, 7th, color tones), plays as a strum or arpeggio, lists four moves of the shape with riff ideas, and opens a four-step play-along (hear it, move the shape, variation, and your own riff inside a daily constraint), including riffs in 7/8 and in alternate tunings. All shapes are original.
+A library of 22 chord shapes for writing riffs in rock, alternative, midwest emo and shoegaze styles:
+
+- **Rock**: power chords with the octave, anchored G–Cadd9–Dsus4–Em7, sus4 moves on open A and D, the 5–6 boogie shuffle, the 7#9 "Hendrix" chord, and five-string open G
+- **Alternative**: two-finger shapes over open strings, drop D power chords, sus2 chords, octaves over open B and E, power chords with the 9th, and minor barres over open B and E
+- **Midwest emo**: major 7ths with open strings, moving shapes under open B and E, FACGCE, sliding maj9 shapes, and DADGAD drones
+- **Shoegaze**: a drone with a sliding shape, drone 3rds, open D shimmer, unison shimmer, and big open add9 chords Each voicing shows a chord diagram and fretboard colored by what each note does (root, 3rd, 5th, 7th, color tones), plays as a strum or arpeggio, lists four moves of the shape with riff ideas, and opens a four-step play-along (hear it, move the shape, variation, and your own riff inside a daily constraint), including riffs in 7/8 and in alternate tunings. All shapes are original.
 
 ## Other tools
 
-- **Today**: an adaptive daily plan (warm-up, one new step in a focused block, due cold checks, mixed review or the next lesson, fretboard notes, a constrained riff of your own, and a one-minute replay of the new step), fixed routines (15, 20, 30 and 45 minutes), a one-line reflection after each routine that greets you next session, daily goal, streak and 7-day chart
+- **Today**: an adaptive daily plan (warm-up, one new step in a focused block, due cold checks, mixed review or the next lesson, fretboard notes, a constrained riff of your own, and a one-minute replay of the new step), fixed routines (Quick 15, Deep 45 and Riff writer 20), a one-line reflection after each routine that greets you next session, daily goal, streak and 7-day chart
 - **Metronome**: click, wood, beep or drum beats, swing, tap tempo, time signatures, accents, speed trainer, gap trainer and tempo log
 - **Fretboard trainer**: find the note, name the note, intervals, find them all, and a progress map
 - **Ear trainer**: scale degrees in a key, intervals and chord types
 - **Tuner**: listens through the microphone with Auto, Manual and Chromatic modes, a needle gauge, a headstock that marks each string green once it's in tune, reference tones, and eight tunings (standard, half and whole step down, Drop D, DADGAD, Open G, Open D and FACGCE). The pitch detector and gauge are adapted from [KotoLab](https://github.com/yuri-r2/kotolab) (MIT, © 2026 yuri-r2). The microphone needs the hosted page (GitHub Pages); embedded previews may block it.
-- **Drone**, **Scales** explorer and **Riff Dice**
+- **Drone** and **Riff Dice**
 
 Progress is saved in your browser's local storage.
 
