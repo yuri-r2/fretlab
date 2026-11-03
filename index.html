@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, scales, scales, riff voicings, tuner, metronome, ear and fretboard trainers.">
+<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, scales, scales, scales, riff voicings, tuner, metronome, ear and fretboard trainers.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2C786A">
@@ -3735,10 +3735,20 @@ function tabFade() { const el = $('.tabs .inner'); if (!el) return; el.classList
 $('.tabs .inner').addEventListener('scroll', tabFade, { passive: true }); window.addEventListener('resize', tabFade); setTimeout(tabFade, 0);
 
 /* ---------- backup and restore ---------- */
-$('#sExport').onclick = () => {
+$('#sExport').onclick = async () => {
+  const filename = `fretlab-backup-${dayKey()}.json`, data = JSON.stringify({ app: 'fretlab', version: 1, exported: new Date().toISOString(), state: S }, null, 1);
+  if (window.claude && typeof window.claude.use === 'function') {
+    $('#sBackupMsg').textContent = 'Preparing…';
+    const dl = await window.claude.use('downloads').catch(() => null);
+    if (dl) {
+      try { await dl.save({ filename, data }); $('#sBackupMsg').textContent = 'Backup saved.'; }
+      catch (e) { $('#sBackupMsg').textContent = e && e.code === 'declined' ? 'Backup not saved.' : e && e.code === 'rate_limited' ? 'A save prompt is already open.' : 'Saving files is not available here. Open Fretlab on its GitHub page to back up.'; }
+      return;
+    }
+  }
   try {
-    const blob = new Blob([JSON.stringify({ app: 'fretlab', version: 1, exported: new Date().toISOString(), state: S }, null, 1)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `fretlab-backup-${dayKey()}.json`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    const blob = new Blob([data], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
     $('#sBackupMsg').textContent = 'Backup downloaded.';
   } catch (e) { $('#sBackupMsg').textContent = 'Downloads are blocked here. Open Fretlab on its GitHub page to back up.'; }
 };
