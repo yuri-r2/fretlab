@@ -4,7 +4,9 @@ A fretboard practice app for intermediate and advanced guitarists, in a single H
 
 ## Find your way
 
-Five main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, **Create**, and **Progress**. The Library groups Chord Shapes, Scales, Exercises, Fretboard, and Ear training. Tuner, metronome, and drone are available from Tools. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
+The desktop web app uses a persistent navigation rail and a wider practice workspace. Playback and notation sit beside feedback and collapsible settings. Smaller windows use the compact navigation layout. Keyboard arrows move through navigation, and settings keep keyboard focus inside the dialog.
+
+Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Exercises, Fretboard, and Ear training. Tuner, metronome, and drone are available from Tools. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase.
 
@@ -33,7 +35,7 @@ Pick a key and one of ten scales (major and minor pentatonic, blues, major, natu
 
 ## Chord Shapes
 
-A library of 26 shape collections, organized by movable foundations, triads and inversions, sevenths and shells, chord colors, open-string drones, and alternate tunings. Genre filters retain the rock, alternative, midwest emo, and shoegaze applications.
+A library of 26 shape collections, organized by movable foundations, triads and inversions, sevenths and shells, chord colors, open-string drones, and alternate tunings. Search by chord, sound, family or tuning, preview a collection without opening it, or show only your favorites. Family, genre, search, and diagram-label preferences are remembered. Genre filters retain the rock, alternative, midwest emo, and shoegaze applications.
 
 Four movable studies compare A-string major/minor/sus grips, low-E major/minor/sus grips, major-triad inversions, and three-note seventh/sixth shells. Choose any root, view fingers, notes, or chord degrees, and hear each grip as a strum or arpeggio. The studies show suggested fingerings and barre markings; the triad collection also links to the existing workout across string sets. Traditional chord vocabulary is presented with original explanations and exercises. Shape-family organization draws on [Fretboard Logic](https://www.fretboardlogic.com/about-us/); chord colors and progressions on [Ted Greene](https://www.alfred.com/products/ted-greene-chord-chemistry-00-el02778); and compact, connected voicings on [Bret Willmott](https://www.melbay.com/Products/Default.aspx?bookid=95112).
 
@@ -50,7 +52,7 @@ Completion, best tempos, and review schedules for keyed exercises are stored sep
 
 ## Checks
 
-Install Playwright and Chromium, then run `node tests/validate.js`, `node tests/smoke.js`, and `node tests/practice.js`. The practice checks cover lesson resume, contextual Back, shared tempo controls, chord formulas and inversions in all keys, separate progress by key, review preparation, time budgets, and timer transitions.
+Install Playwright and Chromium, then run `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, and `node tests/desktop.js`. The desktop checks cover 1280, 1440, and 1920-pixel workspaces, search and favorites, preview audio, appearance changes, keyboard controls, and return context. The practice checks cover lesson resume, contextual Back, shared tempo controls, chord formulas and inversions in all keys, separate progress by key, review preparation, time budgets, and timer transitions.
 
 ## Other tools
 
@@ -59,7 +61,7 @@ Install Playwright and Chromium, then run `node tests/validate.js`, `node tests/
 - **Fretboard trainer**: find the note, name the note, intervals, find them all, and a progress map
 - **Ear trainer**: scale degrees in a key, intervals and chord types
 - **Tuner**: listens through the microphone with Auto, Manual and Chromatic modes, a needle gauge, a headstock that marks each string green once it's in tune, reference tones, and eight tunings (standard, half and whole step down, Drop D, DADGAD, Open G, Open D and FACGCE). The pitch detector and gauge are adapted from [KotoLab](https://github.com/yuri-r2/kotolab) (MIT, © 2026 yuri-r2). The microphone needs the hosted page (GitHub Pages); embedded previews may block it.
-- **Drone** and **Riff Dice**
+- **Drone**: a sustained reference for scale and chord-tone practice.
 
 Progress is saved in your browser's local storage. Use **Settings → Download backup** to save it to a file, and **Restore from file** to move it to another device or browser.
 
@@ -73,7 +75,7 @@ The speaker button in the header opens a mixer: **Master** with **Mute**, plus s
 
 ## Install and offline use
 
-On the GitHub Pages site, Fretlab can be installed like an app (Add to Home Screen on iPhone, Install app on Android or desktop Chrome) and works offline after the first visit, so it's available at rehearsal without Wi‑Fi. The screen stays awake while an exercise, the metronome or a Riff Dice loop is playing.
+On the GitHub Pages site, Fretlab can be installed like an app (Add to Home Screen on iPhone, Install app on Android or desktop Chrome) and works offline after the first visit, so it's available at rehearsal without Wi‑Fi. The screen stays awake while an exercise or the metronome is playing.
 
 ## Inspiration
 

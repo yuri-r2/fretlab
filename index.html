@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, scales, scales, scales, scales, scales, riff voicings, tuner, metronome, ear and fretboard trainers.">
+<meta name="description" content="Guitar practice for fretboard fluency, chord shapes, scales and musical ideas. Guided lessons and exercises, with a tuner, metronome and ear training.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2C786A">
@@ -44,6 +44,7 @@
   --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B; --warn-soft:#3A2F16;
   --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{background:var(--bg);color:var(--ink)}
 body{font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
@@ -105,7 +106,7 @@ p{margin:0}
 @media (max-width:440px){.hstat > span{display:none}.mini .pulse{display:none}.top .iconbtn{width:34px;height:34px}}
 @media (max-width:560px){.brand .bname{display:none}.hstat .hgoal{display:none}.top .inner{gap:8px;padding-block:6px}.mini .bpm{min-width:44px;font-size:14px}.mini .bpm .unit{display:none}.mini button{width:30px;height:30px}.pill{order:9;width:100%;justify-content:space-between}}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-.tabs .inner{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));overflow:visible}
+.tabs .inner{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible}
 .tab{padding-inline:4px;letter-spacing:0}
 .tools-menu{position:relative}
 .tools-menu>summary{list-style:none}
@@ -263,29 +264,6 @@ a{color:var(--accent)}
 table.t{width:100%;border-collapse:collapse;font-size:14px}
 table.t th{text-align:left;font-weight:500;color:var(--muted);font-size:12.5px;padding:6px 8px;border-bottom:1px solid var(--line)}
 table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
-
-/* riffs */
-.slots{display:flex;gap:10px;flex-wrap:wrap}
-.slot{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:72px}
-.slot.locked{border-color:var(--root);background:var(--root-soft)}
-.slot .die{border:0;background:none;padding:0}
-.slot .iv{font-weight:600;font-size:14px}
-.slot .nm{font-size:12px;color:var(--muted)}
-.slot .lk{border:0;background:var(--surface-2);border-radius:6px;font-size:11px;padding:2px 8px}
-.slot.locked .lk{background:var(--root);color:var(--root-ink)}
-.die svg rect{fill:var(--surface);stroke:var(--ink)}
-.die svg circle{fill:var(--ink)}
-.rolling .die svg{animation:shake .35s ease}
-@keyframes shake{0%{transform:rotate(0)}25%{transform:rotate(-18deg)}50%{transform:rotate(14deg)}75%{transform:rotate(-8deg)}100%{transform:rotate(0)}}
-@media (prefers-reduced-motion:reduce){.rolling .die svg{animation:none}.beat{transition:none}}
-.rgrid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;max-width:420px}
-.rgrid button{aspect-ratio:1;max-width:100%;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);font:500 11px var(--font-mono);color:var(--muted);padding:0}
-.rgrid button.on{background:var(--root);border-color:var(--root);color:var(--root-ink)}
-.rgrid button.now{outline:3px solid var(--warn);outline-offset:1px}
-pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;background:var(--surface-2);border-radius:10px;padding:12px 14px;margin:0;overflow-x:auto}
-.saved{display:flex;flex-direction:column}
-.saved .it{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
-.saved .it span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* tuner */
 .strings{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
@@ -448,6 +426,80 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   .brand{font-size:21px}
   .notebtns{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
+.mini-context{padding:0 6px;font-size:12px;color:var(--muted)}
+.catalog-toolbar{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.catalog-search{flex:1;min-width:220px}
+.catalog-search input{width:100%;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+.catalog-meta{justify-content:space-between;min-height:28px}
+.vocard{display:flex;flex-direction:column;gap:0;padding:0;align-items:stretch;overflow:hidden}
+.vo-open{display:flex;gap:14px;align-items:center;text-align:left;padding:16px;background:none;border:0;color:inherit;flex:1;min-width:0}
+.vo-open .vobox{width:136px}
+.vo-open .votext b{font-size:16px;line-height:1.35}
+.vo-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:9px 14px}
+.vo-card-footer .btn{padding:5px 10px;font-size:13px}
+.vo-card-footer .favbtn{min-width:36px}
+.vo-empty{grid-column:1/-1;padding:40px;text-align:center;background:var(--surface);border:1px dashed var(--line);border-radius:14px}
+.vo-empty p{max-width:42ch;margin:8px auto 16px}
+.shape-choices button{min-width:64px;padding:9px 14px}
+.focus-choice[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.practice-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}
+.practice-stage,.practice-aside{min-width:0}
+.practice-stage{gap:14px}
+.practice-workspace>h2{margin-bottom:8px}
+.practice-stage .ptrans{padding:12px 0}
+.practice-stage .steps button{display:inline-flex;align-items:center;gap:6px;max-width:210px;padding:7px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.practice-stage .steps button span{overflow:hidden;text-overflow:ellipsis}
+.practice-aside{padding:18px;background:var(--surface-2);border-radius:12px;gap:16px}
+.practice-aside .feedback{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;background:transparent;gap:8px}
+.practice-aside .feedback h3,.practice-aside #pBest,.practice-aside #pNextStep{grid-column:1/-1;width:100%}
+.practice-aside .feedback h3{margin-bottom:4px}
+.practice-aside #pBest{font-size:12px;color:var(--muted)}
+.practice-aside .feedback .btn{min-width:0;padding:9px 4px;font-size:13px}
+.practice-help>summary{cursor:pointer;font-size:13px;font-weight:500}
+.practice-help[open]>summary{margin-bottom:12px}
+.practice-options{display:flex;flex-direction:column;gap:16px}
+.practice-options .mixctl{align-items:flex-start;flex-direction:column;width:100%}
+.practice-options .mvol{width:100%}
+.practice-options label.f{flex-wrap:wrap}
+.note-steps{margin-top:14px}
+.practice-tip{font-size:13px;padding-block:14px;border-block:1px solid var(--line)}
+.practice-aside .lessonlink{flex-direction:column;align-items:flex-start;margin-top:12px}
+.practice-aside .psrow{grid-template-columns:minmax(0,1fr) auto}
+.practice-aside .psrow svg{grid-column:1/-1;grid-row:2}
+.practice-aside .phist summary{font-size:13px}
+.practice-quick{justify-content:space-between;gap:12px}
+.practice-quick .f{margin-left:auto}
+.practice-help .legend{margin-block:10px}
+.practice-help .kbdhint{line-height:1.9}
+body:has(#settings:not([hidden])){overflow:hidden}
+@media(min-width:1100px){
+  .top>.inner{max-width:1552px}
+  main.pad{max-width:1600px;margin-inline:auto;padding:30px 32px 72px 216px}
+  main>.inner{max-width:none}
+  .tabs{position:fixed;top:calc(var(--hdr-h,65px) + 30px);left:max(24px,calc((100vw - 1600px)/2 + 24px));width:160px;padding:0;border:0;background:transparent}
+  .tabs>.inner{display:flex;flex-direction:column;gap:6px;max-width:none}
+  .tab{display:flex;align-items:center;gap:12px;text-align:left;border:0;border-radius:10px;padding:13px 16px;font:500 15px var(--font-body);letter-spacing:0;text-transform:none}
+  .tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent)}
+  .tab:hover{background:var(--surface-2)}
+  .tab[aria-selected="true"]:hover{background:var(--accent-soft)}
+  #libraryNav{gap:6px;padding-bottom:18px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+  #libraryNav .btn{background:transparent;border-color:transparent;padding:7px 12px}
+  #libraryNav [aria-current="page"]{background:var(--surface);border-color:var(--line)}
+  .vhead{margin-bottom:8px}
+  .practice-workspace{padding:24px}
+  .practice-layout{grid-template-columns:minmax(0,1fr) 256px}
+  .practice-aside{position:sticky;top:calc(var(--hdr-h,65px) + 20px)}
+  .practice-stage .ptrans{flex-wrap:nowrap;position:sticky;top:var(--hdr-h,65px);z-index:5;background:var(--surface)}
+  .practice-stage .ptempo{gap:6px}
+  .practice-stage .tbar{width:110px}
+  .practice-stage .ptempo .round{width:32px;height:32px}
+  .vodetail{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;align-items:center;padding:20px 0}
+  .vobig{display:flex;justify-content:center}
+  .vhead h2,.practice-workspace>h2{font-size:32px}
+  #lnUnit>.card{padding:24px}
+}
+@media(max-width:620px){.mini-context{display:none}.catalog-toolbar{gap:12px}.catalog-search{min-width:100%}.vo-open .vobox{width:124px}.practice-aside{padding:16px}.practice-stage .ptrans{padding-block:4px}}
+@media(prefers-reduced-motion:no-preference){.btn,.tab,.vocard,.excard{transition:border-color .15s}}
 </style>
 
 <header class="top pad" id="top">
@@ -474,7 +526,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       <button id="rpSkip" type="button">Skip</button>
       <button id="rpStop" type="button" aria-label="End routine">End</button>
     </div>
-    <div class="mini" aria-label="Metronome">
+    <div class="mini" aria-label="Playback controls"><span id="miniContext" class="mini-context">Metronome</span>
       <span class="pulse" id="pulse" aria-hidden="true"></span>
       <button type="button" id="miniMinus" aria-label="Slower">−</button>
       <button type="button" class="bpm" id="miniBpm" title="Open metronome">80 bpm</button>
@@ -491,7 +543,6 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
     <button class="tab" role="tab" data-tab="today">Today</button>
     <button class="tab" role="tab" data-tab="learn">Learn</button>
     <button class="tab" role="tab" data-tab="library">Library</button>
-    <button class="tab" role="tab" data-tab="riffs">Create</button>
     <button class="tab" role="tab" data-tab="progress">Progress</button>
   </div>
 </nav>
@@ -607,56 +658,60 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   <div id="exLib" class="stack" style="gap:16px">
     <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Workouts for knowing the neck in any key, connecting it with technique and chord tones, and turning it into riffs, plus a play-along for every voicing. Scale workouts live under Library → <button class="linkbtn" type="button" data-go="explorer">Scales</button>, bundled with each scale. Each one shows exactly what to play, note by note, in time. Most work in any key: pick one, or let it move up a 4th every loop until you've played it in all 12. Rate every run and the tempo climbs toward the goal.</p></div>
     <div class="row" style="justify-content:space-between"><div class="seg" id="exView"><button type="button" data-v="lib">Library</button><button type="button" data-v="hist">History</button></div><span class="small muted" id="exHistSum"></span></div>
+    <label class="f catalog-search"><span>Find an exercise</span><input type="search" id="exSearch" maxlength="120" placeholder="Search a technique, chord or skill…" autocomplete="off"></label>
     <div id="exRecent" class="stack" style="gap:14px"></div>
     <div id="exList" class="stack" style="gap:18px"></div>
     <div id="exHist" class="stack" style="gap:14px" hidden></div>
   </div>
   <div id="exPlayer" class="stack" hidden>
-    <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="row" style="gap:10px"><span class="small muted" id="pCat"></span><button class="btn" id="pFocusPick" type="button">Make my focus</button><button class="btn favbtn" id="pFav" type="button" aria-pressed="false">☆ Favorite</button></span></div>
-    <div class="card stack">
-      <div class="stack" style="gap:2px"><h2 id="pTitle">Exercise</h2><p class="small muted" id="pAbout"></p><div id="pLesson"></div></div>
-      <div class="row" id="pKeyRow" hidden><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Key</span><select id="pKey"></select></label><button class="btn" id="pRandKey" type="button">Random key</button><label class="toggle"><input type="checkbox" id="pKeyCycle"> Up a 4th every loop (all 12 keys)</label></div>
-      <div class="steps" id="pSteps"></div>
-      <p class="small"><b id="pStepName"></b> <span class="muted" id="pStepDesc"></span></p>
-      <div class="hw"><canvas id="pCanvas" role="img" aria-label="Scrolling tab. The orange line marks now; notes move left toward it."></canvas></div>
-      <div class="pstatus small muted" id="pStatus"></div>
-      <p class="small pfocus" id="pFocus"></p>
-      <div class="ptrans">
-        <button class="btn primary big" id="pPlay" type="button">Play</button>
-        <button class="btn" id="pListen" type="button" title="Hear and watch one pass without playing">Listen first</button>
-        <button class="btn" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀ Note</button>
-        <button class="btn" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">Note ▶</button>
-        <div class="ptempo"><button class="round sm" id="pSlower" type="button" aria-label="Slower">−</button><div><div><button class="bpmtap mono" id="pBpm" type="button" title="Tap to type a tempo">60</button><input class="bpmin mono" id="pBpmIn" type="number" inputmode="numeric" min="30" max="260" aria-label="Tempo in bpm" hidden> <span class="small muted">bpm · goal <button class="bpmtap goaltap mono" id="pGoal" type="button" title="Tap to change the goal tempo">90</button><span id="pOver"></span></span></div><div class="tbar"><i id="pTempoBar"></i></div></div><button class="round sm" id="pFaster" type="button" aria-label="Faster">+</button></div>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="row" style="gap:10px"><span class="small muted" id="pCat"></span><button class="btn" id="pFocusPick" type="button" aria-pressed="false">Make my focus</button><button class="btn favbtn" id="pFav" type="button" aria-pressed="false">☆ Favorite</button></span></div>
+    <div class="card stack practice-workspace">
+      <h2 id="pTitle">Exercise</h2>
+      <div class="practice-layout">
+        <div class="practice-stage stack">
+          <div class="row" id="pKeyRow" hidden><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Key</span><select id="pKey"></select></label><button class="btn" id="pRandKey" type="button">Random key</button></div>
+          <div class="steps" id="pSteps"></div>
+          <p class="small"><b id="pStepName"></b> <span class="muted" id="pStepDesc"></span></p>
+          <div class="ptrans">
+            <button class="btn primary big" id="pPlay" type="button">Play</button>
+            <button class="btn" id="pListen" type="button" title="Hear and watch one pass without playing">Listen first</button>
+            <div class="ptempo"><button class="round sm" id="pSlower" type="button" aria-label="Slower">−</button><div><div><button class="bpmtap mono" id="pBpm" type="button" title="Tap to type a tempo">60</button><input class="bpmin mono" id="pBpmIn" type="number" inputmode="numeric" min="30" max="260" aria-label="Tempo in bpm" hidden> <span class="small muted">bpm · goal <button class="bpmtap goaltap mono" id="pGoal" type="button" title="Tap to change the goal tempo">90</button><span id="pOver"></span></span></div><div class="tbar"><i id="pTempoBar"></i></div></div><button class="round sm" id="pFaster" type="button" aria-label="Faster">+</button></div>
+          </div>
+          <div class="goaled" id="pGoalEd" hidden>
+            <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Goal tempo</span><input class="bpmin mono" id="pGoalIn" type="number" inputmode="numeric" min="40" max="260"> <span class="small muted">bpm</span></label>
+            <label class="toggle"><input type="checkbox" id="pGoalAll"> All steps of this exercise</label>
+            <button class="btn primary" id="pGoalSave" type="button">Set goal</button><button class="btn" id="pGoalReset" type="button">Default</button><button class="btn" id="pGoalCancel" type="button">Cancel</button>
+            <span class="small muted" id="pGoalNote"></span>
+          </div>
+          <div class="row practice-quick"><label class="toggle"><input type="checkbox" id="pLoop"> Loop</label><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label></div>
+          <div class="hw"><canvas id="pCanvas" role="img" aria-label="Scrolling tab. The orange line marks now; notes move left toward it."></canvas></div>
+          <div class="pstatus small muted" id="pStatus"></div>
+          <p class="small pfocus" id="pFocus"></p>
+          <div class="scroll-x"><div id="pBoard"></div></div>
+          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play or stop · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
+        </div>
+        <aside class="practice-aside stack" aria-label="Practice guidance and settings">
+          <div class="feedback" id="pFeedback">
+            <h3>How did that run go?</h3>
+            <button class="btn" id="pClean" type="button">Clean</button>
+            <button class="btn" id="pAlmost" type="button">Almost</button>
+            <button class="btn" id="pMessy" type="button">Messy</button>
+            <button class="btn primary" id="pNextStep" type="button" hidden>Next step →</button>
+            <span class="small muted" id="pBest"></span>
+          </div>
+          <details class="practice-help"><summary id="pCriteriaTitle">What counts as clean?</summary><p class="small muted" id="pCrit"><b>Clean</b>: no stops, every note lands with the click (one tiny slip is fine). <b>Almost</b>: kept going, a few notes off. <b>Messy</b>: stopped or lost the beat. Two clean runs in a row move the tempo up.</p></details>
+          <details id="pSettings" class="practice-help"><summary>Playback &amp; display settings</summary><div class="practice-options">
+              <label class="toggle"><input type="checkbox" id="pCount"> Count-in</label>
+              <span class="mixctl"><label class="toggle"><input type="checkbox" id="pGuide"> Hear the notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Guitar notes volume"></span>
+              <span class="mixctl"><label class="toggle"><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
+              <label class="toggle"><input type="checkbox" id="pLadder"> Speed up 4 bpm each loop</label>
+              <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select></label>
+              <label class="toggle"><input type="checkbox" id="pKeyCycle"> Up a 4th every loop (all 12 keys)</label></div><div class="row note-steps"><button class="btn" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀ Note</button><button class="btn" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">Note ▶</button></div></details>
+          <div class="practice-tip"><p class="small"><b>Tip:</b> <span id="pTip"></span></p></div>
+          <details class="practice-help"><summary>About this exercise</summary><p class="small muted" id="pAbout"></p><div id="pLesson"></div></details>
+          <details class="phist" id="pHistWrap"><summary><b>Your history</b> <span class="small muted" id="pHistSum"></span></summary><div id="pHist" class="stack" style="gap:6px;margin-top:8px"></div></details>
+        </aside>
       </div>
-      <div class="goaled" id="pGoalEd" hidden>
-        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Goal tempo</span><input class="bpmin mono" id="pGoalIn" type="number" inputmode="numeric" min="40" max="260"> <span class="small muted">bpm</span></label>
-        <label class="toggle"><input type="checkbox" id="pGoalAll"> All steps of this exercise</label>
-        <button class="btn primary" id="pGoalSave" type="button">Set goal</button><button class="btn" id="pGoalReset" type="button">Default</button><button class="btn" id="pGoalCancel" type="button">Cancel</button>
-        <span class="small muted" id="pGoalNote"></span>
-      </div>
-      <div class="row ptoggles">
-        <label class="toggle"><input type="checkbox" id="pLoop"> Loop</label>
-        <label class="toggle"><input type="checkbox" id="pCount"> Count-in</label>
-        <span class="mixctl"><label class="toggle"><input type="checkbox" id="pGuide"> Hear the notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Guitar notes volume"></span>
-        <span class="mixctl"><label class="toggle"><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
-        <label class="toggle"><input type="checkbox" id="pLadder"> Speed up 4 bpm each loop</label>
-        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Practice</span><select id="pSpot"><option value="">Whole step</option></select></label>
-        <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Show</span><select id="pLab"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select></label>
-      </div>
-      <div class="scroll-x"><div id="pBoard"></div></div>
-      <div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div>
-      <div class="feedback" id="pFeedback">
-        <span style="font-weight:500">How did that run go?</span>
-        <button class="btn" id="pClean" type="button">Clean</button>
-        <button class="btn" id="pAlmost" type="button">Almost</button>
-        <button class="btn" id="pMessy" type="button">Messy</button>
-        <button class="btn primary" id="pNextStep" type="button" hidden>Next step →</button>
-        <span class="small muted" id="pBest"></span>
-      </div>
-      <p class="small muted kbdhint">Keys: <kbd>Space</kbd> play or stop · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p>
-      <p class="small muted" id="pCrit"><b>Clean</b>: no stops, every note lands with the click (one tiny slip is fine). <b>Almost</b>: kept going, a few notes off. <b>Messy</b>: stopped or lost the beat. Two clean runs in a row move the tempo up.</p>
-      <p class="small"><b>Tip:</b> <span id="pTip"></span></p>
-      <details class="phist" id="pHistWrap"><summary><b>Your history</b> <span class="small muted" id="pHistSum"></span></summary><div id="pHist" class="stack" style="gap:6px;margin-top:8px"></div></details>
     </div>
   </div>
 </section>
@@ -666,8 +721,9 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 <section class="view" id="view-voicings" hidden>
   <div id="voList" class="stack" style="gap:16px">
     <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Chord vocabulary</span><h2>Chord Shapes</h2></div><p class="muted small">Learn related shapes, compare their sound, and use them in music. Start with movable grips and triads, then explore sevenths, chord colors, drones and alternate tunings. Genre collections turn these sounds into riffs.</p></div>
-    <div class="row"><label class="f"><span>Shape family</span><select id="voFamily"></select></label><button class="btn" id="voTriads" type="button">Practice triads across the neck</button></div>
+    <div class="catalog-toolbar"><label class="f catalog-search"><span>Find a sound or shape</span><input id="voSearch" type="search" maxlength="120" placeholder="Search maj7, triads, open strings…" autocomplete="off"></label><label class="f"><span>Shape family</span><select id="voFamily"></select></label><label class="toggle"><input id="voSaved" type="checkbox"> Favorites</label><button class="btn" id="voReset" type="button">Clear filters</button></div>
     <div class="seg" id="voStyle"><button type="button" data-v="all">All genres</button><button type="button" data-v="rock">Rock</button><button type="button" data-v="alt">Alternative</button><button type="button" data-v="emo">Midwest emo</button><button type="button" data-v="gaze">Shoegaze</button></div>
+    <div class="row catalog-meta"><span class="small muted" id="voCount" aria-live="polite"></span><button class="linkbtn" id="voTriads" type="button">Practice triads across the neck →</button></div>
     <div class="vogrid" id="voGrid"></div>
     <p class="small muted">New to color tones and open-string drones? <button class="btn" type="button" data-openunit="u9">Read the lesson: Voicings for riffs</button></p>
   </div>
@@ -675,15 +731,16 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
     <div class="row" style="justify-content:space-between"><button class="btn" id="voBack" type="button">← All chord shapes</button><span class="row" id="voTags" style="gap:6px"></span></div>
     <div class="card stack">
       <h2 id="voTitle">Voicing</h2>
-      <p class="small" id="voWhy" style="max-width:70ch"></p>
-      <div class="row"><label class="f" id="voKeyRow" hidden><span>Root</span><select id="voKey"></select></label><label class="f"><span>Diagram labels</span><select id="voLabels"><option value="degree">Chord tones</option><option value="note">Notes</option><option value="finger">Fingers</option></select></label><button class="btn" id="voFocus" type="button">Make my practice focus</button></div>
-      <div class="seg" id="voMoves"></div>
+      <p class="small muted" id="voWhy" style="max-width:80ch"></p>
+      <div class="row"><label class="f" id="voKeyRow" hidden><span>Root</span><select id="voKey"></select></label><label class="f"><span>Diagram labels</span><select id="voLabels"><option value="degree">Chord tones</option><option value="note">Notes</option><option value="finger">Fingers</option></select></label><button class="btn" id="voFocus" type="button" aria-pressed="false">Make my practice focus</button></div>
+      <div class="seg shape-choices" id="voMoves" aria-label="Related chord shapes"></div>
+      <p class="small muted" id="voPosition"></p>
       <div class="vodetail">
         <div id="voBox" class="vobig"></div>
         <div class="stack" style="min-width:0">
           <div class="scroll-x"><div id="voBoard"></div></div>
           <p class="small" id="voNotes"></p>
-          <div class="row"><button class="btn" id="voStrum" type="button">▶ Strum</button><button class="btn" id="voArp" type="button">▶ Arpeggio</button><button class="btn primary" id="voPlayAlong" type="button">Play along: make it a riff</button></div>
+          <div class="row"><button class="btn" id="voStrum" type="button">▶ Strum</button><button class="btn" id="voArp" type="button">▶ Arpeggio</button><button class="btn primary" id="voPlayAlong" type="button">Practice these shapes →</button></div>
         </div>
       </div>
       <h3>Riff ideas</h3>
@@ -820,31 +877,6 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   </div>
 </section>
 
-<!-- RIFFS -->
-<section class="view" id="view-riffs" hidden>
-  <div class="card row" style="justify-content:space-between"><div class="stack" style="gap:4px"><h2>Write with chord shapes</h2><p class="small muted">Choose a family, compare its sound, then open Your riff in its play-along.</p></div><button class="btn primary" type="button" data-go="voicings">Choose shapes</button></div>
-  <div class="vhead"><h2>Riff Dice</h2><p class="muted small">Roll notes and a rhythm, loop it with drums, then fix one or two notes until it grooves. Lock notes you like and roll again. Tap a die to change it, tap a box to change the rhythm.</p></div>
-  <div class="card stack">
-    <div class="row">
-      <label class="f"><span>Key</span><select id="dRoot"></select></label>
-      <label class="f"><span>Notes</span><select id="dCount"><option>4</option><option>6</option><option>8</option></select></label>
-      <label class="f"><span>Bars</span><select id="dBars"><option value="1">1</option><option value="2">2</option></select></label>
-      <label class="f"><span>Backing</span><select id="dBack"><option value="drums">Drums</option><option value="click">Click</option><option value="none">None</option></select></label>
-    </div>
-    <div class="slots" id="dSlots"></div>
-    <div class="stack" id="dRhythm"></div>
-    <pre class="tabtxt" id="dTab" aria-label="Tab"></pre>
-    <div class="row">
-      <button class="btn primary big" id="dRoll" type="button">Roll</button>
-      <button class="btn big" id="dPlay" type="button">Play loop</button>
-      <button class="btn" id="dRhy" type="button">New rhythm</button>
-      <button class="btn" id="dRev" type="button">Reverse notes</button>
-    </div>
-    <div class="row"><input type="text" id="dName" placeholder="Name this riff" style="flex:1;min-width:160px"><button class="btn" id="dSave" type="button">Save riff</button></div>
-  </div>
-  <div class="card stack"><h3>Saved riffs</h3><div class="saved" id="dSaved"></div></div>
-</section>
-
 <!-- TUNER -->
 <section class="view" id="view-tuner" hidden>
   <div class="vhead"><h2>Tuner</h2><p class="muted small">Press Start listening and play a string. Auto mode finds the string for you; Manual tunes the one you tap and moves to the next when it's in tune; Chromatic shows any note. Tap a peg anytime to hear its reference note.</p></div>
@@ -938,7 +970,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
-  ui: { planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, droot: 4, dcount: 4, dbars: 1, dback: 'drums', tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { exQuery: '', voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -959,7 +991,6 @@ function save() { S.updatedAt = Date.now(); clearTimeout(saveT); saveT = setTime
 function prune() {
   const keys = Object.keys(S.days).sort(); while (keys.length > 400) delete S.days[keys.shift()];
   for (const k of Object.keys(S.changes.hist)) if (S.changes.hist[k].length > 60) S.changes.hist[k] = S.changes.hist[k].slice(-60);
-  if (S.riffs.length > 60) S.riffs.length = 60;
   for (const t of S.tempo) if (t.log.length > 60) t.log = t.log.slice(-60);
   const rk = Object.keys(S.routines).sort(); while (rk.length > 120) delete S.routines[rk.shift()];
 }
@@ -1117,7 +1148,7 @@ function tone(m, dest, type = 'warm') {
 function chime() { const c = ac(); const t = c.currentTime + 0.02; pluck(76, t, null, 0.6, 1.2); pluck(83, t + 0.16, null, 0.6, 1.4); }
 
 /* ---------- metronome engine ---------- */
-const M = { running: false, beat: 0, bar: 0, next: 0, timer: null, bus: null, q: [], listeners: new Set(), override: null, taps: [], changed: false };
+const M = { running: false, beat: 0, bar: 0, next: 0, timer: null, bus: null, q: [], taps: [], changed: false };
 const DRUM = {
   rock: { k: [0, 4, 5], s: [2, 6], h: [0, 1, 2, 3, 4, 5, 6, 7] },
   half: { k: [0, 3], s: [4], h: [0, 1, 2, 3, 4, 5, 6, 7] },
@@ -1148,7 +1179,6 @@ function mStart() {
 function mStop() {
   if (!M.running) return;
   clearInterval(M.timer); killBus(M.bus); M.bus = null; M.running = false; M.q.length = 0;
-  M.listeners.forEach(l => l.onStop && l.onStop());
   renderTransport(); clearBeatUI();
 }
 function mToggle() { M.running ? mStop() : mStart(); }
@@ -1170,7 +1200,7 @@ function mBeat(t) {
   const cyc = Math.max(1, cfg.gap.play + cfg.gap.mute);
   const muted = !counting && cfg.gap.on && (bar % cyc) >= cfg.gap.play;
   const lvl = cfg.accents[beat] ?? 1;
-  const snd = M.override || cfg.sound;
+  const snd = cfg.sound;
   const sw = (snd === 'drums' && cfg.drum === 'shuffle') ? 1 : cfg.swing / 100;
   const off8 = 0.5 + sw / 6;
   if (counting) SND.beep(t, beat === 0 ? 3 : 1, d);
@@ -1193,8 +1223,6 @@ function mBeat(t) {
       }
     }
   }
-  const eighths = cfg.den === 4 ? [[beat * 2, 0], [beat * 2 + 1, off8]] : [[beat, 0]];
-  for (const [idx, off] of eighths) M.listeners.forEach(l => l.eighth && l.eighth(t + off * spb, idx, bar, counting, spb));
   M.q.push({ t, beat, bar, muted, counting, lvl });
 }
 function mDraw() {
@@ -1227,6 +1255,7 @@ function renderBpm() {
 function playerVisible() { return !!P.ex && curTab === P.host && !$('#exPlayer').hidden; }
 function renderMini() {
   const player = playerVisible(), running = player ? P.running : M.running;
+  $('#miniContext').textContent = player ? 'Practice' : 'Metronome';
   $('#miniBpm').innerHTML = (player ? P.bpm : S.metro.bpm) + '<span class="unit">bpm</span>';
   $('#miniBpm').title = player ? 'Change exercise tempo' : 'Open metronome';
   $('#miniBpm').setAttribute('aria-label', (player ? 'Exercise tempo: ' + P.bpm : 'Metronome tempo: ' + S.metro.bpm) + ' bpm');
@@ -1236,7 +1265,6 @@ function renderMini() {
 function renderTransport() {
   renderMini();
   $('#mPlay').textContent = M.running ? 'Stop' : 'Start';
-  if (curTab === 'riffs') renderRiffPlay();
 }
 function renderBeats() {
   const cfg = S.metro, w = $('#beats'); w.innerHTML = '';
@@ -1706,73 +1734,6 @@ function xPlay() {
 function xDrone() {
   if (X.drone) { X.drone.stop(); X.drone = null; $('#xDrone').textContent = 'Root drone'; return; }
   X.drone = tone(36 + S.ui.xkey + (S.ui.xkey < 4 ? 12 : 0), null, 'fifth'); $('#xDrone').textContent = 'Stop drone';
-}
-
-/* ---------- riff dice ---------- */
-const DIE = [null, { iv: 'R', s: 5, df: 0 }, { iv: 'b3', s: 5, df: 3 }, { iv: '4', s: 4, df: 0 }, { iv: '5', s: 4, df: 2 }, { iv: 'b7', s: 3, df: 0 }, { iv: '8', s: 3, df: 2 }];
-const RHY = ['x-x-x-x-', 'xxxxxxxx', 'x--x--x-', '-x-x-x-x', 'x--xx-x-', 'xx-x-xx-'];
-const D = { notes: [1, 2, 3, 1, 4, 5, 6, 1], locks: [], rhythm: ['x--x--x-', 'x--xx-x-'], playing: false, armed: false, step: 0, startedMetro: false, delArm: null };
-function dieSvg(n, size = 40) {
-  const P = { 1: [[0, 0]], 2: [[-1, 1], [1, -1]], 3: [[-1, 1], [0, 0], [1, -1]], 4: [[-1, 1], [1, 1], [-1, -1], [1, -1]], 5: [[-1, 1], [1, 1], [0, 0], [-1, -1], [1, -1]], 6: [[-1, 1], [1, 1], [-1, 0], [1, 0], [-1, -1], [1, -1]] };
-  const c = size / 2, o = size * 0.26;
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><rect x="1" y="1" width="${size - 2}" height="${size - 2}" rx="8" stroke-width="1.5"/>${P[n].map(([x, y]) => `<circle cx="${c + x * o}" cy="${c - y * o}" r="${size * 0.085}"/>`).join('')}</svg>`;
-}
-const dR = () => (S.ui.droot - 4 + 12) % 12;
-function dCell(v) { const d = DIE[v]; return { s: d.s, f: dR() + d.df }; }
-function dHits() { const out = []; let k = 0; for (let b = 0; b < S.ui.dbars; b++) for (let i = 0; i < 8; i++) if (D.rhythm[b][i] === 'x') out.push({ b, i, n: k++ % S.ui.dcount }); return out; }
-function renderRiffs() {
-  $('#dRoot').innerHTML = [4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3].map(pc => { const r = (pc - 4 + 12) % 12; return `<option value="${pc}">${nn(pc)} minor${r === 0 ? ' (open)' : ` (fret ${r})`}</option>`; }).join('');
-  $('#dRoot').value = S.ui.droot; $('#dCount').value = S.ui.dcount; $('#dBars').value = S.ui.dbars; $('#dBack').value = S.ui.dback;
-  renderSlots(); renderRhythm(); renderTab(); renderSaved(); renderRiffPlay();
-}
-function renderSlots(rolling) {
-  $('#dSlots').innerHTML = D.notes.slice(0, S.ui.dcount).map((v, i) => { const c = dCell(v); const locked = !!D.locks[i]; return `<div class="slot ${locked ? 'locked' : ''} ${rolling && !locked ? 'rolling' : ''}"><button class="die" type="button" data-i="${i}" aria-label="Note ${i + 1}: ${DIE[v].iv}. Tap to change">${dieSvg(v)}</button><span class="iv">${DIE[v].iv}</span><span class="nm">${nn((OPEN[c.s] + c.f) % 12)} · ${SNAME[c.s]}${c.f}</span><button class="lk" type="button" data-lock="${i}">${locked ? 'Locked' : 'Lock'}</button></div>`; }).join('');
-}
-function renderRhythm(now) {
-  let h = '';
-  for (let b = 0; b < S.ui.dbars; b++) {
-    h += `<div class="stack" style="gap:4px"><span class="small muted">Bar ${b + 1} rhythm, 8th notes</span><div class="rgrid">${[...D.rhythm[b]].map((c, i) => `<button type="button" class="${c === 'x' ? 'on' : ''} ${now && now.b === b && now.i === i ? 'now' : ''}" data-b="${b}" data-i="${i}" aria-label="Bar ${b + 1}, 8th ${i + 1}, ${c === 'x' ? 'note' : 'rest'}">${['1', '&', '2', '&', '3', '&', '4', '&'][i]}</button>`).join('')}</div></div>`;
-  }
-  $('#dRhythm').innerHTML = h;
-}
-function renderTab() {
-  const lines = { 3: 'D|', 4: 'A|', 5: 'E|' }; const hits = dHits(); const map = new Map(hits.map(h => [h.b + ':' + h.i, h]));
-  for (let b = 0; b < S.ui.dbars; b++) {
-    for (let i = 0; i < 8; i++) { const h = map.get(b + ':' + i); const c = h ? dCell(D.notes[h.n]) : null; for (const s of [3, 4, 5]) { const t = c && c.s === s ? String(c.f) : ''; lines[s] += '-' + t + '-'.repeat(3 - t.length); } }
-    for (const s of [3, 4, 5]) lines[s] += '|';
-  }
-  $('#dTab').textContent = [lines[3], lines[4], lines[5]].join('\n');
-}
-function renderSaved() {
-  $('#dSaved').innerHTML = S.riffs.length ? S.riffs.map(r => `<div class="it"><span><b>${esc(r.name)}</b> <span class="small muted">· ${nn(r.root)} minor · ${r.count} notes · ${esc(r.date)}</span></span><button class="btn" type="button" data-load="${esc(r.id)}">Load</button><button class="btn" type="button" data-del="${esc(r.id)}">${D.delArm === r.id ? 'Confirm' : 'Delete'}</button></div>`).join('') : '<p class="small muted">Riffs you save show up here, so you can bring them to band practice.</p>';
-}
-function renderRiffPlay() { $('#dPlay').textContent = D.playing ? 'Stop loop' : 'Play loop'; $('#dPlay').classList.toggle('primary', D.playing); }
-function dRoll() {
-  for (let i = 0; i < 8; i++) if (!D.locks[i]) D.notes[i] = 1 + rnd(6);
-  for (let b = 0; b < 2; b++) D.rhythm[b] = RHY[rnd(6)];
-  renderSlots(true); renderRhythm(); renderTab();
-  if (!D.playing) { ac(); const t = AU.ctx.currentTime + 0.05; D.notes.slice(0, S.ui.dcount).forEach((v, k) => { const c = dCell(v); pluck(OPEN[c.s] + c.f, t + k * 0.16, null, 0.55, 0.5); }); }
-}
-const riffListener = {
-  eighth(t, idx, bar, counting, spb) {
-    if (!D.playing || counting) return;
-    if (D.armed) { if (idx !== 0) return; D.armed = false; D.step = 0; }
-    const slot = D.step % (8 * S.ui.dbars), b = Math.floor(slot / 8), i = slot % 8; D.step++;
-    const delay = Math.max(0, (t - AU.ctx.currentTime) * 1000);
-    setTimeout(() => { if (D.playing && curTab === 'riffs') renderRhythm({ b, i }); }, delay);
-    if (D.rhythm[b][i] !== 'x') return;
-    const h = dHits().find(x => x.b === b && x.i === i); if (!h) return;
-    const c = dCell(D.notes[h.n]); pluck(OPEN[c.s] + c.f, t, M.bus, 0.9, Math.min(0.95, spb * 1.4));
-  },
-  onStop() { if (D.playing) { D.playing = false; M.override = null; D.startedMetro = false; renderRiffPlay(); renderRhythm(); } }
-};
-M.listeners.add(riffListener);
-function dPlay() {
-  if (D.playing) { D.playing = false; M.override = null; if (D.startedMetro) { D.startedMetro = false; mStop(); } renderRiffPlay(); renderRhythm(); return; }
-  D.playing = true; D.armed = true; M.override = S.ui.dback === 'click' ? null : S.ui.dback;
-  if (S.ui.dback === 'click' && S.metro.sound === 'drums') M.override = 'click';
-  if (!M.running) { D.startedMetro = true; mStart(); }
-  renderRiffPlay();
 }
 
 /* ---------- tuner ----------
@@ -2306,7 +2267,7 @@ const FOCUS = {
   'Positions and scales': 'an even string of notes, like beads of the same size. No note louder or longer than the others.',
   'Arpeggios and chords': 'each chord tone ringing clearly on its own, then the next one taking over without a gap.',
   'Fretboard fluency': 'the note name in your head just before it sounds. Say it, then play it.',
-  'Voicing riffs': 'the open strings ringing under the moving notes. Keep that shimmer going between shapes.'
+  'Chord Shapes': 'the open strings ringing under the moving notes. Keep that shimmer going between shapes.'
 };
 function focusCue(e, sd) {
   if (sd.create) return 'a riff you would want to play again. Keep the tempo steady and let the chord on beat 1 anchor each bar.';
@@ -2680,7 +2641,7 @@ function renderExHistPanel() {
   const e = P.ex; if (!e) return; const st = exStat(e.id), L = S.exlog.filter(x => x.id === e.id);
   $('#pFav').setAttribute('aria-pressed', S.exfav.includes(e.id)); $('#pFav').textContent = S.exfav.includes(e.id) ? '★ Favorite' : '☆ Favorite';
   $('#pHistSum').textContent = L.length ? `${L.length} run${L.length > 1 ? 's' : ''} · last ${ago(L[L.length - 1].t)}` : 'no runs yet';
-  if (S.ui.histOpen !== false && L.length) $('#pHistWrap').open = true;
+  $('#pHistWrap').open = S.ui.histOpen === true && L.length > 0;
   $('#pHist').innerHTML = e.steps.map((sd, i) => {
     const R = L.filter(x => x.s === i), last = R[R.length - 1], tail = R.filter(x => x.b).slice(-14);
     const keys = [...new Set(R.filter(x => x.k != null).map(x => x.k))];
@@ -2689,10 +2650,13 @@ function renderExHistPanel() {
 }
 function renderExLib() {
   setExView(S.ui.exview || 'lib');
+  const query = S.ui.exQuery.toLowerCase().trim();
+  if ($('#exSearch').value !== S.ui.exQuery) $('#exSearch').value = S.ui.exQuery;
+  $('#exRecent').hidden = !!query;
   $('#exList').innerHTML = EXCATS.map(cat => {
-    const items = EX.filter(e => e.cat === cat); if (!items.length) return '';
+    const items = EX.filter(e => e.cat === cat && (!query || [e.title,e.about,e.cat].join(' ').toLowerCase().includes(query))); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(exCard).join('')}</div></div>`;
-  }).join('');
+  }).join('') || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a skill such as triads, legato or arpeggios.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
 }
 function exCard(e) {
   {
@@ -2720,13 +2684,20 @@ function renderExMeta() {
   if (free) $('#pBest').textContent = st.done[P.step] ? sd.observe ? 'Sound explored' : 'A riff worth keeping' : 'Use a comfortable tempo';
   renderMini();
 }
+function renderExSteps() {
+  const e = P.ex, st = exStat(e.id), next = nextStep(e), names = ['Hear', 'Practice', 'Variation', 'Your riff'];
+  $('#pSteps').innerHTML = e.steps.map((step, i) => `<button type="button" data-step="${i}" title="${esc(step.n)}" aria-label="Step ${i + 1}: ${esc(step.n)}" aria-pressed="${i === P.step}" class="${st.done[i] ? 'done' : ''} ${i === next && !st.done[i] ? 'next' : ''}">${st.done[i] ? '✓' : i + 1}<span>${esc(e.voicing ? names[i] : step.n)}</span></button>`).join('');
+}
 function renderExPlayer() {
-  const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step], ns = nextStep(e);
+  const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step];
   $('#pCat').textContent = `${e.cat} · ${e.lvl}`;
   $('#pTitle').textContent = e.title; $('#pAbout').textContent = e.about;
-  $('#pSteps').innerHTML = e.steps.map((s, i) => `<button type="button" data-step="${i}" aria-pressed="${i === P.step}" class="${st.done[i] ? 'done' : ''} ${i === ns && !st.done[i] ? 'next' : ''}">${st.done[i] ? '✓ ' : ''}Step ${i + 1}</button>`).join('');
+  const focused = S.ui.focusEx === e.id; $('#pFocusPick').classList.add('focus-choice'); $('#pFocusPick').setAttribute('aria-pressed', focused); $('#pFocusPick').textContent = focused ? '✓ Current focus' : 'Make my focus';
+  renderExSteps();
   $('#pStepName').textContent = `Step ${P.step + 1}: ${sd.n}.`; $('#pStepDesc').textContent = sd.d + (sd.swing ? ' Swing feel.' : '');
-  $('#pClean').textContent = sd.observe ? 'Heard it' : sd.create ? 'Keep this riff' : 'Clean';
+  $('#pClean').textContent = sd.observe ? 'Heard it' : sd.create ? 'Good take' : 'Clean';
+  $('#pCriteriaTitle').textContent = sd.observe ? 'What to listen for' : sd.create ? 'What makes a good take?' : 'What counts as clean?';
+  $('#pNextStep').hidden = !(st.done[P.step] && P.step < e.steps.length - 1);
   $('#pCrit').textContent = sd.observe ? 'Listen to each note and the whole chord. Mark Heard it when you can recognize the sound.' : sd.create ? 'Keep the pulse, use the shapes deliberately, and mark a version you would want to play again. Save or record it for next time.' : 'Clean: keep going with clear notes and a steady pulse. Almost: a few notes or changes need work. Messy: stopped or lost the beat. Two clean runs suggest a higher tempo.';
   $('#pLadder').disabled = !!(sd.observe || sd.create);
   $('#pTip').textContent = e.tip;
@@ -2788,8 +2759,7 @@ function exFeedback(kind) {
   } else if (kind === 'messy') { st.streak[i] = 0; const nb = Math.max(40, Math.min(was - 5, Math.round(was * 0.9))); exReanchor(nb); toast(`Slowed to ${nb} bpm. If one spot keeps breaking, use Practice to loop just that bar.`); }
   else { st.streak[i] = 0; toast(`Stay at ${was} bpm. Aim for two clean runs in a row.`); }
   st.bpm[i] = P.bpm; st.last = t; save(); renderExMeta(); renderExHistPanel();
-  const ns = nextStep(P.ex);
-  $$('#pSteps button').forEach((b, k) => { b.classList.toggle('done', !!st.done[k]); b.classList.toggle('next', k === ns && !st.done[k]); b.textContent = (st.done[k] ? '✓ ' : '') + 'Step ' + (k + 1); });
+  renderExSteps();
   if (review || kind === 'clean') { const e = P.ex; requestAnimationFrame(() => { if (P.ex === e) { const f = $('#pFocus'); if (f.querySelector('.pnew')) renderExPlayerFocus(); } }); }
 }
 function renderExPlayerFocus() { const e = P.ex, sd = e.steps[P.step]; $('#pFocus').innerHTML = `<b>Listen for</b> ${esc(focusCue(e, sd))}`; }
@@ -3015,7 +2985,7 @@ const UNITS = [
     practice: [{ l: 'Fretboard trainer: intervals', d: 'Find any interval from a random root.', a: () => presetFret('iv', [true, true, true, true, true, true], '0-12', false) }, { l: 'Ear trainer: intervals', d: 'Hear the same intervals.', a: () => { switchTab('ear'); S.ui.emode = 'iv'; save(); renderEar(); } }] },
   { id: 'u4', title: 'The CAGED system', sum: 'Five chord shapes that tile the whole neck in every key.',
     cards: [
-      { t: 'Five shapes, one chord', body: ['The open C, A, G, E and D chords are the only five major chord shapes on the guitar. Slide any of them up the neck, with your index finger acting as the nut, and it becomes movable.', 'Played together, the five shapes cover the whole neck. Here is every C, E and G (the notes of C major) from the nut to fret 15, colored by role in the chord.'],
+      { t: 'Five shapes, one chord', body: ['The common open C, A, G, E and D shapes form the CAGED framework. Move these shapes or practical fragments up the neck; open strings need a barre or a different fingering.', 'Played together, the five shapes cover the whole neck. Here is every C, E and G (the notes of C major) from the nut to fret 15, colored by role in the chord.'],
         show: () => board(degCells(0, [0, 4, 7], 0, 15)), legend: [['root', 'Root (1)'], ['d3', '3rd'], ['d5', '5th']] },
       { t: 'Find the root', body: ['Each shape is named after the open chord it comes from. The chord\'s name comes from its root.', '<b>E and G shapes:</b> root on the low E string. <b>A and C shapes:</b> root on the A string. <b>D shape:</b> root on the D string.', 'Move a shape until its root sits on the note you want. Here is the E shape as A major at the 5th fret, with roots on the low E, D and high e strings.'],
         show: () => board(cagedChord(9, 'E').map(c => { const rel = (pcOf(c.s, c.f) - 9 + 12) % 12; return mk(c.s, c.f, degKind(rel), IVL[rel]); })), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th']] },
@@ -3415,7 +3385,7 @@ function vToEx(v) {
   const tuneTxt = v.tune === 'std' ? '' : ` Tuning: ${TUNE[v.tune].name} (${tuneLowHigh(v.tune)}, low to high).`;
   const step = (n, d, pat, bpm, goal) => ({ n, d: d + tuneTxt, bpm, goal, tuning: v.tune, bar: pat === 'odd7' ? 7 : 4, build: key => pad(seq(vMoveEvents(vCurrent(v, key), pat), 0.5, 'none'), pat === 'odd7' ? 7 : 4) });
   return {
-    id: 'v_' + v.id, cat: 'Voicing riffs', title: v.name, keyed: v.keyed ? 'note' : undefined, key0: 0, lvl: STYLE_NAME[v.style], labels: 'chord', tuning: v.tune, voicing: v.id,
+    id: 'v_' + v.id, cat: 'Chord Shapes', title: v.name, keyed: v.keyed ? 'note' : undefined, key0: 0, lvl: STYLE_NAME[v.style], labels: 'chord', tuning: v.tune, voicing: v.id,
     about: v.why, tip: v.ideas.join(' '),
     steps: [
       { n: 'Hear the shape', observe: true, d: `The first shape in your chosen root, one string at a time, then strummed. Labels show each note's role in the chord.` + tuneTxt, bpm: b0, goal: g0, tuning: v.tune, bar: 4,
@@ -3423,7 +3393,7 @@ function vToEx(v) {
       step('Riff: move the shape', `Compare the four shapes with a ${PATNAME[main]}. One bar each. For movable studies, all shapes follow your chosen root.`, main, b0, g0),
       step('Variation', `The same moves as ${PATNAME[alt]}.${alt === 'odd7' ? ' The tempo counts 8th notes, grouped 2 + 2 + 3.' : ''}${alt === 'glide' ? ' The ~ mark means a gentle tremolo-arm dip while the chord rings (or a slow vibrato if your guitar has no arm).' : ''}`, alt, alt === 'odd7' ? b0 * 2 : b0, alt === 'odd7' ? g0 * 2 : g0),
       { n: 'Your riff', create: true, bpm: b0, goal: b0, tuning: v.tune, bar: 4,
-        get d() { return `Make up your own riff with these shapes. Today's constraint: ${vConstraint(v)}. Each chord sounds once on beat 1 as a cue; fill the rest of the bar yourself. Rate Clean when you play a version you'd keep, then record it on your phone.` + tuneTxt; },
+        get d() { return `Make up your own riff with these shapes. Today's constraint: ${vConstraint(v)}. Each chord sounds once on beat 1 as a cue; fill the rest of the bar yourself. Mark Good take when you play a version you'd keep, then record it on your phone.` + tuneTxt; },
         build: key => pad(seq(vCurrent(v, key).moves.map(m => Object.assign(blk(vNotes(m, v.tune), 'D', 4), { chord: m.name })), 4, 'none')) }
     ]
   };
@@ -3431,18 +3401,18 @@ function vToEx(v) {
 const V_CONSTRAINTS = ['use only two of the four shapes', 'keep at least one open string ringing the whole time', 'start every bar on the same note', 'play the same rhythm in every bar and change only the notes', 'no more than four notes in each bar', 'end the riff on a note that is not the root', 'repeat a three-note group so it lands on a different beat each time', 'leave a full beat of silence in every bar', 'only move one finger between shapes', 'play bar 1 twice, then change only its last two notes'];
 function vConstraint(v) { const d = new Date(), k = d.getFullYear() * 400 + d.getMonth() * 31 + d.getDate(); const choices = V_CONSTRAINTS.filter(c => !c.includes('only move one finger') && (!c.includes('open string') || v.moves.every(m => m.f.includes(0)))); return choices[(k + v.id.length * 7) % choices.length]; }
 const VEX = VOICINGS.map(vToEx);
-EX.push(...VEX); EXCATS.push('Voicing riffs');
+EX.push(...VEX); EXCATS.push('Chord Shapes');
 VEX.forEach(e => { EX_UNIT[e.id] = e.id === 'v_shape_triads' ? 'u7' : e.id === 'v_shape_shells' ? 'u8' : e.id.startsWith('v_shape_') ? 'u4' : 'u9'; });
 
 /* ---------- voicings: chord diagram ---------- */
-function vBox(move, tune, big) {
+function vBox(move, tune, big, labels = 'degree') {
   const N = vNotes(move, tune), fr = move.f.filter(f => f != null && f > 0);
   const mn = fr.length ? Math.min(...fr) : 1, mx = fr.length ? Math.max(...fr) : 1;
   const base = mx <= 5 ? 1 : mn, rows = Math.max(5, mx - base + 1);
   const sp = big ? 26 : 20, fs = big ? 26 : 20, left = big ? 30 : 24, top = big ? 34 : 28, W = left * 2 + sp * 5, H = top + rows * fs + (big ? 64 : 56);
   const col = { root: 'var(--root)', d3: 'var(--d3)', d5: 'var(--d5)', d7: 'var(--d7)', note: 'var(--ink)' };
   const kOf = vKind;
-  let s = `<svg class="vbox" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(move.name)} chord diagram">`;
+  let s = `<svg class="vbox" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(move.name)} chord diagram. Low to high: ${move.f.map(f => f == null ? 'muted' : f === 0 ? 'open' : 'fret ' + f).join(', ')}">`;
   for (let i = 0; i < 6; i++) s += `<line x1="${left + i * sp}" y1="${top}" x2="${left + i * sp}" y2="${top + rows * fs}" stroke="var(--muted)" stroke-width="1"/>`;
   for (let j = 0; j <= rows; j++) s += `<line x1="${left}" y1="${top + j * fs}" x2="${left + 5 * sp}" y2="${top + j * fs}" stroke="var(--muted)" stroke-width="${j === 0 && base === 1 ? 4 : 1}"/>`;
   if (base > 1) s += `<text x="${left - 8}" y="${top + fs / 2 + 4}" text-anchor="end" font-size="${big ? 13 : 11}" fill="var(--muted)" font-family="var(--font-mono)">${base}</text>`;
@@ -3452,7 +3422,7 @@ function vBox(move, tune, big) {
     const x = left + i * sp, n = N.find(q => q.s === 5 - i);
     if (f == null) s += `<text x="${x}" y="${top - 9}" text-anchor="middle" font-size="12" fill="var(--muted)">×</text>`;
     else if (f === 0) s += `<circle cx="${x}" cy="${top - 12}" r="${big ? 6 : 5}" fill="none" stroke="${col[kOf(n.lab)]}" stroke-width="2"/>`;
-    else { const y = top + (f - base) * fs + fs / 2; s += `<circle cx="${x}" cy="${y}" r="${big ? 10 : 8}" fill="${col[kOf(n.lab)]}"/>`; const label = big ? VO.labels === 'finger' ? n.fg || '' : VO.labels === 'note' ? nn(n.midi % 12) : n.lab : ''; if (label) s += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" fill="var(--surface)" font-family="var(--font-mono)">${esc(label)}</text>`; }
+    else { const y = top + (f - base) * fs + fs / 2; s += `<circle cx="${x}" cy="${y}" r="${big ? 10 : 8}" fill="${col[kOf(n.lab)]}"/>`; const label = big ? labels === 'finger' ? n.fg || '' : labels === 'note' ? nn(n.midi % 12) : n.lab : ''; if (label) s += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" fill="var(--surface)" font-family="var(--font-mono)">${esc(label)}</text>`; }
     s += `<text x="${x}" y="${top + rows * fs + 16}" text-anchor="middle" font-size="${big ? 12 : 10.5}" font-weight="600" fill="${f == null ? 'var(--line)' : col[kOf(n.lab)]}" font-family="var(--font-mono)">${f == null ? '' : esc(n.lab)}</text>`;
     s += `<text x="${x}" y="${top + rows * fs + (big ? 34 : 31)}" text-anchor="middle" font-size="${big ? 11 : 9.5}" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
   });
@@ -3461,36 +3431,64 @@ function vBox(move, tune, big) {
 }
 
 /* ---------- voicings: UI ---------- */
-const VO = { style: 'all', family: 'all', id: null, move: 0, labels: 'degree' };
+const VO = { ...S.ui.voBrowser, family: VFAMILIES[S.ui.voBrowser.family] ? S.ui.voBrowser.family : 'all', style: STYLE_NAME[S.ui.voBrowser.style] ? S.ui.voBrowser.style : 'all', query: String(S.ui.voBrowser.query || '').slice(0, 120), id: null, move: 0, bus: null, timer: null, preview: null };
+function voRemember() { const { family, style, query, saved, labels } = VO; S.ui.voBrowser = { family, style, query, saved, labels }; save(); }
 const vBoardEl = makeBoard($('#voBoard'), (s, f) => { const v = VOICINGS.find(x => x.id === VO.id); pluck(TUNE[v ? v.tune : 'std'].m[s] + f, 0, null, 0.6, 1.3); });
+function voPreviewState() {
+  $$('#voGrid [data-preview]').forEach(b => { const active = b.dataset.preview === VO.preview; b.setAttribute('aria-pressed', active); b.textContent = active ? '■ Stop' : '▶ Hear'; });
+}
+function voStop() { clearTimeout(VO.timer); killBus(VO.bus); VO.bus = null; VO.preview = null; voPreviewState(); }
 function vSound(v, mv, mode) {
-  ac(); const N = vNotes(mv, v.tune), t = AU.ctx.currentTime + 0.05;
-  if (mode === 'arp') N.concat(N.slice(0, -1).reverse()).forEach((n, i) => pluck(n.midi, t + i * 0.2, null, 0.62, 1.6));
-  else strum(N.map(n => n.midi), t, null, 0.035, 0.5, 2.4);
+  voStop(); ac(); VO.bus = bus(AU.notes);
+  const N = vNotes(mv, v.tune), t = AU.ctx.currentTime + 0.05;
+  if (mode === 'arp') {
+    const notes = N.concat(N.slice(0, -1).reverse());
+    notes.forEach((n, i) => pluck(n.midi, t + i * 0.2, VO.bus, 0.62, 1.6));
+    VO.timer = setTimeout(voStop, notes.length * 200 + 1700);
+  } else { strum(N.map(n => n.midi), t, VO.bus, 0.035, 0.5, 2.4); VO.timer = setTimeout(voStop, 2800); }
+}
+function voReset() { voStop(); VO.family = 'all'; VO.style = 'all'; VO.query = ''; VO.saved = false; voRemember(); renderVoList(); $('#voSearch').focus(); }
+function voFavorite(id) {
+  const ex = 'v_' + id, i = S.exfav.indexOf(ex);
+  if (i < 0) S.exfav.unshift(ex); else S.exfav.splice(i, 1);
+  save(); renderVoList();
 }
 function renderVoicings() { if (VO.id && !$('#voDetail').hidden) renderVoDetail(); else renderVoList(); }
 function renderVoList() {
   $$('#voStyle button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === VO.style));
+  if ($('#voSearch').value !== VO.query) $('#voSearch').value = VO.query;
+  $('#voSaved').checked = !!VO.saved;
   $('#voFamily').innerHTML = Object.entries(VFAMILIES).map(([id,name]) => `<option value="${id}" ${VO.family === id ? 'selected' : ''}>${name}</option>`).join('');
-  const list = VOICINGS.filter(v => (VO.style === 'all' || v.style === VO.style) && (VO.family === 'all' || v.family === VO.family));
-  $('#voGrid').innerHTML = list.map(v => `<button class="vocard" type="button" data-vo="${v.id}"><span class="vobox">${vBox(v.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small"><span class="tag">${STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span><span class="small muted">${v.moves.map(m => esc(m.name)).join(' → ')}</span></span></button>`).join('') || '<p class="small muted">No shapes match this combination. Choose All genres or a different shape family.</p>';
+  const query = VO.query.toLowerCase().replace(/♯/g, '#').replace(/♭/g, 'b').trim();
+  const list = VOICINGS.map(v => ({ v, current: vCurrent(v) })).filter(({v, current}) =>
+    (VO.style === 'all' || v.style === VO.style) && (VO.family === 'all' || v.family === VO.family) &&
+    (!VO.saved || S.exfav.includes('v_' + v.id)) &&
+    (!query || [v.name, v.why, STYLE_NAME[v.style], VFAMILIES[v.family], TUNE[v.tune].name, ...current.moves.map(m => m.name)].join(' ').toLowerCase().includes(query)));
+  $('#voCount').textContent = `${list.length === VOICINGS.length ? list.length : list.length + ' of ' + VOICINGS.length} collections`;
+  $('#voReset').hidden = !(query || VO.saved || VO.family !== 'all' || VO.style !== 'all');
+  $('#voGrid').innerHTML = list.map(({v, current}) => `<article class="vocard"><button class="vo-open" type="button" data-vo="${v.id}"><span class="vobox">${vBox(current.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small muted">${current.moves.map(m => esc(m.name)).join(' → ')}</span><span class="small"><span class="tag">${v.style === 'study' ? 'Movable study' : STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span></span></button><div class="vo-card-footer"><span class="small muted">${esc(VFAMILIES[v.family])}</span><span class="row" style="gap:6px"><button class="btn" type="button" data-preview="${v.id}" aria-label="Hear ${esc(v.name)}" aria-pressed="false">▶ Hear</button><button class="btn favbtn" type="button" data-vfavorite="${v.id}" aria-label="Favorite ${esc(v.name)}" aria-pressed="${S.exfav.includes('v_' + v.id)}">${S.exfav.includes('v_' + v.id) ? '★' : '☆'}</button></span></div></article>`).join('') || '<div class="vo-empty"><h3>No matching chord shapes</h3><p class="small muted">Try a chord name such as maj7, choose another family, or clear the filters to explore all collections.</p><button class="btn" type="button" data-reset-vo>Clear filters</button></div>';
+  voPreviewState();
 }
-function openVoicing(id) { VO.id = id; VO.move = 0; S.ui.lastVo = id; save(); $('#voList').hidden = true; $('#voDetail').hidden = false; $('#libraryNav').hidden = true; renderVoDetail(); window.scrollTo({ top: 0 }); }
+function openVoicing(id) { voStop(); VO.id = id; VO.move = 0; S.ui.lastVo = id; save(); $('#voList').hidden = true; $('#voDetail').hidden = false; $('#libraryNav').hidden = true; renderVoDetail(); window.scrollTo({ top: 0 }); }
 function renderVoDetail() {
   const v = VOICINGS.find(x => x.id === VO.id); if (!v) return;
   const current = vCurrent(v), mv = current.moves[VO.move];
   $('#voKeyRow').hidden = !v.keyed; $('#voKey').innerHTML = Array.from({length:12}, (_,k) => `<option value="${k}">${esc(nn(k))}</option>`).join(''); $('#voKey').value = S.ui.voKey || 0;
-  $('#voLabels').value = VO.labels; $('#voLabels option[value="finger"]').disabled = !mv.fingers;
-  if (VO.labels === 'finger' && !mv.fingers) { VO.labels = 'degree'; $('#voLabels').value = 'degree'; }
+  const labels = VO.labels === 'finger' && !mv.fingers ? 'degree' : VO.labels;
+  $('#voLabels').value = labels; $('#voLabels option[value="finger"]').disabled = !mv.fingers;
+  $('#voLabels').title = mv.fingers ? 'Choose notes, fingers or chord tones' : 'Fingerings are available in the movable studies';
+  const focused = S.ui.focusEx === 'v_' + v.id;
+  $('#voFocus').classList.add('focus-choice'); $('#voFocus').setAttribute('aria-pressed', focused); $('#voFocus').textContent = focused ? '✓ Current practice focus' : 'Make my practice focus';
   $('#voTitle').textContent = v.name;
-  $('#voTags').innerHTML = `<span class="tag">${STYLE_NAME[v.style]}</span><span class="tag">${TUNE[v.tune].name} tuning${v.tune !== 'std' ? ` (${tuneLowHigh(v.tune)})` : ''}</span>`;
+  $('#voTags').innerHTML = `<span class="tag">${VFAMILIES[v.family]}</span><span class="tag">${TUNE[v.tune].name} tuning${v.tune !== 'std' ? ` (${tuneLowHigh(v.tune)})` : ''}</span>`;
   $('#voWhy').textContent = v.why;
   $('#voMoves').innerHTML = current.moves.map((m, i) => `<button type="button" data-mv="${i}" aria-pressed="${i === VO.move}">${esc(m.name)}</button>`).join('');
-  $('#voBox').innerHTML = vBox(mv, v.tune, true);
+  $('#voBox').innerHTML = vBox(mv, v.tune, true, labels);
   const N = vNotes(mv, v.tune);
-  const markers = N.map(n => ({ s: n.s, f: n.f, k: vKind(n.lab), l: VO.labels === 'finger' ? String(n.fg || (n.f === 0 ? '0' : '')) : VO.labels === 'note' ? nn(n.midi % 12) : n.lab }));
-  const fr = mv.f.filter(f => f != null), mx = Math.max(...fr);
-  vBoardEl.draw({ from: 0, to: Math.max(7, mx + 2), markers, win: null, names: tuneNames(v.tune) });
+  const markers = N.map(n => ({ s: n.s, f: n.f, k: vKind(n.lab), l: labels === 'finger' ? String(n.fg || (n.f === 0 ? '0' : '')) : labels === 'note' ? nn(n.midi % 12) : n.lab }));
+  const fr = mv.f.filter(f => f != null), nz = fr.filter(f => f > 0), mx = Math.max(...fr), from = !fr.includes(0) && nz.length && Math.min(...nz) > 3 ? Math.min(...nz) - 1 : 0;
+  $('#voPosition').textContent = 'Root: ' + N.filter(n => n.lab === '1').map(n => `${SLONG[n.s]} string, ${n.f === 0 ? 'open' : 'fret ' + n.f}`).join(' · ');
+  vBoardEl.draw({ from, to: Math.min(20, Math.max(from + 5, mx + 1)), markers, win: null, names: tuneNames(v.tune) });
   $('#voNotes').innerHTML = `Notes, low to high: ${N.map(n => `<b>${nn(n.midi % 12)}</b> <span class="muted">(${esc(n.lab)})</span>`).join(' · ')}`;
   $('#voIdeas').innerHTML = v.ideas.map(t => `<li>${esc(t)}</li>`).join('');
   $('#voPlayAlong').dataset.ex = 'v_' + v.id;
@@ -3560,7 +3558,7 @@ const ROUTINES = {
     { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Strum every move of a few voicings. Pick the one that fits the song in your head.' },
     { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 1, m: 5, t: 'Play-along: move the shape', d: 'Two clean runs in a row, then try the variation.' },
     { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 7, t: 'Your riff', d: 'Write two bars of your own inside the constraint. Record your favorite take on your phone.' },
-    { tool: 'riffs', m: 5, t: 'Riff Dice', d: 'Roll a riff in the same key, lock the notes you like and fit it to your voicing.' } ] }
+    { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 5, t: 'Develop the idea', d: 'Keep the strongest phrase. Change its rhythm or final note, then play the whole idea again.' } ] }
 };
 function focusEx() {
   const chosen = EX.find(e => e.id === S.ui.focusEx); if (chosen) return chosen;
@@ -3625,12 +3623,12 @@ function renderPill() {
   updateHdrH();
 }
 function renderRoutine() {
-  $('#rtMinutes').value = S.ui.planMinutes || S.settings.goal; $('#rtMinutes').disabled = R.running;
-  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + EX.filter(e => !e.id.startsWith('sc_')).map(e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`).join(''); $('#rtFocus').disabled = R.running;
+  $('#rtMinutes').value = S.ui.planMinutes || S.settings.goal; $('#rtMinutes').disabled = R.running || S.rtPick !== 'auto';
+  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + EX.filter(e => !e.id.startsWith('sc_')).map(e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`).join(''); $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
   if (!ROUTINES[S.rtPick]) S.rtPick = 'auto';
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.auto ? r.n : r.n + ' min'}</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = { n: ROUTINES[key].n, blocks: R.running ? R.blocks : rtBlocks(key) };
-  const toolName = { learn: 'Learn', exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', voicings: 'Chord Shapes', explorer: 'Scales', riffs: 'Riff Dice' };
+  const toolName = { learn: 'Learn', exercises: 'Exercise', metronome: 'Metronome', fretboard: 'Fretboard', ear: 'Ear', voicings: 'Chord Shapes', explorer: 'Scales' };
   $('#rtBlocks').innerHTML = r.blocks.map((b, i) => `<li class="${R.running && i === R.idx ? 'cur' : ''} ${R.running && i < R.idx ? 'done' : ''}"><span class="m">${R.running && i === R.idx ? fmtTime(R.rem) : b.m + ' min'}</span><div><div style="font-weight:500">${esc(b.t)} <span class="tool">· ${toolName[b.tool]}</span></div><div class="small muted">${esc(b.d)}</div></div><span></span></li>`).join('');
   $('#rtStart').textContent = R.running ? 'Go to current block' : 'Start my session';
   $('#rtHint').textContent = R.running ? 'Running. Use the bar at the top to pause or skip.' : `${r.blocks.reduce((a, b) => a + b.m, 0)} minutes, ${r.blocks.length} blocks`;
@@ -3675,11 +3673,13 @@ function renderWeak() {
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
 /* ---------- tabs ---------- */
-const PRIMARY_TABS = ['today', 'learn', 'library', 'riffs', 'progress'];
+const PRIMARY_TABS = ['today', 'learn', 'library', 'progress'];
 const LIBRARY_TABS = ['library', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer'];
 const TABS = [...PRIMARY_TABS, ...LIBRARY_TABS.filter(t => t !== 'library'), 'metronome', 'tuner'];
+function tabFromHash() { const t = location.hash.slice(1); return t === 'riffs' ? 'voicings' : TABS.includes(t) ? t : 'today'; }
 function switchTab(t, fromHash) {
   if (!TABS.includes(t)) t = 'today';
+  if (curTab === 'voicings' && t !== 'voicings') voStop();
   if (curTab === 'ear' && t !== 'ear') { clearTimeout(E.nextT); killBus(E.bus); }
   if (curTab === (P.host || 'exercises') && t !== curTab && P.running) exStop();
   if (curTab === 'tuner' && t !== 'tuner') { if (T.listening) tnStop(); if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } }
@@ -3688,7 +3688,7 @@ function switchTab(t, fromHash) {
   $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === (LIBRARY_TABS.includes(t) ? 'library' : t)); b.tabIndex = b.getAttribute('aria-selected') === 'true' || (!PRIMARY_TABS.includes(t) && !LIBRARY_TABS.includes(t) && b.dataset.tab === 'today') ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ library: () => {}, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, riffs: renderRiffs, tuner: renderTuner })[t]();
+  ({ library: () => {}, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, tuner: renderTuner })[t]();
   $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible() || (t === 'voicings' && VO.id && !$('#voDetail').hidden);
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
   renderMini();
@@ -3703,12 +3703,24 @@ function applySettingsUI() {
   $('#sGoal').value = S.settings.goal; $('#sAcc').value = S.settings.acc; $('#sLefty').checked = S.settings.lefty;
   $('#sVol').value = S.settings.vol; $('#sA4').value = S.settings.a4;
 }
+function closeSettings() { $('#settings').hidden = true; $('#openSettings').focus(); }
+document.addEventListener('keydown', e => {
+  if ($('#settings').hidden) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); closeSettings(); return; }
+  if (e.key !== 'Tab') return;
+  const fields = $$('#settings button, #settings input, #settings select').filter(n => !n.disabled && !n.hidden && n.offsetParent !== null);
+  const first = fields[0], last = fields[fields.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
 /* ---------- events ---------- */
 $$('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
 document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (!b) return; switchTab(b.dataset.go); const menu = b.closest('.tools-menu'); if (menu) menu.open = false; if (b.dataset.drone) $('#drGo').scrollIntoView({ block: 'center' }); });
-window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (TABS.includes(h) && h !== curTab) switchTab(h, true); });
-window.addEventListener('resize', updateHdrH);
+window.addEventListener('hashchange', () => { const h = tabFromHash(); if (h !== curTab) switchTab(h, true); });
+function navOrientation() { $('.tabs .inner').setAttribute('aria-orientation', matchMedia('(min-width:1100px)').matches ? 'vertical' : 'horizontal'); }
+navOrientation();
+window.addEventListener('resize', () => { updateHdrH(); navOrientation(); });
 $('#miniPlay').onclick = () => playerVisible() ? exToggle() : mToggle(); $('#mPlay').onclick = mToggle;
 $('#miniMinus').onclick = () => playerVisible() ? exSetBpm(P.bpm - 1) : setBpm(S.metro.bpm - 1); $('#miniPlus').onclick = () => playerVisible() ? exSetBpm(P.bpm + 1) : setBpm(S.metro.bpm + 1);
 $('#miniBpm').onclick = () => playerVisible() ? $('#pBpm').click() : switchTab('metronome');
@@ -3763,43 +3775,32 @@ $('#xChord').onchange = e => { S.ui.xchord = e.target.checked; save(); drawExplo
 $('#xEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (!c) return; const x = EX.find(q => q.id === c.dataset.ex); if (x && x.keyed) { exStat(x.id).key = S.ui.xkey; save(); } exOpen(c.dataset.ex); });
 $('#xPos').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.xpos = +b.dataset.p; save(); renderExplorer(); });
 $('#xPlay').onclick = xPlay; $('#xDrone').onclick = xDrone;
-// riffs
-$('#dRoot').onchange = e => { S.ui.droot = +e.target.value; save(); renderSlots(); renderTab(); };
-$('#dCount').onchange = e => { S.ui.dcount = +e.target.value; save(); renderSlots(); renderTab(); };
-$('#dBars').onchange = e => { S.ui.dbars = +e.target.value; save(); renderRhythm(); renderTab(); };
-$('#dBack').onchange = e => { S.ui.dback = e.target.value; save(); if (D.playing) { M.override = S.ui.dback === 'click' ? (S.metro.sound === 'drums' ? 'click' : null) : S.ui.dback; } };
-$('#dSlots').addEventListener('click', e => {
-  const d = e.target.closest('[data-i]'), l = e.target.closest('[data-lock]');
-  if (l) { const i = +l.dataset.lock; D.locks[i] = !D.locks[i]; renderSlots(); return; }
-  if (d) { const i = +d.dataset.i; D.notes[i] = D.notes[i] % 6 + 1; renderSlots(); renderTab(); ac(); const c = dCell(D.notes[i]); pluck(OPEN[c.s] + c.f, 0, null, 0.6, 0.8); }
-});
-$('#dRhythm').addEventListener('click', e => { const b = e.target.closest('[data-b]'); if (!b) return; const bb = +b.dataset.b, i = +b.dataset.i; const arr = [...D.rhythm[bb]]; arr[i] = arr[i] === 'x' ? '-' : 'x'; D.rhythm[bb] = arr.join(''); renderRhythm(); renderTab(); });
-$('#dRoll').onclick = dRoll; $('#dPlay').onclick = dPlay;
-$('#dRhy').onclick = () => { for (let b = 0; b < 2; b++) D.rhythm[b] = RHY[rnd(6)]; renderRhythm(); renderTab(); };
-$('#dRev').onclick = () => { const n = S.ui.dcount; const part = D.notes.slice(0, n).reverse(); const lk = D.locks.slice(0, n).reverse(); D.notes.splice(0, n, ...part); D.locks.splice(0, n, ...lk); renderSlots(); renderTab(); };
-$('#dSave').onclick = () => {
-  const name = $('#dName').value.trim() || `Riff ${S.riffs.length + 1}`;
-  S.riffs.unshift({ id: 'r' + Date.now(), name: name.slice(0, 60), root: S.ui.droot, count: S.ui.dcount, bars: S.ui.dbars, notes: D.notes.slice(), rhythm: D.rhythm.slice(), date: dayKey() });
-  $('#dName').value = ''; save(); renderSaved(); toast(`Saved "${name}"`);
-};
-$('#dSaved').addEventListener('click', e => {
-  const ld = e.target.closest('[data-load]'), dl = e.target.closest('[data-del]');
-  if (ld) { const r = S.riffs.find(x => x.id === ld.dataset.load); if (!r) return; S.ui.droot = r.root; S.ui.dcount = r.count; S.ui.dbars = r.bars; D.notes = r.notes.slice(); D.rhythm = r.rhythm.slice(); D.locks = []; save(); renderRiffs(); toast(`Loaded "${r.name}"`); }
-  if (dl) { const id = dl.dataset.del; if (D.delArm === id) { S.riffs = S.riffs.filter(x => x.id !== id); D.delArm = null; save(); } else { D.delArm = id; setTimeout(() => { if (D.delArm === id) { D.delArm = null; renderSaved(); } }, 3000); } renderSaved(); }
-});
-
-
-
 // voicings
-$('#voFamily').onchange = e => { VO.family = e.target.value; renderVoList(); };
+$('#voFamily').onchange = e => { voStop(); VO.family = e.target.value; voRemember(); renderVoList(); };
+$('#voSearch').oninput = e => { voStop(); VO.query = e.target.value; voRemember(); renderVoList(); };
+$('#voSaved').onchange = e => { voStop(); VO.saved = e.target.checked; voRemember(); renderVoList(); };
+$('#voReset').onclick = voReset;
 $('#voTriads').onclick = () => exOpen('triads');
-$('#voKey').onchange = e => { S.ui.voKey = +e.target.value; save(); renderVoDetail(); };
-$('#voLabels').onchange = e => { VO.labels = e.target.value; renderVoDetail(); };
-$('#voFocus').onclick = () => { S.ui.focusEx = 'v_' + VO.id; const v = VOICINGS.find(v => v.id === VO.id); if (v.keyed) exStat(S.ui.focusEx).key = S.ui.voKey || 0; save(); toast('Your next session will use these chord shapes.'); };
-$('#voStyle').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; VO.style = b.dataset.v; renderVoList(); });
-$('#voGrid').addEventListener('click', e => { const b = e.target.closest('[data-vo]'); if (b) openVoicing(b.dataset.vo); });
-$('#voBack').onclick = () => { $('#voDetail').hidden = true; $('#voList').hidden = false; VO.id = null; $('#libraryNav').hidden = false; renderVoList(); };
-$('#voMoves').addEventListener('click', e => { const b = e.target.closest('[data-mv]'); if (!b) return; VO.move = +b.dataset.mv; renderVoDetail(); const v = vCurrent(VOICINGS.find(x => x.id === VO.id)); vSound(v, v.moves[VO.move], 'strum'); });
+$('#voKey').onchange = e => { voStop(); S.ui.voKey = +e.target.value; save(); renderVoDetail(); };
+$('#voLabels').onchange = e => { VO.labels = e.target.value; voRemember(); renderVoDetail(); };
+$('#voFocus').onclick = () => {
+  const id = 'v_' + VO.id, v = VOICINGS.find(v => v.id === VO.id);
+  S.ui.focusEx = S.ui.focusEx === id ? '' : id;
+  if (v.keyed && S.ui.focusEx) exStat(id).key = S.ui.voKey || 0;
+  save(); renderVoDetail(); toast(S.ui.focusEx ? 'Your next session will use these shapes.' : 'Automatic practice recommendations restored.');
+};
+$('#voStyle').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; voStop(); VO.style = b.dataset.v; voRemember(); renderVoList(); });
+$('#voGrid').addEventListener('click', e => {
+  const reset = e.target.closest('[data-reset-vo]'); if (reset) { voReset(); return; }
+  const favorite = e.target.closest('[data-vfavorite]'); if (favorite) { voFavorite(favorite.dataset.vfavorite); return; }
+  const preview = e.target.closest('[data-preview]');
+  if (preview) { const id = preview.dataset.preview; if (VO.preview === id) voStop(); else { const v = vCurrent(VOICINGS.find(v => v.id === id)); vSound(v, v.moves[0], 'strum'); VO.preview = id; voPreviewState(); } return; }
+  const b = e.target.closest('[data-vo]'); if (b) openVoicing(b.dataset.vo);
+});
+$('#voBack').onclick = () => { voStop(); $('#voDetail').hidden = true; $('#voList').hidden = false; VO.id = null; $('#libraryNav').hidden = false; renderVoList(); };
+function voMove(i) { const v = vCurrent(VOICINGS.find(v => v.id === VO.id)); VO.move = (i + v.moves.length) % v.moves.length; renderVoDetail(); vSound(v, v.moves[VO.move], 'strum'); $(`#voMoves [data-mv="${VO.move}"]`).focus({ preventScroll: true }); }
+$('#voMoves').addEventListener('click', e => { const b = e.target.closest('[data-mv]'); if (b) voMove(+b.dataset.mv); });
+$('#voMoves').addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); voMove(VO.move + (e.key === 'ArrowRight' ? 1 : -1)); } });
 $('#voStrum').onclick = () => { const v = vCurrent(VOICINGS.find(x => x.id === VO.id)); vSound(v, v.moves[VO.move], 'strum'); };
 $('#voArp').onclick = () => { const v = vCurrent(VOICINGS.find(x => x.id === VO.id)); vSound(v, v.moves[VO.move], 'arp'); };
 $('#voPlayAlong').onclick = () => { const id = $('#voPlayAlong').dataset.ex, e = EX.find(e => e.id === id); if (e.keyed) exStat(id).key = S.ui.voKey || 0; openEx(id); };
@@ -3817,7 +3818,8 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-revi
 $('#lnPractice').addEventListener('click', e => { const b = e.target.closest('[data-prac]'); if (b) LN.unit.practice[+b.dataset.prac].a(); });
 document.addEventListener('click', e => { const b = e.target.closest('[data-openunit]'); if (!b) return; switchTab('learn'); openUnit(b.dataset.openunit); });
 // exercises
-$('#exList').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
+$('#exSearch').oninput = e => { S.ui.exQuery = e.target.value; save(); renderExLib(); };
+$('#exList').addEventListener('click', e => { if (e.target.closest('#exClearSearch')) { S.ui.exQuery = ''; save(); renderExLib(); $('#exSearch').focus(); return; } const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#exRecent').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#exView').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { if (b.dataset.v === 'hist') switchTab('progress'); else setExView('lib'); } });
 $('#exHist').addEventListener('change', e => { if (e.target.id === 'exHistFilter') { S.ui.histFilter = e.target.value; save(); renderExHist(); } });
@@ -3827,11 +3829,12 @@ $('#pHist').addEventListener('click', e => { const b = e.target.closest('[data-g
 $('#pHistWrap').addEventListener('toggle', () => { S.ui.histOpen = $('#pHistWrap').open; save(); });
 $('#pBack').onclick = () => {
   const origin = P.origin, e = P.ex; exStop(); $('#exPlayer').hidden = true;
+  if (origin === 'voicings' && e.voicing && e.keyed) { S.ui.voKey = exKey(); save(); }
   if (P.host === 'explorer') { if (e && e.scale) { S.ui.xscale = e.scale; if (e.keyed) S.ui.xkey = exKey(); save(); } $('#xMain').hidden = false; }
   $('#exLib').hidden = false;
   switchTab(TABS.includes(origin) ? origin : P.host || 'exercises'); window.scrollTo({ top: 0 });
 };
-$('#pFocusPick').onclick = () => { S.ui.focusEx = P.ex.id; save(); toast('Your next daily session will focus on this exercise.'); };
+$('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' : P.ex.id; save(); renderExPlayer(); toast(S.ui.focusEx ? 'Your next session will focus on this exercise.' : 'Automatic practice recommendations restored.'); };
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pPlay').onclick = exToggle;
 $('#pPrev').onclick = () => exStepNote(-1); $('#pNext').onclick = () => exStepNote(1);
@@ -3857,6 +3860,7 @@ $('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= 
 $('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; } };
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { exColors(true); if (P.ex && !$('#exPlayer').hidden) exDraw(exPos()); });
 // tuner
 $('#tTuning').onchange = e => { S.ui.tuning = +e.target.value; T.done.clear(); T.sel = 0; if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } save(); renderTuner(); };
 $('#tnMode').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.tnmode = b.dataset.v; save(); renderTuner(); });
@@ -3881,8 +3885,8 @@ $('#rtFocus').onchange = e => { S.ui.focusEx = e.target.value; save(); renderRou
 $('#rpStop').onclick = routineStop;
 // settings
 $('#openSettings').onclick = () => { applySettingsUI(); $('#settings').hidden = false; $('#sGoal').focus(); };
-$('#closeSettings').onclick = () => { $('#settings').hidden = true; };
-$('#settings').addEventListener('click', e => { if (e.target.id === 'settings') $('#settings').hidden = true; });
+$('#closeSettings').onclick = closeSettings;
+$('#settings').addEventListener('click', e => { if (e.target.id === 'settings') closeSettings(); });
 $('#sGoal').onchange = e => { S.settings.goal = clamp(Math.round(+e.target.value || 20), 5, 180); e.target.value = S.settings.goal; save(); renderHeaderStats(); if (curTab === 'today') renderToday(); };
 $('#sAcc').onchange = e => { S.settings.acc = e.target.value; save(); switchTab(curTab, true); };
 $('#sLefty').onchange = e => { S.settings.lefty = e.target.checked; save(); switchTab(curTab, true); };
@@ -3894,10 +3898,10 @@ $('#sReset').onclick = () => {
   resetArm = false; const keepSettings = S.settings; S = merge(DEF, null); S.settings = keepSettings; flush(); $('#sReset').textContent = 'Reset all progress'; $('#sResetMsg').textContent = ''; refreshAll(); toast('Progress reset');
 };
 document.addEventListener('keydown', e => {
+  if (!$('#settings').hidden) return;
   if (e.target.closest('input, select, textarea')) return;
-  if (e.key === 'Escape' && !$('#settings').hidden) { $('#settings').hidden = true; return; }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
-  if (e.code === 'Space') {
+  if (e.code === 'Space' && !e.target.closest('button, summary, [role="tab"]')) {
     e.preventDefault();
     if (curTab === (P.host || 'exercises') && P.ex && !$('#exPlayer').hidden) { exToggle(); return; }
     mToggle(); return;
@@ -3912,12 +3916,12 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 
 /* ---------- keyboard: tabs and rating ---------- */
 $('.tabs .inner').addEventListener('keydown', e => {
-  const tabs = $$('.tab'), i = tabs.indexOf(document.activeElement); if (i < 0) return;
-  let j = null; if (e.key === 'ArrowRight') j = (i + 1) % tabs.length; else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length; else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = tabs.length - 1;
+  const tabs = $$('.tab'), i = tabs.indexOf(document.activeElement), vertical = matchMedia('(min-width:1100px)').matches; if (i < 0) return;
+  let j = null; if (e.key === 'ArrowRight' || (vertical && e.key === 'ArrowDown')) j = (i + 1) % tabs.length; else if (e.key === 'ArrowLeft' || (vertical && e.key === 'ArrowUp')) j = (i - 1 + tabs.length) % tabs.length; else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = tabs.length - 1;
   if (j == null) return; e.preventDefault(); e.stopPropagation(); switchTab(tabs[j].dataset.tab); tabs[j].focus();
 });
 document.addEventListener('keydown', e => {
-  if (e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, select, textarea') || !P.ex || $('#exPlayer').hidden || curTab !== (P.host || 'exercises')) return;
+  if (!$('#settings').hidden || e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, select, textarea') || !P.ex || $('#exPlayer').hidden || curTab !== (P.host || 'exercises')) return;
   const k = { '1': 'clean', '2': 'almost', '3': 'messy' }[e.key];
   if (k) { e.preventDefault(); exFeedback(k); const b = $(k === 'clean' ? '#pClean' : k === 'almost' ? '#pAlmost' : '#pMessy'); b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 250); }
   else if (e.key === 'l' || e.key === 'L') { e.preventDefault(); exListen(); }
@@ -3951,9 +3955,11 @@ document.addEventListener('change', e => { const r = e.target.closest && e.targe
 $('#volBtn').onclick = e => { e.stopPropagation(); const open = $('#volPop').hidden; $('#volPop').hidden = !open; $('#volBtn').setAttribute('aria-expanded', open); if (open) { volRender(); const f = $('#volPop .vctl'); f && f.focus(); } };
 $('#vMute').onclick = () => volMute();
 document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop') && !e.target.closest('#volBtn')) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); } });
+document.addEventListener('click', e => { if (!e.target.closest('.tools-menu')) $('.tools-menu').open = false; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('.tools-menu').open) { $('.tools-menu').open = false; $('.tools-menu summary').focus(); } });
 document.addEventListener('keydown', e => {
+  if (!$('#settings').hidden) return;
   if (e.key === 'Escape' && !$('#volPop').hidden) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); $('#volBtn').focus(); return; }
-  if (e.key === 'Escape' && !$('#settings').hidden && e.target.closest('input, select, textarea')) { $('#settings').hidden = true; return; }
   if ((e.key === 'm' || e.key === 'M') && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest('input, select, textarea')) volMute();
 });
 volRender();
@@ -4026,8 +4032,7 @@ $('#pGoalIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.prev
 
 /* ---------- boot ---------- */
 applySettingsUI(); renderHeaderStats(); renderBpm(); renderPill();
-const startTab = location.hash.slice(1);
-switchTab(TABS.includes(startTab) ? startTab : 'today', true);
+switchTab(tabFromHash(), true);
 updateHdrH();
 initDb();
 })();

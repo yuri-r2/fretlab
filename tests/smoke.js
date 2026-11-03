@@ -2,10 +2,10 @@
 // Run: node tests/smoke.js   (needs playwright, see validate.js)
 const { chromium } = require('playwright'); const path = require('path');
 const URL = 'file://' + path.join(__dirname, '..', 'index.html');
-const TABS = ['today', 'learn', 'library', 'riffs', 'progress'];
+const TABS = ['today', 'learn', 'library', 'progress'];
 (async () => {
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] }); const errs = [];
-  for (const [vp, scheme] of [[{ width: 390, height: 844 }, 'dark'], [{ width: 1280, height: 860 }, 'light']]) {
+  for (const [vp, scheme] of [[{ width: 1280, height: 860 }, 'light'], [{ width: 1440, height: 960 }, 'dark'], [{ width: 390, height: 844 }, 'light']]) {
     const ctx = await b.newContext({ viewport: vp, colorScheme: scheme }); const p = await ctx.newPage(); const tag = `[${vp.width}]`;
     p.on('pageerror', e => errs.push(`${tag} ${e.message}`));
     const step = async (name, fn) => { try { await fn(); } catch (e) { errs.push(`${tag} ${name}: ${e.message.split('\n')[0]}`); } };
