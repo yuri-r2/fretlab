@@ -386,7 +386,10 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 .ptempo{display:flex;align-items:center;gap:10px;margin-left:auto}
 .round.sm{width:38px;height:38px;font-size:18px}
 .tbar{height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;width:150px;margin-top:4px}
-.tbar i{display:block;height:100%;background:var(--accent)}
+.tbar i{display:block;height:100%;background:var(--accent)} .tbar.over i{background:var(--good)}
+.bpmtap{font:600 16px var(--font-mono);background:none;border:0;border-bottom:1px dashed var(--muted);padding:0 1px;color:var(--ink);cursor:text}
+.bpmin{width:64px;font:600 15px var(--font-mono);padding:2px 4px;border:1px solid var(--accent);border-radius:6px;background:var(--surface);color:var(--ink)}
+#pOver{color:var(--good);font-weight:600}
 .ptoggles{gap:14px}
 .feedback{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
 .feedback.nudge{animation:nudge 1.4s ease}
@@ -557,7 +560,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <button class="btn" id="pListen" type="button" title="Hear and watch one pass without playing">Listen first</button>
         <button class="btn" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀ Note</button>
         <button class="btn" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">Note ▶</button>
-        <div class="ptempo"><button class="round sm" id="pSlower" type="button" aria-label="Slower">−</button><div><div><b class="mono" id="pBpm">60</b> <span class="small muted">bpm · goal <b class="mono" id="pGoal">90</b></span></div><div class="tbar"><i id="pTempoBar"></i></div></div><button class="round sm" id="pFaster" type="button" aria-label="Faster">+</button></div>
+        <div class="ptempo"><button class="round sm" id="pSlower" type="button" aria-label="Slower">−</button><div><div><button class="bpmtap mono" id="pBpm" type="button" title="Tap to type a tempo">60</button><input class="bpmin mono" id="pBpmIn" type="number" inputmode="numeric" min="30" max="260" aria-label="Tempo in bpm" hidden> <span class="small muted">bpm · goal <b class="mono" id="pGoal">90</b><span id="pOver"></span></span></div><div class="tbar"><i id="pTempoBar"></i></div></div><button class="round sm" id="pFaster" type="button" aria-label="Faster">+</button></div>
       </div>
       <div class="row ptoggles">
         <label class="toggle"><input type="checkbox" id="pLoop"> Loop</label>
@@ -2301,7 +2304,7 @@ function exFrame() {
 }
 function exLoopEnd() {
   if (P.preview) return;
-  const goal = P.ex.steps[P.step].goal;
+  const goal = exStat(P.ex.id).done[P.step] ? 260 : P.ex.steps[P.step].goal;
   if (S.ui.exopts.keycycle && P.ex.keyed) {
     const spb = 60 / P.bpm, tB = P.startT + P.loops * P.L * spb;
     let nb = P.bpm; if (S.ui.exopts.ladder && nb < goal) nb = Math.min(goal, nb + 4);
@@ -2514,7 +2517,8 @@ function renderExMeta() {
   $('#pBpm').textContent = P.bpm; $('#pGoal').textContent = sd.goal;
   const best = st.best[P.step];
   $('#pBest').textContent = best ? `Best clean run on this step: ${best} bpm` : 'No clean runs logged on this step yet.';
-  $('#pTempoBar').style.width = Math.min(100, Math.round(P.bpm / sd.goal * 100)) + '%';
+  $('#pTempoBar').style.width = Math.min(100, Math.round(P.bpm / sd.goal * 100)) + '%'; $('#pTempoBar').parentElement.classList.toggle('over', P.bpm > sd.goal);
+  $('#pOver').textContent = P.bpm > sd.goal ? ` · +${P.bpm - sd.goal} over` : '';
 }
 function renderExPlayer() {
   const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step], ns = nextStep(e);
@@ -2564,10 +2568,10 @@ function exFeedback(kind) {
     st.best[i] = Math.max(st.best[i] || 0, was);
     const n = st.streak[i] = (st.streak[i] || 0) + 1, last = i === P.ex.steps.length - 1;
     if (was >= sd.goal) {
-      if (st.done[i]) { st.streak[i] = 0; toast(last ? 'Clean at goal tempo.' : `Clean at goal tempo again. Try step ${i + 2}.`); if (!last) $('#pNextStep').hidden = false; }
+      if (st.done[i]) { if (n >= 2) { const nb = Math.min(260, was + 5); st.streak[i] = 0; exReanchor(nb); toast(`Two clean runs in a row at ${was}. Pushing past the goal: ${nb} bpm.`); } else toast(`Clean at ${was} bpm. One more clean run in a row and the tempo goes up again.`); if (!last) $('#pNextStep').hidden = false; }
       else if (n >= 2) {
         st.done[i] = true; st.streak[i] = 0; st.rev = st.rev || {}; st.rev[i] = { k: 0, due: dayAdd(1) };
-        if (!last) { toast(`Step ${i + 1} locked in. It comes back tomorrow for a quick cold check. Step ${i + 2} is next.`); $('#pNextStep').hidden = false; }
+        if (!last) { toast(`Step ${i + 1} locked in. Step ${i + 2} is next, or keep going here: two more clean runs push it past the goal.`); $('#pNextStep').hidden = false; }
         else toast(`${P.ex.title}: every step complete. Each one comes back for spaced cold checks.`);
       } else toast('Clean at goal tempo. One more clean run in a row locks it in.');
     } else if (n >= 2) { const nb = Math.min(sd.goal, was + 5); st.streak[i] = 0; exReanchor(nb); toast(`Two clean runs in a row at ${was}. Moving up to ${nb} bpm.`); }
@@ -3497,8 +3501,19 @@ $('#pBack').onclick = () => { exStop(); $('#exPlayer').hidden = true; $('#exLib'
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pPlay').onclick = exToggle;
 $('#pPrev').onclick = () => exStepNote(-1); $('#pNext').onclick = () => exStepNote(1);
-$('#pSlower').onclick = () => { exReanchor(P.bpm - 2); exStat(P.ex.id).bpm[P.step] = P.bpm; save(); };
-$('#pFaster').onclick = () => { exReanchor(P.bpm + 2); exStat(P.ex.id).bpm[P.step] = P.bpm; save(); };
+function exSetBpm(v) { if (!P.ex) return; exReanchor(clamp(Math.round(v), 30, 260)); exStat(P.ex.id).bpm[P.step] = P.bpm; save(); }
+function holdRepeat(btn, d) {
+  let t = null, n = 0;
+  const stop = () => { clearTimeout(t); t = null; };
+  btn.addEventListener('pointerdown', e => { if (e.button) return; try { btn.setPointerCapture(e.pointerId); } catch (x) {} n = 0; exSetBpm(P.bpm + d); const go = () => { n++; exSetBpm(P.bpm + d * (n > 12 ? 5 : 1)); t = setTimeout(go, n > 4 ? 70 : 140); }; t = setTimeout(go, 420); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => btn.addEventListener(ev, stop));
+  btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); exSetBpm(P.bpm + d); } });
+}
+holdRepeat($('#pSlower'), -2); holdRepeat($('#pFaster'), 2);
+$('#pBpm').onclick = () => { const i = $('#pBpmIn'); i.value = P.bpm; $('#pBpm').hidden = true; i.hidden = false; i.focus(); i.select(); };
+const bpmDone = ok => { const i = $('#pBpmIn'); if (i.hidden) return; if (ok && i.value) exSetBpm(+i.value); i.hidden = true; $('#pBpm').hidden = false; renderExMeta(); };
+$('#pBpmIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); bpmDone(true); } else if (e.key === 'Escape') { e.preventDefault(); bpmDone(false); } });
+$('#pBpmIn').addEventListener('blur', () => bpmDone(true));
 [['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop' && P.running) exStart(); if (k === 'loop' && !P.running) exDraw(P.viewPos); }; });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
 $('#pListen').onclick = exListen; $('#pSpot').onchange = e => exSetSpot(e.target.value);
