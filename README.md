@@ -1,6 +1,6 @@
 # Fretlab
 
-A fretboard practice app for intermediate and advanced guitarists, in a single HTML file. Open `index.html` in any modern browser, or use the hosted version on GitHub Pages.
+A fretboard practice app for intermediate and advanced guitarists, in a single HTML file. Open `index.html` in any modern browser, or use the hosted version on GitHub Pages. Developer notes for working on the code are in [AGENTS.md](AGENTS.md).
 
 ## Learn path
 
