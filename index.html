@@ -320,6 +320,12 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .vobox{flex:none}
 .votext{display:flex;flex-direction:column;gap:5px;min-width:0}
 .tag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-right:4px}
+.esspills{display:flex;flex-wrap:wrap;gap:6px}
+.esspill{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:500 13px var(--font-mono);display:inline-flex;align-items:center;justify-content:center}
+.esspill.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.esspill.next{border-color:var(--accent);color:var(--ink);border-width:2px}
+.tag.ess{background:var(--accent-soft);color:var(--accent);margin-right:6px}
+details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .vodetail{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
 .vobig{flex:none}
 .vodetail>.stack{flex:1 1 300px}
@@ -560,6 +566,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
+  <div class="card stack" id="essCard"></div>
   <div class="excards">
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Related grips, inversions and chord colors. Hear the difference, then use it in a riff.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
@@ -603,6 +610,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     </div>
     <div class="card stack">
       <div class="row" style="justify-content:space-between"><h3>Exercises up next</h3><button class="btn" type="button" data-go="exercises">All exercises</button></div>
+      <span class="small muted" id="upNextSum"></span>
       <div id="upNext"></div>
     </div>
     <div class="card stack">
@@ -868,7 +876,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <section class="view" id="view-rhythm" hidden>
   <div id="rMain" class="stack" style="gap:16px">
     <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Time and feel</span><h2>Rhythm</h2></div><p class="muted small">Subdivisions, strumming, muting, syncopation, odd meters and delay rhythms. Counts under the tab show where every stroke falls. A faint dashed arrow is an air strum: move the hand but miss the strings. ✕ is a muted chuck.</p></div>
-    <div class="excards" id="rEx"></div>
+    <div class="stack" id="rEx" style="gap:18px"></div>
   </div>
 </section>
 <section class="view" id="view-explorer" hidden>
@@ -987,7 +995,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
-  ui: { exQuery: '', voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { exQuery: '', exMore: false, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -2136,6 +2144,26 @@ function pedalFor(k, f) {
   c.sort((a, b) => Math.abs(a[1] - f) - Math.abs(b[1] - f)); return nt(c[0][0], c[0][1], 1);
 }
 const EXCATS = ['Fretboard fluency', 'Arpeggios and chords', 'Technique', 'Riff building'];
+/* ---------- essentials: the exercises worth most, in order ---------- */
+const ESSENTIALS = [
+  { id: 'rh_sub', why: 'Timing is what a band notices first. Feeling the subdivision keeps you locked to the drummer.' },
+  { id: 'notemap', why: 'Know where every note is and you can move any riff or chord to any key or position.' },
+  { id: 'rh_pend', why: 'A hand that never stops keeps every strum pattern in time, even the syncopated ones.' },
+  { id: 'pentall', why: 'The scale most rock riffs and leads come from. Five boxes cover the whole neck.' },
+  { id: 'rh_chug', why: 'Palm-muted 8ths and gallops are the right-hand engine of rock riffs.' },
+  { id: 'triads', why: 'Small chords for parts that sit above the bass and the other guitar.' },
+  { id: 'dstops', why: 'Two-note riffs in 3rds and 6ths: the melodic glue of emo and indie guitar.' },
+  { id: 'v_emo_moving', why: 'A moving shape under ringing open strings: the core sound of emo, alternative and shoegaze.' },
+  { id: 'rh_sync', why: 'Pushes and anticipations make a riff groove instead of plod.' },
+  { id: 'octaves', why: 'One shape for big melodic lines that cut through a loud band.' },
+  { id: 'majcaged', why: 'The major scale, and its relative minor, in every position: the map behind melodies and progressions.' },
+  { id: 'cagedarp', why: 'The chord tones inside each position, so your lines land on the chord.' }
+];
+const ESS_IX = Object.fromEntries(ESSENTIALS.map((x, i) => [x.id, i]));
+function isEss(id) { return Object.prototype.hasOwnProperty.call(ESS_IX, id); }
+function essList() { return ESSENTIALS.map(x => ({ ...x, e: EX.find(e => e.id === x.id) })).filter(x => x.e); }
+function exComplete(e) { const st = exStat(e.id); return e.steps.every((_, i) => st.done[i]); }
+function essNext() { return essList().find(x => !exComplete(x.e)) || null; }
 const EX = [
   { id: 'pentall', cat: 'Positions and scales', title: 'Minor pentatonic: all five boxes', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Intermediate', about: 'Link the five pentatonic boxes until the whole neck feels like one scale. Works in any key.', tip: 'Shift on the string where the boxes overlap. Watch the scale-degree labels: know where every root (1) and b3 is.', steps: [
     { n: 'Boxes 1 and 2', d: 'Up box 1, down box 2, in 8th notes.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 0).concat(rev(pentBox(k, 1))), 0.5)) },
@@ -2358,7 +2386,8 @@ function chuck(t, dest, up) {
 function renderRhythm() {
   if (P.ex && P.host === 'rhythm' && !$('#exPlayer').hidden) { renderExPlayer(); return; }
   $('#rMain').hidden = false; const pl = $('#exPlayer'); if (pl.parentElement === $('#view-rhythm')) pl.hidden = true;
-  $('#rEx').innerHTML = RX.map(exCard).join('');
+  const sec = (lab, xs) => xs.length ? `<div class="stack" style="gap:8px"><span class="label">${lab}</span><div class="excards">${xs.map(exCard).join('')}</div></div>` : '';
+  $('#rEx').innerHTML = sec('Essentials', RX.filter(e => isEss(e.id)).sort((a, b) => ESS_IX[a.id] - ESS_IX[b.id])) + sec('More rhythm', RX.filter(e => !isEss(e.id)));
 }
 
 /* ---------- guided exercises: player ---------- */
@@ -2380,7 +2409,7 @@ function exDueList() {
     const keys = e.keyed ? Object.keys(S.ex[e.id].contexts).map(Number) : [null];
     for (const key of keys) e.steps.forEach((_, i) => { const r = exRevOf(e, i, key); if (r && r.due <= t) out.push({ e, i, key, due: r.due }); });
   }
-  return out.sort((a, b) => a.due.localeCompare(b.due));
+  return out.sort((a, b) => isEss(b.e.id) - isEss(a.e.id) || a.due.localeCompare(b.due));
 }
 const FOCUS = {
   'Technique': 'one smooth sound per pick direction, like a slow strum that happens to be one note at a time.',
@@ -2428,7 +2457,7 @@ function exOpen(id, step, origin) {
   exLoad(step == null ? nextStep(e) : step);
   const hostEl = $('#view-' + host); if ($('#exPlayer').parentElement !== hostEl) hostEl.appendChild($('#exPlayer'));
   $('#exLib').hidden = host === 'exercises'; $('#xMain').hidden = host === 'explorer'; $('#rMain').hidden = host === 'rhythm';
-  $('#pBack').textContent = P.origin === 'voicings' ? '← Back to chord shape' : P.origin === 'learn' ? '← Back to lesson' : P.origin === 'today' ? '← Back to Today' : P.origin === 'progress' ? '← Back to progress' : host === 'explorer' ? `← ${scName(e.scale)}` : host === 'rhythm' ? '← Rhythm' : '← All exercises';
+  $('#pBack').textContent = P.origin === 'voicings' ? '← Back to chord shape' : P.origin === 'learn' ? '← Back to lesson' : P.origin === 'today' ? '← Back to Today' : P.origin === 'progress' ? '← Back to progress' : P.origin === 'library' ? '← Library' : P.origin === 'exercises' ? '← All exercises' : host === 'explorer' ? `← ${scName(e.scale)}` : host === 'rhythm' ? '← Rhythm' : '← All exercises';
   $('#exPlayer').hidden = false; $('#libraryNav').hidden = true;
   renderExPlayer();
   window.scrollTo({ top: 0 });
@@ -2841,16 +2870,25 @@ function renderExLib() {
   const query = S.ui.exQuery.toLowerCase().trim();
   if ($('#exSearch').value !== S.ui.exQuery) $('#exSearch').value = S.ui.exQuery;
   $('#exRecent').hidden = !!query;
-  $('#exList').innerHTML = EXCATS.map(cat => {
-    const items = EX.filter(e => e.cat === cat && (!query || [e.title,e.about,e.cat].join(' ').toLowerCase().includes(query))); if (!items.length) return '';
+  const hit = e => !query || [e.title, e.about, e.cat, isEss(e.id) ? 'essential ' + ESSENTIALS[ESS_IX[e.id]].why : ''].join(' ').toLowerCase().includes(query);
+  const cats = skip => EXCATS.map(cat => {
+    const items = EX.filter(e => e.cat === cat && hit(e) && !(skip && isEss(e.id))).sort((a, b) => isEss(b.id) - isEss(a.id)); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(exCard).join('')}</div></div>`;
-  }).join('') || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a skill such as triads, legato or arpeggios.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
+  }).join('');
+  if (!query) {
+    const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, rest = EX.filter(e => EXCATS.includes(e.cat) && !isEss(e.id)).length;
+    $('#exList').innerHTML = `<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="label">Essentials: start here</span><span class="small muted">${done} of ${ess.length} complete</span></div><p class="small muted" style="margin:0">The ${ess.length} exercises that pay off most for playing and writing riffs in a band, in the order to learn them. They include rhythm and scale workouts, which open in their own sections. Everything else is extra.</p><div class="excards">${ess.map(x => exCard(x.e)).join('')}</div></div>` +
+      `<details class="more" id="exMore"${S.ui.exMore ? ' open' : ''}><summary>All other exercises (${rest})</summary><div class="stack" style="gap:18px;margin-top:14px">${cats(true)}</div></details>`;
+    return;
+  }
+  $('#exList').innerHTML = cats(false) || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a skill such as triads, legato or arpeggios.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
 }
 function exCard(e) {
   {
       const st = exStat(e.id), done = e.steps.filter((_, i) => st.done[i]).length, ns = nextStep(e), bests = Object.values(st.best), best = bests.length ? Math.max(...bests) : 0;
       const lr = S.exlog.findLast ? S.exlog.findLast(x => x.id === e.id) : [...S.exlog].reverse().find(x => x.id === e.id);
-      return `<button class="excard" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed ? ' · any key' : ''}</span></span><span class="small muted">${esc(e.about)}</span><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
+      const ess = isEss(e.id) ? ESSENTIALS[ESS_IX[e.id]] : null;
+      return `<button class="excard${ess ? ' isess' : ''}" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed && !/any key/.test(e.lvl) ? ' · any key' : ''}</span></span>${ess ? `<span class="small"><span class="tag ess">Essential ${ESS_IX[e.id] + 1}</span>${esc(ess.why)}</span>` : `<span class="small muted">${esc(e.about)}</span>`}<span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
   }
 }
 function renderExTransport() {
@@ -2881,7 +2919,7 @@ function renderExSteps() {
 }
 function renderExPlayer() {
   const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step];
-  $('#pCat').textContent = `${e.cat} · ${e.lvl}`;
+  $('#pCat').textContent = `${isEss(e.id) ? `Essential ${ESS_IX[e.id] + 1} of ${ESSENTIALS.length} · ` : ''}${e.cat} · ${e.lvl}`;
   $('#pTitle').textContent = e.title; $('#pAbout').textContent = e.about;
   const focused = S.ui.focusEx === e.id; $('#pFocusPick').classList.add('focus-choice'); $('#pFocusPick').setAttribute('aria-pressed', focused); $('#pFocusPick').textContent = focused ? '✓ Current focus' : 'Make my focus';
   renderExSteps();
@@ -2962,10 +3000,12 @@ function renderDue() {
   $('#dueBox').innerHTML = h ? '<div class="hr"></div><h3>Due for review</h3>' + h : '';
 }
 function renderUpNext() {
-  const list = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => (!x.e.id.startsWith('sc_') || x.st.last) && x.e.steps.some((_, i) => !x.st.done[i]))
-    .sort((a, b) => (a.st.last || '').localeCompare(b.st.last || '')).slice(0, 4);
+  const ess = essList(), essOpen = ess.filter(x => !exComplete(x.e)).map(x => ({ e: x.e }));
+  const others = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => !isEss(x.e.id) && x.st.last && x.e.steps.some((_, i) => !x.st.done[i])).sort((a, b) => (a.st.last || '').localeCompare(b.st.last || ''));
+  const list = essOpen.slice(0, 3).concat(others).slice(0, 4);
+  $('#upNextSum').textContent = `Essentials: ${ess.length - essOpen.length} of ${ess.length} complete`;
   const rr = recentRuns(1)[0], resume = rr && Date.now() - rr.x.t < 14 * 864e5 ? `<div class="weak"><div><div style="font-weight:500">Last time: ${esc(rr.e.title)}</div><div class="small muted">Step ${rr.x.s + 1}: ${esc(rr.e.steps[rr.x.s].n)}${runLine(rr.x, rr.e) ? ' · ' + esc(runLine(rr.x, rr.e)) : ''} · ${ago(rr.x.t)}</div></div><button class="btn primary" type="button" ${resAttr(rr.x)}>Resume</button></div>` : '';
-  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>');
+  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${isEss(e.id) ? `<span class="tag ess">Essential ${ESS_IX[e.id] + 1}</span>` : ''}${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>');
 }
 
 /* ---------- learn path: helpers ---------- */
@@ -3654,10 +3694,11 @@ function renderVoList() {
   const list = VOICINGS.map(v => ({ v, current: vCurrent(v) })).filter(({v, current}) =>
     (VO.style === 'all' || v.style === VO.style) && (VO.family === 'all' || v.family === VO.family) &&
     (!VO.saved || S.exfav.includes('v_' + v.id)) &&
-    (!query || [v.name, v.why, STYLE_NAME[v.style], VFAMILIES[v.family], TUNE[v.tune].name, ...current.moves.map(m => m.name)].join(' ').toLowerCase().includes(query)));
+    (!query || [v.name, v.why, STYLE_NAME[v.style], VFAMILIES[v.family], TUNE[v.tune].name, ...current.moves.map(m => m.name)].join(' ').toLowerCase().includes(query)))
+    .sort((a, b) => isEss('v_' + b.v.id) - isEss('v_' + a.v.id));
   $('#voCount').textContent = `${list.length === VOICINGS.length ? list.length : list.length + ' of ' + VOICINGS.length} collections`;
   $('#voReset').hidden = !(query || VO.saved || VO.family !== 'all' || VO.style !== 'all');
-  $('#voGrid').innerHTML = list.map(({v, current}) => `<article class="vocard"><button class="vo-open" type="button" data-vo="${v.id}"><span class="vobox">${vBox(current.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small muted">${current.moves.map(m => esc(m.name)).join(' → ')}</span><span class="small"><span class="tag">${v.style === 'study' ? 'Movable study' : STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span></span></button><div class="vo-card-footer"><span class="small muted">${esc(VFAMILIES[v.family])}</span><span class="row" style="gap:6px"><button class="btn" type="button" data-preview="${v.id}" aria-label="Hear ${esc(v.name)}" aria-pressed="false">▶ Hear</button><button class="btn favbtn" type="button" data-vfavorite="${v.id}" aria-label="Favorite ${esc(v.name)}" aria-pressed="${S.exfav.includes('v_' + v.id)}">${S.exfav.includes('v_' + v.id) ? '★' : '☆'}</button></span></div></article>`).join('') || '<div class="vo-empty"><h3>No matching chord shapes</h3><p class="small muted">Try a chord name such as maj7, choose another family, or clear the filters to explore all collections.</p><button class="btn" type="button" data-reset-vo>Clear filters</button></div>';
+  $('#voGrid').innerHTML = list.map(({v, current}) => `<article class="vocard"><button class="vo-open" type="button" data-vo="${v.id}"><span class="vobox">${vBox(current.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small muted">${current.moves.map(m => esc(m.name)).join(' → ')}</span><span class="small">${isEss('v_' + v.id) ? '<span class="tag ess">Essential</span>' : ''}<span class="tag">${v.style === 'study' ? 'Movable study' : STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span></span></button><div class="vo-card-footer"><span class="small muted">${esc(VFAMILIES[v.family])}</span><span class="row" style="gap:6px"><button class="btn" type="button" data-preview="${v.id}" aria-label="Hear ${esc(v.name)}" aria-pressed="false">▶ Hear</button><button class="btn favbtn" type="button" data-vfavorite="${v.id}" aria-label="Favorite ${esc(v.name)}" aria-pressed="${S.exfav.includes('v_' + v.id)}">${S.exfav.includes('v_' + v.id) ? '★' : '☆'}</button></span></div></article>`).join('') || '<div class="vo-empty"><h3>No matching chord shapes</h3><p class="small muted">Try a chord name such as maj7, choose another family, or clear the filters to explore all collections.</p><button class="btn" type="button" data-reset-vo>Clear filters</button></div>';
   voPreviewState();
 }
 function openVoicing(id) { voStop(); VO.id = id; VO.move = 0; S.ui.lastVo = id; save(); $('#voList').hidden = true; $('#voDetail').hidden = false; $('#libraryNav').hidden = true; renderVoDetail(); window.scrollTo({ top: 0 }); }
@@ -3727,7 +3768,7 @@ UNITS.push({ id: 'u9', title: 'Chord shapes for riffs', sum: 'Color tones, open-
 const ROUTINES = {
   auto: { n: "Today's plan", auto: true, blocks: [] },
   quick: { n: 'Quick · 15', blocks: [
-    { tool: 'exercises', ex: 'legato', m: 3, t: 'Warm-up: legato and slides', d: 'Your current step. Relaxed hands first.' },
+    { tool: 'exercises', ex: 'rh_sub', m: 3, t: 'Warm-up: subdivisions', d: 'Relaxed hands, locked to the click.' },
     { tool: 'exercises', ex: 'notemap', m: 3, t: 'One note, the whole neck', d: 'Name it before you play it.' },
     { tool: 'exercises', ex: 'pentall', m: 4, t: 'Pentatonic boxes', d: 'Link two boxes. Try a new key.' },
     { tool: 'exercises', ex: 'triads', m: 3, t: 'Triads', d: 'Spot the root in every shape.' },
@@ -3737,13 +3778,13 @@ const ROUTINES = {
     { tool: 'fretboard', m: 3, t: 'Fretboard notes', d: 'Your slow and missed notes come up more often.' },
     { tool: 'exercises', ex: 'pentall', m: 4, t: 'All five pentatonic boxes', d: 'Turn on the key change each loop.' },
     { tool: 'exercises', ex: 'majcaged', m: 4, t: 'Major scale positions', d: 'One position, then link it to the next.' },
-    { tool: 'exercises', ex: 'nps3', m: 4, t: 'Three notes per string', d: 'Legato or groups of six.' },
-    { tool: 'exercises', ex: 'seqs', m: 3, t: 'Scale sequences', d: 'Fours and thirds.' },
     { tool: 'exercises', ex: 'cagedarp', m: 4, t: 'CAGED arpeggios', d: 'Know where every 3rd is.' },
-    { tool: 'exercises', ex: 'twofive', m: 4, t: 'ii–V–I', d: 'Arpeggios, then guide tones.' },
+    { tool: 'exercises', ex: 'rh_pend', m: 4, t: 'Pendulum strumming', d: 'Keep the hand moving through every rest.' },
     { tool: 'exercises', ex: 'triads', m: 4, t: 'Triad inversions', d: 'Voice-led progressions.' },
+    { tool: 'exercises', ex: 'rh_chug', m: 4, t: 'Chugs and gallops', d: 'Even palm mutes, accents that jump out.' },
     { tool: 'exercises', ex: 'dstops', m: 4, t: '3rds and 6ths', d: 'Then make a riff from them.' },
     { tool: 'exercises', ex: 'octaves', m: 3, t: 'Octave riffs', d: 'Mute the string in between.' },
+    { tool: 'exercises', ex: 'rh_sync', m: 3, t: 'Syncopation', d: 'Land the pushes early, then stop dead.' },
     { tool: 'learn', m: 5, t: 'Lesson', d: 'Next lesson card or unit check.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
     { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Strum every move of a few voicings. Pick the one that fits the song in your head.' },
@@ -3756,6 +3797,7 @@ function focusEx() {
   const open = EX.filter(e => e.id !== 'legato' && (!e.id.startsWith('sc_') || exStat(e.id).last) && e.steps.some((_, i) => !exStat(e.id).done[i]));
   const recent = open.filter(e => exStat(e.id).last && dayDiff(exStat(e.id).last, dayKey()) <= 7).sort((a, b) => exStat(b.id).last.localeCompare(exStat(a.id).last));
   if (recent.length) return recent[0];
+  const en = essNext(); if (en) return en.e;
   const nu = nextUnit(), linked = open.find(e => EX_UNIT[e.id] === nu.id);
   return linked || open[0] || null;
 }
@@ -3815,7 +3857,8 @@ function renderPill() {
 }
 function renderRoutine() {
   $('#rtMinutes').value = S.ui.planMinutes || S.settings.goal; $('#rtMinutes').disabled = R.running || S.rtPick !== 'auto';
-  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + EX.filter(e => !e.id.startsWith('sc_')).map(e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`).join(''); $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
+  const fOpt = e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`;
+  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + `<optgroup label="Essentials">${essList().map(x => fOpt(x.e)).join('')}</optgroup><optgroup label="Everything else">${EX.filter(e => !e.id.startsWith('sc_') && !isEss(e.id)).map(fOpt).join('')}</optgroup>`; $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
   if (!ROUTINES[S.rtPick]) S.rtPick = 'auto';
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.auto ? r.n : r.n + ' min'}</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = { n: ROUTINES[key].n, blocks: R.running ? R.blocks : rtBlocks(key) };
@@ -3861,6 +3904,15 @@ function renderWeak() {
   if (tl) items.push({ t: 'Tempo', d: tl.log.length ? `${tl.name}: best ${Math.max(...tl.log.map(e => e.bpm))} bpm. Try 4 bpm faster.` : `${tl.name}: find your clean tempo and log it.`, tab: 'metronome' });
   $('#weakList').innerHTML = items.map(i => `<div class="weak"><div><div style="font-weight:500">${i.t}</div><div class="small muted">${esc(i.d)}</div></div><button class="btn" type="button" data-go="${i.tab}">Practice</button></div>`).join('');
 }
+function renderLibrary() {
+  const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, nx = essNext();
+  const pill = x => `<button class="esspill${exComplete(x.e) ? ' done' : ''}${nx && nx.id === x.id ? ' next' : ''}" type="button" data-openex="${x.id}" title="${esc(x.e.title)}">${exComplete(x.e) ? '✓' : ESS_IX[x.id] + 1}</button>`;
+  $('#essCard').innerHTML = `<div class="row" style="justify-content:space-between;align-items:baseline"><h3>Essentials</h3><span class="small muted">${done} of ${ess.length} complete</span></div>
+    <p class="small muted" style="margin:0">The ${ess.length} exercises that pay off most for playing and writing riffs in a band, in order: timing, the neck, the pentatonic, rhythm guitar, then the shapes and lines riffs are built from. The rest of the library is extra.</p>
+    <div class="esspills">${ess.map(pill).join('')}</div>
+    ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button></div>` : '<p class="small">All twelve complete. They will keep coming back as reviews; pick anything in the library to go further.</p>'}
+    <div><button class="btn" type="button" data-go="exercises">See all essentials</button></div>`;
+}
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
 /* ---------- tabs ---------- */
@@ -3880,7 +3932,7 @@ function switchTab(t, fromHash) {
   $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === (LIBRARY_TABS.includes(t) ? 'library' : t)); b.tabIndex = b.getAttribute('aria-selected') === 'true' || (!PRIMARY_TABS.includes(t) && !LIBRARY_TABS.includes(t) && b.dataset.tab === 'today') ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ library: () => {}, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
+  ({ library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
   $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible() || (t === 'voicings' && VO.id && !$('#voDetail').hidden);
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
   renderMini();
@@ -4012,6 +4064,7 @@ $('#lnPractice').addEventListener('click', e => { const b = e.target.closest('[d
 document.addEventListener('click', e => { const b = e.target.closest('[data-openunit]'); if (!b) return; switchTab('learn'); openUnit(b.dataset.openunit); });
 // exercises
 $('#exSearch').oninput = e => { S.ui.exQuery = e.target.value; save(); renderExLib(); };
+$('#exList').addEventListener('toggle', e => { if (e.target.id === 'exMore') { S.ui.exMore = e.target.open; save(); } }, true);
 $('#exList').addEventListener('click', e => { if (e.target.closest('#exClearSearch')) { S.ui.exQuery = ''; save(); renderExLib(); $('#exSearch').focus(); return; } const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#exRecent').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#exView').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { if (b.dataset.v === 'hist') switchTab('progress'); else setExView('lib'); } });
@@ -4094,6 +4147,7 @@ $('#rtStart').onclick = () => { if (R.running) switchTab(R.blocks[R.idx].tool); 
 
 
 $('#view-today').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex, undefined, 'today'); });
+$('#essCard').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex); });
 $('#rpPause').onclick = () => { R.paused = !R.paused; renderPill(); };
 $('#rpSkip').onclick = routineNext;
 $('#rtMinutes').onchange = e => { S.ui.planMinutes = clamp(Math.round(+e.target.value || S.settings.goal), 5, 90); save(); renderRoutine(); };

@@ -9,7 +9,7 @@ A practice app for an intermediate guitarist who writes riffs (rock, alternative
 - `index.html`: the whole app (HTML, CSS, one JS IIFE). **Source of truth.**
 - `sw.js`, `manifest.webmanifest`, icons: install/offline for GitHub Pages. Bump the cache name in `sw.js` when shipping.
 - `tests/*.js` (Playwright: `npm i -D playwright && npx playwright install chromium`). Run all before pushing; each prints `OK`:
-  `validate` (every exercise in all keys, quizzes) · `smoke` (navigation, main flows, phone/desktop) · `practice` (resume, chord formulas, per-key progress, plans) · `desktop` (wide layouts, search, previews, legacy routes) · `transport` (pause/seek, count-ins, loop timing) · `rhythm` (bar math, click modes, every rhythm step).
+  `validate` (every exercise in all keys, quizzes) · `smoke` (navigation, main flows, phone/desktop) · `practice` (resume, chord formulas, per-key progress, plans) · `desktop` (wide layouts, search, previews, legacy routes) · `transport` (pause/seek, count-ins, loop timing) · `rhythm` (bar math, click modes, every rhythm step) · `essentials` (curated list surfaced first, focus order).
 
 ## Deployments
 1. **GitHub Pages** `https://yuri-r2.github.io/fretlab/` serves `index.html` from `main`.
@@ -22,6 +22,7 @@ A practice app for an intermediate guitarist who writes riffs (rock, alternative
 - **hosting**: `exHostOf(e)` puts the player in Exercises, Scales (`cat:'Scales'`) or Rhythm (`cat:'Rhythm'`); those cats are hidden from the Exercises list (`EXCATS`).
 - **player**: state `P`; `exOpen`, `exStart`, `exSched` (lookahead; prepares the next loop on the same buses; don't kill buses at loop boundaries), `exPause`/`exStop`/`exSeek`, `exDraw` (canvas tab), `exFeedback` (progression: 2 clean → +5 bpm, messy −10%, 2 clean at goal = done, then up to 260). `clickLevel()` handles groups, `backbeat`, `gap`. `echoBus()` for dotted-8th echo.
 - **progress**: `exStat(id, key?)` is per key (proxy over `contexts[key]`); reviews `REV_IV`; history `S.exlog`; favorites `S.exfav`; custom goals via a getter defined near the end (**all `EX.push` calls must come before it**).
+- **essentials**: `ESSENTIALS` (12 ids + one-line `why`, in learning order) is the owner-facing priority list. `isEss`/`essList`/`essNext`/`exComplete`. Lists sort essentials first; `focusEx` falls back to `essNext()`; `exDueList` puts essential reviews first; Quick/Deep routines use only essentials (+ legato warm-up, checked in `essentials`). Change the list here, not in each view.
 - **content**: scales `SCALES`/`scaleExs`; rhythm `RX`/`strumBar`/`noteRhythm`; Chord Shapes `VOICINGS`/`VFAMILIES`/`vToEx` (moves run low E → high e, `NX` = muted); Learn `UNITS`/`QZ`; plans `ROUTINES`/`autoBlocks`; tuner from KotoLab (MIT).
 - **navigation**: `PRIMARY_TABS` (Today, Learn, Library, Progress) + `LIBRARY_TABS`; desktop rail at ≥1100px. Tuner and Metronome are direct header buttons (`.toolbtn`, highlighted via `aria-pressed` in `switchTab`); the header must stay one row from 360px up (checked in `smoke`). Internal ids: `explorer` = Scales, `voicings` = Chord Shapes; `#riffs` redirects to Chord Shapes.
 

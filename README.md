@@ -10,6 +10,10 @@ Four main destinations keep the learning flow close at hand: **Today**, **Learn*
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase.
 
+## Essentials
+
+Twelve exercises, chosen as the ones that pay off most for playing and writing riffs in a band, form an ordered path: Subdivision ladder, One note on the whole neck, Pendulum strumming, Minor pentatonic boxes, Palm-muted chugs and gallops, Triad inversions, 3rds and 6ths, Moving shape under open B and E, Syncopation and pushes, Octave riffs, Major scale positions, and CAGED arpeggios. Timing and rhythm guitar come early because they are what a band hears first. The Library shows your place in the path and the next one to play. Exercises lists the twelve first and tucks everything else under *All other exercises*; Rhythm and Chord Shapes show their essentials first. Today's plan picks the next unfinished essential as its focus unless you chose one or practiced something else this week, reviews of essentials come first, and the Quick and Deep routines are built from them. Everything else stays in the library and in search.
+
 ## Learn path
 
 Nine units that build on each other: notes on the low strings, octave shapes, intervals as shapes, the CAGED system, pentatonic boxes, the major scale (positions, three-notes-per-string patterns and lines along the strings), triads and inversions, chords in a key (diatonic chords, the progressions songs lean on, borrowed iv, bVII and bVI chords, the ii–V–I and guide tones), and voicings for riffs (color tones, open-string drones, alternate tunings). Each unit has short lesson cards with color-coded fretboard diagrams (root, 3rd, 5th, 7th), a 10-question check with an explanation after every answer (8 to pass, new questions each attempt), and links to the drills and exercises that make it automatic. From unit 2 on, each check includes two questions from earlier units. Passed units come back as a mixed 10-question review after 1, 3, 7, 16 and 35 days; a unit you get fully right moves to the next gap, and a miss brings it back the next day. Question types include naming and finding notes, finding every place a note lives, octave shapes, naming and finding intervals, identifying CAGED shapes and roots, scale degrees inside a position, triad inversions and quality, and key harmony.
@@ -67,7 +71,7 @@ Completion, best tempos, and review schedules for keyed exercises are stored sep
 
 ## Checks
 
-Install Playwright and Chromium, then run `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, and `node tests/desktop.js`. The desktop checks cover 1280, 1440, and 1920-pixel workspaces, search and favorites, preview audio, appearance changes, keyboard controls, and return context. The practice checks cover lesson resume, contextual Back, shared tempo controls, chord formulas and inversions in all keys, separate progress by key, review preparation, time budgets, and timer transitions.
+Install Playwright and Chromium, then run each file in `tests/` with node (`validate`, `smoke`, `practice`, `desktop`, `transport`, `rhythm`, `essentials`); each prints OK. The desktop checks cover 1280, 1440, and 1920-pixel workspaces, search and favorites, preview audio, appearance changes, keyboard controls, and return context. The practice checks cover lesson resume, contextual Back, shared tempo controls, chord formulas and inversions in all keys, separate progress by key, review preparation, time budgets, and timer transitions.
 
 ## Other tools
 
