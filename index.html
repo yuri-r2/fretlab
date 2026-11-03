@@ -3,8 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, riff voicings, tuner, metronome, ear and fretboard trainers.">
+<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, scales, scales, riff voicings, tuner, metronome, ear and fretboard trainers.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2C786A">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 <title>Fretlab</title>
@@ -79,6 +85,11 @@ p{margin:0}
 .tabs .inner::-webkit-scrollbar{display:none}
 .tab{border:0;background:none;padding:12px 12px 10px;font-family:var(--font-display);font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
 .tab:hover{color:var(--ink)}
+.tabs .inner.more-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
+.tabs .inner.more-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px);mask-image:linear-gradient(90deg,transparent,#000 44px)}
+.tabs .inner.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent)}
+@media (min-width:900px){.tab{padding:12px 10px 10px;font-size:15px;letter-spacing:.03em}}
+@media (max-width:560px){.brand .bname{display:none}.hstat .hgoal{display:none}.top .inner{gap:8px;padding-block:6px}.mini .bpm{min-width:44px;font-size:14px}.mini .bpm .unit{display:none}.mini button{width:30px;height:30px}.pill{order:9;width:100%;justify-content:space-between}}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 
 main{padding-block:20px 60px}
@@ -410,11 +421,11 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
   <div class="inner">
     <div class="brand">
       <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3" fill="var(--wood)"/><line x1="8" y1="5" x2="8" y2="19" stroke="var(--fret)" stroke-width="1.5"/><line x1="14" y1="5" x2="14" y2="19" stroke="var(--fret)" stroke-width="1.5"/><line x1="2" y1="9" x2="22" y2="9" stroke="var(--string)" stroke-width=".8"/><line x1="2" y1="12" x2="22" y2="12" stroke="var(--string)" stroke-width="1"/><line x1="2" y1="15" x2="22" y2="15" stroke="var(--string)" stroke-width="1.2"/><circle cx="11" cy="12" r="2.6" fill="var(--root)"/></svg>
-      Fretlab
+      <span class="bname">Fretlab</span>
     </div>
     <div class="hstat" title="Practice today">
       <svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-2)" stroke-width="5"/><circle id="hdrRing" cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
-      <span><b id="hdrMin">0</b> / <span id="hdrGoal">20</span> min</span>
+      <span><b id="hdrMin">0</b><span class="hgoal"> / <span id="hdrGoal">20</span></span> min</span>
       <span class="hide-sm">· <b id="hdrStreak">0</b>-day streak</span>
     </div>
     <div class="pill" id="routinePill" hidden>
@@ -822,6 +833,8 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
     <label class="f"><span>Reference pitch</span><select id="sA4"><option value="438">A = 438 Hz</option><option value="439">A = 439 Hz</option><option value="440">A = 440 Hz</option><option value="441">A = 441 Hz</option><option value="442">A = 442 Hz</option></select></label>
     <div class="sync" id="syncStatus"><i></i><span>Progress is saved in this browser.</span></div>
     <div class="hr"></div>
+    <div class="stack" style="gap:6px"><b>Back up your progress</b><span class="small muted" id="sBackupNote">Download a backup file of your progress, history and settings, and restore it on another device or browser.</span>
+      <div class="row"><button class="btn" id="sExport" type="button">Download backup</button><label class="btn" for="sImport" style="cursor:pointer">Restore from file</label><input type="file" id="sImport" accept="application/json,.json" hidden><span class="small" id="sBackupMsg"></span></div></div>
     <div class="row"><button class="btn warn" id="sReset" type="button">Reset all progress</button><span class="small bad" id="sResetMsg"></span></div>
   </div>
 </div>
@@ -1145,7 +1158,7 @@ function setBpm(v) { S.metro.bpm = clamp(Math.round(v), 30, 260); renderBpm(); s
 function renderBpm() {
   const b = S.metro.bpm;
   $('#bpmBig').textContent = b; $('#bpmSlider').value = b; $('#tempoName').textContent = tempoName(b);
-  $('#miniBpm').textContent = b + ' bpm';
+  $('#miniBpm').innerHTML = b + '<span class="unit"> bpm</span>';
 }
 function renderTransport() {
   $('#miniIcon').setAttribute('d', M.running ? 'M3 2h3v10H3zM8 2h3v10H8z' : 'M3 1.5v11l9-5.5z');
@@ -2304,13 +2317,13 @@ function exStart() {
   for (let j = 0; j < ci; j++) SND.beep(now + j * spb, j === 0 ? 3 : 1, P.bus);
   P.k = 0; P.i = 0; P.cb = 0; P.loops = 0; P.endBeat = S.ui.exopts.loop ? Infinity : P.L;
   P.running = true; P.lastIdx = -2;
-  P.timer = setInterval(exSched, 25); exSched(); exDrone();
+  P.timer = setInterval(exSched, 25); exSched(); exDrone(); wakeSync();
   requestAnimationFrame(exFrame); renderExTransport();
 }
 function exStop() {
   if (P.running && !P.preview && exPos() >= P.L - 0.05) { logRun('played', P.bpm); if (!$('#exPlayer').hidden) setTimeout(renderExHistPanel, 0); }
   if (P.droneTone) { try { P.droneTone.stop(); } catch (x) {} P.droneTone = null; }
-  if (P.running) { clearInterval(P.timer); killBus(P.bus); P.bus = null; P.running = false; }
+  if (P.running) { clearInterval(P.timer); killBus(P.bus); P.bus = null; P.running = false; setTimeout(wakeSync, 0); }
   P.preview = false;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
   if (P.ev.length && !$('#exPlayer').hidden) { exDraw(0); exBoard(0); exStatus(0, true); }
@@ -3706,6 +3719,42 @@ document.addEventListener('keydown', e => {
   if (curTab === 'fretboard' && S.ui.fmode === 'name') { const m = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[e.key.toLowerCase()]; if (m !== undefined) fName(m); }
 });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+
+/* ---------- keep the screen awake while playing ---------- */
+const WK = { lock: null, busy: false };
+async function wakeSync() {
+  const want = (P.running || M.running) && document.visibilityState === 'visible';
+  if (want && !WK.lock && !WK.busy && navigator.wakeLock) { WK.busy = true; try { WK.lock = await navigator.wakeLock.request('screen'); WK.lock.addEventListener('release', () => { WK.lock = null; }); } catch (e) {} WK.busy = false; }
+  else if (!want && WK.lock) { try { await WK.lock.release(); } catch (e) {} WK.lock = null; }
+}
+document.addEventListener('visibilitychange', () => setTimeout(wakeSync, 50));
+setInterval(wakeSync, 2000);
+
+/* ---------- tab bar scroll hints ---------- */
+function tabFade() { const el = $('.tabs .inner'); if (!el) return; el.classList.toggle('more-l', el.scrollLeft > 4); el.classList.toggle('more-r', el.scrollLeft + el.clientWidth < el.scrollWidth - 4); }
+$('.tabs .inner').addEventListener('scroll', tabFade, { passive: true }); window.addEventListener('resize', tabFade); setTimeout(tabFade, 0);
+
+/* ---------- backup and restore ---------- */
+$('#sExport').onclick = () => {
+  try {
+    const blob = new Blob([JSON.stringify({ app: 'fretlab', version: 1, exported: new Date().toISOString(), state: S }, null, 1)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `fretlab-backup-${dayKey()}.json`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    $('#sBackupMsg').textContent = 'Backup downloaded.';
+  } catch (e) { $('#sBackupMsg').textContent = 'Downloads are blocked here. Open Fretlab on its GitHub page to back up.'; }
+};
+$('#sImport').onchange = async e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text()), st = d && d.app === 'fretlab' ? d.state : d;
+    if (!st || typeof st !== 'object' || !st.settings || !st.ex) throw new Error('not a backup');
+    S = merge(DEF, st); S.updatedAt = Date.now(); flush(); refreshAll();
+    $('#sBackupMsg').textContent = `Restored the backup from ${d.exported ? new Date(d.exported).toLocaleDateString() : 'file'}.`; toast('Progress restored.');
+  } catch (x) { $('#sBackupMsg').textContent = "That file isn't a Fretlab backup."; }
+  e.target.value = '';
+};
+
+/* ---------- offline support on the GitHub Pages copy ---------- */
+if ('serviceWorker' in navigator && /github\.io$/.test(location.hostname)) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }
 
 /* ---------- adjustable goal tempo ---------- */
 EX.forEach(e => e.steps.forEach((sd, i) => { const g0 = sd.goal; Object.defineProperty(sd, 'goal0', { value: g0 }); Object.defineProperty(sd, 'goal', { get() { const g = S.ex[e.id] && S.ex[e.id].goal && S.ex[e.id].goal[i]; return g || g0; }, configurable: true }); }));
