@@ -8,7 +8,7 @@ A fretboard practice app for an intermediate guitarist who writes riffs (rock, a
 ## Files
 - `index.html` is the whole app: HTML, CSS, and one JS IIFE. **This is the source of truth.**
 - `sw.js`, `manifest.webmanifest`, `icon-*.png`, `apple-touch-icon.png`: install and offline support (GitHub Pages only).
-- `tests/validate.js` checks every exercise in all 12 keys and the quiz generators. `tests/smoke.js` clicks through navigation and main flows at phone and desktop sizes. `tests/practice.js` checks resume/return behavior, chord formulas and inversions, progress by key, review preparation, plan budgets, and timer transitions. All need Playwright (`npm i -D playwright && npx playwright install chromium`). `tests/desktop.js` checks wide workspaces, searches, favorites, preview audio, appearance changes, keyboard controls, and legacy routes/data. Run all four before pushing; all must print `OK`.
+- `tests/validate.js` checks every exercise in all 12 keys and the quiz generators. `tests/smoke.js` clicks through navigation and main flows at phone and desktop sizes. `tests/practice.js` checks resume/return behavior, chord formulas and inversions, progress by key, review preparation, plan budgets, and timer transitions. All need Playwright (`npm i -D playwright && npx playwright install chromium`). `tests/desktop.js` checks wide workspaces, searches, favorites, preview audio, appearance changes, keyboard controls, and legacy routes/data. `tests/transport.js` checks pause/resume, tab seeking, finger-label visibility, count-ins, history, and audio-clock scheduling across tempo and key transitions. Run all five before pushing; all must print `OK`.
 - `README.md` is user-facing: features and the research behind them.
 
 ## Two deployments of the same code
@@ -32,7 +32,7 @@ A fretboard practice app for an intermediate guitarist who writes riffs (rock, a
   - **String index 0 = high e … 5 = low E.** `OPEN` holds the MIDI pitches of the open strings. Helpers: `seq()`, `pad()`, `winNotes()`, `cagedWins()`, `nps()`.
   - Library categories: `EXCATS`. `cat: 'Scales'` exercises are hidden from the library and appear in the Scales tab instead.
 - **player:**
-  - `P` holds player state. `exOpen(id, step)` hosts the `#exPlayer` node in either the Exercises or the Scales tab (`exHostOf`). Playback: `exStart`, `exSched`, `exStop`, `exLoopEnd`.
+  - `P` holds player state. `exOpen(id, step)` hosts the `#exPlayer` node in either the Exercises or the Scales tab (`exHostOf`). Playback: `exStart`, `exSched`, `exPause`, `exStop`, `exLoopEnd`. `exPause()` retains the position; `exStop()` resets it. `exSeek()` pauses at a chosen beat. `P.viewPos` is the paused position; the position slider `#pScroll` follows playback or seeks when moved manually. `exData(key)` builds notation without mutating player state. `P.audio` is the latest scheduled loop segment and `P.loopQueue` holds segments awaiting their start time. The scheduler prepares the next loop at its exact audio-clock boundary, including its new key/tempo, on the existing buses; `exSync()` adopts it for display at that boundary. Avoid killing or rescheduling the buses at an automatic loop transition. `P.passStart` prevents a partial opening pass from being logged or triggering the speed/key ladder. `S.ui.exopts.fingers` toggles suggested finger annotations independently of note/degree labels.
   - `exFeedback(kind)` holds the progression rules:
     - 2 clean runs in a row: +5 bpm
     - a messy run: about −10%

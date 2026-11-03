@@ -403,7 +403,10 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .steps button.next{border-color:var(--accent);border-style:dashed}
 .steps button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);border-style:solid}
 .hw{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
-.hw canvas{display:block;width:100%;height:250px}
+.hw canvas{display:block;width:100%;height:250px;cursor:crosshair;touch-action:pan-y}
+.tab-scroll{padding:4px 14px;border-top:1px solid var(--line)}
+.tab-scroll input{display:block;width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
+.tab-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .pstatus{min-height:20px}
 .ptrans{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ptempo{display:flex;align-items:center;gap:10px;margin-left:auto}
@@ -674,6 +677,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
           <p class="small"><b id="pStepName"></b> <span class="muted" id="pStepDesc"></span></p>
           <div class="ptrans">
             <button class="btn primary big" id="pPlay" type="button">Play</button>
+            <button class="btn" id="pRestart" type="button" title="Return to the beginning of this step">↶ Restart</button>
             <button class="btn" id="pListen" type="button" title="Hear and watch one pass without playing">Listen first</button>
             <div class="ptempo"><button class="round sm" id="pSlower" type="button" aria-label="Slower">−</button><div><div><button class="bpmtap mono" id="pBpm" type="button" title="Tap to type a tempo">60</button><input class="bpmin mono" id="pBpmIn" type="number" inputmode="numeric" min="30" max="260" aria-label="Tempo in bpm" hidden> <span class="small muted">bpm · goal <button class="bpmtap goaltap mono" id="pGoal" type="button" title="Tap to change the goal tempo">90</button><span id="pOver"></span></span></div><div class="tbar"><i id="pTempoBar"></i></div></div><button class="round sm" id="pFaster" type="button" aria-label="Faster">+</button></div>
           </div>
@@ -683,12 +687,14 @@ body:has(#settings:not([hidden])){overflow:hidden}
             <button class="btn primary" id="pGoalSave" type="button">Set goal</button><button class="btn" id="pGoalReset" type="button">Default</button><button class="btn" id="pGoalCancel" type="button">Cancel</button>
             <span class="small muted" id="pGoalNote"></span>
           </div>
-          <div class="row practice-quick"><label class="toggle"><input type="checkbox" id="pLoop"> Loop</label><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label></div>
-          <div class="hw"><canvas id="pCanvas" role="img" aria-label="Scrolling tab. The orange line marks now; notes move left toward it."></canvas></div>
+          <div class="row practice-quick"><label class="toggle"><input type="checkbox" id="pLoop"> Loop</label><label class="toggle"><input type="checkbox" id="pFingers"> Finger numbers</label><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label></div>
+          <div class="hw"><canvas id="pCanvas" role="img" aria-label="Exercise tab. Click a note to start there. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Exercise position"></div></div>
+          <div class="tab-navigation small muted"><span>Scroll to a spot or click a note · Space to play / pause</span><span id="pPosition"></span></div>
+          <div class="small muted" id="pFingerHint" hidden>Fingers: 1 index · 2 middle · 3 ring · 4 little</div>
           <div class="pstatus small muted" id="pStatus"></div>
           <p class="small pfocus" id="pFocus"></p>
           <div class="scroll-x"><div id="pBoard"></div></div>
-          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play or stop · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
+          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play / pause · <kbd>Home</kbd> restart · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
         </div>
         <aside class="practice-aside stack" aria-label="Practice guidance and settings">
           <div class="feedback" id="pFeedback">
@@ -970,7 +976,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
-  ui: { exQuery: '', voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { exQuery: '', voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -1260,7 +1266,7 @@ function renderMini() {
   $('#miniBpm').title = player ? 'Change exercise tempo' : 'Open metronome';
   $('#miniBpm').setAttribute('aria-label', (player ? 'Exercise tempo: ' + P.bpm : 'Metronome tempo: ' + S.metro.bpm) + ' bpm');
   $('#miniIcon').setAttribute('d', running ? 'M3 2h3v10H3zM8 2h3v10H8z' : 'M3 1.5v11l9-5.5z');
-  $('#miniPlay').setAttribute('aria-label', (running ? 'Stop ' : 'Start ') + (player ? 'exercise' : 'metronome'));
+  $('#miniPlay').setAttribute('aria-label', (running ? (player ? 'Pause ' : 'Stop ') : 'Start ') + (player ? 'exercise' : 'metronome'));
 }
 function renderTransport() {
   renderMini();
@@ -2275,7 +2281,7 @@ function focusCue(e, sd) {
   if (sd.drone) return `how each note feels against the drone. ${SC_COLOR[e.scale] ? `The ${SC_COLOR[e.scale].map(c => IVL[c]).join(' and ')} are what make it sound like ${scName(e.scale)}.` : ''}`;
   return FOCUS[e.cat] || FOCUS['Positions and scales'];
 }
-const P = { ex: null, step: 0, ev: [], L: 4, bpm: 60, swing: 0, running: false, bus: null, timer: null, startT: 0, k: 0, i: 0, cb: 0, endBeat: Infinity, loops: 0, cursor: 0, viewPos: 0, lastIdx: -2, ppb: 100, bf: 0, bt: 12, labels: 'finger', status: '' };
+const P = { ex: null, step: 0, ev: [], L: 4, bpm: 60, swing: 0, running: false, bus: null, timer: null, startT: 0, endBeat: Infinity, cursor: 0, viewPos: 0, lastIdx: -2, ppb: 100, bf: 0, bt: 12, labels: 'finger', status: '', loopQueue: [], loops: 0, audio: null, frame: null, startBeat: 0, countUntil: 0, passStart: 0 };
 const pBoard = makeBoard($('#pBoard'), (s, f) => pluck((P.tun || OPEN)[s] + f, 0, null, 0.65, 1.4));
 function exStat(id, key) {
   const st = S.ex[id] || (S.ex[id] = { done: [], best: {}, bpm: {}, last: '' }), e = EX.find(e => e.id === id);
@@ -2323,38 +2329,37 @@ function exLoad(i) {
   P.bpm = exStat(e.id).bpm[P.step] || e.steps[P.step].bpm;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
 }
-function exRebuild() {
-  const sd = P.ex.steps[P.step]; P.keyPc = exKey();
-  const b = sd.build(P.keyPc);
-  P.ev = b.ev; P.L = b.L; P.swing = sd.swing || 0; P.bar = sd.bar || 4;
+function exData(keyPc) {
+  const sd = P.ex.steps[P.step], b = sd.build(keyPc), bar = sd.bar || 4;
+  let ev = b.ev, L = b.L, spot = P.spot;
   if (P.spot) {
-    const a0 = P.spot[0] * P.bar, b0 = (P.spot[1] + 1) * P.bar;
-    const sub = P.ev.filter(e => e.t >= a0 - 1e-6 && e.t < b0 - 1e-6).map(e => Object.assign({}, e, { t: e.t - a0, d: Math.min(e.d, b0 - e.t) }));
-    if (b0 <= P.L + 1e-6 && sub.length) { P.ev = sub; P.L = b0 - a0; } else P.spot = null;
+    const a0 = P.spot[0] * bar, b0 = (P.spot[1] + 1) * bar;
+    const sub = ev.filter(e => e.t >= a0 - 1e-6 && e.t < b0 - 1e-6).map(e => Object.assign({}, e, { t: e.t - a0, d: Math.min(e.d, b0 - e.t) }));
+    if (b0 <= L + 1e-6 && sub.length) { ev = sub; L = b0 - a0; } else spot = null;
   }
-  const tk = sd.tuning || P.ex.tuning || 'std'; P.tun = TUNE[tk].m; P.names = tuneNames(tk); P.tuneKey = tk;
-  let gap = 1; for (let k = 1; k < P.ev.length; k++) { const g = P.ev[k].t - P.ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
-  P.ppb = clamp(42 / gap, 90, 190);
-  const frets = P.ev.flatMap(x => x.n.map(n => n.f)), nz = frets.filter(f => f > 0);
-  const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...frets);
-  P.bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1; P.bt = Math.min(20, Math.max(P.bf + 5, mx + 1));
+  const tk = sd.tuning || P.ex.tuning || 'std';
+  let gap = 1; for (let k = 1; k < ev.length; k++) { const g = ev[k].t - ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
+  const frets = ev.flatMap(x => x.n.map(n => n.f)), nz = frets.filter(f => f > 0);
+  const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...frets), bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1;
+  return { keyPc, ev, L, bar, spot, swing: sd.swing || 0, tun: TUNE[tk].m, names: tuneNames(tk), tuneKey: tk, ppb: clamp(42 / gap, 90, 190), bf, bt: Math.min(20, Math.max(bf + 5, mx + 1)) };
 }
-function exPlayEv(e, t, spb, dest) {
-  const d = dest || P.bus;
+function exRebuild() { Object.assign(P, exData(exKey())); }
+function exPlayEv(e, t, spb, dest, tuning) {
+  const d = dest || P.bus, tun = tuning || P.tun;
   if (e.roll) {
-    const ns = e.n.map(n => P.tun[n.s] + n.f).sort((a, b) => a - b), order = e.p === 'U' ? rev(ns) : ns;
+    const ns = e.n.map(n => tun[n.s] + n.f).sort((a, b) => a - b), order = e.p === 'U' ? rev(ns) : ns;
     strum(order, t, d, e.p === 'U' ? 0.013 : 0.018, e.p === 'U' ? 0.36 : 0.48, e.x === 'PM' ? 0.2 : Math.min(2.6, Math.max(0.3, e.d * spb * 1.15)));
     return;
   }
   if (e.strum) {
-    const ns = e.n.map(n => P.tun[n.s] + n.f).sort((a, b) => a - b);
+    const ns = e.n.map(n => tun[n.s] + n.f).sort((a, b) => a - b);
     const order = e.p === 'U' ? rev(ns).slice(0, 4) : ns;
     strum(order, t, d, e.p === 'U' ? 0.012 : 0.018, e.p === 'U' ? 0.32 : 0.48, Math.min(1.3, Math.max(0.3, e.d * spb * 1.2)));
     return;
   }
   const dur = e.x === 'PM' ? 0.16 : Math.min(1.6, Math.max(0.28, e.d * spb * 1.15));
   const gain = (e.x === 'h' || e.x === 'p' || e.x === '/') ? 0.5 : 0.72;
-  e.n.forEach(n => pluck(P.tun[n.s] + n.f, t, d, gain / (e.n.length > 1 ? 1.35 : 1), dur));
+  e.n.forEach(n => pluck(tun[n.s] + n.f, t, d, gain / (e.n.length > 1 ? 1.35 : 1), dur));
 }
 function exDrone() {
   if (P.droneTone) { try { P.droneTone.stop(); } catch (x) {} P.droneTone = null; }
@@ -2362,31 +2367,60 @@ function exDrone() {
   P.droneTone = tone(36 + P.keyPc + (P.keyPc < 4 ? 12 : 0), P.bus, 'warm');
 }
 function exClickSnd() { const s = S.metro.sound; return (s === 'drums' || s === 'none') ? 'wood' : s; }
+function exCycleOn() { const sd = P.ex && P.ex.steps[P.step]; return !!(P.ex && P.ex.keyed && sd && !sd.observe && !sd.create && S.ui.exopts.keycycle && !P.preview); }
+function exCount() { return P.running ? Math.max(0, (P.countUntil - AU.ctx.currentTime) * P.bpm / 60) : 0; }
+function exSegment(data, bpm, startT, startBeat, passStart) {
+  let i = data.ev.findIndex(e => swingT(e.t) >= startBeat - 1e-6); if (i < 0) i = data.ev.length;
+  return { data, bpm, startT, startBeat, passStart, i, cb: Math.ceil(startBeat - 1e-6) };
+}
+function exSync() {
+  while (P.running && P.loopQueue.length && P.loopQueue[0].startT <= AU.ctx.currentTime) exLoopEnd(P.loopQueue.shift());
+}
 function exStart() {
   if (!P.ex) return;
   ac(); if (M.running) mStop();
-  exStop();
-  const st = exStat(P.ex.id); st.prepared = st.prepared || {}; P.reviewCold = st.prepared[P.step] !== dayKey(); st.prepared[P.step] = dayKey(); save();
-  P.bus = bus(AU.notes); P.cbus = bus(AU.click); const spb = 60 / P.bpm, now = AU.ctx.currentTime + 0.1, ci = S.ui.exopts.count ? 4 : 0;
-  P.startT = now + ci * spb;
+  if (P.running) exPause();
+  if (P.viewPos >= P.L - 1e-6) { P.viewPos = 0; P.passStart = 0; }
+  const st = exStat(P.ex.id); st.prepared = st.prepared || {};
+  if (P.viewPos === 0) P.reviewCold = st.prepared[P.step] !== dayKey();
+  st.prepared[P.step] = dayKey(); save();
+  P.bus = bus(AU.notes); P.cbus = bus(AU.click);
+  const spb = 60 / P.bpm, now = AU.ctx.currentTime + 0.1, ci = S.ui.exopts.count ? 4 : 0;
+  P.startBeat = P.viewPos; P.countUntil = now + ci * spb; P.startT = P.countUntil - P.startBeat * spb;
   for (let j = 0; j < ci; j++) SND.beep(now + j * spb, j === 0 ? 3 : 1, P.cbus);
-  P.k = 0; P.i = 0; P.cb = 0; P.loops = 0; P.endBeat = S.ui.exopts.loop ? Infinity : P.L;
+  P.audio = exSegment(exData(P.keyPc), P.bpm, P.startT, P.startBeat, P.passStart); P.loopQueue = []; P.completed = false; P.endBeat = S.ui.exopts.loop ? Infinity : P.L;
   P.running = true; P.lastIdx = -2;
   P.timer = setInterval(exSched, 25); exSched(); exDrone(); wakeSync();
-  requestAnimationFrame(exFrame); renderExTransport();
+  P.frame = requestAnimationFrame(exFrame); renderExTransport();
+}
+function exPause() {
+  const pos = exPos();
+  if (P.droneTone) { try { P.droneTone.stop(); } catch (x) {} P.droneTone = null; }
+  clearInterval(P.timer); cancelAnimationFrame(P.frame);
+  killBus(P.bus); killBus(P.cbus); P.bus = null; P.cbus = null;
+  P.viewPos = clamp(pos, 0, P.L);
+  P.running = false; P.preview = false; P.countUntil = 0; P.lastIdx = -2; P.audio = null; P.loopQueue = [];
+  P.cursor = evIndexAt(Math.min(P.viewPos, P.L - 1e-6));
+  setTimeout(wakeSync, 0);
+  if (P.ev.length && !$('#exPlayer').hidden) { exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); }
+  renderExTransport();
 }
 function exStop() {
-  if (P.running && !P.preview && exPos() >= P.L - 0.05) { logRun('played', P.bpm); if (!$('#exPlayer').hidden) setTimeout(renderExHistPanel, 0); }
-  if (P.droneTone) { try { P.droneTone.stop(); } catch (x) {} P.droneTone = null; }
-  if (P.running) { clearInterval(P.timer); killBus(P.bus); killBus(P.cbus); P.bus = null; P.cbus = null; P.running = false; setTimeout(wakeSync, 0); }
-  P.preview = false;
-  P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
+  exPause(); P.cursor = 0; P.viewPos = 0; P.passStart = 0; P.loops = 0; P.reviewCold = false;
   if (P.ev.length && !$('#exPlayer').hidden) { exDraw(0); exBoard(0); exStatus(0, true); }
   renderExTransport();
 }
-function exToggle() { P.running ? exStop() : exStart(); }
+function exSeek(pos) {
+  if (!P.ex) return;
+  if (P.running) exPause();
+  P.viewPos = clamp(pos, 0, P.L); P.passStart = P.viewPos; P.reviewCold = false;
+  P.cursor = evIndexAt(Math.min(P.viewPos, P.L - 1e-6)); P.lastIdx = -2;
+  exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); renderExTransport();
+}
+function exToggle() { P.running ? exPause() : exStart(); }
 function exListen() {
-  if (!P.ex) return; if (P.running) { exStop(); return; }
+  if (!P.ex) return; if (P.running) { exPause(); return; }
+  exStop();
   const o = S.ui.exopts, keep = [o.loop, o.count, o.keycycle]; o.loop = false; o.count = false; o.keycycle = false;
   exStart(); P.preview = true; o.loop = keep[0]; o.count = keep[1]; o.keycycle = keep[2];
   P.reviewCold = false;
@@ -2410,83 +2444,92 @@ function exSetSpot(v) {
   if (run) exStart();
 }
 function exSched() {
-  const c = AU.ctx, spb = 60 / P.bpm, hz = c.currentTime + 0.15, cs = exClickSnd();
-  for (let guard = 0; guard < 400; guard++) {
-    const e = P.ev[P.i], ab = P.k * P.L + swingT(e.t);
-    if (ab >= P.endBeat - 1e-6) break;
-    const tt = P.startT + ab * spb; if (tt > hz) break;
-    if (tt >= c.currentTime - 0.03 && (S.ui.exopts.guide || P.preview)) exPlayEv(e, tt, spb);
-    P.i++; if (P.i >= P.ev.length) { P.i = 0; P.k++; }
-  }
-  for (let guard = 0; guard < 64; guard++) {
-    if (P.cb >= P.endBeat - 1e-6) break;
-    const tt = P.startT + P.cb * spb; if (tt > hz) break;
-    const rel = P.cb % P.L;
-    if (S.ui.exopts.click && tt >= c.currentTime - 0.03) SND[cs](tt, rel === 0 ? 3 : rel % P.bar === 0 ? 2 : (P.bar === 7 && (rel % 7 === 2 || rel % 7 === 4)) ? 2 : 1, P.cbus);
-    P.cb++;
+  if (!P.running || !P.audio) return;
+  const c = AU.ctx, hz = c.currentTime + 0.15, cs = exClickSnd();
+  for (let guard = 0; guard < 16; guard++) {
+    const seg = P.audio, d = seg.data, spb = 60 / seg.bpm;
+    while (seg.i < d.ev.length) {
+      const e = d.ev[seg.i], tt = seg.startT + swingT(e.t) * spb;
+      if (tt > hz) break;
+      if (tt >= c.currentTime - 0.03 && (S.ui.exopts.guide || P.preview)) exPlayEv(e, tt, spb, P.bus, d.tun);
+      seg.i++;
+    }
+    while (seg.cb < d.L - 1e-6) {
+      const tt = seg.startT + seg.cb * spb; if (tt > hz) break;
+      if (S.ui.exopts.click && tt >= c.currentTime - 0.03) SND[cs](tt, seg.cb === 0 ? 3 : seg.cb % d.bar === 0 ? 2 : (d.bar === 7 && (seg.cb % 7 === 2 || seg.cb % 7 === 4)) ? 2 : 1, P.cbus);
+      seg.cb++;
+    }
+    const boundary = seg.startT + d.L * spb;
+    if (boundary > hz || !S.ui.exopts.loop || P.preview) break;
+    const sd = P.ex.steps[P.step], full = seg.passStart === 0, technical = !sd.observe && !sd.create;
+    const key = full && technical && exCycleOn() ? (d.keyPc + 5) % 12 : d.keyPc;
+    const goal = exStat(P.ex.id, d.keyPc).done[P.step] ? 260 : sd.goal;
+    const bpm = full && technical && S.ui.exopts.ladder && seg.bpm < goal ? Math.min(goal, seg.bpm + 4) : seg.bpm;
+    const next = exSegment(key === d.keyPc ? d : exData(key), bpm, boundary, 0, 0);
+    P.loopQueue.push(next); P.audio = next;
   }
 }
-function exPos() { return P.running ? (AU.ctx.currentTime - P.startT) * P.bpm / 60 : P.viewPos; }
+function exPos() {
+  if (!P.running) return P.viewPos;
+  exSync(); return Math.max(P.startBeat, (AU.ctx.currentTime - P.startT) * P.bpm / 60);
+}
 function exReanchor(nb) {
   nb = clamp(Math.round(nb), 30, 260);
   if (!P.running) { P.bpm = nb; renderExMeta(); return; }
-  const pos = exPos();
+  const pos = exPos(), count = exCount();
   killBus(P.bus); killBus(P.cbus); P.bus = bus(AU.notes); P.cbus = bus(AU.click); P.bpm = nb; exDrone();
-  const spb = 60 / nb; P.startT = AU.ctx.currentTime + 0.05 - pos * spb;
-  if (pos < 0) { P.k = 0; P.i = 0; P.cb = 0; }
-  else {
-    P.k = Math.floor(pos / P.L); const w = pos - P.k * P.L;
-    P.i = P.ev.findIndex(e => swingT(e.t) >= w - 1e-6); if (P.i < 0) { P.i = 0; P.k++; }
-    P.cb = Math.ceil(pos - 1e-6);
-  }
-  renderExMeta();
+  const spb = 60 / nb, now = AU.ctx.currentTime + 0.05;
+  P.startBeat = pos; P.countUntil = now + count * spb; P.startT = P.countUntil - pos * spb;
+  for (let j = 0; j < Math.ceil(count); j++) SND.beep(now + j * spb, j === 0 ? 3 : 1, P.cbus);
+  P.audio = exSegment(exData(P.keyPc), nb, P.startT, pos, P.passStart); P.loopQueue = []; exSched(); renderExMeta();
 }
 function exFrame() {
   if (!P.running) return;
   const pos = exPos();
-  if (pos >= P.endBeat + 0.3) { const pv = P.preview; exStop(); toast(pv ? 'Now you play it. Press Play.' : 'Done. Rate how it went, then play it again.'); return; }
-  const k = Math.floor(Math.max(0, pos) / P.L);
-  if (k > P.loops) { P.loops = k; exLoopEnd(); }
+  if (pos >= P.endBeat) {
+    if (!P.completed && !P.preview && P.passStart === 0) { logRun('played', P.bpm); setTimeout(renderExHistPanel, 0); }
+    P.completed = true; const pv = P.preview; exPause();
+    toast(pv ? 'Now you play it. Press Play.' : 'Done. Rate how it went, then play it again.'); return;
+  }
   exDraw(pos);
-  const idx = pos < 0 ? -1 : evIndexAt(pos - k * P.L);
-  if (idx !== P.lastIdx) { P.lastIdx = idx; exBoard(idx < 0 ? 0 : idx, idx < 0); }
+  const idx = evIndexAt(Math.min(pos, P.L - 1e-6));
+  if (idx !== P.lastIdx) { P.lastIdx = idx; exBoard(idx, exCount() > 0); }
   exStatus(pos);
-  requestAnimationFrame(exFrame);
+  P.frame = requestAnimationFrame(exFrame);
 }
-function exLoopEnd() {
-  if (P.preview || P.ex.steps[P.step].observe || P.ex.steps[P.step].create) return;
-  const goal = exStat(P.ex.id).done[P.step] ? 260 : P.ex.steps[P.step].goal;
-  if (S.ui.exopts.keycycle && P.ex.keyed) {
-    const spb = 60 / P.bpm, tB = P.startT + P.loops * P.L * spb;
-    let nb = P.bpm; if (S.ui.exopts.ladder && nb < goal) nb = Math.min(goal, nb + 4);
-    const st = exStat(P.ex.id); st.key = (exKey() + 5) % 12; save();
-    const next = exStat(P.ex.id); next.prepared = next.prepared || {}; next.prepared[P.step] = dayKey(); P.reviewCold = false;
-    exRebuild(); P.bpm = nb;
-    killBus(P.bus); killBus(P.cbus); P.bus = bus(AU.notes); P.cbus = bus(AU.click); exDrone(); P.startT = tB; P.k = 0; P.i = 0; P.cb = 0; P.loops = 0; P.endBeat = S.ui.exopts.loop ? Infinity : P.L; P.lastIdx = -2;
-    renderExKey(); renderExMeta();
-  } else if (S.ui.exopts.ladder && P.bpm < goal) { exReanchor(Math.min(goal, P.bpm + 4)); }
+function exLoopEnd(next) {
+  if (!P.preview && P.passStart === 0) { logRun('played', P.bpm); setTimeout(renderExHistPanel, 0); }
+  const keyChange = next.data.keyPc !== P.keyPc, tempoChange = next.bpm !== P.bpm;
+  Object.assign(P, next.data); P.bpm = next.bpm; P.startT = next.startT; P.startBeat = 0; P.countUntil = 0; P.passStart = 0; P.loops++; P.lastIdx = -2;
+  if (keyChange) {
+    exStat(P.ex.id).key = P.keyPc;
+    const st = exStat(P.ex.id); st.prepared = st.prepared || {}; st.prepared[P.step] = dayKey(); P.reviewCold = false; save();
+    exDrone(); renderExKey(); renderExSteps(); exSpotOptions();
+  }
+  if (keyChange || tempoChange) renderExMeta();
   if (P.loops % 3 === 0) { const f = $('#pFeedback'); f.classList.remove('nudge'); void f.offsetWidth; f.classList.add('nudge'); }
 }
 function exStatus(pos, force) {
+  const w = Math.min(P.L - 1e-6, Math.max(0, pos % P.L)), bar = Math.floor(w / P.bar) + 1, beat = Math.floor(w % P.bar) + 1;
   let s;
-  if (P.running && P.preview && pos >= 0) s = 'Listening: watch the tab and fretboard, hear the sound you are aiming for';
-  else if (!P.running) s = `${P.spot ? 'Part practice · ' : ''}${P.ev.length} ${P.ev[0] && P.ev[0].strum ? 'strums' : 'notes'} · ${P.L / P.bar} bar${P.L > P.bar ? 's' : ''}${P.bar === 7 ? ' of 7/8' : ''} · press Play or step through with the arrow keys`;
-  else if (pos < 0) s = 'Count-in…';
-  else { const k = Math.floor(pos / P.L), w = pos - k * P.L; s = `${P.spot ? 'Part practice · ' : ''}${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop ? `Loop ${k + 1} · ` : ''}bar ${Math.floor(w / P.bar) + 1} of ${P.L / P.bar} · ${P.bar === 7 ? '8th' : 'beat'} ${Math.floor(w % P.bar) + 1}`; }
+  if (P.running && exCount() > 0) s = 'Count-in…';
+  else if (P.running && P.preview) s = 'Listening: watch the tab and fretboard, hear the sound you are aiming for';
+  else if (!P.running) s = P.viewPos >= P.L ? 'Pass complete · Play again or scroll to a spot' : `${P.viewPos > 0 ? 'Paused' : 'Ready'} · bar ${bar} of ${Math.ceil(P.L / P.bar)} · beat ${beat} · ${P.viewPos > 0 ? 'Resume from here' : 'Play or choose a starting point'}`;
+  else s = `${P.spot ? 'Part practice · ' : ''}${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop && !exCycleOn() ? `Loop ${P.loops + 1} · ` : ''}bar ${bar} of ${Math.ceil(P.L / P.bar)} · ${P.bar === 7 ? '8th' : 'beat'} ${beat}`;
   if (s !== P.status || force) { P.status = s; $('#pStatus').textContent = s; }
 }
 function exStepNote(dir) {
   if (!P.ev.length) return;
-  if (P.running) exStop();
+  if (P.running) exPause();
   const st = exStat(P.ex.id); st.prepared = st.prepared || {}; st.prepared[P.step] = dayKey(); P.reviewCold = false; save();
   ac();
   P.cursor = ((P.cursor + dir) % P.ev.length + P.ev.length) % P.ev.length;
-  P.viewPos = swingT(P.ev[P.cursor].t);
+  P.viewPos = swingT(P.ev[P.cursor].t); P.passStart = P.viewPos;
   exPlayEv(P.ev[P.cursor], AU.ctx.currentTime + 0.01, 60 / P.bpm, AU.master);
-  exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor);
+  exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor); renderExTransport();
   const s = `Note ${P.cursor + 1} of ${P.ev.length} · step-through mode`; P.status = s; $('#pStatus').textContent = s;
 }
-function exLabel(n) { const pc = (P.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return n.fg ? String(n.fg) : (n.f === 0 ? '0' : ''); }
+function exLabel(n) { const pc = (P.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return S.ui.exopts.fingers && n.fg ? String(n.fg) : (n.f === 0 ? '0' : ''); }
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
@@ -2518,6 +2561,10 @@ function exDraw(pos) {
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
   const C = exColors();
   g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
+  const local = pos >= P.L && !P.running ? P.L : Math.max(0, pos % P.L);
+  const scroll = $('#pScroll'); scroll.max = P.L; scroll.value = local;
+  const location = local >= P.L ? 'End' : `Bar ${Math.floor(local / P.bar) + 1} · beat ${Math.floor(local % P.bar) + 1}`;
+  scroll.setAttribute('aria-valuetext', location); $('#pPosition').textContent = location + ` / ${Math.ceil(P.L / P.bar)} bars`;
   const top = 70, sh = 27, left = 24, bot = top + 5 * sh, ph = Math.round(Math.min(W * 0.28, 190)), ppb = P.ppb;
   g.textBaseline = 'middle';
   const b0 = Math.floor(pos - ph / ppb) - 1, b1 = Math.ceil(pos + (W - ph) / ppb) + 1;
@@ -2558,8 +2605,12 @@ function exDraw(pos) {
           rrect(g, x - w / 2, y - 10, w, 20, 6); g.fillStyle = cur ? C.warn : C.bg; g.fill();
           g.lineWidth = 1.5; g.strokeStyle = cur ? C.warn : C.ink; g.stroke();
           g.fillStyle = cur ? C.onSem : C.ink; g.font = '600 12px ' + MONO; g.textAlign = 'center'; g.fillText(txt, x, y + 0.5);
-          const sub = P.labels === 'finger' ? (n.fg ? String(n.fg) : '') : exLabel(n);
+          const sub = P.labels === 'finger' ? (S.ui.exopts.fingers && n.fg ? String(n.fg) : '') : exLabel(n);
           if (sub) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 9.5px ' + SANS; g.textAlign = 'left'; g.fillText(sub, x + w / 2 + 2, y + 9); }
+          if (P.labels !== 'finger' && S.ui.exopts.fingers && n.fg) {
+            g.beginPath(); g.arc(x - w / 2 - 2, y - 11, 6, 0, Math.PI * 2); g.fillStyle = cur ? C.warn : C.ink; g.fill();
+            g.fillStyle = cur ? C.onSem : C.bg; g.font = '600 9px ' + SANS; g.textAlign = 'center'; g.fillText(String(n.fg), x - w / 2 - 2, y - 10.5);
+          }
         });
         if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
         if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30); }
@@ -2569,7 +2620,7 @@ function exDraw(pos) {
   }
   g.strokeStyle = C.warn; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, top - 16); g.lineTo(ph, bot + 12); g.stroke();
   g.fillStyle = C.warn; g.beginPath(); g.moveTo(ph - 6, top - 22); g.lineTo(ph + 6, top - 22); g.lineTo(ph, top - 14); g.closePath(); g.fill();
-  if (pos < 0) { g.fillStyle = C.warn; g.font = '700 60px ' + DISP; g.textAlign = 'center'; g.fillText(String(Math.max(1, Math.ceil(-pos - 1e-6))), ph + (W - ph) / 2, top + 2.5 * sh); }
+  if (exCount() > 0) { g.fillStyle = C.warn; g.font = '700 60px ' + DISP; g.textAlign = 'center'; g.fillText(String(Math.max(1, Math.ceil(exCount() - 1e-6))), ph + (W - ph) / 2, top + 2.5 * sh); }
 }
 /* ---------- exercise history ---------- */
 const RLAB = { clean: 'Clean', almost: 'Almost', messy: 'Messy', played: 'Played' };
@@ -2667,8 +2718,11 @@ function exCard(e) {
 }
 function renderExTransport() {
   const b = $('#pPlay'); if (!b) return;
-  b.textContent = P.running && !P.preview ? 'Stop' : 'Play';
-  $('#pListen').textContent = P.running && P.preview ? 'Stop' : 'Listen first';
+  b.textContent = P.running ? 'Pause' : P.viewPos >= P.L ? 'Play again' : P.viewPos > 0 ? 'Resume' : 'Play';
+  $('#pListen').textContent = P.running && P.preview ? 'Pause' : 'Listen first';
+  $('#pFingers').checked = !!S.ui.exopts.fingers;
+  $('#pFingerHint').hidden = !S.ui.exopts.fingers;
+  $('#pFingerHint').textContent = P.ev.some(e => e.n.some(n => n.fg)) ? 'Suggested fingers: 1 index · 2 middle · 3 ring · 4 little' : 'Finger suggestions are not specified for this step.';
   renderMini();
 }
 function renderExMeta() {
@@ -3836,7 +3890,29 @@ $('#pBack').onclick = () => {
 };
 $('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' : P.ex.id; save(); renderExPlayer(); toast(S.ui.focusEx ? 'Your next session will focus on this exercise.' : 'Automatic practice recommendations restored.'); };
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
+$('#pFingers').onchange = e => { S.ui.exopts.fingers = e.target.checked; save(); renderExTransport(); exDraw(exPos()); exBoard(P.running ? evIndexAt(Math.min(exPos(), P.L - 1e-6)) : P.cursor); };
 $('#pPlay').onclick = exToggle;
+$('#pRestart').onclick = () => { const run = P.running; exStop(); if (run) exStart(); };
+$('#pScroll').addEventListener('input', e => exSeek(+e.target.value));
+$('#pScroll').addEventListener('keydown', e => {
+  const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -P.bar, PageDown: P.bar };
+  if (e.key in moves || e.key === 'Home' || e.key === 'End') {
+    e.preventDefault(); e.stopPropagation();
+    exSeek(e.key === 'Home' ? 0 : e.key === 'End' ? P.L : (P.running ? exPos() : P.viewPos) + moves[e.key]);
+  }
+});
+$('#pCanvas').addEventListener('wheel', e => {
+  const delta = e.deltaX || (e.shiftKey ? e.deltaY : 0); if (!delta) return;
+  e.preventDefault(); const scale = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? $('#pCanvas').clientWidth : 1;
+  exSeek((P.running ? exPos() % P.L : P.viewPos) + delta * scale / P.ppb);
+}, { passive: false });
+$('#pCanvas').addEventListener('click', e => {
+  if (!P.ev.length) return;
+  const cv = $('#pCanvas'), x = e.clientX - cv.getBoundingClientRect().left, ph = Math.round(Math.min(cv.clientWidth * 0.28, 190));
+  const beat = (P.running ? exPos() % P.L : P.viewPos) + (x - ph) / P.ppb;
+  const nearest = P.ev.reduce((best, ev) => Math.abs(swingT(ev.t) - beat) < Math.abs(swingT(best.t) - beat) ? ev : best);
+  exSeek(swingT(nearest.t));
+});
 $('#pPrev').onclick = () => exStepNote(-1); $('#pNext').onclick = () => exStepNote(1);
 function exSetBpm(v) { if (!P.ex) return; exReanchor(clamp(Math.round(v), 30, 260)); exStat(P.ex.id).bpm[P.step] = P.bpm; save(); }
 function holdRepeat(btn, d) {
@@ -3851,13 +3927,13 @@ $('#pBpm').onclick = () => { const i = $('#pBpmIn'); i.value = P.bpm; $('#pBpm')
 const bpmDone = ok => { const i = $('#pBpmIn'); if (i.hidden) return; if (ok && i.value) exSetBpm(+i.value); i.hidden = true; $('#pBpm').hidden = false; renderExMeta(); };
 $('#pBpmIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); bpmDone(true); } else if (e.key === 'Escape') { e.preventDefault(); bpmDone(false); } });
 $('#pBpmIn').addEventListener('blur', () => bpmDone(true));
-[['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop' && P.running) exStart(); if (k === 'loop' && !P.running) exDraw(P.viewPos); }; });
+[['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop') { if (!S.ui.exopts.loop) { S.ui.exopts.keycycle = false; $('#pKeyCycle').checked = false; } if (P.running) { P.endBeat = S.ui.exopts.loop ? Infinity : P.L; exReanchor(P.bpm); } else exDraw(P.viewPos); renderExTransport(); save(); } }; });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
 $('#pListen').onclick = exListen; $('#pSpot').onchange = e => exSetSpot(e.target.value);
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
 $('#pKey').onchange = e => { exStat(P.ex.id).key = +e.target.value; save(); exLoad(P.step); renderExPlayer(); };
 $('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= cur) k++; exStat(P.ex.id).key = k; save(); exLoad(P.step); renderExPlayer(); toast(`Key: ${keyName(k)}`); };
-$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; } };
+$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = Infinity; exReanchor(P.bpm); } } };
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { exColors(true); if (P.ex && !$('#exPlayer').hidden) exDraw(exPos()); });
@@ -3906,6 +3982,7 @@ document.addEventListener('keydown', e => {
     if (curTab === (P.host || 'exercises') && P.ex && !$('#exPlayer').hidden) { exToggle(); return; }
     mToggle(); return;
   }
+  if (playerVisible() && e.key === 'Home') { e.preventDefault(); $('#pRestart').click(); return; }
   if (curTab === (P.host || 'exercises') && P.ex && !$('#exPlayer').hidden && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { e.preventDefault(); exStepNote(e.key === 'ArrowRight' ? 1 : -1); return; }
   if (curTab === 'learn' && LN.unit && LN.tab === 'quiz') { if (/^[1-9]$/.test(e.key)) { qzAnswer(+e.key - 1); return; } if (e.key === 'Enter' && QZ.answered) { e.preventDefault(); qzNext(); return; } }
   if (curTab === 'ear' && /^[1-9]$/.test(e.key)) { eAnswer(+e.key - 1); return; }

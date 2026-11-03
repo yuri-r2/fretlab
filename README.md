@@ -16,7 +16,7 @@ Nine units that build on each other: notes on the low strings, octave shapes, in
 
 ## Exercises
 
-Play-along workouts that show exactly what to play, note by note, in time. A scrolling tab with a fixed playhead shows pick direction, technique marks and labels (finger, note name or scale degree), while a live fretboard shows the note to play now, the next one, and the rest of the shape. Most exercises work in any key: pick one, roll a random key, or move up a 4th every loop to play through all 12.
+Play-along workouts that show exactly what to play, note by note, in time. A scrolling tab with a fixed playhead shows pick direction, technique marks and labels (finger, note name or scale degree), while a live fretboard shows the note to play now, the next one, and the rest of the shape. Pause keeps your place, and Resume continues from there with your count-in setting. Scroll the tab horizontally (or use Shift + mouse wheel), click a note, or use the position slider to choose a starting point. Restart returns to the beginning. The Finger numbers toggle shows or hides suggested fingers alongside the selected note labels. Space plays/pauses, Home restarts, and the focused position slider supports arrow keys, Page Up/Down, Home, and End. Automatic +4 bpm and key changes are scheduled ahead at the loop boundary, keeping the first note and click in time. Most exercises work in any key: pick one, roll a random key, or move up a 4th every loop to play through all 12.
 
 Workouts for knowing the neck in any key, connecting it with technique and chord tones, and turning it into riffs:
 

@@ -60,7 +60,7 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
     assert.equal(await page.locator('#pSettings').getAttribute('open'), null);
     await page.focus('#pPlay');
     await page.keyboard.press('Space');
-    assert.equal(await page.locator('#pPlay').textContent(), 'Stop');
+    assert.equal(await page.locator('#pPlay').textContent(), 'Pause');
     await page.keyboard.press('Space');
     assert.equal(await page.locator('#pPlay').textContent(), 'Play');
     const light = await page.locator('#pCanvas').evaluate(n => Array.from(n.getContext('2d').getImageData(2,2,1,1).data));
