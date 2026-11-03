@@ -45,6 +45,10 @@ A library of 22 chord shapes for writing riffs in rock, alternative, midwest emo
 
 Progress is saved in your browser's local storage. Use **Settings → Download backup** to save it to a file, and **Restore from file** to move it to another device or browser.
 
+## Volume
+
+The speaker button in the header opens a mixer: **Master** with **Mute**, plus separate **Guitar notes** (the guide sound in exercises and play-alongs) and **Click & drums** (metronome, count-ins and drum backing) levels, each up to 150%. The same two sliders sit next to the *Hear the notes* and *Click* switches inside every exercise. Press **M** anywhere to mute or unmute. On iPhone, sound plays even with the silent switch on.
+
 ## Install and offline use
 
 On the GitHub Pages site, Fretlab can be installed like an app (Add to Home Screen on iPhone, Install app on Android or desktop Chrome) and works offline after the first visit, so it's available at rehearsal without Wi‑Fi. The screen stays awake while an exercise, the metronome or a Riff Dice loop is playing.
