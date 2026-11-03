@@ -6,7 +6,7 @@ A fretboard practice app for intermediate and advanced guitarists, in a single H
 
 The desktop web app uses a persistent navigation rail and a wider practice workspace. Playback and notation sit beside feedback and collapsible settings. Smaller windows use the compact navigation layout. Keyboard arrows move through navigation, and settings keep keyboard focus inside the dialog.
 
-Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Exercises, Fretboard, and Ear training. Tuner, metronome, and drone are available from Tools. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
+Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Rhythm, Exercises, Fretboard, and Ear training. Tuner, metronome, and drone are available from Tools. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase.
 
@@ -32,6 +32,21 @@ Each exercise has 3 to 8 steps with a goal tempo. Tap the goal to set your own, 
 ## Scales
 
 Pick a key and one of ten scales (major and minor pentatonic, blues, major, natural minor, Dorian, Mixolydian, Phrygian, Lydian, harmonic minor) and see it on the whole neck or one CAGED position at a time, then practice it with exercises built for that scale. They open right in the Library → Scales, already in your key: five positions linked up the neck, three-notes-per-string patterns (diagonal patterns for pentatonic and blues), sequences in 3s, 4s, 3rds and 4ths, the scale along one string, and *Hear it over a drone*, which plays a held root under the scale and holds its color notes (the 6 in Dorian, the b7 in Mixolydian, the #4 in Lydian, and so on) so you hear what makes each scale sound like itself. Minor pentatonic uses the five-box exercise, and major uses the five positions, three notes per string, sequences and one-string exercises.
+
+## Rhythm
+
+Eight play-along workouts for time and feel, in their own Library section:
+
+- **Subdivision ladder**: quarters, 8ths, triplets and 16ths on one muted note, then all four in one loop, then with the click only on 2 and 4
+- **Pendulum strumming**: the hand keeps moving down and up while some strokes miss the strings, from steady 8ths to D DU UDU, accented backbeats, 16ths, and a click that drops out every other bar
+- **Muted chucks and the backbeat**: percussive chucks on 2 and 4, pushes, and offbeat upstrokes
+- **Palm-muted chugs and gallops**: downpicked 8ths, chugs with chord stabs, gallops, reverse gallops and punk 8ths
+- **Syncopation and pushes**: 3-3-2, fills, chord changes that arrive on the "&" of 4, and offbeat accents
+- **Odd meters**: 7/8 as 2+2+3 and 3+2+2, 5/4 as 3+2, and a 6/8 arpeggio, with the click accenting each group
+- **Dotted-8th echo**: straight notes with a dotted-8th delay that turns 8ths into a 16th-note shimmer; dashed boxes show where the echoes fall
+- **Triplets and shuffle**: straight against swung 8ths, triplet strums and a shuffle boogie
+
+Counts ("1 e & a") sit under every stroke. A faint dashed arrow is an air strum (move but miss), ✕ is a muted chuck, and > is an accent. Subdividing the beat reduces timing variability, especially at slow tempos ([Repp, 2010](https://labs.sonicfield.org/library/self-generated-interval-subdivision-reduces-variability-of-synchronization-with-)).
 
 ## Chord Shapes
 

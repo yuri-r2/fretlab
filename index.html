@@ -302,6 +302,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .btn.flash{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .kbdhint kbd{font:600 11px var(--font-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface)}
 @media (hover:none){.kbdhint{display:none}}
+.weekchart{display:block;width:100%;max-width:560px;height:auto;max-height:240px;margin-inline:auto}
 .favbtn[aria-pressed="true"]{color:var(--warn);border-color:var(--warn)}
 /* research-based practice */
 .pfocus{margin:0;color:var(--ink)} .pfocus b{color:var(--accent)}
@@ -553,12 +554,13 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <main class="pad">
 <div class="inner">
 
-<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
+<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="excards">
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Related grips, inversions and chord colors. Hear the difference, then use it in a riff.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
+    <button class="excard" type="button" data-go="rhythm"><h3>Rhythm</h3><span>Subdivisions, strumming, chugs, syncopation, odd meters and dotted-8th delay rhythms.</span></button>
     <button class="excard" type="button" data-go="exercises"><h3>Exercises</h3><span>Guided workouts for changes, fretboard fluency, arpeggios and technique.</span></button>
     <button class="excard" type="button" data-go="fretboard"><h3>Fretboard</h3><span>Find notes and intervals, with extra practice for your weak spots.</span></button>
     <button class="excard" type="button" data-go="ear"><h3>Ear training</h3><span>Recognize scale degrees, intervals and chord qualities by sound.</span></button>
@@ -572,7 +574,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <div class="stat"><div><div class="v" id="stWeek">0</div><div class="k">minutes this week</div></div></div>
     <div class="stat"><div><div class="v" id="stTotal">0</div><div class="k">hours all time</div></div></div>
   </div>
-  <div class="card stack"><h3>Last 7 days</h3><svg id="weekChart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Minutes practiced over the last seven days"></svg></div>
+  <div class="card stack"><h3>Last 7 days</h3><svg id="weekChart" class="weekchart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Minutes practiced over the last seven days"></svg></div>
   <div class="card stack"><h3>Practice history</h3><div id="progressHistory" class="stack"></div></div>
 </section>
 
@@ -694,7 +696,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
           <div class="pstatus small muted" id="pStatus"></div>
           <p class="small pfocus" id="pFocus"></p>
           <div class="scroll-x"><div id="pBoard"></div></div>
-          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play / pause · <kbd>Home</kbd> restart · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
+          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide, &gt; = accent, faint dashed arrow = air strum (move but miss), ✕ = muted chuck, dashed box = delay echo. Counts under the tab: 1 e &amp; a</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play / pause · <kbd>Home</kbd> restart · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
         </div>
         <aside class="practice-aside stack" aria-label="Practice guidance and settings">
           <div class="feedback" id="pFeedback">
@@ -860,6 +862,12 @@ body:has(#settings:not([hidden])){overflow:hidden}
 </section>
 
 <!-- EXPLORER -->
+<section class="view" id="view-rhythm" hidden>
+  <div id="rMain" class="stack" style="gap:16px">
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Time and feel</span><h2>Rhythm</h2></div><p class="muted small">Subdivisions, strumming, muting, syncopation, odd meters and delay rhythms. Counts under the tab show where every stroke falls. A faint dashed arrow is an air strum: move the hand but miss the strings. ✕ is a muted chuck.</p></div>
+    <div class="excards" id="rEx"></div>
+  </div>
+</section>
 <section class="view" id="view-explorer" hidden>
   <div id="xMain" class="stack" style="gap:16px">
   <div class="vhead"><div class="stack" style="gap:4px"><span class="label">See it, then play it</span><h2>Scales</h2></div><p class="muted small">Pick a key and scale and see it on the whole neck or one position at a time. The exercises below are built for that scale and open right here, already in your key.</p></div>
@@ -2246,6 +2254,110 @@ const SC_EX = {};
 Object.keys(SCALES).forEach(id => { const g = scaleExs(id); EX.push(...g); SC_EX[id] = (id === 'minPent' ? ['pentall'] : id === 'major' ? ['majcaged', 'nps3', 'seqs', 'onestring'] : []).concat(g.map(e => e.id)); });
 function scaleOf(e) { return e && e.scale; }
 
+/* ---------- rhythm ---------- */
+// Chord shapes are written low E to high e ('x' = muted); notes use string index 0 = high e.
+const RCH = { Em: '022000', C: 'x32010', G: '320033', D: 'xx0232', A: 'x02220', E: '022100', Am: 'x02210', Asus2: 'x02200', E5: '022xxx', G5: '355xxx', A5: '577xxx', C5: 'x355xx', D5: 'x577xx' };
+function rch(name) { return [...RCH[name]].map((c, i) => c === 'x' ? null : nt(5 - i, +c, 0)).filter(Boolean); }
+const CNT = { 1: ['1', '2', '3', '4', '5', '6', '7'], 2: ['&'], 3: ['trip', 'let'], 4: ['e', '&', 'a'] };
+function cntFor(i, per) { const b = Math.floor(i / per), r = i % per; return r === 0 ? String(b + 1) : (CNT[per] || [''])[r - 1] || ''; }
+// One bar of strums from a pattern: D/U = strum, d/u = air strum (hand moves, misses), X/x = muted chuck, - = hold.
+// Uppercase accent with '>' after the letter, e.g. 'D>'.
+function strumBar(pattern, chord, per, t0, opt = {}) {
+  const toks = pattern.match(/[DUdurXx\-][>]?/g), ev = [], step = 1 / per;
+  toks.forEach((tk, i) => {
+    const c = tk[0], acc = tk[1] === '>';
+    if (c === '-') { if (ev.length) ev[ev.length - 1].d += step; return; }
+    const down = c === 'D' || c === 'd' || c === 'X', air = c === 'd' || c === 'u', mute = c === 'X' || c === 'x';
+    const n = air ? [] : chord.map(m => Object.assign({}, m));
+    ev.push({ t: t0 + i * step, d: step, n, strum: true, p: down ? 'D' : 'U', air, mute, acc, x: opt.pm && !air && !mute && !acc ? 'PM' : '', chord: opt.name, cnt: cntFor(i, per) });
+  });
+  return ev;
+}
+function strumProg(pattern, names, per, opt = {}) {
+  const ev = []; names.forEach((nm, b) => ev.push(...strumBar(typeof pattern === 'function' ? pattern(b) : pattern, rch(nm), per, b * 4, Object.assign({ name: nm }, opt)))); return { ev, L: names.length * 4 };
+}
+// Single-note or dyad rhythms: durations in beats; returns evenly picked events with counts.
+function noteRhythm(bars, note, opt = {}) {
+  const ev = []; let t = 0;
+  bars.forEach(b => {
+    const per = b.per || 2, n = b.n || note; let i = 0;
+    for (let k = 0; k < (b.count || 4 * per); k++) {
+      const acc = b.acc ? b.acc.includes(k) : false;
+      ev.push({ t, d: 1 / per, n: [].concat(n).map(m => Object.assign({}, m)), p: b.down || opt.down ? 'D' : (i % 2 ? 'U' : 'D'), x: (b.pm ?? opt.pm) && !acc ? 'PM' : '', acc, cnt: cntFor(k, per) });
+      t += 1 / per; i++;
+    }
+  });
+  return { ev, L: Math.ceil(t - 1e-6) };
+}
+function gallopBar(t0, low, chordHit, reverse) {
+  const ev = [];
+  for (let b = 0; b < 4; b++) {
+    const t = t0 + b, ds = reverse ? [0.25, 0.25, 0.5] : [0.5, 0.25, 0.25], cn = reverse ? ['' + (b + 1), 'e', '&'] : ['' + (b + 1), '&', 'a'];
+    let tt = t; ds.forEach((d, k) => { const hit = chordHit && b === 0 && k === 0; ev.push({ t: tt, d, n: (hit ? chordHit : [low]).map(m => Object.assign({}, m)), p: 'D', x: hit ? '' : 'PM', acc: hit, cnt: cn[k] }); tt += d; });
+  }
+  return ev;
+}
+const LOWE = nt(5, 0, 0);
+const RX = [
+  { id: 'rh_sub', cat: 'Rhythm', title: 'Subdivision ladder', lvl: 'Timing', about: 'One muted note, four ways to divide the beat: quarters, 8ths, triplets and 16ths. Feeling the smaller notes inside each beat is what keeps your timing steady, especially at slow tempos.', tip: 'Count out loud with the labels under the tab. Keep your picking hand moving at the speed of the smallest note, even when you are not playing it.', steps: [
+    { n: 'Quarter notes', d: 'Four downstrokes per bar on the palm-muted low E. Count "1 2 3 4".', bpm: 70, goal: 140, build: () => noteRhythm([{ per: 1, down: true }, { per: 1, down: true }], LOWE, { pm: true }) },
+    { n: '8th notes', d: 'Down on the beat, up on the "&".', bpm: 70, goal: 140, build: () => noteRhythm([{ per: 2 }, { per: 2 }], LOWE, { pm: true }) },
+    { n: 'Triplets', d: 'Three even notes per beat. The pick direction flips on every beat.', bpm: 60, goal: 120, build: () => noteRhythm([{ per: 3 }, { per: 3 }], LOWE, { pm: true }) },
+    { n: '16th notes', d: 'Four per beat: "1 e & a". Keep the motion small.', bpm: 60, goal: 120, build: () => noteRhythm([{ per: 4 }, { per: 4 }], LOWE, { pm: true }) },
+    { n: 'The ladder', d: 'One bar each: quarters, 8ths, triplets, 16ths. Change exactly on beat 1.', bpm: 60, goal: 110, build: () => noteRhythm([{ per: 1, down: true }, { per: 2 }, { per: 3 }, { per: 4 }], LOWE, { pm: true }) },
+    { n: 'Ladder, click on 2 and 4', d: 'The click only sounds on beats 2 and 4, like a snare drum. You supply beats 1 and 3.', bpm: 60, goal: 110, click: 'backbeat', build: () => noteRhythm([{ per: 1, down: true }, { per: 2 }, { per: 3 }, { per: 4 }], LOWE, { pm: true }) } ] },
+  { id: 'rh_pend', cat: 'Rhythm', title: 'Pendulum strumming', lvl: 'Strumming', about: 'Your strumming hand never stops: down on every beat, up on every "&". Rhythms come from which strokes hit the strings and which ones pass over them. Faint arrows are air strums: move, but miss.', tip: 'Strum from the wrist, not the elbow, and keep the swing even whether you hit the strings or not. Em, C, G and D, one bar each.', steps: [
+    { n: 'Steady 8ths', d: 'Every stroke hits: D U D U D U D U.', bpm: 70, goal: 130, build: () => strumProg('DUDUDUDU', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'Downbeats only', d: 'Hit the downstrokes, miss the upstrokes. The hand still moves up.', bpm: 70, goal: 130, build: () => strumProg('DuDuDuDu', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'The classic: D DU UDU', d: 'Miss the downstroke on beat 3. Probably the most used strum in rock and pop.', bpm: 70, goal: 130, build: () => strumProg('DuDUdUDU', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'Accent the backbeat', d: 'Same pattern, but dig in on beats 2 and 4.', bpm: 70, goal: 130, build: () => strumProg('DuD>UdUD>U', ['Em', 'C', 'G', 'D'], 2) },
+    { n: '16th pendulum', d: 'Four strokes per beat. Accents on 2 and 4; the rest stay light.', bpm: 60, goal: 100, build: () => strumProg('DUDUD>UDUDUDUD>UDU', ['Em', 'C', 'G', 'D'], 4) },
+    { n: 'Click drops out', d: 'The click plays every other bar. Keep the pendulum going through the silent bars.', bpm: 70, goal: 120, click: 'gap', build: () => strumProg('DuDUdUDU', ['Em', 'C', 'G', 'D'], 2) } ] },
+  { id: 'rh_chuck', cat: 'Rhythm', title: 'Muted chucks and the backbeat', lvl: 'Strumming', about: 'A chuck is a strum with the fretting hand relaxed so the strings are muted: a percussive scratch instead of a chord. On beats 2 and 4 it acts like the snare drum in your strumming.', tip: 'To chuck, loosen the fretting hand just enough that the strings stop ringing, or slap the strings with the side of your strumming hand.', steps: [
+    { n: 'Chuck on 2 and 4', d: 'Chord on 1 and 3, muted chuck on 2 and 4.', bpm: 70, goal: 130, build: () => strumProg('DuXuDuXu', ['G', 'C', 'Em', 'D'], 2) },
+    { n: '8ths with chucks', d: 'Fill in the upstrokes: D U X U D U X U.', bpm: 70, goal: 130, build: () => strumProg('DUXUDUXU', ['G', 'C', 'Em', 'D'], 2) },
+    { n: 'Push and chuck', d: 'Chords land on the "&" before each chuck.', bpm: 70, goal: 120, build: () => strumProg('DUXUdUXU', ['G', 'C', 'Em', 'D'], 2) },
+    { n: 'Upstrokes only', d: 'Hit only the "&"s with short upstrokes; the downstrokes miss. The offbeat feel of ska and a lot of indie.', bpm: 80, goal: 140, build: () => strumProg('dUdUdUdU', ['G', 'C', 'Em', 'D'], 2) } ] },
+  { id: 'rh_chug', cat: 'Rhythm', title: 'Palm-muted chugs and gallops', lvl: 'Rock rhythm', about: 'Downpicked, palm-muted 8ths are the engine of rock, punk and grunge riffs. Open chord hits and accents give them shape; gallops add drive.', tip: 'Rest the edge of your picking hand on the strings right by the bridge. Further forward mutes more; find the spot where the note still has pitch.', steps: [
+    { n: 'Downpicked 8ths', d: 'All downstrokes on the muted low E, with an open accent on beat 1.', bpm: 90, goal: 170, build: () => noteRhythm([{ per: 2, down: true, pm: true, acc: [0] }, { per: 2, down: true, pm: true, acc: [0] }], LOWE) },
+    { n: 'Chugs and stabs', d: 'Muted 8ths with an E5 hit on beat 1 and the "&" of 2.', bpm: 90, goal: 160, build: () => { const e5 = rch('E5'), r = noteRhythm([{ per: 2, down: true, pm: true, acc: [0, 3] }, { per: 2, down: true, pm: true, acc: [0, 3] }], LOWE); r.ev.forEach(e => { if (e.acc) Object.assign(e, { n: e5.map(m => Object.assign({}, m)), chord: 'E5', x: '' }); }); return r; } },
+    { n: 'Gallop', d: 'An 8th and two 16ths on every beat: "1 & a". All downstrokes or down-down-up.', bpm: 80, goal: 150, build: () => ({ ev: gallopBar(0, LOWE, rch('E5')).concat(gallopBar(4, LOWE, rch('E5'))), L: 8 }) },
+    { n: 'Reverse gallop', d: 'Two 16ths and an 8th: "1 e &".', bpm: 80, goal: 150, build: () => ({ ev: gallopBar(0, LOWE, rch('E5'), true).concat(gallopBar(4, LOWE, rch('E5'), true)), L: 8 }) },
+    { n: 'Punk 8ths', d: 'Driving downstrokes through E5, G5, A5, C5, one bar each. Lift the palm mute on beat 1.', bpm: 100, goal: 180, build: () => strumProg('D>DDDDDDD', ['E5', 'G5', 'A5', 'C5'], 2, { pm: true }) } ] },
+  { id: 'rh_sync', cat: 'Rhythm', title: 'Syncopation and pushes', lvl: 'Feel', about: 'Syncopation puts the strong notes off the beat. The 3-3-2 rhythm and chords that arrive half a beat early are all over rock, emo and indie riffs.', tip: 'Count the 8ths steadily ("1 & 2 & 3 & 4 &") and say the accented counts louder.', steps: [
+    { n: '3-3-2', d: 'Accents on 1, the "&" of 2, and 4: dotted quarter, dotted quarter, quarter.', bpm: 70, goal: 130, build: () => strumProg('D>--U>--D>-', ['Em', 'C', 'G', 'D'], 2) },
+    { n: '3-3-2 with fill', d: 'The same accents, with muted chucks filling the gaps.', bpm: 70, goal: 120, build: () => strumProg('D>xXU>XxD>x', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'Push the change', d: 'Each new chord arrives on the "&" of 4 of the bar before, half a beat early.', bpm: 70, goal: 120, build: () => { const names = ['Em', 'C', 'G', 'D'], ev = []; names.forEach((nm, b) => { const nx = names[(b + 1) % 4]; strumBar('DuDUdUD', rch(nm), 2, b * 4, { name: nm }).forEach(e => ev.push(e)); strumBar('U>', rch(nx), 2, b * 4 + 3.5, { name: nx }).forEach(e => { e.cnt = '&'; ev.push(e); }); }); return { ev, L: 16 }; } },
+    { n: 'Offbeat accents', d: 'Steady 8ths with every "&" accented.', bpm: 70, goal: 130, build: () => strumProg('DU>DU>DU>DU>', ['Em', 'C', 'G', 'D'], 2) } ] },
+  { id: 'rh_odd', cat: 'Rhythm', title: 'Odd meters: 7/8, 5/4 and 6/8', lvl: 'Math rock and emo', about: 'Odd meters feel natural when you group the beats into 2s and 3s instead of counting to seven. The click accents the start of each group.', tip: 'Say the groups, not the numbers: "1 2, 1 2, 1 2 3". In 7/8 and 6/8 the tempo counts 8th notes.', steps: [
+    { n: '7/8 as 2+2+3', d: 'Seven 8ths per bar, accents on 1, 3 and 5. Em, then C.', bpm: 140, goal: 240, bar: 7, groups: [2, 2, 3], build: () => { const ev = []; ['Em', 'C'].forEach((nm, b) => [...'DUDUDUD'].forEach((p, i) => ev.push({ t: b * 7 + i, d: 1, n: rch(nm), strum: true, p, acc: [0, 2, 4].includes(i), chord: nm, cnt: ['1', '2', '1', '2', '1', '2', '3'][i] }))); return { ev, L: 14 }; } },
+    { n: '7/8 as 3+2+2', d: 'Same seven 8ths, now grouped 3 first: accents on 1, 4 and 6.', bpm: 140, goal: 240, bar: 7, groups: [3, 2, 2], build: () => { const ev = []; ['G', 'D'].forEach((nm, b) => [...'DUDDUDU'].forEach((p, i) => ev.push({ t: b * 7 + i, d: 1, n: rch(nm), strum: true, p, acc: [0, 3, 5].includes(i), chord: nm, cnt: ['1', '2', '3', '1', '2', '1', '2'][i] }))); return { ev, L: 14 }; } },
+    { n: '5/4 as 3+2', d: 'Five beats per bar in 8ths, accents on 1 and 4.', bpm: 70, goal: 130, bar: 5, groups: [3, 2], build: () => { const ev = []; ['Am', 'G'].forEach((nm, b) => strumBar('DUDUDUDUDU', rch(nm), 2, b * 5, { name: nm }).forEach((e, i) => { e.acc = i === 0 || i === 6; e.cnt = cntFor(i, 2); ev.push(e); })); return { ev, L: 10 }; } },
+    { n: '6/8 arpeggio', d: 'Two groups of three 8ths per bar, picked across an open chord. Felt as two big beats.', bpm: 120, goal: 200, bar: 6, groups: [3, 3], build: () => { const ev = [], pick = { Em: [5, 3, 2, 1, 2, 3], C: [4, 3, 2, 1, 2, 3] }; ['Em', 'C'].forEach((nm, b) => { const ch = rch(nm); pick[nm].forEach((s, i) => { const n = ch.find(m => m.s === s); ev.push({ t: b * 6 + i, d: 1, n: [Object.assign({}, n)], p: i % 3 === 0 ? 'D' : '', acc: i % 3 === 0, chord: nm, cnt: ['1', '2', '3', '1', '2', '3'][i] }); }); }); return { ev, L: 12 }; } } ] },
+  { id: 'rh_echo', cat: 'Rhythm', title: 'Dotted-8th echo', lvl: 'Shoegaze and post-rock', about: 'Set a delay to a dotted 8th and play straight notes: each echo lands halfway between them, so simple 8ths turn into a shimmering 16th-note pattern. The faint notes on the tab show where the echoes fall.', tip: 'Delay time in milliseconds = 45000 ÷ tempo. At 120 bpm that is 375 ms. Use one or two repeats with the echo nearly as loud as the note.', steps: [
+    { n: 'Quarter notes', d: 'One note per beat. With the echo it becomes a gallop.', bpm: 80, goal: 130, echo: 0.75, build: () => noteRhythm([{ per: 1, down: true }, { per: 1, down: true }], nt(2, 2, 2)) },
+    { n: '8th notes', d: 'Straight 8ths on one note. The echoes fill in the 16ths.', bpm: 80, goal: 130, echo: 0.75, build: () => noteRhythm([{ per: 2 }, { per: 2 }], nt(2, 2, 2)) },
+    { n: 'Two strings', d: 'Alternate the G and B strings in 8ths. The echo weaves them together.', bpm: 80, goal: 130, echo: 0.75, build: () => { const a = nt(2, 2, 2), c = nt(1, 0, 0), ev = []; for (let i = 0; i < 16; i++) ev.push({ t: i / 2, d: 0.5, n: [Object.assign({}, i % 2 ? c : a)], p: i % 2 ? 'U' : 'D', cnt: cntFor(i % 8, 2) }); return { ev, L: 8 }; } },
+    { n: 'Chord shape', d: 'Pick through Asus2 and Em in 8ths and let the echo blur them.', bpm: 80, goal: 120, echo: 0.75, build: () => { const ev = [], pick = { Asus2: [4, 2, 1, 3, 1, 2, 0, 1], Em: [5, 2, 1, 3, 1, 2, 0, 1] }; ['Asus2', 'Asus2', 'Em', 'Em'].forEach((nm, b) => { const ch = rch(nm); pick[nm].forEach((s, i) => { const n = ch.find(m => m.s === s); ev.push({ t: b * 4 + i / 2, d: 0.5, n: [Object.assign({}, n)], p: i % 2 ? 'U' : 'D', chord: nm, cnt: cntFor(i, 2) }); }); }); return { ev, L: 16 }; } } ] },
+  { id: 'rh_swing', cat: 'Rhythm', title: 'Triplets and shuffle', lvl: 'Feel', about: 'Straight 8ths split the beat in half; a shuffle splits it long-short, using the first and last note of a triplet. Blues rock and a lot of classic rock riffs live on this feel.', tip: 'Feel the triplet underneath: "1 trip let" with the middle note silent.', steps: [
+    { n: 'Straight 8ths', d: 'Even 8ths on A5. Listen to the evenness first.', bpm: 80, goal: 140, build: () => strumProg('DUDUDUDU', ['A5', 'A5'], 2, { pm: true }) },
+    { n: 'Shuffle 8ths', d: 'The same strums, long-short.', bpm: 80, goal: 140, swing: 1, build: () => strumProg('DUDUDUDU', ['A5', 'A5'], 2, { pm: true }) },
+    { n: 'Triplet strums', d: 'Three strums per beat. The direction flips each beat: D U D, U D U.', bpm: 60, goal: 110, build: () => strumProg('DUDUDUDUDUDU', ['E', 'A'], 3) },
+    { n: 'Shuffle boogie', d: 'A5 to A6 and back, shuffled: the classic rock-and-roll riff.', bpm: 80, goal: 140, swing: 1, build: () => { const ev = [], five = [nt(4, 0, 0), nt(3, 2, 1)], six = [nt(4, 0, 0), nt(3, 4, 3)]; for (let b = 0; b < 2; b++) for (let i = 0; i < 8; i++) ev.push({ t: b * 4 + i / 2, d: 0.5, n: (Math.floor(i / 2) % 2 ? six : five).map(m => Object.assign({}, m)), p: 'D', x: 'PM', chord: 'A5', cnt: cntFor(i, 2) }); return { ev, L: 8 }; } } ] }
+];
+EX.push(...RX);
+function chuck(t, dest, up) {
+  const c = AU.ctx, n = c.createBufferSource(); n.buffer = AU.noise;
+  const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = up ? 2600 : 1800; bp.Q.value = 0.9;
+  const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(up ? 0.32 : 0.45, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+  n.connect(bp); bp.connect(g); g.connect(dest); n.start(t, Math.random() * 0.5); n.stop(t + 0.09);
+}
+function renderRhythm() {
+  if (P.ex && P.host === 'rhythm' && !$('#exPlayer').hidden) { renderExPlayer(); return; }
+  $('#rMain').hidden = false; const pl = $('#exPlayer'); if (pl.parentElement === $('#view-rhythm')) pl.hidden = true;
+  $('#rEx').innerHTML = RX.map(exCard).join('');
+}
+
 /* ---------- guided exercises: player ---------- */
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', SANS = '"IBM Plex Sans", system-ui, sans-serif', DISP = '"Barlow Condensed", "Arial Narrow", sans-serif';
 /* ---------- spacing and review (research-based) ---------- */
@@ -2301,7 +2413,7 @@ function exStat(id, key) {
 function nextStep(e) { const st = exStat(e.id); const i = e.steps.findIndex((_, k) => !st.done[k]); return i < 0 ? e.steps.length - 1 : i; }
 function swingT(t) { if (!P.swing) return t; const b = Math.floor(t + 1e-6), fr = t - b; return Math.abs(fr - 0.5) < 1e-3 ? b + 0.5 + P.swing / 6 : t; }
 function evIndexAt(w) { let lo = 0; for (let i = 0; i < P.ev.length; i++) { if (swingT(P.ev[i].t) <= w + 1e-6) lo = i; else break; } return lo; }
-function exHostOf(e) { return e && e.cat === 'Scales' ? 'explorer' : 'exercises'; }
+function exHostOf(e) { return e && e.cat === 'Scales' ? 'explorer' : e && e.cat === 'Rhythm' ? 'rhythm' : 'exercises'; }
 function exOpen(id, step, origin) {
   const e = EX.find(x => x.id === id); if (!e) return;
   P.origin = origin || (curTab === P.host && !$('#exPlayer').hidden ? P.origin : curTab);
@@ -2312,8 +2424,8 @@ function exOpen(id, step, origin) {
   P.labels = e.labels || 'finger';
   exLoad(step == null ? nextStep(e) : step);
   const hostEl = $('#view-' + host); if ($('#exPlayer').parentElement !== hostEl) hostEl.appendChild($('#exPlayer'));
-  $('#exLib').hidden = host === 'exercises'; $('#xMain').hidden = host === 'explorer';
-  $('#pBack').textContent = P.origin === 'voicings' ? '← Back to chord shape' : P.origin === 'learn' ? '← Back to lesson' : P.origin === 'today' ? '← Back to Today' : P.origin === 'progress' ? '← Back to progress' : host === 'explorer' ? `← ${scName(e.scale)}` : '← All exercises';
+  $('#exLib').hidden = host === 'exercises'; $('#xMain').hidden = host === 'explorer'; $('#rMain').hidden = host === 'rhythm';
+  $('#pBack').textContent = P.origin === 'voicings' ? '← Back to chord shape' : P.origin === 'learn' ? '← Back to lesson' : P.origin === 'today' ? '← Back to Today' : P.origin === 'progress' ? '← Back to progress' : host === 'explorer' ? `← ${scName(e.scale)}` : host === 'rhythm' ? '← Rhythm' : '← All exercises';
   $('#exPlayer').hidden = false; $('#libraryNav').hidden = true;
   renderExPlayer();
   window.scrollTo({ top: 0 });
@@ -2341,11 +2453,14 @@ function exData(keyPc) {
   let gap = 1; for (let k = 1; k < ev.length; k++) { const g = ev[k].t - ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
   const frets = ev.flatMap(x => x.n.map(n => n.f)), nz = frets.filter(f => f > 0);
   const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...frets), bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1;
-  return { keyPc, ev, L, bar, spot, swing: sd.swing || 0, tun: TUNE[tk].m, names: tuneNames(tk), tuneKey: tk, ppb: clamp(42 / gap, 90, 190), bf, bt: Math.min(20, Math.max(bf + 5, mx + 1)) };
+  return { keyPc, ev, L, bar, spot, echo: sd.echo || 0, groups: sd.groups || (bar === 7 ? [2, 2, 3] : null), click: sd.click || '', hasCnt: ev.some(e => e.cnt), swing: sd.swing || 0, tun: TUNE[tk].m, names: tuneNames(tk), tuneKey: tk, ppb: clamp(42 / gap, 90, 190), bf, bt: Math.min(20, Math.max(bf + 5, mx + 1)) };
 }
 function exRebuild() { Object.assign(P, exData(exKey())); }
 function exPlayEv(e, t, spb, dest, tuning) {
   const d = dest || P.bus, tun = tuning || P.tun;
+  if (e.air) return;
+  if (e.mute) { chuck(t, d, e.p === 'U'); return; }
+  const acc = e.acc ? 1.35 : 1;
   if (e.roll) {
     const ns = e.n.map(n => tun[n.s] + n.f).sort((a, b) => a - b), order = e.p === 'U' ? rev(ns) : ns;
     strum(order, t, d, e.p === 'U' ? 0.013 : 0.018, e.p === 'U' ? 0.36 : 0.48, e.x === 'PM' ? 0.2 : Math.min(2.6, Math.max(0.3, e.d * spb * 1.15)));
@@ -2354,12 +2469,12 @@ function exPlayEv(e, t, spb, dest, tuning) {
   if (e.strum) {
     const ns = e.n.map(n => tun[n.s] + n.f).sort((a, b) => a - b);
     const order = e.p === 'U' ? rev(ns).slice(0, 4) : ns;
-    strum(order, t, d, e.p === 'U' ? 0.012 : 0.018, e.p === 'U' ? 0.32 : 0.48, Math.min(1.3, Math.max(0.3, e.d * spb * 1.2)));
+    strum(order, t, d, e.p === 'U' ? 0.012 : 0.018, (e.p === 'U' ? 0.32 : 0.48) * acc, e.x === 'PM' ? 0.18 : Math.min(1.3, Math.max(0.3, e.d * spb * 1.2)));
     return;
   }
   const dur = e.x === 'PM' ? 0.16 : Math.min(1.6, Math.max(0.28, e.d * spb * 1.15));
   const gain = (e.x === 'h' || e.x === 'p' || e.x === '/') ? 0.5 : 0.72;
-  e.n.forEach(n => pluck(tun[n.s] + n.f, t, d, gain / (e.n.length > 1 ? 1.35 : 1), dur));
+  e.n.forEach(n => pluck(tun[n.s] + n.f, t, d, gain * acc / (e.n.length > 1 ? 1.35 : 1), dur));
 }
 function exDrone() {
   if (P.droneTone) { try { P.droneTone.stop(); } catch (x) {} P.droneTone = null; }
@@ -2443,6 +2558,19 @@ function exSetSpot(v) {
   renderExMeta(); requestAnimationFrame(() => { exColors(true); exDraw(0); exBoard(0); exStatus(0, true); });
   if (run) exStart();
 }
+function clickLevel(d, cb) {
+  const bi = Math.floor(cb / d.bar), beat = cb % d.bar;
+  if (d.click === 'gap' && bi % 2 === 1) return 0;
+  if (d.click === 'backbeat' && d.bar === 4) return beat === 1 || beat === 3 ? 2 : 0;
+  if (cb === 0) return 3;
+  if (beat === 0) return 2;
+  if (d.groups) { let a = 0; for (const g of d.groups) { if (beat === a) return 2; a += g; } }
+  return 1;
+}
+function echoBus() {
+  if (!P.echoG || P.echoG._b !== P.bus) { P.echoG = AU.ctx.createGain(); P.echoG.gain.value = 0.55; P.echoG.connect(P.bus); P.echoG._b = P.bus; }
+  return P.echoG;
+}
 function exSched() {
   if (!P.running || !P.audio) return;
   const c = AU.ctx, hz = c.currentTime + 0.15, cs = exClickSnd();
@@ -2451,12 +2579,12 @@ function exSched() {
     while (seg.i < d.ev.length) {
       const e = d.ev[seg.i], tt = seg.startT + swingT(e.t) * spb;
       if (tt > hz) break;
-      if (tt >= c.currentTime - 0.03 && (S.ui.exopts.guide || P.preview)) exPlayEv(e, tt, spb, P.bus, d.tun);
+      if (tt >= c.currentTime - 0.03 && (S.ui.exopts.guide || P.preview)) { exPlayEv(e, tt, spb, P.bus, d.tun); if (d.echo && !e.air) exPlayEv(e, tt + d.echo * spb, spb, echoBus(), d.tun); }
       seg.i++;
     }
     while (seg.cb < d.L - 1e-6) {
       const tt = seg.startT + seg.cb * spb; if (tt > hz) break;
-      if (S.ui.exopts.click && tt >= c.currentTime - 0.03) SND[cs](tt, seg.cb === 0 ? 3 : seg.cb % d.bar === 0 ? 2 : (d.bar === 7 && (seg.cb % 7 === 2 || seg.cb % 7 === 4)) ? 2 : 1, P.cbus);
+      const lv = clickLevel(d, seg.cb); if (S.ui.exopts.click && lv && tt >= c.currentTime - 0.03) SND[cs](tt, lv, P.cbus);
       seg.cb++;
     }
     const boundary = seg.startT + d.L * spb;
@@ -2574,7 +2702,7 @@ function exDraw(pos) {
     const rel = b % P.L, bar = rel % P.bar === 0;
     g.strokeStyle = bar ? C.muted : C.line; g.lineWidth = bar ? 1.4 : 1; g.globalAlpha = bar ? 0.6 : 1;
     g.beginPath(); g.moveTo(x, top - 10); g.lineTo(x, bot + 10); g.stroke(); g.globalAlpha = 1;
-    if (bar) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / P.bar + 1), x + 4, bot + 22); }
+    if (bar && !P.hasCnt) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / P.bar + 1), x + 4, bot + 22); }
   }
   for (let s = 0; s < 6; s++) {
     const y = top + s * sh; g.strokeStyle = C.muted; g.globalAlpha = 0.45; g.lineWidth = 0.8 + s * 0.3;
@@ -2592,13 +2720,18 @@ function exDraw(pos) {
       const cur = k === curK && idx === curIdx, past = !cur && st < pos;
       g.globalAlpha = past ? 0.32 : 1;
       const prev = P.ev[(idx - 1 + P.ev.length) % P.ev.length];
-      if (e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % 4) < 1e-6 && P.L > 8))) { g.fillStyle = cur ? C.warn : C.ink; g.font = '600 15px ' + DISP; g.textAlign = 'left'; g.fillText(e.chord, x - 6, 16); }
+      if (e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % P.bar) < 1e-6 && P.L > 2 * P.bar))) { g.fillStyle = cur ? C.warn : C.ink; g.font = '600 15px ' + DISP; g.textAlign = 'left'; g.fillText(e.chord, x - 6, 16); }
       const col = cur ? C.warn : C.ink;
+      if (e.cnt) { const beatN = /^\d/.test(e.cnt); g.fillStyle = cur ? C.warn : beatN ? C.ink : C.muted; g.font = (beatN ? '700 12px ' : '500 11px ') + SANS; g.textAlign = 'center'; g.fillText(e.cnt, x, bot + 22); }
+      if (e.acc) { g.fillStyle = cur ? C.warn : C.ink; g.font = '700 15px ' + SANS; g.textAlign = 'center'; g.fillText('>', x, e.x ? 18 : 30); }
       if (e.strum) {
+        if (e.air) { g.globalAlpha = past ? 0.15 : 0.3; g.setLineDash([4, 4]); }
         g.strokeStyle = col; g.fillStyle = col; g.lineWidth = cur ? 4 : 3; g.lineCap = 'round';
-        const ya = top - 4, yb = bot + 4; g.beginPath(); g.moveTo(x, ya); g.lineTo(x, yb); g.stroke();
+        const ya = top - 4, yb = bot + 4; g.beginPath(); g.moveTo(x, ya); g.lineTo(x, yb); g.stroke(); g.setLineDash([]);
         g.beginPath(); if (e.p === 'D') { g.moveTo(x - 7, yb - 9); g.lineTo(x, yb + 3); g.lineTo(x + 7, yb - 9); } else { g.moveTo(x - 7, ya + 9); g.lineTo(x, ya - 3); g.lineTo(x + 7, ya + 9); } g.closePath(); g.fill(); g.lineCap = 'butt';
-        g.font = '600 11px ' + SANS; g.textAlign = 'center'; g.fillText(e.p === 'D' ? '↓' : '↑', x, 44);
+        if (e.mute) { g.fillStyle = C.bg; g.beginPath(); g.arc(x, (ya + yb) / 2, 10, 0, Math.PI * 2); g.fill(); g.strokeStyle = col; g.lineWidth = 2.4; g.beginPath(); const m = (ya + yb) / 2; g.moveTo(x - 6, m - 6); g.lineTo(x + 6, m + 6); g.moveTo(x + 6, m - 6); g.lineTo(x - 6, m + 6); g.stroke(); }
+        g.fillStyle = col; g.font = '600 11px ' + SANS; g.textAlign = 'center'; g.fillText(e.p === 'D' ? '↓' : '↑', x, 44);
+        if (e.x === 'PM') { g.font = '600 10.5px ' + SANS; g.fillText('PM', x, 30); }
       } else {
         e.n.forEach(n => {
           const y = top + n.s * sh, txt = String(n.f), w = txt.length > 1 ? 24 : 19;
@@ -2613,6 +2746,7 @@ function exDraw(pos) {
           }
         });
         if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
+        if (P.echo && !past) e.n.forEach(n => { const ex = x + P.echo * ppb, y = top + n.s * sh; if (ex > W + 20) return; g.globalAlpha = 0.3; g.setLineDash([3, 3]); rrect(g, ex - 9.5, y - 10, 19, 20, 6); g.strokeStyle = C.ink; g.lineWidth = 1.2; g.stroke(); g.setLineDash([]); g.fillStyle = C.muted; g.font = '600 11px ' + MONO; g.textAlign = 'center'; g.fillText(String(n.f), ex, y + 0.5); g.globalAlpha = 1; });
         if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30); }
       }
       g.globalAlpha = 1;
@@ -3728,7 +3862,7 @@ function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); rend
 
 /* ---------- tabs ---------- */
 const PRIMARY_TABS = ['today', 'learn', 'library', 'progress'];
-const LIBRARY_TABS = ['library', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer'];
+const LIBRARY_TABS = ['library', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer', 'rhythm'];
 const TABS = [...PRIMARY_TABS, ...LIBRARY_TABS.filter(t => t !== 'library'), 'metronome', 'tuner'];
 function tabFromHash() { const t = location.hash.slice(1); return t === 'riffs' ? 'voicings' : TABS.includes(t) ? t : 'today'; }
 function switchTab(t, fromHash) {
@@ -3742,7 +3876,7 @@ function switchTab(t, fromHash) {
   $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === (LIBRARY_TABS.includes(t) ? 'library' : t)); b.tabIndex = b.getAttribute('aria-selected') === 'true' || (!PRIMARY_TABS.includes(t) && !LIBRARY_TABS.includes(t) && b.dataset.tab === 'today') ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ library: () => {}, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, tuner: renderTuner })[t]();
+  ({ library: () => {}, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
   $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible() || (t === 'voicings' && VO.id && !$('#voDetail').hidden);
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
   renderMini();
@@ -3826,6 +3960,7 @@ $('#xKey').onchange = e => { S.ui.xkey = +e.target.value; save(); renderExplorer
 $('#xScale').onchange = e => { S.ui.xscale = e.target.value; save(); renderExplorer(); };
 $('#xLab').onchange = e => { S.ui.xlab = e.target.value; save(); drawExplorer(); };
 $('#xChord').onchange = e => { S.ui.xchord = e.target.checked; save(); drawExplorer(); };
+$('#rEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#xEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (!c) return; const x = EX.find(q => q.id === c.dataset.ex); if (x && x.keyed) { exStat(x.id).key = S.ui.xkey; save(); } exOpen(c.dataset.ex); });
 $('#xPos').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.xpos = +b.dataset.p; save(); renderExplorer(); });
 $('#xPlay').onclick = xPlay; $('#xDrone').onclick = xDrone;
@@ -3885,6 +4020,7 @@ $('#pBack').onclick = () => {
   const origin = P.origin, e = P.ex; exStop(); $('#exPlayer').hidden = true;
   if (origin === 'voicings' && e.voicing && e.keyed) { S.ui.voKey = exKey(); save(); }
   if (P.host === 'explorer') { if (e && e.scale) { S.ui.xscale = e.scale; if (e.keyed) S.ui.xkey = exKey(); save(); } $('#xMain').hidden = false; }
+  if (P.host === 'rhythm') $('#rMain').hidden = false;
   $('#exLib').hidden = false;
   switchTab(TABS.includes(origin) ? origin : P.host || 'exercises'); window.scrollTo({ top: 0 });
 };
