@@ -45,6 +45,10 @@ A library of 22 chord shapes for writing riffs in rock, alternative, midwest emo
 
 Progress is saved in your browser's local storage. Use **Settings → Download backup** to save it to a file, and **Restore from file** to move it to another device or browser.
 
+## Keyboard
+
+In an exercise: **Space** plays or stops, **1** / **2** / **3** rate the run Clean / Almost / Messy, **L** plays a listen-first pass, and **←** **→** step through notes. **M** mutes anywhere. In the tab bar, **←** **→** (and **Home** / **End**) move between tabs. In Learn checks and the ear trainer, number keys pick answers.
+
 ## Volume
 
 The speaker button in the header opens a mixer: **Master** with **Mute**, plus separate **Guitar notes** (the guide sound in exercises and play-alongs) and **Click & drums** (metronome, count-ins and drum backing) levels, each up to 150%. The same two sliders sit next to the *Hear the notes* and *Click* switches inside every exercise. Press **M** anywhere to mute or unmute. On iPhone, sound plays even with the silent switch on.

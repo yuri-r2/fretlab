@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, scales, scales, scales, scales, riff voicings, tuner, metronome, ear and fretboard trainers.">
+<meta name="description" content="Fretboard mastery app for guitarists: lesson path, play-along exercises in any key, scales, scales, scales, scales, scales, riff voicings, tuner, metronome, ear and fretboard trainers.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2C786A">
@@ -72,6 +72,8 @@ p{margin:0}
 .mini button{border:0;background:transparent;width:32px;height:32px;border-radius:9px;display:grid;place-items:center}
 .mini button:hover{background:var(--surface-2)}
 .mini .bpm{font-family:var(--font-mono);font-weight:600;min-width:74px;white-space:nowrap;text-align:center;font-size:15px;background:none;border:0;padding:0 2px}
+.mini .bpm{display:flex;align-items:center;justify-content:center}
+.mini .bpm .unit{margin-left:.3em}
 .mini .play{background:var(--accent);color:var(--accent-ink)}
 .mini .play:hover{background:var(--accent);filter:brightness(1.08)}
 .pulse{width:9px;height:9px;border-radius:50%;background:var(--line);transition:background .05s}
@@ -303,6 +305,10 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
 .psrow:last-child{border-bottom:0} .psrow svg{display:block}
 @media (max-width:560px){.psrow{grid-template-columns:minmax(0,1fr) auto}.psrow svg{display:none}}
 .linkbtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer}
+.qzwrap > div{width:max-content;margin-inline:auto}
+.btn.flash{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.kbdhint kbd{font:600 11px var(--font-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface)}
+@media (hover:none){.kbdhint{display:none}}
 .favbtn[aria-pressed="true"]{color:var(--warn);border-color:var(--warn)}
 /* research-based practice */
 .pfocus{margin:0;color:var(--ink)} .pfocus b{color:var(--accent)}
@@ -558,7 +564,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
       </div>
       <div id="lnQuiz" class="stack" hidden>
         <div class="prompt"><div class="q" id="qzQ"></div><div class="scorebar" id="qzScore"></div></div>
-        <div class="scroll-x" id="qzBoardWrap"><div id="qzBoard"></div></div>
+        <div class="scroll-x qzwrap" id="qzBoardWrap"><div id="qzBoard"></div></div>
         <p class="small muted" id="qzHint" style="text-align:center"></p>
         <div class="ansbtns" id="qzAns"></div>
         <div class="qzfb" id="qzFb"></div>
@@ -621,6 +627,7 @@ pre.tabtxt{font-family:var(--font-mono);font-size:14px;line-height:1.45;backgrou
         <button class="btn primary" id="pNextStep" type="button" hidden>Next step →</button>
         <span class="small muted" id="pBest"></span>
       </div>
+      <p class="small muted kbdhint">Keys: <kbd>Space</kbd> play or stop · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p>
       <p class="small muted" id="pCrit"><b>Clean</b>: no stops, every note lands with the click (one tiny slip is fine). <b>Almost</b>: kept going, a few notes off. <b>Messy</b>: stopped or lost the beat. Two clean runs in a row move the tempo up.</p>
       <p class="small"><b>Tip:</b> <span id="pTip"></span></p>
       <details class="phist" id="pHistWrap"><summary><b>Your history</b> <span class="small muted" id="pHistSum"></span></summary><div id="pHist" class="stack" style="gap:6px;margin-top:8px"></div></details>
@@ -1186,7 +1193,7 @@ function setBpm(v) { S.metro.bpm = clamp(Math.round(v), 30, 260); renderBpm(); s
 function renderBpm() {
   const b = S.metro.bpm;
   $('#bpmBig').textContent = b; $('#bpmSlider').value = b; $('#tempoName').textContent = tempoName(b);
-  $('#miniBpm').innerHTML = b + '<span class="unit"> bpm</span>';
+  $('#miniBpm').innerHTML = b + '<span class="unit">bpm</span>';
 }
 function renderTransport() {
   $('#miniIcon').setAttribute('d', M.running ? 'M3 2h3v10H3zM8 2h3v10H8z' : 'M3 1.5v11l9-5.5z');
@@ -3541,7 +3548,7 @@ function switchTab(t, fromHash) {
   if (curTab === 'tuner' && t !== 'tuner') { if (T.listening) tnStop(); if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } }
   if (curTab === 'explorer' && t !== 'explorer' && X.bus) { killBus(X.bus); X.bus = null; $('#xPlay').textContent = 'Play this position'; }
   curTab = t;
-  $$('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+  $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === t); b.tabIndex = b.dataset.tab === t ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.replaceState(null, '', '#' + t); } catch (e) { location.hash = t; } }
   ({ today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, riffs: renderRiffs, tuner: renderTuner })[t]();
@@ -3747,6 +3754,19 @@ document.addEventListener('keydown', e => {
   if (curTab === 'fretboard' && S.ui.fmode === 'name') { const m = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[e.key.toLowerCase()]; if (m !== undefined) fName(m); }
 });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+
+/* ---------- keyboard: tabs and rating ---------- */
+$('.tabs .inner').addEventListener('keydown', e => {
+  const tabs = $$('.tab'), i = tabs.indexOf(document.activeElement); if (i < 0) return;
+  let j = null; if (e.key === 'ArrowRight') j = (i + 1) % tabs.length; else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length; else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = tabs.length - 1;
+  if (j == null) return; e.preventDefault(); e.stopPropagation(); switchTab(tabs[j].dataset.tab); tabs[j].focus();
+});
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, select, textarea') || !P.ex || $('#exPlayer').hidden || curTab !== (P.host || 'exercises')) return;
+  const k = { '1': 'clean', '2': 'almost', '3': 'messy' }[e.key];
+  if (k) { e.preventDefault(); exFeedback(k); const b = $(k === 'clean' ? '#pClean' : k === 'almost' ? '#pAlmost' : '#pMessy'); b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 250); }
+  else if (e.key === 'l' || e.key === 'L') { e.preventDefault(); exListen(); }
+});
 
 /* ---------- volume mixer ---------- */
 function volRender() {
