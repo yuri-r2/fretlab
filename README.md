@@ -8,7 +8,7 @@ The desktop web app uses a persistent navigation rail and a wider practice works
 
 Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Rhythm, Exercises, Fretboard, and Ear training. **Tuner** and **Metronome** buttons sit in the header on every screen (icons on phones), and the drone lives on the Tuner page. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
 
-Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase. The persistent session bar has an **Open block** button: return to the current exercise from any page with its step, key, tempo and practice position. Opening it keeps the block timer and paused state.
+Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase. The persistent session bar has an **Open block** button: return to the current exercise from any page with its step, key, tempo and practice position. Opening it keeps the block timer and paused state. Session Pause stops the exercise or metronome along with the timer; Resume continues the same exercise at its paused position. End keeps that position, and Next block stops the outgoing playback.
 
 ## Explore & develop
 
@@ -68,7 +68,7 @@ Finger numbers sit inside diagram dots, with fret positions on a separate row. O
 
 The 26 existing shape and genre workouts remain in **Exercises**, retaining their IDs, favorites and progress: movable A- and E-string shapes, triad inversions, shells, and rock, alternative, midwest emo and shoegaze applications. Listening and composing keep their own completion criteria.
 
-Playback and display controls sit open in a bar above the tab, one tap each: Loop, Count-in, Click and Notes (each with its own volume), +4 bpm per loop, a new key per loop, the note labels (none, degrees, chord tones, notes), Show fingers, and the section to loop. The run rating and your history stay quietly in the side panel.
+Playback and display controls sit open in a bar above the tab, one tap each: Loop, Count-in, Click and Notes (each with its own volume), +4 bpm per loop, a new key per loop, the note labels (none, degrees, chord tones, notes), Show fingers, and the section to loop. The run rating and your history stay quietly in the side panel. The volume menu’s **Notes & tones** slider also controls chord previews, step-through notes, ear training, tuner references and drones; click and drums remain separate.
 
 With New key / loop or the tempo ladder enabled, **Up next** shows the destination and opening frets before the boundary, with a beat countdown while playing. The tab renders the approaching key's notes in advance and preserves the previous notes as they pass the playhead. Click upcoming notation to pause and prepare that key at the selected note. Audio and visual previews share the next-loop plan.
 
@@ -76,9 +76,11 @@ Completion, best tempos, and review schedules for keyed exercises are stored sep
 
 ## Checks
 
+Audio checks render the actual sound graph to check note sustain, quiet endings, master mute and separate note/click levels. They also cover opening notes with Notes off or click-only steps, session Pause/Resume/End, independent finger annotations, immediate tempo previews and the desktop chord toolbar.
+
 Advanced checks verify the moving inner voices and modal spellings, creative tasks, reversible skip behavior, early key/tempo previews, future-note selection, light/dark label contrast and responsive layouts.
 
-Install Playwright and Chromium, then run all nine suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, `node tests/chords.js`, `node tests/rhythm.js`, `node tests/essentials.js`, and `node tests/advanced.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Rhythm and featured-study checks verify bar counts, click modes, priority ordering and focus selection. Chord checks verify all 24 discovery voicings, all twelve transpositions of the movable forms, pitches, fingers, barres, exclusive open/movable classification, genre filters and small default sets.
+Install Playwright and Chromium, then run all ten suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, `node tests/chords.js`, `node tests/rhythm.js`, `node tests/essentials.js`, `node tests/advanced.js`, and `node tests/audio.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Rhythm and featured-study checks verify bar counts, click modes, priority ordering and focus selection. Chord checks verify all 24 discovery voicings, all twelve transpositions of the movable forms, pitches, fingers, barres, exclusive open/movable classification, genre filters and small default sets.
 
 ## Other tools
 
