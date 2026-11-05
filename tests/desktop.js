@@ -15,7 +15,16 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
     const page = await browser.newPage({ viewport: { width: 1440, height: 960 }, colorScheme: 'light' });
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
+    await page.context().setOffline(true);
     await page.goto('file://' + tmp);
+    const fonts = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const families = ['400 16px "Instrument Sans"', '600 28px "Instrument Sans"', '400 13px "IBM Plex Mono"', '500 13px "IBM Plex Mono"', '600 12px "IBM Plex Mono"'];
+      return Promise.all(families.map(async value => { const faces = await document.fonts.load(value); return faces.length > 0 && faces.every(face => face.status === 'loaded') && document.fonts.check(value); }));
+    });
+    assert.ok(fonts.every(Boolean), 'bundled fonts load offline at every used weight');
+    assert.match(await page.locator('body').evaluate(n => getComputedStyle(n).fontFamily), /Instrument Sans/);
+    assert.equal(await page.locator('.tab').first().evaluate(n => getComputedStyle(n).textTransform), 'none');
     assert.equal(await page.locator('.tab').count(), 4);
     assert.equal(await page.locator('#view-riffs, #dRoll').count(), 0);
     assert.equal(await page.locator('[data-tab="riffs"]').count(), 0);
@@ -94,8 +103,14 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
     await page.fill('#exSearch','Triad inversions');
     await page.click('#exList [data-ex="triads"]');
     assert.equal(await page.locator('#pNextStep').isVisible(), false, 'body-only deployment preserves hidden controls');
+    assert.equal(await page.locator('#pStepDesc').evaluate(n => getComputedStyle(n).fontSize), '16px');
+    assert.equal(await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 12px "IBM Plex Mono"') && document.fonts.check('600 28px "Instrument Sans"'); }), true, 'body-only copies retain both bundled fonts');
+    for (const scale of [1.25, 1.5]) {
+      await page.locator('body').evaluate((n, value) => n.style.zoom = value, scale);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, 'practice layout fits with zoom ' + scale);
+    }
     assert.equal(await page.locator('#view-progress').isVisible(), false);
     assert.deepEqual(errors, []);
-    console.log('Desktop workspace at 1280/1440/1920, reference preferences and previews, exercise search, appearance changes, keyboard controls, return context, removed destinations and body-only deployment: OK');
+    console.log('Desktop workspace at 1280/1440/1920, reference preferences and previews, exercise search, appearance changes, keyboard controls, return context, offline fonts, zoom and body-only deployment: OK');
   } finally { await browser.close(); fs.unlinkSync(tmp); fs.unlinkSync(artifact); }
 })().catch(e => { console.error(e); process.exitCode = 1; });

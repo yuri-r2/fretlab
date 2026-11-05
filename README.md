@@ -74,6 +74,8 @@ With New key / loop or the tempo ladder enabled, **Up next** shows the destinati
 
 Completion, best tempos, and review schedules for keyed exercises are stored separately for each key. Existing progress is retained in its saved key (or the exercise's default key when none was saved). Listening or stepping through a due exercise before rating it postpones that review to tomorrow rather than advancing its cold-review interval. Ratings remain self-reported; Fretlab does not assess the guitar performance automatically.
 
+Instrument Sans provides the headings, controls and instructions; IBM Plex Mono keeps tab, frets and changing numbers aligned. Fonts are bundled into the page for offline use. Practice instructions and lessons use larger reading text, while labels use sentence case. Font sources and rationale are in [Typography research](TYPOGRAPHY_RESEARCH.md); license texts are in [licenses](licenses/).
+
 ## Checks
 
 Audio checks render the actual sound graph to check note sustain, quiet endings, master mute and separate note/click levels. They also cover opening notes with Notes off or click-only steps, session Pause/Resume/End, independent finger annotations, immediate tempo previews and the desktop chord toolbar.
