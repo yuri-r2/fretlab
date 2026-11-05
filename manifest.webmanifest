@@ -1,7 +1,7 @@
 {
  "name": "Fretlab",
  "short_name": "Fretlab",
- "description": "Fretboard practice: lessons, play-along exercises, scales, riff voicings, tuner and metronome.",
+ "description": "Guitar practice: guided lessons, rhythm workouts, chord shapes in every key, scales, tuner and metronome.",
  "start_url": "./#today",
  "scope": "./",
  "display": "standalone",

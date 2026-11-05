@@ -55,7 +55,8 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
       assert.ok(feedback.y < 500 && nav.x + nav.width < canvas.x, `feedback and navigation stay accessible at ${width}`);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     }
-    assert.equal(await page.locator('#pSettings').getAttribute('open'), null);
+    const ctl = await page.locator('#pCtl').boundingBox(), cv = await page.locator('#pCanvas').boundingBox();
+    assert.ok(ctl.y + ctl.height <= cv.y && await page.locator('#pLoop').isVisible() && await page.locator('#pLabSeg').isVisible(), 'playback and display controls sit open above the tab');
     await page.focus('#pPlay');
     await page.keyboard.press('Space');
     assert.equal(await page.locator('#pPlay').textContent(), 'Pause');

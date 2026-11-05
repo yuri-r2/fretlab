@@ -6,9 +6,13 @@ A fretboard practice app for intermediate and advanced guitarists, in a single H
 
 The desktop web app uses a persistent navigation rail and a wider practice workspace. Playback and notation sit beside feedback and collapsible settings. Smaller windows use the compact navigation layout. Keyboard arrows move through navigation, and settings keep keyboard focus inside the dialog.
 
-Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Exercises, Fretboard, and Ear training. Tuner, metronome, and drone are available from Tools. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
+Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Rhythm, Exercises, Fretboard, and Ear training. **Tuner** and **Metronome** buttons sit in the header on every screen (icons on phones), and the drone lives on the Tuner page. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase.
+
+## Essentials
+
+Twelve exercises, chosen as the ones that pay off most for playing and writing riffs in a band, form an ordered path: Subdivision ladder, One note on the whole neck, Pendulum strumming, Minor pentatonic boxes, Palm-muted chugs and gallops, Triad inversions, 3rds and 6ths, Moving shape under open B and E, Syncopation and pushes, Octave riffs, Major scale positions, and CAGED arpeggios. Timing and rhythm guitar come early because they are what a band hears first. The Library shows your place in the path and the next one to play. Exercises lists the twelve first and tucks everything else under *All other exercises*; Rhythm shows its essentials first; Chord Shapes remains a reference independent of the workout order. Today's plan picks the next unfinished essential as its focus unless you chose one or practiced something else this week, reviews of essentials come first, and the Quick and Deep routines are built from them. Everything else stays in the library and in search.
 
 ## Learn path
 
@@ -33,9 +37,26 @@ Each exercise has 3 to 8 steps with a goal tempo. Tap the goal to set your own, 
 
 Pick a key and one of ten scales (major and minor pentatonic, blues, major, natural minor, Dorian, Mixolydian, Phrygian, Lydian, harmonic minor) and see it on the whole neck or one CAGED position at a time, then practice it with exercises built for that scale. They open right in the Library → Scales, already in your key: five positions linked up the neck, three-notes-per-string patterns (diagonal patterns for pentatonic and blues), sequences in 3s, 4s, 3rds and 4ths, the scale along one string, and *Hear it over a drone*, which plays a held root under the scale and holds its color notes (the 6 in Dorian, the b7 in Mixolydian, the #4 in Lydian, and so on) so you hear what makes each scale sound like itself. Minor pentatonic uses the five-box exercise, and major uses the five positions, three notes per string, sequences and one-string exercises.
 
+## Rhythm
+
+Eight play-along workouts for time and feel, in their own Library section:
+
+- **Subdivision ladder**: quarters, 8ths, triplets and 16ths on one muted note, then all four in one loop, then with the click only on 2 and 4
+- **Pendulum strumming**: the hand keeps moving down and up while some strokes miss the strings, from steady 8ths to D DU UDU, accented backbeats, 16ths, and a click that drops out every other bar
+- **Muted chucks and the backbeat**: percussive chucks on 2 and 4, pushes, and offbeat upstrokes
+- **Palm-muted chugs and gallops**: downpicked 8ths, chugs with chord stabs, gallops, reverse gallops and punk 8ths
+- **Syncopation and pushes**: 3-3-2, fills, chord changes that arrive on the "&" of 4, and offbeat accents
+- **Odd meters**: 7/8 as 2+2+3 and 3+2+2, 5/4 as 3+2, and a 6/8 arpeggio, with the click accenting each group
+- **Dotted-8th echo**: straight notes with a dotted-8th delay that turns 8ths into a 16th-note shimmer; dashed boxes show where the echoes fall
+- **Triplets and shuffle**: straight against swung 8ths, triplet strums and a shuffle boogie
+
+On the steps where the click thins out (only on 2 and 4, or dropping out every other bar) the guide notes stay silent, so you keep the time yourself instead of following the playback. Listen first still plays them once.
+
+Counts ("1 e & a") sit under every stroke. A faint dashed arrow is an air strum (move but miss), ✕ is a muted chuck, and > is an accent. Subdividing the beat reduces timing variability, especially at slow tempos ([Repp, 2010](https://labs.sonicfield.org/library/self-generated-interval-subdivision-reduces-variability-of-synchronization-with-)).
+
 ## Chord Shapes
 
-A chord reference with **Open chords** and **Movable shapes** views. Choose any of 12 roots and 28 chord types, then compare fingerings, notes, chord degrees and inversions. The root, type, view, filters and label choice are remembered. Hear any individual grip as a strum or arpeggio. Desktop controls remain available while scrolling through the diagrams.
+A chord reference with **Open chords** and **Movable shapes** views. Choose any of 12 roots and 28 chord types, then compare fingerings, notes, chord degrees and inversions. The root, type, view, filters and label choice are remembered. Hear any individual grip as a strum or arpeggio. Desktop controls remain available while scrolling through the diagrams. Arrow keys change the focused root; Home/End jump to C/B. Show more brings the first newly revealed grip into view.
 
 Open chords start with frets 0–4; choose Full neck for higher open-string voicings. They contain actual open strings in the chosen tuning; their number depends on the root and chord type. Identical grips and redundant open-string muting variants with the same bass register and chord tones are collapsed. Movable shapes include closed grips and transferable open forms such as open A major: move all sounding notes together, replace the nut with a barre, and adjust the remaining fingers. A transferable open form appears in both views and is labeled accordingly.
 
@@ -47,11 +68,13 @@ The reference follows the root/type and alternate-voicing organization used by [
 
 The 26 existing shape and genre workouts remain in **Exercises**, retaining their IDs, favorites and progress: movable A- and E-string shapes, triad inversions, shells, and rock, alternative, midwest emo and shoegaze applications. Listening and composing keep their own completion criteria.
 
+Playback and display controls sit open in a bar above the tab, one tap each: Loop, Count-in, Click and Notes (each with its own volume), +4 bpm per loop, a new key per loop, the note labels (none, degrees, chord tones, notes), Show fingers, and the section to loop. The run rating and your history stay quietly in the side panel.
+
 Completion, best tempos, and review schedules for keyed exercises are stored separately for each key. Existing progress is retained in its saved key (or the exercise's default key when none was saved). Listening or stepping through a due exercise before rating it postpones that review to tomorrow rather than advancing its cold-review interval. Ratings remain self-reported; Fretlab does not assess the guitar performance automatically.
 
 ## Checks
 
-Install Playwright and Chromium, then run all six suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, and `node tests/chords.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Chord checks verify pitches, formulas, bass notes, finger assignments, barres, unique open grips, transferable forms, and familiar shapes across roots and tunings.
+Install Playwright and Chromium, then run all eight suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, `node tests/chords.js`, `node tests/rhythm.js`, and `node tests/essentials.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Rhythm and Essentials checks verify bar counts, click modes, priority ordering and focus selection. Chord checks verify pitches, formulas, bass notes, finger assignments, barres, unique open grips, transferable forms, and familiar shapes across roots and tunings.
 
 ## Other tools
 

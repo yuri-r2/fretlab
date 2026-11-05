@@ -104,17 +104,19 @@ p{margin:0}
 .tabs .inner.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent)}
 @media (min-width:900px){.tab{padding:12px 10px 10px;font-size:15px;letter-spacing:.03em}}
 @media (max-width:440px){.hstat > span{display:none}.mini .pulse{display:none}.top .iconbtn{width:34px;height:34px}}
-@media (max-width:560px){.brand .bname{display:none}.hstat .hgoal{display:none}.top .inner{gap:8px;padding-block:6px}.mini .bpm{min-width:44px;font-size:14px}.mini .bpm .unit{display:none}.mini button{width:30px;height:30px}.pill{order:9;width:100%;justify-content:space-between}}
+@media (max-width:680px){.brand .bname{display:none}.hstat .hgoal{display:none}.top .inner{gap:8px;padding-block:6px}.mini .bpm{min-width:44px;font-size:14px}.mini .bpm .unit{display:none}.mini button{width:30px;height:30px}.pill{order:9;width:100%;justify-content:space-between}}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .tabs .inner{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible}
 .tab{padding-inline:4px;letter-spacing:0}
-.tools-menu{position:relative}
-.tools-menu>summary{list-style:none}
-.tools-menu>div{position:absolute;right:0;top:calc(100% + 8px);width:180px;z-index:45;box-shadow:0 8px 24px #0002}
+.toolbtn .tlabel{display:none}
+@media (max-width:1099px){.hstat .hide-sm{display:none}.mini .mini-context{display:none}}
+@media (max-width:400px){.brand{display:none}.top .inner{gap:6px}}
+.toolbtn[aria-pressed="true"]{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+@media (min-width:900px){.toolbtn{width:auto;padding:0 12px;gap:7px;display:inline-flex;align-items:center;font-size:14px;font-weight:500}.toolbtn .tlabel{display:inline}}
 #libraryNav{margin-bottom:16px}
 #libraryNav[hidden]{display:none}
 #libraryNav [aria-current="page"]{background:var(--accent-soft);border-color:var(--accent)}
-@media(max-width:560px){.tab{font-size:14px}.tools-menu>summary{padding:5px 8px;font-size:13px}}
+@media(max-width:560px){.tab{font-size:14px}}
 @media(max-width:560px){.hstat{display:none}}
 
 main{padding-block:20px 60px}
@@ -302,6 +304,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .btn.flash{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .kbdhint kbd{font:600 11px var(--font-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface)}
 @media (hover:none){.kbdhint{display:none}}
+.weekchart{display:block;width:100%;max-width:560px;height:auto;max-height:240px;margin-inline:auto}
 .favbtn[aria-pressed="true"]{color:var(--warn);border-color:var(--warn)}
 /* research-based practice */
 .pfocus{margin:0;color:var(--ink)} .pfocus b{color:var(--accent)}
@@ -312,6 +315,12 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .revres{margin:4px 0 0;padding-left:18px}
 /* voicings */
 .tag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-right:4px}
+.esspills{display:flex;flex-wrap:wrap;gap:6px}
+.esspill{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:500 13px var(--font-mono);display:inline-flex;align-items:center;justify-content:center}
+.esspill.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.esspill.next{border-color:var(--accent);color:var(--ink);border-width:2px}
+.tag.ess{background:var(--accent-soft);color:var(--accent);margin-right:6px}
+details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .vbox{display:block;max-width:100%;height:auto}
 /* tuner (gauge adapted from KotoLab) */
 .tuner{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
@@ -475,24 +484,33 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .practice-stage .steps button span{overflow:hidden;text-overflow:ellipsis}
 .practice-aside{padding:18px;background:var(--surface-2);border-radius:12px;gap:16px}
 .practice-aside .feedback{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;background:transparent;gap:8px}
-.practice-aside .feedback h3,.practice-aside #pBest,.practice-aside #pNextStep{grid-column:1/-1;width:100%}
-.practice-aside .feedback h3{margin-bottom:4px}
+.practice-aside .feedback .label,.practice-aside #pBest,.practice-aside #pNextStep{grid-column:1/-1;width:100%}
 .practice-aside #pBest{font-size:12px;color:var(--muted)}
-.practice-aside .feedback .btn{min-width:0;padding:9px 4px;font-size:13px}
+.practice-aside .feedback .btn{min-width:0;padding:6px 4px;font-size:13px;background:transparent}
 .practice-help>summary{cursor:pointer;font-size:13px;font-weight:500}
 .practice-help[open]>summary{margin-bottom:12px}
-.practice-options{display:flex;flex-direction:column;gap:16px}
-.practice-options .mixctl{align-items:flex-start;flex-direction:column;width:100%}
-.practice-options .mvol{width:100%}
-.practice-options label.f{flex-wrap:wrap}
-.note-steps{margin-top:14px}
 .practice-tip{font-size:13px;padding-block:14px;border-block:1px solid var(--line)}
 .practice-aside .lessonlink{flex-direction:column;align-items:flex-start;margin-top:12px}
 .practice-aside .psrow{grid-template-columns:minmax(0,1fr) auto}
 .practice-aside .psrow svg{grid-column:1/-1;grid-row:2}
 .practice-aside .phist summary{font-size:13px}
-.practice-quick{justify-content:space-between;gap:12px}
-.practice-quick .f{margin-left:auto}
+.pctl{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.pctl-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.pctl-lab{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);width:40px}
+.chip{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
+.chip label{display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+.chip input[type=checkbox]{appearance:none;-webkit-appearance:none;width:9px;height:9px;margin:0;border-radius:50%;background:var(--line);cursor:pointer;flex:none}
+.chip input[type=checkbox]:checked{background:var(--accent)}
+.chip:has(input[type=checkbox]:checked){border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
+.chip:has(input[type=checkbox]:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.chip:has(input[type=checkbox]:disabled){opacity:.5;cursor:default}
+.chip.mix{padding-right:8px}
+.chip .mvol{width:60px}
+.pseg button{padding:5px 10px;font-size:13px}
+.pctl-sec{flex-direction:row !important;align-items:center;gap:6px;margin-left:auto}
+.btn.sm{padding:3px 9px;font-size:12px;min-height:0}
+.pseg{flex-wrap:nowrap}
+@media (max-width:560px){.pctl-lab{width:100%}.pctl-sec{margin-left:0}.pseg{width:100%}.pseg button{flex:1;padding:5px 2px;font-size:12.5px;white-space:nowrap}.pctl{padding:10px}.pctl-row{gap:5px}.chip{padding:0 9px;gap:6px;font-size:12.5px;min-height:32px}.chip .mvol{width:46px}}
 .practice-help .legend{margin-block:10px}
 .practice-help .kbdhint{line-height:1.9}
 body:has(#settings:not([hidden])){overflow:hidden}
@@ -558,7 +576,8 @@ body:has(#settings:not([hidden])){overflow:hidden}
       <button type="button" class="play" id="miniPlay" aria-label="Start metronome"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path id="miniIcon" d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button>
     </div>
     <button class="iconbtn volbtn" id="volBtn" type="button" aria-label="Volume" aria-expanded="false" aria-controls="volPop" title="Volume (M to mute)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="vw1" d="M16 9.5a3.5 3.5 0 0 1 0 5"/><path class="vw2" d="M18.5 7a7 7 0 0 1 0 10"/><path class="vx" d="M16 9l5 6M21 9l-5 6"/></svg></button>
-    <details class="tools-menu"><summary class="btn">Tools</summary><div class="card stack"><button class="btn" type="button" data-go="tuner">Tuner</button><button class="btn" type="button" data-go="metronome">Metronome</button><button class="btn" type="button" data-go="tuner" data-drone="1">Drone</button></div></details>
+    <button class="iconbtn toolbtn" type="button" data-go="tuner" aria-label="Tuner" title="Tuner and drone"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 2v6.5a3.5 3.5 0 0 0 7 0V2"/><path d="M12 12v10"/><path d="M9.5 22h5"/></svg><span class="tlabel">Tuner</span></button>
+    <button class="iconbtn toolbtn" type="button" data-go="metronome" aria-label="Metronome" title="Metronome"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3h4l4 18H6z"/><path d="M12 16l5-9"/><path d="M8.5 13h7"/></svg><span class="tlabel">Metronome</span></button>
     <button class="iconbtn" id="openSettings" type="button" aria-label="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
 </header>
@@ -574,12 +593,14 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <main class="pad">
 <div class="inner">
 
-<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
+<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
+  <div class="card stack" id="essCard"></div>
   <div class="excards">
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Browse chord types, fingerings and inversions across the neck, in any key.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
+    <button class="excard" type="button" data-go="rhythm"><h3>Rhythm</h3><span>Subdivisions, strumming, chugs, syncopation, odd meters and dotted-8th delay rhythms.</span></button>
     <button class="excard" type="button" data-go="exercises"><h3>Exercises</h3><span>Guided workouts for changes, fretboard fluency, arpeggios and technique.</span></button>
     <button class="excard" type="button" data-go="fretboard"><h3>Fretboard</h3><span>Find notes and intervals, with extra practice for your weak spots.</span></button>
     <button class="excard" type="button" data-go="ear"><h3>Ear training</h3><span>Recognize scale degrees, intervals and chord qualities by sound.</span></button>
@@ -593,7 +614,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <div class="stat"><div><div class="v" id="stWeek">0</div><div class="k">minutes this week</div></div></div>
     <div class="stat"><div><div class="v" id="stTotal">0</div><div class="k">hours all time</div></div></div>
   </div>
-  <div class="card stack"><h3>Last 7 days</h3><svg id="weekChart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Minutes practiced over the last seven days"></svg></div>
+  <div class="card stack"><h3>Last 7 days</h3><svg id="weekChart" class="weekchart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Minutes practiced over the last seven days"></svg></div>
   <div class="card stack"><h3>Practice history</h3><div id="progressHistory" class="stack"></div></div>
 </section>
 
@@ -619,6 +640,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     </div>
     <div class="card stack">
       <div class="row" style="justify-content:space-between"><h3>Exercises up next</h3><button class="btn" type="button" data-go="exercises">All exercises</button></div>
+      <span class="small muted" id="upNextSum"></span>
       <div id="upNext"></div>
     </div>
     <div class="card stack">
@@ -681,11 +703,11 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <section class="view" id="view-exercises" hidden>
   <div id="exLib" class="stack" style="gap:16px">
     <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Play along</span><h2>Exercises</h2></div><p class="muted small">Workouts for knowing the neck in any key, connecting it with technique and chord tones, and turning it into riffs, plus a play-along for every voicing. Scale workouts live under Library → <button class="linkbtn" type="button" data-go="explorer">Scales</button>, bundled with each scale. Each one shows exactly what to play, note by note, in time. Most work in any key: pick one, or let it move up a 4th every loop until you've played it in all 12. Rate every run and the tempo climbs toward the goal.</p></div>
-    <div class="row" style="justify-content:space-between"><div class="seg" id="exView"><button type="button" data-v="lib">Library</button><button type="button" data-v="hist">History</button></div><span class="small muted" id="exHistSum"></span></div>
     <label class="f catalog-search"><span>Find an exercise</span><input type="search" id="exSearch" maxlength="120" placeholder="Search a technique, chord or skill…" autocomplete="off"></label>
     <div id="exRecent" class="stack" style="gap:14px"></div>
     <div id="exList" class="stack" style="gap:18px"></div>
     <div id="exHist" class="stack" style="gap:14px" hidden></div>
+    <p class="small muted"><button class="linkbtn" type="button" data-go="progress" id="exHistSum">Run history</button></p>
   </div>
   <div id="exPlayer" class="stack" hidden>
     <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="row" style="gap:10px"><span class="small muted" id="pCat"></span><button class="btn" id="pFocusPick" type="button" aria-pressed="false">Make my focus</button><button class="btn favbtn" id="pFav" type="button" aria-pressed="false">☆ Favorite</button></span></div>
@@ -708,18 +730,33 @@ body:has(#settings:not([hidden])){overflow:hidden}
             <button class="btn primary" id="pGoalSave" type="button">Set goal</button><button class="btn" id="pGoalReset" type="button">Default</button><button class="btn" id="pGoalCancel" type="button">Cancel</button>
             <span class="small muted" id="pGoalNote"></span>
           </div>
-          <div class="row practice-quick"><label class="toggle"><input type="checkbox" id="pLoop"> Loop</label><label class="toggle"><input type="checkbox" id="pFingers" aria-describedby="pFingerHint"> Show fingers</label><label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label></div>
+          <div class="pctl" id="pCtl">
+            <div class="pctl-row" role="group" aria-label="Playback"><span class="pctl-lab">Play</span>
+              <label class="chip"><input type="checkbox" id="pLoop"> Loop</label>
+              <label class="chip"><input type="checkbox" id="pCount"> Count-in</label>
+              <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
+              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Guitar notes volume"></span>
+              <label class="chip" title="Speed up 4 bpm every loop"><input type="checkbox" id="pLadder"> +4 bpm / loop</label>
+              <label class="chip" id="pKeyCycleChip" title="Move up a 4th every loop to play through all 12 keys"><input type="checkbox" id="pKeyCycle"> New key / loop</label>
+            </div>
+            <div class="pctl-row" role="group" aria-label="Display"><span class="pctl-lab">Show</span>
+              <div class="seg pseg" id="pLabSeg"><button type="button" data-v="finger">None</button><button type="button" data-v="degree">Degrees</button><button type="button" data-v="chord">Chord tones</button><button type="button" data-v="note">Notes</button></div>
+              <select id="pLab" hidden aria-hidden="true" tabindex="-1"><option value="finger">None</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select>
+              <label class="chip" title="Small finger numbers next to each note"><input type="checkbox" id="pFingers" aria-describedby="pFingerHint"> Show fingers</label>
+              <label class="f pctl-sec"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label>
+            </div>
+          </div>
           <div class="hw"><canvas id="pCanvas" role="img" aria-label="Exercise tab. Click a note to start there. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Exercise position"></div></div>
-          <div class="tab-navigation small muted"><span>Scroll to a spot or click a note · Space to play / pause</span><span id="pPosition"></span></div>
+          <div class="tab-navigation small muted"><span>Scroll or click a note · Space play / pause</span><span class="row" style="gap:6px;align-items:center"><span id="pPosition"></span><button class="btn sm" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀</button><button class="btn sm" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">▶</button></span></div>
           <div class="finger-legend small muted" id="pFingerHint" aria-label="Fretting hand finger key" hidden></div>
           <div class="pstatus small muted" id="pStatus"></div>
           <p class="small pfocus" id="pFocus"></p>
           <div class="scroll-x"><div id="pBoard"></div></div>
-          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play / pause · <kbd>Home</kbd> restart · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
+          <details class="practice-help"><summary>Notation &amp; keyboard shortcuts</summary><div class="legend"><span><i style="background:var(--warn)"></i>Play now</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Next</span><span><i style="background:var(--wood-2);border:1px solid var(--fret)"></i>Rest of the shape</span><span>Above the tab: bracket = downstroke, V = upstroke, h = hammer-on, p = pull-off, sl = slide, PM = palm mute, ~ = tremolo-arm glide, &gt; = accent, faint dashed arrow = air strum (move but miss), ✕ = muted chuck, dashed box = delay echo. Counts under the tab: 1 e &amp; a</span></div><p class="small muted kbdhint">Keys: <kbd>Space</kbd> play / pause · <kbd>Home</kbd> restart · <kbd>1</kbd> Clean · <kbd>2</kbd> Almost · <kbd>3</kbd> Messy · <kbd>L</kbd> listen first · <kbd>←</kbd> <kbd>→</kbd> step through notes · <kbd>M</kbd> mute</p></details>
         </div>
         <aside class="practice-aside stack" aria-label="Practice guidance and settings">
-          <div class="feedback" id="pFeedback">
-            <h3>How did that run go?</h3>
+          <div class="feedback" id="pFeedback" role="group" aria-label="Rate the last run">
+            <span class="label">Rate the last run</span>
             <button class="btn" id="pClean" type="button">Clean</button>
             <button class="btn" id="pAlmost" type="button">Almost</button>
             <button class="btn" id="pMessy" type="button">Messy</button>
@@ -727,13 +764,6 @@ body:has(#settings:not([hidden])){overflow:hidden}
             <span class="small muted" id="pBest"></span>
           </div>
           <details class="practice-help"><summary id="pCriteriaTitle">What counts as clean?</summary><p class="small muted" id="pCrit"><b>Clean</b>: no stops, every note lands with the click (one tiny slip is fine). <b>Almost</b>: kept going, a few notes off. <b>Messy</b>: stopped or lost the beat. Two clean runs in a row move the tempo up.</p></details>
-          <details id="pSettings" class="practice-help"><summary>Playback &amp; display settings</summary><div class="practice-options">
-              <label class="toggle"><input type="checkbox" id="pCount"> Count-in</label>
-              <span class="mixctl"><label class="toggle"><input type="checkbox" id="pGuide"> Hear the notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Guitar notes volume"></span>
-              <span class="mixctl"><label class="toggle"><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
-              <label class="toggle"><input type="checkbox" id="pLadder"> Speed up 4 bpm each loop</label>
-              <label class="f" style="flex-direction:row;align-items:center;gap:6px"><span>Note labels</span><select id="pLab"><option value="finger">None</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select></label>
-              <label class="toggle"><input type="checkbox" id="pKeyCycle"> Up a 4th every loop (all 12 keys)</label></div><div class="row note-steps"><button class="btn" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀ Note</button><button class="btn" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">Note ▶</button></div></details>
           <div class="practice-tip"><p class="small"><b>Tip:</b> <span id="pTip"></span></p></div>
           <details class="practice-help"><summary>About this exercise</summary><p class="small muted" id="pAbout"></p><div id="pLesson"></div></details>
           <details class="phist" id="pHistWrap"><summary><b>Your history</b> <span class="small muted" id="pHistSum"></span></summary><div id="pHist" class="stack" style="gap:6px;margin-top:8px"></div></details>
@@ -867,6 +897,12 @@ body:has(#settings:not([hidden])){overflow:hidden}
 </section>
 
 <!-- EXPLORER -->
+<section class="view" id="view-rhythm" hidden>
+  <div id="rMain" class="stack" style="gap:16px">
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Time and feel</span><h2>Rhythm</h2></div><p class="muted small">Subdivisions, strumming, muting, syncopation, odd meters and delay rhythms. Counts under the tab show where every stroke falls. A faint dashed arrow is an air strum: move the hand but miss the strings. ✕ is a muted chuck.</p></div>
+    <div class="stack" id="rEx" style="gap:18px"></div>
+  </div>
+</section>
 <section class="view" id="view-explorer" hidden>
   <div id="xMain" class="stack" style="gap:16px">
   <div class="vhead"><div class="stack" style="gap:4px"><span class="label">See it, then play it</span><h2>Scales</h2></div><p class="muted small">Pick a key and scale and see it on the whole neck or one position at a time. The exercises below are built for that scale and open right here, already in your key.</p></div>
@@ -983,7 +1019,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
-  ui: { exQuery: '', chordRef: { group: 'open', type: 'major', kind: 'all', bass: 'all', position: '0-4', tuning: 'std', labels: 'finger' }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { exQuery: '', exMore: false, chordRef: { group: 'open', type: 'major', kind: 'all', bass: 'all', position: '0-4', tuning: 'std', labels: 'finger' }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -2132,6 +2168,26 @@ function pedalFor(k, f) {
   c.sort((a, b) => Math.abs(a[1] - f) - Math.abs(b[1] - f)); return nt(c[0][0], c[0][1], 1);
 }
 const EXCATS = ['Fretboard fluency', 'Arpeggios and chords', 'Technique', 'Riff building'];
+/* ---------- essentials: the exercises worth most, in order ---------- */
+const ESSENTIALS = [
+  { id: 'rh_sub', why: 'Timing is what a band notices first. Feeling the subdivision keeps you locked to the drummer.' },
+  { id: 'notemap', why: 'Know where every note is and you can move any riff or chord to any key or position.' },
+  { id: 'rh_pend', why: 'A hand that never stops keeps every strum pattern in time, even the syncopated ones.' },
+  { id: 'pentall', why: 'The scale most rock riffs and leads come from. Five boxes cover the whole neck.' },
+  { id: 'rh_chug', why: 'Palm-muted 8ths and gallops are the right-hand engine of rock riffs.' },
+  { id: 'triads', why: 'Small chords for parts that sit above the bass and the other guitar.' },
+  { id: 'dstops', why: 'Two-note riffs in 3rds and 6ths: the melodic glue of emo and indie guitar.' },
+  { id: 'v_emo_moving', why: 'A moving shape under ringing open strings: the core sound of emo, alternative and shoegaze.' },
+  { id: 'rh_sync', why: 'Pushes and anticipations make a riff groove instead of plod.' },
+  { id: 'octaves', why: 'One shape for big melodic lines that cut through a loud band.' },
+  { id: 'majcaged', why: 'The major scale, and its relative minor, in every position: the map behind melodies and progressions.' },
+  { id: 'cagedarp', why: 'The chord tones inside each position, so your lines land on the chord.' }
+];
+const ESS_IX = Object.fromEntries(ESSENTIALS.map((x, i) => [x.id, i]));
+function isEss(id) { return Object.prototype.hasOwnProperty.call(ESS_IX, id); }
+function essList() { return ESSENTIALS.map(x => ({ ...x, e: EX.find(e => e.id === x.id) })).filter(x => x.e); }
+function exComplete(e) { const st = exStat(e.id); return e.steps.every((_, i) => st.done[i]); }
+function essNext() { return essList().find(x => !exComplete(x.e)) || null; }
 const EX = [
   { id: 'pentall', cat: 'Positions and scales', title: 'Minor pentatonic: all five boxes', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Intermediate', about: 'Link the five pentatonic boxes until the whole neck feels like one scale. Works in any key.', tip: 'Shift on the string where the boxes overlap. Watch the scale-degree labels: know where every root (1) and b3 is.', steps: [
     { n: 'Boxes 1 and 2', d: 'Up box 1, down box 2, in 8th notes.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 0).concat(rev(pentBox(k, 1))), 0.5)) },
@@ -2253,6 +2309,111 @@ const SC_EX = {};
 Object.keys(SCALES).forEach(id => { const g = scaleExs(id); EX.push(...g); SC_EX[id] = (id === 'minPent' ? ['pentall'] : id === 'major' ? ['majcaged', 'nps3', 'seqs', 'onestring'] : []).concat(g.map(e => e.id)); });
 function scaleOf(e) { return e && e.scale; }
 
+/* ---------- rhythm ---------- */
+// Chord shapes are written low E to high e ('x' = muted); notes use string index 0 = high e.
+const RCH = { Em: '022000', C: 'x32010', G: '320033', D: 'xx0232', A: 'x02220', E: '022100', Am: 'x02210', Asus2: 'x02200', E5: '022xxx', G5: '355xxx', A5: '577xxx', C5: 'x355xx', D5: 'x577xx' };
+function rch(name) { return [...RCH[name]].map((c, i) => c === 'x' ? null : nt(5 - i, +c, 0)).filter(Boolean); }
+const CNT = { 1: ['1', '2', '3', '4', '5', '6', '7'], 2: ['&'], 3: ['trip', 'let'], 4: ['e', '&', 'a'] };
+function cntFor(i, per) { const b = Math.floor(i / per), r = i % per; return r === 0 ? String(b + 1) : (CNT[per] || [''])[r - 1] || ''; }
+// One bar of strums from a pattern: D/U = strum, d/u = air strum (hand moves, misses), X/x = muted chuck, - = hold.
+// Uppercase accent with '>' after the letter, e.g. 'D>'.
+function strumBar(pattern, chord, per, t0, opt = {}) {
+  const toks = pattern.match(/[DUdurXx\-][>]?/g), ev = [], step = 1 / per;
+  toks.forEach((tk, i) => {
+    const c = tk[0], acc = tk[1] === '>';
+    if (c === '-') { if (ev.length) ev[ev.length - 1].d += step; return; }
+    const down = c === 'D' || c === 'd' || c === 'X', air = c === 'd' || c === 'u', mute = c === 'X' || c === 'x';
+    const n = air ? [] : chord.map(m => Object.assign({}, m));
+    ev.push({ t: t0 + i * step, d: step, n, strum: true, p: down ? 'D' : 'U', air, mute, acc, x: opt.pm && !air && !mute && !acc ? 'PM' : '', chord: opt.name, cnt: cntFor(i, per) });
+  });
+  return ev;
+}
+function strumProg(pattern, names, per, opt = {}) {
+  const ev = []; names.forEach((nm, b) => ev.push(...strumBar(typeof pattern === 'function' ? pattern(b) : pattern, rch(nm), per, b * 4, Object.assign({ name: nm }, opt)))); return { ev, L: names.length * 4 };
+}
+// Single-note or dyad rhythms: durations in beats; returns evenly picked events with counts.
+function noteRhythm(bars, note, opt = {}) {
+  const ev = []; let t = 0;
+  bars.forEach(b => {
+    const per = b.per || 2, n = b.n || note; let i = 0;
+    for (let k = 0; k < (b.count || 4 * per); k++) {
+      const acc = b.acc ? b.acc.includes(k) : false;
+      ev.push({ t, d: 1 / per, n: [].concat(n).map(m => Object.assign({}, m)), p: b.down || opt.down ? 'D' : (i % 2 ? 'U' : 'D'), x: (b.pm ?? opt.pm) && !acc ? 'PM' : '', acc, cnt: cntFor(k, per) });
+      t += 1 / per; i++;
+    }
+  });
+  return { ev, L: Math.ceil(t - 1e-6) };
+}
+function gallopBar(t0, low, chordHit, reverse) {
+  const ev = [];
+  for (let b = 0; b < 4; b++) {
+    const t = t0 + b, ds = reverse ? [0.25, 0.25, 0.5] : [0.5, 0.25, 0.25], cn = reverse ? ['' + (b + 1), 'e', '&'] : ['' + (b + 1), '&', 'a'];
+    let tt = t; ds.forEach((d, k) => { const hit = chordHit && b === 0 && k === 0; ev.push({ t: tt, d, n: (hit ? chordHit : [low]).map(m => Object.assign({}, m)), p: 'D', x: hit ? '' : 'PM', acc: hit, cnt: cn[k] }); tt += d; });
+  }
+  return ev;
+}
+const LOWE = nt(5, 0, 0);
+const RX = [
+  { id: 'rh_sub', cat: 'Rhythm', title: 'Subdivision ladder', lvl: 'Timing', about: 'One muted note, four ways to divide the beat: quarters, 8ths, triplets and 16ths. Feeling the smaller notes inside each beat is what keeps your timing steady, especially at slow tempos.', tip: 'Count out loud with the labels under the tab. Keep your picking hand moving at the speed of the smallest note, even when you are not playing it.', steps: [
+    { n: 'Quarter notes', d: 'Four downstrokes per bar on the palm-muted low E. Count "1 2 3 4".', bpm: 70, goal: 140, build: () => noteRhythm([{ per: 1, down: true }, { per: 1, down: true }], LOWE, { pm: true }) },
+    { n: '8th notes', d: 'Down on the beat, up on the "&".', bpm: 70, goal: 140, build: () => noteRhythm([{ per: 2 }, { per: 2 }], LOWE, { pm: true }) },
+    { n: 'Triplets', d: 'Three even notes per beat. The pick direction flips on every beat.', bpm: 60, goal: 120, build: () => noteRhythm([{ per: 3 }, { per: 3 }], LOWE, { pm: true }) },
+    { n: '16th notes', d: 'Four per beat: "1 e & a". Keep the motion small.', bpm: 60, goal: 120, build: () => noteRhythm([{ per: 4 }, { per: 4 }], LOWE, { pm: true }) },
+    { n: 'The ladder', d: 'One bar each: quarters, 8ths, triplets, 16ths. Change exactly on beat 1.', bpm: 60, goal: 110, build: () => noteRhythm([{ per: 1, down: true }, { per: 2 }, { per: 3 }, { per: 4 }], LOWE, { pm: true }) },
+    { n: 'Ladder, click on 2 and 4', d: 'The click only sounds on beats 2 and 4, like a snare drum. You supply beats 1 and 3.', bpm: 60, goal: 110, click: 'backbeat', build: () => noteRhythm([{ per: 1, down: true }, { per: 2 }, { per: 3 }, { per: 4 }], LOWE, { pm: true }) } ] },
+  { id: 'rh_pend', cat: 'Rhythm', title: 'Pendulum strumming', lvl: 'Strumming', about: 'Your strumming hand never stops: down on every beat, up on every "&". Rhythms come from which strokes hit the strings and which ones pass over them. Faint arrows are air strums: move, but miss.', tip: 'Strum from the wrist, not the elbow, and keep the swing even whether you hit the strings or not. Em, C, G and D, one bar each.', steps: [
+    { n: 'Steady 8ths', d: 'Every stroke hits: D U D U D U D U.', bpm: 70, goal: 130, build: () => strumProg('DUDUDUDU', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'Downbeats only', d: 'Hit the downstrokes, miss the upstrokes. The hand still moves up.', bpm: 70, goal: 130, build: () => strumProg('DuDuDuDu', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'The classic: D DU UDU', d: 'Miss the downstroke on beat 3. Probably the most used strum in rock and pop.', bpm: 70, goal: 130, build: () => strumProg('DuDUdUDU', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'Accent the backbeat', d: 'Same pattern, but dig in on beats 2 and 4.', bpm: 70, goal: 130, build: () => strumProg('DuD>UdUD>U', ['Em', 'C', 'G', 'D'], 2) },
+    { n: '16th pendulum', d: 'Four strokes per beat. Accents on 2 and 4; the rest stay light.', bpm: 60, goal: 100, build: () => strumProg('DUDUD>UDUDUDUD>UDU', ['Em', 'C', 'G', 'D'], 4) },
+    { n: 'Click drops out', d: 'The click plays every other bar. Keep the pendulum going through the silent bars.', bpm: 70, goal: 120, click: 'gap', build: () => strumProg('DuDUdUDU', ['Em', 'C', 'G', 'D'], 2) } ] },
+  { id: 'rh_chuck', cat: 'Rhythm', title: 'Muted chucks and the backbeat', lvl: 'Strumming', about: 'A chuck is a strum with the fretting hand relaxed so the strings are muted: a percussive scratch instead of a chord. On beats 2 and 4 it acts like the snare drum in your strumming.', tip: 'To chuck, loosen the fretting hand just enough that the strings stop ringing, or slap the strings with the side of your strumming hand.', steps: [
+    { n: 'Chuck on 2 and 4', d: 'Chord on 1 and 3, muted chuck on 2 and 4.', bpm: 70, goal: 130, build: () => strumProg('DuXuDuXu', ['G', 'C', 'Em', 'D'], 2) },
+    { n: '8ths with chucks', d: 'Fill in the upstrokes: D U X U D U X U.', bpm: 70, goal: 130, build: () => strumProg('DUXUDUXU', ['G', 'C', 'Em', 'D'], 2) },
+    { n: 'Push and chuck', d: 'Chords land on the "&" before each chuck.', bpm: 70, goal: 120, build: () => strumProg('DUXUdUXU', ['G', 'C', 'Em', 'D'], 2) },
+    { n: 'Upstrokes only', d: 'Hit only the "&"s with short upstrokes; the downstrokes miss. The offbeat feel of ska and a lot of indie.', bpm: 80, goal: 140, build: () => strumProg('dUdUdUdU', ['G', 'C', 'Em', 'D'], 2) } ] },
+  { id: 'rh_chug', cat: 'Rhythm', title: 'Palm-muted chugs and gallops', lvl: 'Rock rhythm', about: 'Downpicked, palm-muted 8ths are the engine of rock, punk and grunge riffs. Open chord hits and accents give them shape; gallops add drive.', tip: 'Rest the edge of your picking hand on the strings right by the bridge. Further forward mutes more; find the spot where the note still has pitch.', steps: [
+    { n: 'Downpicked 8ths', d: 'All downstrokes on the muted low E, with an open accent on beat 1.', bpm: 90, goal: 170, build: () => noteRhythm([{ per: 2, down: true, pm: true, acc: [0] }, { per: 2, down: true, pm: true, acc: [0] }], LOWE) },
+    { n: 'Chugs and stabs', d: 'Muted 8ths with an E5 hit on beat 1 and the "&" of 2.', bpm: 90, goal: 160, build: () => { const e5 = rch('E5'), r = noteRhythm([{ per: 2, down: true, pm: true, acc: [0, 3] }, { per: 2, down: true, pm: true, acc: [0, 3] }], LOWE); r.ev.forEach(e => { if (e.acc) Object.assign(e, { n: e5.map(m => Object.assign({}, m)), chord: 'E5', x: '' }); }); return r; } },
+    { n: 'Gallop', d: 'An 8th and two 16ths on every beat: "1 & a". All downstrokes or down-down-up.', bpm: 80, goal: 150, build: () => ({ ev: gallopBar(0, LOWE, rch('E5')).concat(gallopBar(4, LOWE, rch('E5'))), L: 8 }) },
+    { n: 'Reverse gallop', d: 'Two 16ths and an 8th: "1 e &".', bpm: 80, goal: 150, build: () => ({ ev: gallopBar(0, LOWE, rch('E5'), true).concat(gallopBar(4, LOWE, rch('E5'), true)), L: 8 }) },
+    { n: 'Punk 8ths', d: 'Driving downstrokes through E5, G5, A5, C5, one bar each. Lift the palm mute on beat 1.', bpm: 100, goal: 180, build: () => strumProg('D>DDDDDDD', ['E5', 'G5', 'A5', 'C5'], 2, { pm: true }) } ] },
+  { id: 'rh_sync', cat: 'Rhythm', title: 'Syncopation and pushes', lvl: 'Feel', about: 'Syncopation puts the strong notes off the beat. The 3-3-2 rhythm and chords that arrive half a beat early are all over rock, emo and indie riffs.', tip: 'Count the 8ths steadily ("1 & 2 & 3 & 4 &") and say the accented counts louder.', steps: [
+    { n: '3-3-2', d: 'Accents on 1, the "&" of 2, and 4: dotted quarter, dotted quarter, quarter.', bpm: 70, goal: 130, build: () => strumProg('D>--U>--D>-', ['Em', 'C', 'G', 'D'], 2) },
+    { n: '3-3-2 with fill', d: 'The same accents, with muted chucks filling the gaps.', bpm: 70, goal: 120, build: () => strumProg('D>xXU>XxD>x', ['Em', 'C', 'G', 'D'], 2) },
+    { n: 'Push the change', d: 'Each new chord arrives on the "&" of 4 of the bar before, half a beat early.', bpm: 70, goal: 120, build: () => { const names = ['Em', 'C', 'G', 'D'], ev = []; names.forEach((nm, b) => { const nx = names[(b + 1) % 4]; strumBar('DuDUdUD', rch(nm), 2, b * 4, { name: nm }).forEach(e => ev.push(e)); strumBar('U>', rch(nx), 2, b * 4 + 3.5, { name: nx }).forEach(e => { e.cnt = '&'; ev.push(e); }); }); return { ev, L: 16 }; } },
+    { n: 'Offbeat accents', d: 'Steady 8ths with every "&" accented.', bpm: 70, goal: 130, build: () => strumProg('DU>DU>DU>DU>', ['Em', 'C', 'G', 'D'], 2) } ] },
+  { id: 'rh_odd', cat: 'Rhythm', title: 'Odd meters: 7/8, 5/4 and 6/8', lvl: 'Math rock and emo', about: 'Odd meters feel natural when you group the beats into 2s and 3s instead of counting to seven. The click accents the start of each group.', tip: 'Say the groups, not the numbers: "1 2, 1 2, 1 2 3". In 7/8 and 6/8 the tempo counts 8th notes.', steps: [
+    { n: '7/8 as 2+2+3', d: 'Seven 8ths per bar, accents on 1, 3 and 5. Em, then C.', bpm: 140, goal: 240, bar: 7, groups: [2, 2, 3], build: () => { const ev = []; ['Em', 'C'].forEach((nm, b) => [...'DUDUDUD'].forEach((p, i) => ev.push({ t: b * 7 + i, d: 1, n: rch(nm), strum: true, p, acc: [0, 2, 4].includes(i), chord: nm, cnt: ['1', '2', '1', '2', '1', '2', '3'][i] }))); return { ev, L: 14 }; } },
+    { n: '7/8 as 3+2+2', d: 'Same seven 8ths, now grouped 3 first: accents on 1, 4 and 6.', bpm: 140, goal: 240, bar: 7, groups: [3, 2, 2], build: () => { const ev = []; ['G', 'D'].forEach((nm, b) => [...'DUDDUDU'].forEach((p, i) => ev.push({ t: b * 7 + i, d: 1, n: rch(nm), strum: true, p, acc: [0, 3, 5].includes(i), chord: nm, cnt: ['1', '2', '3', '1', '2', '1', '2'][i] }))); return { ev, L: 14 }; } },
+    { n: '5/4 as 3+2', d: 'Five beats per bar in 8ths, accents on 1 and 4.', bpm: 70, goal: 130, bar: 5, groups: [3, 2], build: () => { const ev = []; ['Am', 'G'].forEach((nm, b) => strumBar('DUDUDUDUDU', rch(nm), 2, b * 5, { name: nm }).forEach((e, i) => { e.acc = i === 0 || i === 6; e.cnt = cntFor(i, 2); ev.push(e); })); return { ev, L: 10 }; } },
+    { n: '6/8 arpeggio', d: 'Two groups of three 8ths per bar, picked across an open chord. Felt as two big beats.', bpm: 120, goal: 200, bar: 6, groups: [3, 3], build: () => { const ev = [], pick = { Em: [5, 3, 2, 1, 2, 3], C: [4, 3, 2, 1, 2, 3] }; ['Em', 'C'].forEach((nm, b) => { const ch = rch(nm); pick[nm].forEach((s, i) => { const n = ch.find(m => m.s === s); ev.push({ t: b * 6 + i, d: 1, n: [Object.assign({}, n)], p: i % 3 === 0 ? 'D' : '', acc: i % 3 === 0, chord: nm, cnt: ['1', '2', '3', '1', '2', '3'][i] }); }); }); return { ev, L: 12 }; } } ] },
+  { id: 'rh_echo', cat: 'Rhythm', title: 'Dotted-8th echo', lvl: 'Shoegaze and post-rock', about: 'Set a delay to a dotted 8th and play straight notes: each echo lands halfway between them, so simple 8ths turn into a shimmering 16th-note pattern. The faint notes on the tab show where the echoes fall.', tip: 'Delay time in milliseconds = 45000 ÷ tempo. At 120 bpm that is 375 ms. Use one or two repeats with the echo nearly as loud as the note.', steps: [
+    { n: 'Quarter notes', d: 'One note per beat. With the echo it becomes a gallop.', bpm: 80, goal: 130, echo: 0.75, build: () => noteRhythm([{ per: 1, down: true }, { per: 1, down: true }], nt(2, 2, 2)) },
+    { n: '8th notes', d: 'Straight 8ths on one note. The echoes fill in the 16ths.', bpm: 80, goal: 130, echo: 0.75, build: () => noteRhythm([{ per: 2 }, { per: 2 }], nt(2, 2, 2)) },
+    { n: 'Two strings', d: 'Alternate the G and B strings in 8ths. The echo weaves them together.', bpm: 80, goal: 130, echo: 0.75, build: () => { const a = nt(2, 2, 2), c = nt(1, 0, 0), ev = []; for (let i = 0; i < 16; i++) ev.push({ t: i / 2, d: 0.5, n: [Object.assign({}, i % 2 ? c : a)], p: i % 2 ? 'U' : 'D', cnt: cntFor(i % 8, 2) }); return { ev, L: 8 }; } },
+    { n: 'Chord shape', d: 'Pick through Asus2 and Em in 8ths and let the echo blur them.', bpm: 80, goal: 120, echo: 0.75, build: () => { const ev = [], pick = { Asus2: [4, 2, 1, 3, 1, 2, 0, 1], Em: [5, 2, 1, 3, 1, 2, 0, 1] }; ['Asus2', 'Asus2', 'Em', 'Em'].forEach((nm, b) => { const ch = rch(nm); pick[nm].forEach((s, i) => { const n = ch.find(m => m.s === s); ev.push({ t: b * 4 + i / 2, d: 0.5, n: [Object.assign({}, n)], p: i % 2 ? 'U' : 'D', chord: nm, cnt: cntFor(i, 2) }); }); }); return { ev, L: 16 }; } } ] },
+  { id: 'rh_swing', cat: 'Rhythm', title: 'Triplets and shuffle', lvl: 'Feel', about: 'Straight 8ths split the beat in half; a shuffle splits it long-short, using the first and last note of a triplet. Blues rock and a lot of classic rock riffs live on this feel.', tip: 'Feel the triplet underneath: "1 trip let" with the middle note silent.', steps: [
+    { n: 'Straight 8ths', d: 'Even 8ths on A5. Listen to the evenness first.', bpm: 80, goal: 140, build: () => strumProg('DUDUDUDU', ['A5', 'A5'], 2, { pm: true }) },
+    { n: 'Shuffle 8ths', d: 'The same strums, long-short.', bpm: 80, goal: 140, swing: 1, build: () => strumProg('DUDUDUDU', ['A5', 'A5'], 2, { pm: true }) },
+    { n: 'Triplet strums', d: 'Three strums per beat. The direction flips each beat: D U D, U D U.', bpm: 60, goal: 110, build: () => strumProg('DUDUDUDUDUDU', ['E', 'A'], 3) },
+    { n: 'Shuffle boogie', d: 'A5 to A6 and back, shuffled: the classic rock-and-roll riff.', bpm: 80, goal: 140, swing: 1, build: () => { const ev = [], five = [nt(4, 0, 0), nt(3, 2, 1)], six = [nt(4, 0, 0), nt(3, 4, 3)]; for (let b = 0; b < 2; b++) for (let i = 0; i < 8; i++) ev.push({ t: b * 4 + i / 2, d: 0.5, n: (Math.floor(i / 2) % 2 ? six : five).map(m => Object.assign({}, m)), p: 'D', x: 'PM', chord: 'A5', cnt: cntFor(i, 2) }); return { ev, L: 8 }; } } ] }
+];
+EX.push(...RX);
+function chuck(t, dest, up) {
+  const c = AU.ctx, n = c.createBufferSource(); n.buffer = AU.noise;
+  const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = up ? 2600 : 1800; bp.Q.value = 0.9;
+  const g = c.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(up ? 0.32 : 0.45, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+  n.connect(bp); bp.connect(g); g.connect(dest); n.start(t, Math.random() * 0.5); n.stop(t + 0.09);
+}
+function renderRhythm() {
+  if (P.ex && P.host === 'rhythm' && !$('#exPlayer').hidden) { renderExPlayer(); return; }
+  $('#rMain').hidden = false; const pl = $('#exPlayer'); if (pl.parentElement === $('#view-rhythm')) pl.hidden = true;
+  const sec = (lab, xs) => xs.length ? `<div class="stack" style="gap:8px"><span class="label">${lab}</span><div class="excards">${xs.map(exCard).join('')}</div></div>` : '';
+  $('#rEx').innerHTML = sec('Essentials', RX.filter(e => isEss(e.id)).sort((a, b) => ESS_IX[a.id] - ESS_IX[b.id])) + sec('More rhythm', RX.filter(e => !isEss(e.id)));
+}
+
 /* ---------- guided exercises: player ---------- */
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', SANS = '"IBM Plex Sans", system-ui, sans-serif', DISP = '"Barlow Condensed", "Arial Narrow", sans-serif';
 /* ---------- spacing and review (research-based) ---------- */
@@ -2272,7 +2433,7 @@ function exDueList() {
     const keys = e.keyed ? Object.keys(S.ex[e.id].contexts).map(Number) : [null];
     for (const key of keys) e.steps.forEach((_, i) => { const r = exRevOf(e, i, key); if (r && r.due <= t) out.push({ e, i, key, due: r.due }); });
   }
-  return out.sort((a, b) => a.due.localeCompare(b.due));
+  return out.sort((a, b) => isEss(b.e.id) - isEss(a.e.id) || a.due.localeCompare(b.due));
 }
 const FOCUS = {
   'Technique': 'one smooth sound per pick direction, like a slow strum that happens to be one note at a time.',
@@ -2308,7 +2469,7 @@ function exStat(id, key) {
 function nextStep(e) { const st = exStat(e.id); const i = e.steps.findIndex((_, k) => !st.done[k]); return i < 0 ? e.steps.length - 1 : i; }
 function swingT(t) { if (!P.swing) return t; const b = Math.floor(t + 1e-6), fr = t - b; return Math.abs(fr - 0.5) < 1e-3 ? b + 0.5 + P.swing / 6 : t; }
 function evIndexAt(w) { let lo = 0; for (let i = 0; i < P.ev.length; i++) { if (swingT(P.ev[i].t) <= w + 1e-6) lo = i; else break; } return lo; }
-function exHostOf(e) { return e && e.cat === 'Scales' ? 'explorer' : 'exercises'; }
+function exHostOf(e) { return e && e.cat === 'Scales' ? 'explorer' : e && e.cat === 'Rhythm' ? 'rhythm' : 'exercises'; }
 function exOpen(id, step, origin) {
   const e = EX.find(x => x.id === id); if (!e) return;
   P.origin = origin || (curTab === P.host && !$('#exPlayer').hidden ? P.origin : curTab);
@@ -2319,8 +2480,8 @@ function exOpen(id, step, origin) {
   P.labels = e.labels || 'finger';
   exLoad(step == null ? nextStep(e) : step);
   const hostEl = $('#view-' + host); if ($('#exPlayer').parentElement !== hostEl) hostEl.appendChild($('#exPlayer'));
-  $('#exLib').hidden = host === 'exercises'; $('#xMain').hidden = host === 'explorer';
-  $('#pBack').textContent = P.origin === 'voicings' ? '← Back to chord shape' : P.origin === 'learn' ? '← Back to lesson' : P.origin === 'today' ? '← Back to Today' : P.origin === 'progress' ? '← Back to progress' : host === 'explorer' ? `← ${scName(e.scale)}` : '← All exercises';
+  $('#exLib').hidden = host === 'exercises'; $('#xMain').hidden = host === 'explorer'; $('#rMain').hidden = host === 'rhythm';
+  $('#pBack').textContent = P.origin === 'voicings' ? '← Back to chord shape' : P.origin === 'learn' ? '← Back to lesson' : P.origin === 'today' ? '← Back to Today' : P.origin === 'progress' ? '← Back to progress' : P.origin === 'library' ? '← Library' : P.origin === 'exercises' ? '← All exercises' : host === 'explorer' ? `← ${scName(e.scale)}` : host === 'rhythm' ? '← Rhythm' : '← All exercises';
   $('#exPlayer').hidden = false; $('#libraryNav').hidden = true;
   renderExPlayer();
   window.scrollTo({ top: 0 });
@@ -2348,11 +2509,14 @@ function exData(keyPc) {
   let gap = 1; for (let k = 1; k < ev.length; k++) { const g = ev[k].t - ev[k - 1].t; if (g > 1e-6 && g < gap) gap = g; }
   const frets = ev.flatMap(x => x.n.map(n => n.f)), nz = frets.filter(f => f > 0);
   const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...frets), bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1;
-  return { keyPc, ev, L, bar, spot, swing: sd.swing || 0, tun: TUNE[tk].m, names: tuneNames(tk), tuneKey: tk, ppb: clamp(42 / gap, 90, 190), bf, bt: Math.min(20, Math.max(bf + 5, mx + 1)) };
+  return { keyPc, ev, L, bar, spot, echo: sd.echo || 0, groups: sd.groups || (bar === 7 ? [2, 2, 3] : null), click: sd.click || '', hasCnt: ev.some(e => e.cnt), swing: sd.swing || 0, tun: TUNE[tk].m, names: tuneNames(tk), tuneKey: tk, ppb: clamp(42 / gap, 90, 190), bf, bt: Math.min(20, Math.max(bf + 5, mx + 1)) };
 }
 function exRebuild() { Object.assign(P, exData(exKey())); }
 function exPlayEv(e, t, spb, dest, tuning) {
   const d = dest || P.bus, tun = tuning || P.tun;
+  if (e.air) return;
+  if (e.mute) { chuck(t, d, e.p === 'U'); return; }
+  const acc = e.acc ? 1.35 : 1;
   if (e.roll) {
     const ns = e.n.map(n => tun[n.s] + n.f).sort((a, b) => a - b), order = e.p === 'U' ? rev(ns) : ns;
     strum(order, t, d, e.p === 'U' ? 0.013 : 0.018, e.p === 'U' ? 0.36 : 0.48, e.x === 'PM' ? 0.2 : Math.min(2.6, Math.max(0.3, e.d * spb * 1.15)));
@@ -2361,12 +2525,12 @@ function exPlayEv(e, t, spb, dest, tuning) {
   if (e.strum) {
     const ns = e.n.map(n => tun[n.s] + n.f).sort((a, b) => a - b);
     const order = e.p === 'U' ? rev(ns).slice(0, 4) : ns;
-    strum(order, t, d, e.p === 'U' ? 0.012 : 0.018, e.p === 'U' ? 0.32 : 0.48, Math.min(1.3, Math.max(0.3, e.d * spb * 1.2)));
+    strum(order, t, d, e.p === 'U' ? 0.012 : 0.018, (e.p === 'U' ? 0.32 : 0.48) * acc, e.x === 'PM' ? 0.18 : Math.min(1.3, Math.max(0.3, e.d * spb * 1.2)));
     return;
   }
   const dur = e.x === 'PM' ? 0.16 : Math.min(1.6, Math.max(0.28, e.d * spb * 1.15));
   const gain = (e.x === 'h' || e.x === 'p' || e.x === '/') ? 0.5 : 0.72;
-  e.n.forEach(n => pluck(tun[n.s] + n.f, t, d, gain / (e.n.length > 1 ? 1.35 : 1), dur));
+  e.n.forEach(n => pluck(tun[n.s] + n.f, t, d, gain * acc / (e.n.length > 1 ? 1.35 : 1), dur));
 }
 function exDrone() {
   if (P.droneTone) { try { P.droneTone.stop(); } catch (x) {} P.droneTone = null; }
@@ -2450,6 +2614,19 @@ function exSetSpot(v) {
   renderExMeta(); requestAnimationFrame(() => { exColors(true); exDraw(0); exBoard(0); exStatus(0, true); });
   if (run) exStart();
 }
+function clickLevel(d, cb) {
+  const bi = Math.floor(cb / d.bar), beat = cb % d.bar;
+  if (d.click === 'gap' && bi % 2 === 1) return 0;
+  if (d.click === 'backbeat' && d.bar === 4) return beat === 1 || beat === 3 ? 2 : 0;
+  if (cb === 0) return 3;
+  if (beat === 0) return 2;
+  if (d.groups) { let a = 0; for (const g of d.groups) { if (beat === a) return 2; a += g; } }
+  return 1;
+}
+function echoBus() {
+  if (!P.echoG || P.echoG._b !== P.bus) { P.echoG = AU.ctx.createGain(); P.echoG.gain.value = 0.55; P.echoG.connect(P.bus); P.echoG._b = P.bus; }
+  return P.echoG;
+}
 function exSched() {
   if (!P.running || !P.audio) return;
   const c = AU.ctx, hz = c.currentTime + 0.15, cs = exClickSnd();
@@ -2458,12 +2635,12 @@ function exSched() {
     while (seg.i < d.ev.length) {
       const e = d.ev[seg.i], tt = seg.startT + swingT(e.t) * spb;
       if (tt > hz) break;
-      if (tt >= c.currentTime - 0.03 && (S.ui.exopts.guide || P.preview)) exPlayEv(e, tt, spb, P.bus, d.tun);
+      if (tt >= c.currentTime - 0.03 && (P.preview || (S.ui.exopts.guide && !d.click))) { exPlayEv(e, tt, spb, P.bus, d.tun); if (d.echo && !e.air) exPlayEv(e, tt + d.echo * spb, spb, echoBus(), d.tun); }
       seg.i++;
     }
     while (seg.cb < d.L - 1e-6) {
       const tt = seg.startT + seg.cb * spb; if (tt > hz) break;
-      if (S.ui.exopts.click && tt >= c.currentTime - 0.03) SND[cs](tt, seg.cb === 0 ? 3 : seg.cb % d.bar === 0 ? 2 : (d.bar === 7 && (seg.cb % 7 === 2 || seg.cb % 7 === 4)) ? 2 : 1, P.cbus);
+      const lv = clickLevel(d, seg.cb); if (S.ui.exopts.click && lv && tt >= c.currentTime - 0.03) SND[cs](tt, lv, P.cbus);
       seg.cb++;
     }
     const boundary = seg.startT + d.L * spb;
@@ -2514,7 +2691,6 @@ function exLoopEnd(next) {
     exDrone(); renderExKey(); renderExSteps(); exSpotOptions();
   }
   if (keyChange || tempoChange) renderExMeta();
-  if (P.loops % 3 === 0) { const f = $('#pFeedback'); f.classList.remove('nudge'); void f.offsetWidth; f.classList.add('nudge'); }
 }
 function exStatus(pos, force) {
   const w = Math.min(P.L - 1e-6, Math.max(0, pos % P.L)), bar = Math.floor(w / P.bar) + 1, beat = Math.floor(w % P.bar) + 1;
@@ -2581,7 +2757,7 @@ function exDraw(pos) {
     const rel = b % P.L, bar = rel % P.bar === 0;
     g.strokeStyle = bar ? C.muted : C.line; g.lineWidth = bar ? 1.4 : 1; g.globalAlpha = bar ? 0.6 : 1;
     g.beginPath(); g.moveTo(x, top - 10); g.lineTo(x, bot + 10); g.stroke(); g.globalAlpha = 1;
-    if (bar) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / P.bar + 1), x + 4, bot + 22); }
+    if (bar && !P.hasCnt) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / P.bar + 1), x + 4, bot + 22); }
   }
   for (let s = 0; s < 6; s++) {
     const y = top + s * sh; g.strokeStyle = C.muted; g.globalAlpha = 0.45; g.lineWidth = 0.8 + s * 0.3;
@@ -2599,13 +2775,18 @@ function exDraw(pos) {
       const cur = k === curK && idx === curIdx, past = !cur && st < pos;
       g.globalAlpha = past ? 0.32 : 1;
       const prev = P.ev[(idx - 1 + P.ev.length) % P.ev.length];
-      if (e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % 4) < 1e-6 && P.L > 8))) { g.fillStyle = cur ? C.warn : C.ink; g.font = '600 15px ' + DISP; g.textAlign = 'left'; g.fillText(e.chord, x - 6, 16); }
+      if (e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % P.bar) < 1e-6 && P.L > 2 * P.bar))) { g.fillStyle = cur ? C.warn : C.ink; g.font = '600 15px ' + DISP; g.textAlign = 'left'; g.fillText(e.chord, x - 6, 16); }
       const col = cur ? C.warn : C.ink;
+      if (e.cnt) { const beatN = /^\d/.test(e.cnt); g.fillStyle = cur ? C.warn : beatN ? C.ink : C.muted; g.font = (beatN ? '700 12px ' : '500 11px ') + SANS; g.textAlign = 'center'; g.fillText(e.cnt, x, bot + 22); }
+      if (e.acc) { g.fillStyle = cur ? C.warn : C.ink; g.font = '700 15px ' + SANS; g.textAlign = 'center'; g.fillText('>', x, e.x ? 18 : 30); }
       if (e.strum) {
+        if (e.air) { g.globalAlpha = past ? 0.15 : 0.3; g.setLineDash([4, 4]); }
         g.strokeStyle = col; g.fillStyle = col; g.lineWidth = cur ? 4 : 3; g.lineCap = 'round';
-        const ya = top - 4, yb = bot + 4; g.beginPath(); g.moveTo(x, ya); g.lineTo(x, yb); g.stroke();
+        const ya = top - 4, yb = bot + 4; g.beginPath(); g.moveTo(x, ya); g.lineTo(x, yb); g.stroke(); g.setLineDash([]);
         g.beginPath(); if (e.p === 'D') { g.moveTo(x - 7, yb - 9); g.lineTo(x, yb + 3); g.lineTo(x + 7, yb - 9); } else { g.moveTo(x - 7, ya + 9); g.lineTo(x, ya - 3); g.lineTo(x + 7, ya + 9); } g.closePath(); g.fill(); g.lineCap = 'butt';
-        g.font = '600 11px ' + SANS; g.textAlign = 'center'; g.fillText(e.p === 'D' ? '↓' : '↑', x, 44);
+        if (e.mute) { g.fillStyle = C.bg; g.beginPath(); g.arc(x, (ya + yb) / 2, 10, 0, Math.PI * 2); g.fill(); g.strokeStyle = col; g.lineWidth = 2.4; g.beginPath(); const m = (ya + yb) / 2; g.moveTo(x - 6, m - 6); g.lineTo(x + 6, m + 6); g.moveTo(x + 6, m - 6); g.lineTo(x - 6, m + 6); g.stroke(); }
+        g.fillStyle = col; g.font = '600 11px ' + SANS; g.textAlign = 'center'; g.fillText(e.p === 'D' ? '↓' : '↑', x, 44);
+        if (e.x === 'PM') { g.font = '600 10.5px ' + SANS; g.fillText('PM', x, 30); }
       } else {
         e.n.forEach(n => {
           const y = top + n.s * sh, txt = String(n.f), w = txt.length > 1 ? 24 : 19;
@@ -2621,6 +2802,7 @@ function exDraw(pos) {
           }
         });
         if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
+        if (P.echo && !past) e.n.forEach(n => { const ex = x + P.echo * ppb, y = top + n.s * sh; if (ex > W + 20) return; g.globalAlpha = 0.3; g.setLineDash([3, 3]); rrect(g, ex - 9.5, y - 10, 19, 20, 6); g.strokeStyle = C.ink; g.lineWidth = 1.2; g.stroke(); g.setLineDash([]); g.fillStyle = C.muted; g.font = '600 11px ' + MONO; g.textAlign = 'center'; g.fillText(String(n.f), ex, y + 0.5); g.globalAlpha = 1; });
         if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30); }
       }
       g.globalAlpha = 1;
@@ -2665,7 +2847,7 @@ function renderExRecent() {
   if (favs.length) h += `<div class="stack" style="gap:8px"><span class="label">Favorites</span><div class="rstrip">${favs.map(e => { const ns = nextStep(e), st = exStat(e.id); return `<button class="rcard" type="button" data-ex="${e.id}"><b>★ ${esc(e.title)}</b><span class="small">Step ${ns + 1}: ${esc(e.steps[ns].n)}</span><span class="small muted">${e.keyed ? esc(keyName(st.key != null ? st.key : e.key0, e)) + ' · ' : ''}${st.bpm[ns] || e.steps[ns].bpm} bpm</span><span class="go">Open →</span></button>`; }).join('')}</div></div>`;
   $('#exRecent').innerHTML = h;
   const days = new Set(S.exlog.map(x => dayKey(new Date(x.t))));
-  $('#exHistSum').textContent = S.exlog.length ? `${S.exlog.length} run${S.exlog.length > 1 ? 's' : ''} logged over ${days.size} day${days.size > 1 ? 's' : ''}` : 'Your runs will be logged here';
+  $('#exHistSum').textContent = `Run history: ${S.exlog.length} run${S.exlog.length === 1 ? '' : 's'} over ${days.size} day${days.size === 1 ? '' : 's'} →`; $('#exHistSum').parentElement.hidden = !S.exlog.length;
 }
 function renderExHist() {
   const f = S.ui.histFilter || '', L = S.exlog.filter(x => (!f || x.id === f) && EX.some(e => e.id === x.id));
@@ -2712,16 +2894,25 @@ function renderExLib() {
   const query = S.ui.exQuery.toLowerCase().trim();
   if ($('#exSearch').value !== S.ui.exQuery) $('#exSearch').value = S.ui.exQuery;
   $('#exRecent').hidden = !!query;
-  $('#exList').innerHTML = EXCATS.map(cat => {
-    const items = EX.filter(e => e.cat === cat && (!query || [e.title,e.about,e.cat].join(' ').toLowerCase().includes(query))); if (!items.length) return '';
+  const hit = e => !query || [e.title, e.about, e.cat, isEss(e.id) ? 'essential ' + ESSENTIALS[ESS_IX[e.id]].why : ''].join(' ').toLowerCase().includes(query);
+  const cats = skip => EXCATS.map(cat => {
+    const items = EX.filter(e => e.cat === cat && hit(e) && !(skip && isEss(e.id))).sort((a, b) => isEss(b.id) - isEss(a.id)); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(exCard).join('')}</div></div>`;
-  }).join('') || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a skill such as triads, legato or arpeggios.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
+  }).join('');
+  if (!query) {
+    const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, rest = EX.filter(e => EXCATS.includes(e.cat) && !isEss(e.id)).length;
+    $('#exList').innerHTML = `<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="label">Essentials: start here</span><span class="small muted">${done} of ${ess.length} complete</span></div><p class="small muted" style="margin:0">The ${ess.length} exercises that pay off most for playing and writing riffs in a band, in the order to learn them. They include rhythm and scale workouts, which open in their own sections. Everything else is extra.</p><div class="excards">${ess.map(x => exCard(x.e)).join('')}</div></div>` +
+      `<details class="more" id="exMore"${S.ui.exMore ? ' open' : ''}><summary>All other exercises (${rest})</summary><div class="stack" style="gap:18px;margin-top:14px">${cats(true)}</div></details>`;
+    return;
+  }
+  $('#exList').innerHTML = cats(false) || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a skill such as triads, legato or arpeggios.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
 }
 function exCard(e) {
   {
       const st = exStat(e.id), done = e.steps.filter((_, i) => st.done[i]).length, ns = nextStep(e), bests = Object.values(st.best), best = bests.length ? Math.max(...bests) : 0;
       const lr = S.exlog.findLast ? S.exlog.findLast(x => x.id === e.id) : [...S.exlog].reverse().find(x => x.id === e.id);
-      return `<button class="excard" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed ? ' · any key' : ''}</span></span><span class="small muted">${esc(e.about)}</span><span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
+      const ess = isEss(e.id) ? ESSENTIALS[ESS_IX[e.id]] : null;
+      return `<button class="excard${ess ? ' isess' : ''}" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed && !/any key/.test(e.lvl) ? ' · any key' : ''}</span></span>${ess ? `<span class="small"><span class="tag ess">Essential ${ESS_IX[e.id] + 1}</span>${esc(ess.why)}</span>` : `<span class="small muted">${esc(e.about)}</span>`}<span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
   }
 }
 function renderExTransport() {
@@ -2752,11 +2943,11 @@ function renderExSteps() {
 }
 function renderExPlayer() {
   const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step];
-  $('#pCat').textContent = `${e.cat} · ${e.lvl}`;
+  $('#pCat').textContent = `${isEss(e.id) ? `Essential ${ESS_IX[e.id] + 1} of ${ESSENTIALS.length} · ` : ''}${e.cat} · ${e.lvl}`;
   $('#pTitle').textContent = e.title; $('#pAbout').textContent = e.about;
   const focused = S.ui.focusEx === e.id; $('#pFocusPick').classList.add('focus-choice'); $('#pFocusPick').setAttribute('aria-pressed', focused); $('#pFocusPick').textContent = focused ? '✓ Current focus' : 'Make my focus';
   renderExSteps();
-  $('#pStepName').textContent = `Step ${P.step + 1}: ${sd.n}.`; $('#pStepDesc').textContent = sd.d + (sd.swing ? ' Swing feel.' : '');
+  $('#pStepName').textContent = `Step ${P.step + 1}: ${sd.n}.`; $('#pStepDesc').textContent = sd.d + (sd.swing ? ' Swing feel.' : '') + (sd.click ? ' Only the click plays here, so you keep the time; Listen first plays the notes once.' : '');
   $('#pClean').textContent = sd.observe ? 'Heard it' : sd.create ? 'Good take' : 'Clean';
   $('#pCriteriaTitle').textContent = sd.observe ? 'What to listen for' : sd.create ? 'What makes a good take?' : 'What counts as clean?';
   $('#pNextStep').hidden = !(st.done[P.step] && P.step < e.steps.length - 1);
@@ -2772,13 +2963,14 @@ function renderExPlayer() {
   $('#pLesson').innerHTML = un ? `<span class="lessonlink">Concept behind this: <button class="btn" type="button" data-openunit="${un.id}">Unit ${UNITS.indexOf(un) + 1} · ${esc(un.title)}</button></span>` : '';
   const o = S.ui.exopts;
   $('#pLoop').checked = o.loop; $('#pCount').checked = o.count; $('#pGuide').checked = o.guide; $('#pClick').checked = o.click; $('#pLadder').checked = o.ladder;
-  $('#pLab').value = P.labels; renderExKey();
+  $('#pLab').value = P.labels; $$('#pLabSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === P.labels)); renderExKey();
+  const selfTime = !!P.click; $('#pGuide').disabled = selfTime; $('#pGuideChip').title = selfTime ? 'Notes stay silent in this step so you keep the time. Listen first plays them once.' : '';
   renderExMeta(); renderExTransport();
   requestAnimationFrame(() => { exColors(true); exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); });
 }
 function renderExKey() {
   const e = P.ex, row = $('#pKeyRow'); if (!e) return;
-  row.hidden = !e.keyed; if (!e.keyed) return;
+  row.hidden = !e.keyed; $('#pKeyCycleChip').hidden = !e.keyed; if (!e.keyed) return;
   $('#pKey').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(pc => `<option value="${pc}">${esc(keyName(pc))}</option>`).join('');
   $('#pKey').value = exKey(); $('#pKeyCycle').checked = !!S.ui.exopts.keycycle;
 }
@@ -2833,10 +3025,12 @@ function renderDue() {
   $('#dueBox').innerHTML = h ? '<div class="hr"></div><h3>Due for review</h3>' + h : '';
 }
 function renderUpNext() {
-  const list = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => (!x.e.id.startsWith('sc_') || x.st.last) && x.e.steps.some((_, i) => !x.st.done[i]))
-    .sort((a, b) => (a.st.last || '').localeCompare(b.st.last || '')).slice(0, 4);
+  const ess = essList(), essOpen = ess.filter(x => !exComplete(x.e)).map(x => ({ e: x.e }));
+  const others = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => !isEss(x.e.id) && x.st.last && x.e.steps.some((_, i) => !x.st.done[i])).sort((a, b) => (a.st.last || '').localeCompare(b.st.last || ''));
+  const list = essOpen.slice(0, 3).concat(others).slice(0, 4);
+  $('#upNextSum').textContent = `Essentials: ${ess.length - essOpen.length} of ${ess.length} complete`;
   const rr = recentRuns(1)[0], resume = rr && Date.now() - rr.x.t < 14 * 864e5 ? `<div class="weak"><div><div style="font-weight:500">Last time: ${esc(rr.e.title)}</div><div class="small muted">Step ${rr.x.s + 1}: ${esc(rr.e.steps[rr.x.s].n)}${runLine(rr.x, rr.e) ? ' · ' + esc(runLine(rr.x, rr.e)) : ''} · ${ago(rr.x.t)}</div></div><button class="btn primary" type="button" ${resAttr(rr.x)}>Resume</button></div>` : '';
-  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>');
+  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${isEss(e.id) ? `<span class="tag ess">Essential ${ESS_IX[e.id] + 1}</span>` : ''}${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>');
 }
 
 /* ---------- learn path: helpers ---------- */
@@ -3606,15 +3800,16 @@ function vSound(v, mv, mode) {
 function renderVoicings() {
   const o = S.ui.chordRef, type = CHORD_TYPES.find(t=>t.id === o.type) || CHORD_TYPES[0]; o.type = type.id;
   const root = S.ui.voKey || 0;
-  $$('#chordGroup [data-group]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.group === o.group));
+  $$('#chordGroup [data-group]').forEach(b=>{ b.setAttribute('aria-pressed', b.dataset.group === o.group); b.tabIndex = b.dataset.group === o.group ? 0 : -1; });
   $('#chordGroupHint').textContent = o.group === 'open' ? 'Grips with open strings, unique to this root and chord type. Some roots have fewer open shapes. Redundant muted-string variants are collapsed.' : 'Closed grips and transferable open forms. Move every sounding note together; for an open form, replace the nut with a barre and adjust the other fingers. A movable open form also appears under Open chords.';
-  $('#chordRoot').innerHTML = Array.from({length:12},(_,k)=>`<button type="button" data-root="${k}" aria-pressed="${root === k}">${esc(nn(k))}</button>`).join('');
+  $('#chordRoot').innerHTML = Array.from({length:12},(_,k)=>`<button type="button" data-root="${k}" aria-pressed="${root === k}" tabindex="${root === k ? 0 : -1}">${esc(nn(k))}</button>`).join('');
   $('#chordType').innerHTML = CHORD_TYPES.map(t=>`<option value="${t.id}">${esc(t.name)} (${esc(nn(root)+t.suffix)})</option>`).join(''); $('#chordType').value = type.id;
   $('#chordTuning').innerHTML = Object.entries(TUNE).map(([id,t])=>`<option value="${id}">${esc(t.name)}</option>`).join(''); $('#chordTuning').value = o.tuning;
   $('#chordKind').value = o.kind; $('#chordLabels').value = o.labels; $('#chordBass').value = o.bass; $('#chordPosition').value = o.position;
   $('#chordName').textContent = nn(root)+type.suffix;
   $('#chordFormula').innerHTML = type.roles.map((r,i)=>`<span><b>${esc(r)}</b> ${esc(nn(root+type.iv[i]))}</span>`).join('');
-  const matches = chordShapes(root,type.id,o.tuning).filter(s=>{
+  const allShapes = chordShapes(root,type.id,o.tuning);
+  const matches = allShapes.filter(s=>{
     const group = o.group === 'open' ? s.open : chordCanMove(s);
     const kind = o.kind === 'all' || o.kind === 'barre' && s.move.barres.length || o.kind === 'triads' && s.count === 3 || o.kind === 'four' && s.count === 4 || o.kind === 'shell' && s.count === 3 && s.missing5;
     const bass = o.bass === 'all' || o.bass === 'root' && s.bass === root || o.bass === 'inversion' && s.bass !== root;
@@ -3624,7 +3819,11 @@ function renderVoicings() {
   VO.results = chordUnique(matches);
   $('#chordCount').textContent = `${VO.results.length} ${o.group === 'open' ? 'unique open grips' : 'movable shapes'} · ${TUNE[o.tuning].name} tuning`;
   $('#chordLegend').innerHTML = o.labels === 'finger' ? fingerLegend() : o.labels === 'note' ? 'Dots show note names. The row below each diagram shows fret numbers.' : 'Dots show chord degrees. The row below each diagram shows fret numbers.';
-  $('#chordGrid').innerHTML = VO.results.slice(0,VO.limit).map((s,i)=>`<article class="chord-card"><div class="chord-card-heading"><b>${esc(s.move.name)}</b><span class="small muted">${s.low === 0 ? 'Open strings' : `Frets ${s.low}–${s.high}`}</span></div>${vBox(s.move,o.tuning,true,o.labels)}<div class="chord-caption small">${s.bass === root ? 'Root in bass' : esc(s.role)+' in bass'}${s.missing5 ? ' · 5th omitted' : ''}${s.move.barres.length ? ' · Barre' : ''}${s.open && chordCanMove(s) ? ' · Movable open form' : ''}</div><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(s.move.name)}, shape ${i+1}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(s.move.name)}, shape ${i+1}">Arpeggio</button></div></article>`).join('') || '<div class="vo-empty"><h3>No shapes match this selection</h3><p class="small muted">Some roots have no open-string shapes. Try movable shapes, another neck area or a different filter.</p><button class="btn" type="button" id="chordReset">See movable shapes</button></div>';
+  const noOpen = o.group === 'open' && !allShapes.some(s=>s.open);
+  const emptyTitle = noOpen ? `No open ${nn(root)+type.suffix} shapes in this tuning` : 'No shapes match these filters';
+  const emptyCopy = noOpen ? 'Use a movable form to play this chord in the same key.' : 'Try All shapes, Any bass or Full neck to see more positions.';
+  const empty = `<div class="vo-empty"><h3>${esc(emptyTitle)}</h3><p class="small muted">${esc(emptyCopy)}</p><button class="btn" type="button" id="chordReset" data-movable="${noOpen}">${noOpen ? 'See movable shapes' : 'Clear filters'}</button></div>`;
+  $('#chordGrid').innerHTML = VO.results.slice(0,VO.limit).map((s,i)=>`<article class="chord-card"><div class="chord-card-heading"><b>${esc(s.move.name)}</b><span class="small muted">${s.low === 0 ? 'Open strings' : `Frets ${s.low}–${s.high}`}</span></div>${vBox(s.move,o.tuning,true,o.labels)}<div class="chord-caption small">${s.bass === root ? 'Root in bass' : esc(s.role)+' in bass'}${s.missing5 ? ' · 5th omitted' : ''}${s.move.barres.length ? ' · Barre' : ''}${s.open && chordCanMove(s) ? ' · Movable open form' : ''}</div><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(s.move.name)}, shape ${i+1}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(s.move.name)}, shape ${i+1}">Arpeggio</button></div></article>`).join('') || empty;
   $('#chordMore').hidden = VO.limit >= VO.results.length; $('#chordMore').textContent = `Show more shapes (${Math.min(VO.limit,VO.results.length)} of ${VO.results.length})`;
   voPreviewState();
 }
@@ -3671,7 +3870,7 @@ UNITS.push({ id: 'u9', title: 'Chord shapes for riffs', sum: 'Color tones, open-
 const ROUTINES = {
   auto: { n: "Today's plan", auto: true, blocks: [] },
   quick: { n: 'Quick · 15', blocks: [
-    { tool: 'exercises', ex: 'legato', m: 3, t: 'Warm-up: legato and slides', d: 'Your current step. Relaxed hands first.' },
+    { tool: 'exercises', ex: 'rh_sub', m: 3, t: 'Warm-up: subdivisions', d: 'Relaxed hands, locked to the click.' },
     { tool: 'exercises', ex: 'notemap', m: 3, t: 'One note, the whole neck', d: 'Name it before you play it.' },
     { tool: 'exercises', ex: 'pentall', m: 4, t: 'Pentatonic boxes', d: 'Link two boxes. Try a new key.' },
     { tool: 'exercises', ex: 'triads', m: 3, t: 'Triads', d: 'Spot the root in every shape.' },
@@ -3681,13 +3880,13 @@ const ROUTINES = {
     { tool: 'fretboard', m: 3, t: 'Fretboard notes', d: 'Your slow and missed notes come up more often.' },
     { tool: 'exercises', ex: 'pentall', m: 4, t: 'All five pentatonic boxes', d: 'Turn on the key change each loop.' },
     { tool: 'exercises', ex: 'majcaged', m: 4, t: 'Major scale positions', d: 'One position, then link it to the next.' },
-    { tool: 'exercises', ex: 'nps3', m: 4, t: 'Three notes per string', d: 'Legato or groups of six.' },
-    { tool: 'exercises', ex: 'seqs', m: 3, t: 'Scale sequences', d: 'Fours and thirds.' },
     { tool: 'exercises', ex: 'cagedarp', m: 4, t: 'CAGED arpeggios', d: 'Know where every 3rd is.' },
-    { tool: 'exercises', ex: 'twofive', m: 4, t: 'ii–V–I', d: 'Arpeggios, then guide tones.' },
+    { tool: 'exercises', ex: 'rh_pend', m: 4, t: 'Pendulum strumming', d: 'Keep the hand moving through every rest.' },
     { tool: 'exercises', ex: 'triads', m: 4, t: 'Triad inversions', d: 'Voice-led progressions.' },
+    { tool: 'exercises', ex: 'rh_chug', m: 4, t: 'Chugs and gallops', d: 'Even palm mutes, accents that jump out.' },
     { tool: 'exercises', ex: 'dstops', m: 4, t: '3rds and 6ths', d: 'Then make a riff from them.' },
     { tool: 'exercises', ex: 'octaves', m: 3, t: 'Octave riffs', d: 'Mute the string in between.' },
+    { tool: 'exercises', ex: 'rh_sync', m: 3, t: 'Syncopation', d: 'Land the pushes early, then stop dead.' },
     { tool: 'learn', m: 5, t: 'Lesson', d: 'Next lesson card or unit check.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
     { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Compare a few shapes in one key. Listen for the bass and top notes.' },
@@ -3700,6 +3899,7 @@ function focusEx() {
   const open = EX.filter(e => e.id !== 'legato' && (!e.id.startsWith('sc_') || exStat(e.id).last) && e.steps.some((_, i) => !exStat(e.id).done[i]));
   const recent = open.filter(e => exStat(e.id).last && dayDiff(exStat(e.id).last, dayKey()) <= 7).sort((a, b) => exStat(b.id).last.localeCompare(exStat(a.id).last));
   if (recent.length) return recent[0];
+  const en = essNext(); if (en) return en.e;
   const nu = nextUnit(), linked = open.find(e => EX_UNIT[e.id] === nu.id);
   return linked || open[0] || null;
 }
@@ -3759,7 +3959,8 @@ function renderPill() {
 }
 function renderRoutine() {
   $('#rtMinutes').value = S.ui.planMinutes || S.settings.goal; $('#rtMinutes').disabled = R.running || S.rtPick !== 'auto';
-  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + EX.filter(e => !e.id.startsWith('sc_')).map(e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`).join(''); $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
+  const fOpt = e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`;
+  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + `<optgroup label="Essentials">${essList().map(x => fOpt(x.e)).join('')}</optgroup><optgroup label="Everything else">${EX.filter(e => !e.id.startsWith('sc_') && !isEss(e.id)).map(fOpt).join('')}</optgroup>`; $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
   if (!ROUTINES[S.rtPick]) S.rtPick = 'auto';
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.auto ? r.n : r.n + ' min'}</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = { n: ROUTINES[key].n, blocks: R.running ? R.blocks : rtBlocks(key) };
@@ -3805,11 +4006,20 @@ function renderWeak() {
   if (tl) items.push({ t: 'Tempo', d: tl.log.length ? `${tl.name}: best ${Math.max(...tl.log.map(e => e.bpm))} bpm. Try 4 bpm faster.` : `${tl.name}: find your clean tempo and log it.`, tab: 'metronome' });
   $('#weakList').innerHTML = items.map(i => `<div class="weak"><div><div style="font-weight:500">${i.t}</div><div class="small muted">${esc(i.d)}</div></div><button class="btn" type="button" data-go="${i.tab}">Practice</button></div>`).join('');
 }
+function renderLibrary() {
+  const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, nx = essNext();
+  const pill = x => `<button class="esspill${exComplete(x.e) ? ' done' : ''}${nx && nx.id === x.id ? ' next' : ''}" type="button" data-openex="${x.id}" title="${esc(x.e.title)}">${exComplete(x.e) ? '✓' : ESS_IX[x.id] + 1}</button>`;
+  $('#essCard').innerHTML = `<div class="row" style="justify-content:space-between;align-items:baseline"><h3>Essentials</h3><span class="small muted">${done} of ${ess.length} complete</span></div>
+    <p class="small muted" style="margin:0">The ${ess.length} exercises that pay off most for playing and writing riffs in a band, in order: timing, the neck, the pentatonic, rhythm guitar, then the shapes and lines riffs are built from. The rest of the library is extra.</p>
+    <div class="esspills">${ess.map(pill).join('')}</div>
+    ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button></div>` : '<p class="small">All twelve complete. They will keep coming back as reviews; pick anything in the library to go further.</p>'}
+    <div><button class="btn" type="button" data-go="exercises">See all essentials</button></div>`;
+}
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
 /* ---------- tabs ---------- */
 const PRIMARY_TABS = ['today', 'learn', 'library', 'progress'];
-const LIBRARY_TABS = ['library', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer'];
+const LIBRARY_TABS = ['library', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer', 'rhythm'];
 const TABS = [...PRIMARY_TABS, ...LIBRARY_TABS.filter(t => t !== 'library'), 'metronome', 'tuner'];
 function tabFromHash() { const t = location.hash.slice(1); return t === 'riffs' ? 'voicings' : TABS.includes(t) ? t : 'today'; }
 function switchTab(t, fromHash) {
@@ -3820,10 +4030,11 @@ function switchTab(t, fromHash) {
   if (curTab === 'tuner' && t !== 'tuner') { if (T.listening) tnStop(); if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } }
   if (curTab === 'explorer' && t !== 'explorer' && X.bus) { killBus(X.bus); X.bus = null; $('#xPlay').textContent = 'Play this position'; }
   curTab = t;
+  $$('.toolbtn').forEach(b => b.setAttribute('aria-pressed', b.dataset.go === t));
   $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === (LIBRARY_TABS.includes(t) ? 'library' : t)); b.tabIndex = b.getAttribute('aria-selected') === 'true' || (!PRIMARY_TABS.includes(t) && !LIBRARY_TABS.includes(t) && b.dataset.tab === 'today') ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ library: () => {}, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, tuner: renderTuner })[t]();
+  ({ library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
   $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible();
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
   renderMini();
@@ -3851,7 +4062,7 @@ document.addEventListener('keydown', e => {
 
 /* ---------- events ---------- */
 $$('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
-document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (!b) return; switchTab(b.dataset.go); const menu = b.closest('.tools-menu'); if (menu) menu.open = false; if (b.dataset.drone) $('#drGo').scrollIntoView({ block: 'center' }); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (!b) return; switchTab(b.dataset.go); if (b.dataset.drone) $('#drGo').scrollIntoView({ block: 'center' }); });
 window.addEventListener('hashchange', () => { const h = tabFromHash(); if (h !== curTab) switchTab(h, true); });
 function navOrientation() { $('.tabs .inner').setAttribute('aria-orientation', matchMedia('(min-width:1100px)').matches ? 'vertical' : 'horizontal'); }
 navOrientation();
@@ -3907,16 +4118,35 @@ $('#xKey').onchange = e => { S.ui.xkey = +e.target.value; save(); renderExplorer
 $('#xScale').onchange = e => { S.ui.xscale = e.target.value; save(); renderExplorer(); };
 $('#xLab').onchange = e => { S.ui.xlab = e.target.value; save(); drawExplorer(); };
 $('#xChord').onchange = e => { S.ui.xchord = e.target.checked; save(); drawExplorer(); };
+$('#rEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#xEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (!c) return; const x = EX.find(q => q.id === c.dataset.ex); if (x && x.keyed) { exStat(x.id).key = S.ui.xkey; save(); } exOpen(c.dataset.ex); });
 $('#xPos').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.xpos = +b.dataset.p; save(); renderExplorer(); });
 $('#xPlay').onclick = xPlay; $('#xDrone').onclick = xDrone;
 // chord reference
-$('#chordRoot').addEventListener('click', e => { const b = e.target.closest('[data-root]'); if (!b) return; voStop(); S.ui.voKey = +b.dataset.root; VO.limit = 24; save(); renderVoicings(); });
-$('#chordGroup').addEventListener('click', e => { const b = e.target.closest('[data-group]'); if (!b) return; voStop(); S.ui.chordRef.group = b.dataset.group; S.ui.chordRef.position = b.dataset.group === 'open' ? '0-4' : 'all'; VO.limit = 24; save(); renderVoicings(); });
+function chordChooseRoot(root) {
+  voStop(); S.ui.voKey = root; VO.limit = 24; save(); renderVoicings();
+  $(`#chordRoot [data-root="${root}"]`).focus({preventScroll:true});
+}
+$('#chordRoot').addEventListener('click', e => { const b = e.target.closest('[data-root]'); if (b) chordChooseRoot(+b.dataset.root); });
+$('#chordRoot').addEventListener('keydown', e => {
+  if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+  e.preventDefault(); e.stopPropagation();
+  chordChooseRoot(e.key === 'Home' ? 0 : e.key === 'End' ? 11 : ((S.ui.voKey || 0)+(e.key === 'ArrowRight' ? 1 : 11))%12);
+});
+$('#chordGroup').addEventListener('click', e => {
+  const b = e.target.closest('[data-group]'); if (!b) return;
+  const group = b.dataset.group; voStop(); S.ui.chordRef.group = group; S.ui.chordRef.position = group === 'open' ? '0-4' : 'all'; VO.limit = 24; save(); renderVoicings();
+  $(`#chordGroup [data-group="${group}"]`).focus({preventScroll:true});
+});
+$('#chordGroup').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  e.preventDefault(); $(`#chordGroup [data-group="${S.ui.chordRef.group === 'open' ? 'movable' : 'open'}"]`).click();
+});
 [['#chordPosition','position'],['#chordType','type'],['#chordKind','kind'],['#chordBass','bass'],['#chordLabels','labels'],['#chordTuning','tuning']].forEach(([id,key])=>{ $(id).onchange = e => { voStop(); S.ui.chordRef[key] = e.target.value; VO.limit = 24; save(); renderVoicings(); }; });
-$('#chordMore').onclick = () => { VO.limit += 24; renderVoicings(); };
+$('#chordMore').onclick = () => { const start = VO.limit; VO.limit += 24; renderVoicings(); const card = $$('#chordGrid .chord-card')[start]; if (card) { card.scrollIntoView({block:'center'}); card.querySelector('button').focus({preventScroll:true}); } };
 $('#chordGrid').addEventListener('click', e => {
-  if (e.target.closest('#chordReset')) { S.ui.chordRef.group = 'movable'; S.ui.chordRef.kind = 'all'; S.ui.chordRef.bass = 'all'; S.ui.chordRef.position = 'all'; save(); renderVoicings(); return; }
+  const reset = e.target.closest('#chordReset');
+  if (reset) { voStop(); if (reset.dataset.movable === 'true') S.ui.chordRef.group = 'movable'; S.ui.chordRef.kind = 'all'; S.ui.chordRef.bass = 'all'; S.ui.chordRef.position = 'all'; VO.limit = 24; save(); renderVoicings(); $('#chordType').focus({preventScroll:true}); return; }
   const b = e.target.closest('[data-chord-sound]'); if (!b) return;
   if (VO.preview === b.dataset.chordSound) { voStop(); return; }
   const shape = VO.results[+b.dataset.index]; vSound({tune:S.ui.chordRef.tuning},shape.move,b.dataset.mode); VO.preview = b.dataset.chordSound; voPreviewState();
@@ -3936,9 +4166,9 @@ $('#lnPractice').addEventListener('click', e => { const b = e.target.closest('[d
 document.addEventListener('click', e => { const b = e.target.closest('[data-openunit]'); if (!b) return; switchTab('learn'); openUnit(b.dataset.openunit); });
 // exercises
 $('#exSearch').oninput = e => { S.ui.exQuery = e.target.value; save(); renderExLib(); };
+$('#exList').addEventListener('toggle', e => { if (e.target.id === 'exMore') { S.ui.exMore = e.target.open; save(); } }, true);
 $('#exList').addEventListener('click', e => { if (e.target.closest('#exClearSearch')) { S.ui.exQuery = ''; save(); renderExLib(); $('#exSearch').focus(); return; } const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
 $('#exRecent').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (c) exOpen(c.dataset.ex); });
-$('#exView').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { if (b.dataset.v === 'hist') switchTab('progress'); else setExView('lib'); } });
 $('#exHist').addEventListener('change', e => { if (e.target.id === 'exHistFilter') { S.ui.histFilter = e.target.value; save(); renderExHist(); } });
 document.addEventListener('click', e => { const r = e.target.closest('[data-res]'); if (r) { e.stopPropagation(); exResume(r.dataset.res, r.dataset.step, r.dataset.key); } }, true);
 $('#pFav').onclick = () => { const id = P.ex && P.ex.id; if (!id) return; const i = S.exfav.indexOf(id); if (i >= 0) S.exfav.splice(i, 1); else S.exfav.unshift(id); save(); renderExHistPanel(); toast(i >= 0 ? 'Removed from favorites.' : 'Added to favorites. It shows at the top of the library.'); };
@@ -3948,6 +4178,7 @@ $('#pBack').onclick = () => {
   const origin = P.origin, e = P.ex; exStop(); $('#exPlayer').hidden = true;
   if (origin === 'voicings' && e.voicing && e.keyed) { S.ui.voKey = exKey(); save(); }
   if (P.host === 'explorer') { if (e && e.scale) { S.ui.xscale = e.scale; if (e.keyed) S.ui.xkey = exKey(); save(); } $('#xMain').hidden = false; }
+  if (P.host === 'rhythm') $('#rMain').hidden = false;
   $('#exLib').hidden = false;
   switchTab(TABS.includes(origin) ? origin : P.host || 'exercises'); window.scrollTo({ top: 0 });
 };
@@ -3991,6 +4222,7 @@ const bpmDone = ok => { const i = $('#pBpmIn'); if (i.hidden) return; if (ok && 
 $('#pBpmIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); bpmDone(true); } else if (e.key === 'Escape') { e.preventDefault(); bpmDone(false); } });
 $('#pBpmIn').addEventListener('blur', () => bpmDone(true));
 [['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop') { if (!S.ui.exopts.loop) { S.ui.exopts.keycycle = false; $('#pKeyCycle').checked = false; } if (P.running) { P.endBeat = S.ui.exopts.loop ? Infinity : P.L; exReanchor(P.bpm); } else exDraw(P.viewPos); renderExTransport(); save(); } }; });
+$('#pLabSeg').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; const s = $('#pLab'); s.value = b.dataset.v; s.dispatchEvent(new Event('change')); $$('#pLabSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
 $('#pListen').onclick = exListen; $('#pSpot').onchange = e => exSetSpot(e.target.value);
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
@@ -4017,6 +4249,7 @@ $('#rtStart').onclick = () => { if (R.running) switchTab(R.blocks[R.idx].tool); 
 
 
 $('#view-today').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex, undefined, 'today'); });
+$('#essCard').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex); });
 $('#rpPause').onclick = () => { R.paused = !R.paused; renderPill(); };
 $('#rpSkip').onclick = routineNext;
 $('#rtMinutes').onchange = e => { S.ui.planMinutes = clamp(Math.round(+e.target.value || S.settings.goal), 5, 90); save(); renderRoutine(); };
@@ -4095,8 +4328,6 @@ document.addEventListener('change', e => { const r = e.target.closest && e.targe
 $('#volBtn').onclick = e => { e.stopPropagation(); const open = $('#volPop').hidden; $('#volPop').hidden = !open; $('#volBtn').setAttribute('aria-expanded', open); if (open) { volRender(); const f = $('#volPop .vctl'); f && f.focus(); } };
 $('#vMute').onclick = () => volMute();
 document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop') && !e.target.closest('#volBtn')) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); } });
-document.addEventListener('click', e => { if (!e.target.closest('.tools-menu')) $('.tools-menu').open = false; });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('.tools-menu').open) { $('.tools-menu').open = false; $('.tools-menu summary').focus(); } });
 document.addEventListener('keydown', e => {
   if (!$('#settings').hidden) return;
   if (e.key === 'Escape' && !$('#volPop').hidden) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); $('#volBtn').focus(); return; }

@@ -1,72 +1,40 @@
 # Fretlab: technical handoff
 
-Read this before changing anything. **Keep it current:** when you change structure, data shapes, deployment or conventions, update this file in the same commit.
+Read before changing anything. **Keep it current and short:** update this file in the same commit when structure, data shapes, deployment or conventions change.
 
 ## What it is
-A fretboard practice app for an intermediate guitarist who writes riffs (rock, alternative, midwest emo, shoegaze). It's one static page: no build step, no dependencies, vanilla JS + Web Audio + SVG/canvas.
+A practice app for an intermediate guitarist who writes riffs (rock, alternative, midwest emo, shoegaze). One static page: no build, no dependencies, vanilla JS + Web Audio + SVG/canvas.
 
 ## Files
-- `index.html` is the whole app: HTML, CSS, and one JS IIFE. **This is the source of truth.**
-- `sw.js`, `manifest.webmanifest`, `icon-*.png`, `apple-touch-icon.png`: install and offline support (GitHub Pages only).
-- `tests/validate.js` checks every exercise in all 12 keys and the quiz generators. `tests/smoke.js` clicks through navigation and main flows at phone and desktop sizes. `tests/practice.js` checks resume/return behavior, chord formulas and inversions, progress by key, review preparation, plan budgets, and timer transitions. All need Playwright (`npm i -D playwright && npx playwright install chromium`). `tests/desktop.js` checks wide workspaces, searches, favorites, preview audio, appearance changes, keyboard controls, and legacy routes/data. `tests/transport.js` checks pause/resume, tab seeking, finger-label visibility, count-ins, history, and audio-clock scheduling across tempo and key transitions. `tests/chords.js` checks the generated reference across roots and tunings, finger/barre feasibility, unique open grips, movable forms, labels and filters. Run all six before pushing; all must print `OK`.
-- `README.md` is user-facing: features and the research behind them.
+- `index.html`: the whole app (HTML, CSS, one JS IIFE). **Source of truth.**
+- `sw.js`, `manifest.webmanifest`, icons: install/offline for GitHub Pages. Bump the cache name in `sw.js` when shipping.
+- `tests/*.js` (Playwright: `npm i -D playwright && npx playwright install chromium`). Run all before pushing; each prints `OK`:
+  `validate` (every exercise in all keys, quizzes) · `smoke` (navigation, main flows, phone/desktop) · `practice` (resume, chord formulas, per-key progress, plans) · `desktop` (wide layouts, search, previews, legacy routes) · `transport` (pause/seek, count-ins, loop timing) · `rhythm` (bar math, click modes, every rhythm step) · `essentials` (curated list surfaced first, focus order) · `chords` (reference pitches, fingering, open/movable classification and filters).
 
-## Two deployments of the same code
-1. **GitHub Pages:** `https://yuri-r2.github.io/fretlab/` serves `index.html` as is. The service worker registers only on `*.github.io`. The microphone tuner works only here.
-2. **claude.ai artifact:** `https://claude.ai/artifact/67VitgdwZnZ4gh8X3sJuVv`. Publish **only the content between `<body>` and `</body>`** of `index.html`; the artifact host adds its own head. Capabilities: `db`, `user`, `downloads`. The `<head>` in `index.html` holds only Pages extras: manifest, theme color, icons.
+## Deployments
+1. **GitHub Pages** `https://yuri-r2.github.io/fretlab/` serves `index.html` from `main`.
+2. **claude.ai artifact** `https://claude.ai/artifact/67VitgdwZnZ4gh8X3sJuVv`: publish **only the content between `<body>` and `</body>`**. Capabilities `db`, `user`, `downloads`. Mic and plain downloads don't work there.
 
-## Code map (inside the IIFE; search for `/* ---------- name ---------- */` markers)
-- **state + persistence:**
-  - All persisted data lives in `S`. `DEF` has the defaults, `merge(DEF, saved)` loads them, and `save()` debounces then calls `flush()`.
-  - Storage: localStorage key `fretlab.v1`. In the artifact it also syncs to db doc `data/users/<id>/progress` as `{state, updatedAt}`; `initDb()` keeps whichever copy is newer.
-  - To add a persisted field, add it to `DEF`.
-  - Chord-reference preferences are `S.ui.chordRef` (group, type, kind, bass, position, tuning, labels), with root in `S.ui.voKey`. `S.ui.exQuery` stores exercise search. `S.ui.voBrowser` is retained as legacy backup data. `S.riffs` retains legacy backup data; there is no Riff Dice view or runtime. Session preferences are `S.ui.planMinutes`, `focusEx` (exercise ID), and `voKey` (root pitch class). Lessons store `lastCard` separately from the furthest reached `card`.
-- **audio:**
-  - `ac()` creates the context lazily. Gain chain: `AU.master` (volume, mute) ← `AU.notes` (guide notes) and `AU.click` (clicks, count-ins, drums).
-  - `bus(parent)` and `killBus()` are disposable sub-buses.
-  - Sound sources: `pluck()` (Karplus-Strong guitar), `strum()`, `tone()` (drones), `SND.*` (click, drums).
-- **metronome engine:** `M`, a lookahead scheduler (`mSched`, `mBeat`) on `AU.click`.
-- **guided exercises:**
-  - Exercises live in the `EX` array. Shape: `{id, cat, title, lvl, about, tip, keyed: 'maj'|'min'|'note'|'scale'|undefined, key0, labels, scale?, tuning?, steps:[{n, d, bpm, goal, bar?, swing?, tuning?, drone?, create?, build(keyPc) → {ev, L}}]}`.
-  - Events: `{t, d (beats), n:[{s, f, fg, lab}], p:'D'|'U'|'', x:''|'h'|'p'|'/'|'PM'|'~', chord?, roll?, strum?}`.
-  - **String index 0 = high e … 5 = low E.** `OPEN` holds the MIDI pitches of the open strings. Helpers: `seq()`, `pad()`, `winNotes()`, `cagedWins()`, `nps()`.
-  - Library categories: `EXCATS`. `cat: 'Scales'` exercises are hidden from the library and appear in the Scales tab instead.
-- **player:**
-  - `P` holds player state. `exOpen(id, step)` hosts the `#exPlayer` node in either the Exercises or the Scales tab (`exHostOf`). Playback: `exStart`, `exSched`, `exPause`, `exStop`, `exLoopEnd`. `exPause()` retains the position; `exStop()` resets it. `exSeek()` pauses at a chosen beat. `P.viewPos` is the paused position; the position slider `#pScroll` follows playback or seeks when moved manually. `exData(key)` builds notation without mutating player state. `P.audio` is the latest scheduled loop segment and `P.loopQueue` holds segments awaiting their start time. The scheduler prepares the next loop at its exact audio-clock boundary, including its new key/tempo, on the existing buses; `exSync()` adopts it for display at that boundary. Avoid killing or rescheduling the buses at an automatic loop transition. `P.passStart` prevents a partial opening pass from being logged or triggering the speed/key ladder. `S.ui.exopts.fingers` toggles suggested finger annotations independently of note/degree labels.
-  - `exFeedback(kind)` holds the progression rules:
-    - 2 clean runs in a row: +5 bpm
-    - a messy run: about −10%
-    - 2 clean runs at the goal: the step is done and scheduled for review
-    - finished steps keep climbing up to 260 bpm
-  - Part practice is `P.spot`.
-  - `P.origin` holds the return destination. The desktop `.practice-layout` places notation and playback beside the feedback/settings aside. Keep essential playback controls outside disclosures. `renderExSteps()` labels and updates step navigation. The header transport uses `playerVisible()` and `renderMini()` to follow the exercise while its player is visible.
-  - `observe` and `create` steps use exploration/creation completion rather than tempo ladders or technical reviews.
-- **spacing and review:** intervals `REV_IV`, review data `st.rev[step]` for exercises and `S.learn[unit].rev` for Learn units.
-  - `exStat(id, key?)` returns the chosen key's `contexts[key]` fields through a proxy; `key` and custom `goal` remain exercise-level fields. Completion, tempo, last activity, streaks, ratings, preparation dates, and reviews are key-specific. Legacy fields seed only the saved/default key, and remain in the backup. Review entries include `key`.
-  - `prepared[step]` records playback/listening/step-through dates. `P.reviewCold` distinguishes the first play from a prepared attempt; a prepared due check returns tomorrow. Ratings are self-reported.
-- **exercise history:** `S.exlog` entries look like `{id, s, k, b, r, t}`, written by `logRun()`. Favorites are `S.exfav`.
-- **adjustable goal tempo:** near the end, a getter on each step's `goal` reads `S.ex[id].goal[i]`, falling back to `goal0`. **Every `EX.push` must happen before this block.**
-- **scale bundles:** `SCALES`, `scaleExs(id)` (generated `sc_<scale>_*` exercises) and `SC_EX` (exercise list per scale).
-- **voicings / Chord Shapes:**
-  - `VOICINGS` retains the 26 workout/quiz collections and stable `v_<id>` exercise IDs. Moves use `f` low E to high e, with `NX` muted. Optional `fingers` and `roles` use that order; `barre` is `[firstStringIndex,lastStringIndex,fret]`. `vCurrent(v,key)` transposes the movable studies. `VPAT` and `vToEx()` build their Exercises workouts.
-  - The reference uses `CHORD_TYPES` (pitch intervals, contextual degree labels, optional omitted fifth), `chordShapes(root,type,tuning)` and `chordFingers(frets)`. Enumerate frets 0–20 with a positive-fret span of at most three semitones, require the root/defining tones, and reject grips needing more than four fingers. Assign fingers in ascending fret order; a shared finger requires one fret and a barre with no intervening open/lower note. `move.barres` can hold multiple barres; `move.barre` is the first for compatibility. `CHORD_CACHE` keeps twelve generated sets and includes accidental preference in its key.
-  - Open grips have an actual open string. `chordCanMove()` also accepts an open form when shifting every sounding note by one fret yields a valid closed grip. `chordUnique()` collapses optional open-string subsets only when bass MIDI pitch and omitted-fifth status match and the larger grip adds only open strings, preserving familiar grips that would otherwise be hidden by a fretted unison bass. Never manufacture an open shape by transposing open strings while leaving them open.
-  - `renderVoicings()` shows Open chords or Movable shapes with persistent root/type/tuning/area/bass/label filters and batches of 24. `vBox()` renders fingers, notes or degrees inside dots, fret numbers below, open/muted strings and barres; strings mirror for the left-handed setting. `VO` owns reference results, pagination and preview audio. `voStop()` disposes its bus on navigation. The reference has no genre collection browser; those workouts stay in Exercises.
-  - `S.ui.exopts.fingers` independently controls finger annotations on exercise tab and fretboard. In `P.labels`, legacy `'finger'` means no extra note/degree label, presented as None. The finger toggle is the sole finger-visibility control. `fingerLegend()` supplies the shared key. The optional `finger` field on fretboard markers renders a smaller annotation alongside the primary note label.
-- **learn path:** `UNITS` holds the cards, `quiz()` (generator) and practice links. `QZ` is the quiz state; `REVIEW_UNIT` is the mixed review.
-- **routines:** `ROUTINES`, plus `autoBlocks()`, which fits Today's plan to its minute budget and chosen focus. `R.waiting` holds a block at zero until `routineNext()`; the timer does not switch tools automatically. Focus and review blocks capture their key.
-- **tuner:** a port of KotoLab (MIT): `detectPitch` and `TunerGauge`.
-- **tabs:** `PRIMARY_TABS` is Today, Learn, Library, and Progress. Desktop widths of 1100px and above use a vertical navigation rail; smaller windows use a horizontal bar. `LIBRARY_TABS` groups the content tools under Library; `TABS` includes all internal views plus standalone tools. `switchTab()` pushes navigation history. Progress hosts the history node and statistics. `tabFromHash()` maps legacy `#riffs` links to Chord Shapes. Existing tool hashes still work: `explorer` = Scales, `voicings` = Chord Shapes.
+## Code map (search for `/* ---------- name ---------- */`)
+- **state**: everything persisted is in `S` (`DEF` defaults, `merge`, `save`/`flush`); localStorage `fretlab.v1`; artifact also syncs `data/users/<id>/progress`. New persisted fields go in `DEF`.
+- **audio**: `ac()`, gain chain `AU.master` ← `AU.notes` / `AU.click`; `bus()`/`killBus()`; sounds `pluck`, `strum`, `tone`, `SND.*`, `chuck` (muted strum).
+- **exercises**: `EX` array. Exercise `{id, cat, title, lvl, about, tip, keyed?, key0, labels, steps:[{n, d, bpm, goal, bar?, groups?, click?, echo?, swing?, tuning?, drone?, create?, observe?, build(key) → {ev, L}}]}`. Event `{t, d (beats), n:[{s, f, fg, lab}], p:'D'|'U', x:''|'h'|'p'|'/'|'PM'|'~', chord?, strum?, roll?, air?, mute?, acc?, cnt?}`. **String 0 = high e … 5 = low E.** IDs are saved progress: never rename.
+- **hosting**: `exHostOf(e)` puts the player in Exercises, Scales (`cat:'Scales'`) or Rhythm (`cat:'Rhythm'`); those cats are hidden from the Exercises list (`EXCATS`).
+- **player**: state `P`; `exOpen`, `exStart`, `exSched` (lookahead; prepares the next loop on the same buses; don't kill buses at loop boundaries), `exPause`/`exStop`/`exSeek`, `exDraw` (canvas tab), `exFeedback` (progression: 2 clean → +5 bpm, messy −10%, 2 clean at goal = done, then up to 260). `clickLevel()` handles groups, `backbeat`, `gap`; steps with `click` set play no guide notes except in Listen first (you keep the time). Playback/display controls are the always-open `#pCtl` bar (chip-styled checkboxes, `#pLabSeg` drives the hidden `#pLab` select); rating and history are deliberately low-key in the aside. `echoBus()` for dotted-8th echo.
+- **progress**: `exStat(id, key?)` is per key (proxy over `contexts[key]`); reviews `REV_IV`; history `S.exlog`; favorites `S.exfav`; custom goals via a getter defined near the end (**all `EX.push` calls must come before it**).
+- **essentials**: `ESSENTIALS` (12 ids + one-line `why`, in learning order) is the owner-facing priority list. `isEss`/`essList`/`essNext`/`exComplete`. Lists sort essentials first; `focusEx` falls back to `essNext()`; `exDueList` puts essential reviews first; Quick/Deep routines use only essentials (+ legato warm-up, checked in `essentials`). Change the list here, not in each view.
+- **content**: scales `SCALES`/`scaleExs`; rhythm `RX`/`strumBar`/`noteRhythm`; Chord Shapes `VOICINGS`/`VFAMILIES`/`vToEx` (moves run low E → high e, `NX` = muted); Learn `UNITS`/`QZ`; plans `ROUTINES`/`autoBlocks`; tuner from KotoLab (MIT).
+- **chord reference**: `CHORD_TYPES`, `chordShapes(root,type,tuning)`, `chordFingers`, `chordCanMove`, `chordUnique`, `vBox`, `renderVoicings`. Open chords use actual open strings; transferable open forms also appear under Movable shapes. Enumerate frets 0–20, four-fret span, four fingers; require the root/defining tones and label omitted fifths. Shared fingers need a valid barre. Deduplicate optional-open-string subsets only with matching bass MIDI pitch and fifth omission; preserve familiar A/D grips. `S.ui.chordRef` stores group/type/shape/bass/area/tuning/labels; `S.ui.voKey` stores root. Root buttons support arrow/Home/End navigation and keep focus after rendering; Show more focuses the first new grip. Empty states distinguish unavailable open chords from restrictive filters. `VO` owns pagination and preview audio; dispose its bus with `voStop()` on navigation. `CHORD_CACHE` holds twelve sets, keyed by root/type/tuning/accidental preference. Workouts remain in `VOICINGS`/`vToEx` with stable IDs.
+- **finger display**: `S.ui.exopts.fingers` controls smaller annotations on tab/fretboard independently of note labels; `fingerLegend()` gives the shared key. Legacy label value `finger` is presented as None in `#pLabSeg`/`#pLab`; the Show fingers checkbox is the single finger-visibility control. Fretboard markers optionally carry `finger`. `vBox()` mirrors strings and fret rows for left-handed settings.
+- **navigation**: `PRIMARY_TABS` (Today, Learn, Library, Progress) + `LIBRARY_TABS`; desktop rail at ≥1100px. Tuner and Metronome are direct header buttons (`.toolbtn`, highlighted via `aria-pressed` in `switchTab`); the header must stay one row from 360px up (checked in `smoke`). Internal ids: `explorer` = Scales, `voicings` = Chord Shapes; `#riffs` redirects to Chord Shapes.
 
 ## Gotchas
-- Everything is inside an IIFE, so tests reach internals by string-replacing the `/* ---------- boot ---------- */` marker to expose them (see `tests/validate.js`).
-- Navigating to the same URL with only a different hash doesn't reload the page. Add a query string in tests.
-- On page hide, `flush()` writes `S` back to localStorage, which overwrites anything a test seeded.
-- The artifact sandbox blocks the microphone and plain downloads. Backups use `claude.use('downloads')` there and a blob link elsewhere.
-- Verify any new chord or voicing note by note: compute pitches from the tuning and check the interval labels.
+- The IIFE hides internals; tests expose them by replacing the `/* ---------- boot ---------- */` marker.
+- Same-URL hash changes don't reload; tests add a query string. `flush()` on page hide overwrites seeded localStorage.
+- Verify every new chord note by note from the tuning before adding it.
 
-## Product rules (from the owner)
-- Focus on the most useful material and avoid bloat. Don't add features or exercises casually; prefer improving what exists.
-- Teach concepts well: every exercise shows exactly what to play, in time, with labels.
-- Changes ship to both deployments: push to `main` (Pages) **and** republish the artifact.
-
+## Product rules (owner)
+- Most useful material only; no bloat. Improve what exists before adding.
+- Don't build mic grading of playing or tab/Guitar Pro import (owner declined).
+- Every exercise shows exactly what to play, in time, with labels.
+- Ship to both deployments: push `main` and republish the artifact.
