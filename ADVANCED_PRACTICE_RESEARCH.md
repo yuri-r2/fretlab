@@ -55,7 +55,7 @@ The app's spaced reviews and first-attempt checks remain useful design choices, 
 - **Reversible skipping:** “Too easy — skip” removes a study from automatic recommendations and reviews without changing completion, best tempo or history. It remains searchable and can be restored in the player.
 - **Return to the session:** an explicit Open block action in the persistent session bar reopens the active exercise with its step, key, tempo and position while retaining the block timer.
 - **Preparation before key changes:** the next key, tempo and opening frets are visible early; the scrolling tab contains the approaching key's actual notes. Previous-key notes remain visible across the boundary. Clicking upcoming notation prepares that key at the selected note. Audio scheduling and the preview share the same next-loop plan.
-- **High-contrast neutral appearance:** near-white/near-black backgrounds, violet accents, clear boundaries and individual marker-label contrast. [Figma's neutral schemes](https://www.figma.com/resource-library/website-color-schemes/) inform the direction; [WCAG enhanced contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html) supplies a 7:1 text target.
+- **High-contrast Inked appearance:** near-white/near-black backgrounds, teal accents, clear boundaries and individual marker-label contrast. [Figma's neutral schemes](https://www.figma.com/resource-library/website-color-schemes/) inform the direction; [WCAG enhanced contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html) supplies a 7:1 text target.
 
 ## Further work to validate with playing
 

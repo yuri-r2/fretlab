@@ -101,7 +101,7 @@ The speaker button in the header opens a mixer: **Master** with **Mute**, plus s
 
 ## Appearance
 
-Near-white (`#fafafa`) light mode and near-black (`#08090b`) dark mode follow your system appearance. Neutral panels, clear borders and violet accents keep the workspace legible. Root, third, fifth and seventh markers retain consistent hues, with individually contrasting labels. Normal text and marker-label pairs are checked against a 7:1 target; control boundaries use stronger contrast than the earlier soft palette. The direction draws on the neutral schemes in [Figma's color-scheme collection](https://www.figma.com/resource-library/website-color-schemes/) and [WCAG contrast guidance](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html).
+Inked uses near-white (`#fafafa`) light mode and near-black (`#08090b`) dark mode, following your system appearance. Neutral panels, clear borders and teal accents keep the workspace legible. Actions use deep teal (`#004f52`) in light mode and bright teal (`#2de0de`) in dark mode. Root, third, fifth and seventh markers retain consistent hues, with individually contrasting labels. Normal text and marker-label pairs are checked against a 7:1 target. The direction draws on the neutral schemes in [Figma's color-scheme collection](https://www.figma.com/resource-library/website-color-schemes/) and [WCAG contrast guidance](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html).
 
 For the palette comparison, measured ratios and sources, see [Color and contrast research](COLOR_THEME_RESEARCH.md).
 
