@@ -6,7 +6,8 @@
 <meta name="description" content="Guitar practice for fretboard fluency, chord shapes, scales and musical ideas. Guided lessons and exercises, with a tuner, metronome and ear training.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#2C786A">
+<meta name="theme-color" content="#eff1f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1e1e2e" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,28 +22,35 @@
 <style>
 /* The header transport follows the active practice tool. Fretboards scroll inside their own containers on narrow screens. */
 :root{
-  --bg:#F2F0EB; --surface:#FFFFFF; --surface-2:#E8E4DC; --ink:#1C1A17; --muted:#6A635A; --line:#D8D2C7;
-  --accent:#2C786A; --accent-ink:#FFFFFF; --accent-soft:#D8EBE6;
-  --root:#C05B28; --root-ink:#FFFFFF; --root-soft:#F5E1D5;
-  --good:#2E8653; --warn:#B07D12; --bad:#BC4034; --on-sem:#FFFFFF; --good-soft:#DCEEE2; --bad-soft:#F5DCD8; --warn-soft:#F5E7C6;
-  --wood:#3A2A20; --wood-2:#57422F; --fret:#BDB5A8; --string:#E4DACA; --inlay:#EAE2D4;
-  --d3:#2F6DB5; --d5:#2C786A; --d7:#7A4CB8;
+  --bg:#eff1f5; --surface:#ffffff; --surface-2:#e6e9ef; --ink:#4c4f69; --muted:#5c5f77; --line:#ccd0da;
+  --accent:#8839ef; --accent-ink:#ffffff; --accent-soft:#e9dcfb;
+  --root:#fe640b; --root-ink:#11111b; --root-soft:#fbe2d6; --root-text:#a83c09;
+  --good:#40a02b; --good-ink:#11111b; --good-text:#287820; --warn:#df8e1d; --warn-ink:#11111b; --warn-text:#8b5a0b; --bad:#d20f39; --bad-ink:#ffffff;
+  --good-soft:#e2efdc; --bad-soft:#f7dfe6; --warn-soft:#f8ead2;
+  --wood:#e6e9ef; --wood-2:#ccd0da; --fret:#8c8fa1; --string:#7c7f93; --inlay:#9ca0b0;
+  --d3:#1e66f5; --d3-ink:#ffffff; --d5:#179299; --d5-ink:#11111b; --d7:#8839ef; --d7-ink:#ffffff;
   --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
   --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#131210; --surface:#1C1A18; --surface-2:#282521; --ink:#EEE9E2; --muted:#A39A8F; --line:#36322D;
-  --accent:#5DBEA8; --accent-ink:#0B1E1A; --accent-soft:#1D3530;
-  --root:#E3874F; --root-ink:#1A0E07; --root-soft:#3A2416;
-  --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B; --warn-soft:#3A2F16;
-  --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}}
+  --bg:#1e1e2e; --surface:#313244; --surface-2:#45475a; --ink:#cdd6f4; --muted:#bac2de; --line:#585b70;
+  --accent:#cba6f7; --accent-ink:#11111b; --accent-soft:#453754;
+  --root:#fab387; --root-ink:#11111b; --root-soft:#4b3740; --root-text:#fab387;
+  --good:#a6e3a1; --good-ink:#11111b; --good-text:#a6e3a1; --warn:#f9e2af; --warn-ink:#11111b; --warn-text:#f9e2af; --bad:#f38ba8; --bad-ink:#11111b;
+  --good-soft:#34473f; --bad-soft:#4b3548; --warn-soft:#494335;
+  --wood:#313244; --wood-2:#45475a; --fret:#7f849c; --string:#a6adc8; --inlay:#6c7086;
+  --d3:#89b4fa; --d3-ink:#11111b; --d5:#94e2d5; --d5-ink:#11111b; --d7:#cba6f7; --d7-ink:#11111b; color-scheme:dark;
+}}
 :root[data-theme="dark"]{
-  --bg:#131210; --surface:#1C1A18; --surface-2:#282521; --ink:#EEE9E2; --muted:#A39A8F; --line:#36322D;
-  --accent:#5DBEA8; --accent-ink:#0B1E1A; --accent-soft:#1D3530;
-  --root:#E3874F; --root-ink:#1A0E07; --root-soft:#3A2416;
-  --good:#5BBE86; --warn:#E0AE44; --bad:#E36A5D; --on-sem:#111111; --good-soft:#1C3324; --bad-soft:#3A1E1B; --warn-soft:#3A2F16;
-  --wood:#271C15; --wood-2:#3A2B20; --fret:#8E877C; --string:#B8AE9F; --inlay:#6E655A; --d3:#73A9EC; --d5:#5DBEA8; --d7:#B596EE; color-scheme:dark;}
+  --bg:#1e1e2e; --surface:#313244; --surface-2:#45475a; --ink:#cdd6f4; --muted:#bac2de; --line:#585b70;
+  --accent:#cba6f7; --accent-ink:#11111b; --accent-soft:#453754;
+  --root:#fab387; --root-ink:#11111b; --root-soft:#4b3740; --root-text:#fab387;
+  --good:#a6e3a1; --good-ink:#11111b; --good-text:#a6e3a1; --warn:#f9e2af; --warn-ink:#11111b; --warn-text:#f9e2af; --bad:#f38ba8; --bad-ink:#11111b;
+  --good-soft:#34473f; --bad-soft:#4b3548; --warn-soft:#494335;
+  --wood:#313244; --wood-2:#45475a; --fret:#7f849c; --string:#a6adc8; --inlay:#6c7086;
+  --d3:#89b4fa; --d3-ink:#11111b; --d5:#94e2d5; --d5-ink:#11111b; --d7:#cba6f7; --d7-ink:#11111b; color-scheme:dark;
+}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{background:var(--bg);color:var(--ink)}
@@ -171,15 +179,15 @@ label.f > span{font-weight:500}
 .mk-note circle{fill:var(--surface);stroke:var(--ink)} .mk-note text{fill:var(--ink)}
 .mk-root circle{fill:var(--root);stroke:var(--root)} .mk-root text{fill:var(--root-ink)}
 .mk-chord circle{fill:var(--accent);stroke:var(--accent)} .mk-chord text{fill:var(--accent-ink)}
-.mk-dim circle{fill:var(--wood-2);stroke:var(--fret)} .mk-dim text{fill:var(--fret)}
-.mk-hit circle{fill:var(--good);stroke:var(--good)} .mk-hit text{fill:var(--on-sem)}
-.mk-miss circle{fill:var(--bad);stroke:var(--bad)} .mk-miss text{fill:var(--on-sem)}
-.mk-ask circle{fill:var(--warn);stroke:var(--surface);stroke-width:3} .mk-ask text{fill:var(--on-sem)}
-.mk-play circle{fill:var(--warn);stroke:var(--warn)} .mk-play text{fill:var(--on-sem)}
+.mk-dim circle{fill:var(--wood-2);stroke:var(--fret)} .mk-dim text{fill:var(--muted)}
+.mk-hit circle{fill:var(--good);stroke:var(--good)} .mk-hit text{fill:var(--good-ink)}
+.mk-miss circle{fill:var(--bad);stroke:var(--bad)} .mk-miss text{fill:var(--bad-ink)}
+.mk-ask circle{fill:var(--warn);stroke:var(--surface);stroke-width:3} .mk-ask text{fill:var(--warn-ink)}
+.mk-play circle{fill:var(--warn);stroke:var(--warn)} .mk-play text{fill:var(--warn-ink)}
 .mk-h0 circle{fill:var(--surface-2);stroke:var(--fret);fill-opacity:.55} .mk-h0 text{fill:var(--muted)}
-.mk-h1 circle{fill:var(--bad);stroke:var(--bad)} .mk-h1 text{fill:var(--on-sem)}
-.mk-h2 circle{fill:var(--warn);stroke:var(--warn)} .mk-h2 text{fill:var(--on-sem)}
-.mk-h3 circle{fill:var(--good);stroke:var(--good)} .mk-h3 text{fill:var(--on-sem)}
+.mk-h1 circle{fill:var(--bad);stroke:var(--bad)} .mk-h1 text{fill:var(--bad-ink)}
+.mk-h2 circle{fill:var(--warn);stroke:var(--warn)} .mk-h2 text{fill:var(--warn-ink)}
+.mk-h3 circle{fill:var(--good);stroke:var(--good)} .mk-h3 text{fill:var(--good-ink)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 
@@ -231,9 +239,9 @@ a{color:var(--accent)}
 /* trainer prompts */
 .prompt{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:8px 0 4px}
 .prompt .q{font-family:var(--font-display);font-size:clamp(26px,5vw,38px);font-weight:600;line-height:1.1}
-.prompt .q em{font-style:normal;color:var(--root)}
+.prompt .q em{font-style:normal;color:var(--root-text)}
 .prompt .fb-msg{min-height:22px;font-size:14px;font-weight:500}
-.good{color:var(--good)} .bad{color:var(--bad)}
+.good{color:var(--good-text)} .bad{color:var(--bad)}
 .scorebar{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .scorebar b{color:var(--ink);font-family:var(--font-mono)}
 .notebtns{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;max-width:520px;margin:0 auto;width:100%}
@@ -241,9 +249,9 @@ a{color:var(--accent)}
 .notebtns button:hover,.ansbtns button:hover{border-color:var(--muted)}
 .ansbtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:8px;max-width:640px;margin:0 auto;width:100%}
 .ansbtns button small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
-.ansbtns button.ok,.notebtns button.ok{background:var(--good);border-color:var(--good);color:var(--on-sem)}
-.ansbtns button.ok small{color:var(--on-sem)}
-.ansbtns button.no,.notebtns button.no{background:var(--bad);border-color:var(--bad);color:var(--on-sem)}
+.ansbtns button.ok,.notebtns button.ok{background:var(--good);border-color:var(--good-text);color:var(--good-ink)}
+.ansbtns button.ok small{color:var(--good-ink)}
+.ansbtns button.no,.notebtns button.no{background:var(--bad);border-color:var(--bad);color:var(--bad-ink)}
 .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;width:100%;max-width:560px}
 .summary div{background:var(--surface-2);border-radius:10px;padding:10px}
 .summary b{display:block;font-family:var(--font-display);font-size:26px}
@@ -291,7 +299,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .rcard{display:flex;flex-direction:column;gap:3px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);min-width:0}
 .rcard:hover{border-color:var(--accent)} .rcard b{font-weight:600} .rcard .go{color:var(--accent);font-weight:600;font-size:13px;margin-top:2px}
 .rchip{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
-.rchip.clean{background:var(--good-soft);color:var(--good)} .rchip.almost{background:var(--warn-soft);color:var(--warn)} .rchip.messy{background:var(--bad-soft);color:var(--bad)}
+.rchip.clean{background:var(--good-soft);color:var(--good-text)} .rchip.almost{background:var(--warn-soft);color:var(--warn-text)} .rchip.messy{background:var(--bad-soft);color:var(--bad)}
 .hday{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:4px}
 .hrow{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-radius:10px;padding:7px 8px;color:var(--ink)}
 .hrow:hover{background:var(--surface-2)} .hrow .t{font:500 12.5px var(--font-mono);color:var(--muted)} .hrow .m{min-width:0} .hrow .m div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -305,7 +313,7 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .kbdhint kbd{font:600 11px var(--font-mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface)}
 @media (hover:none){.kbdhint{display:none}}
 .weekchart{display:block;width:100%;max-width:560px;height:auto;max-height:240px;margin-inline:auto}
-.favbtn[aria-pressed="true"]{color:var(--warn);border-color:var(--warn)}
+.favbtn[aria-pressed="true"]{color:var(--warn-text);border-color:var(--warn-text)}
 /* research-based practice */
 .pfocus{margin:0;color:var(--ink)} .pfocus b{color:var(--accent)}
 .pnew{display:block;background:var(--surface-2);border-radius:10px;padding:8px 12px;margin:0}
@@ -336,11 +344,11 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .g-ring{fill:none;stroke:var(--good);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .12s linear}
 .g-hub{fill:var(--surface);stroke:var(--line);stroke-width:1.5;transition:fill .2s,stroke .2s}
 .g-note{font:700 24px var(--font-display);fill:var(--ink)} .g-cents{font:600 11px var(--font-mono);fill:var(--muted)}
-.g-check{fill:none;stroke:var(--on-sem);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:46;stroke-dashoffset:46;opacity:0}
+.g-check{fill:none;stroke:var(--good-ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:46;stroke-dashoffset:46;opacity:0}
 .gauge-svg[data-state='idle'] .g-needle{opacity:.35}
 .gauge-svg[data-state='near'] .g-needle-line{stroke:var(--warn)} .gauge-svg[data-state='near'] .g-needle-tip{fill:var(--warn)} .gauge-svg[data-state='near'] .g-hub{stroke:var(--warn)}
 .gauge-svg[data-state='far'] .g-needle-line{stroke:var(--bad)} .gauge-svg[data-state='far'] .g-needle-tip{fill:var(--bad)} .gauge-svg[data-state='far'] .g-hub{stroke:var(--bad)}
-.gauge-svg[data-state='in'] .g-needle-line{stroke:var(--good)} .gauge-svg[data-state='in'] .g-needle-tip{fill:var(--good)} .gauge-svg[data-state='in'] .g-hub{stroke:var(--good);fill:var(--good-soft)} .gauge-svg[data-state='in'] .g-note{fill:var(--good)}
+.gauge-svg[data-state='in'] .g-needle-line{stroke:var(--good)} .gauge-svg[data-state='in'] .g-needle-tip{fill:var(--good)} .gauge-svg[data-state='in'] .g-hub{stroke:var(--good);fill:var(--good-soft)} .gauge-svg[data-state='in'] .g-note{fill:var(--good-text)}
 .gauge-svg[data-state='done'] .g-hub{fill:var(--good);stroke:var(--good);animation:g-pop .45s cubic-bezier(.2,1.6,.4,1);transform-origin:160px 150px}
 .gauge-svg[data-state='done'] .g-note,.gauge-svg[data-state='done'] .g-cents{opacity:0}
 .gauge-svg[data-state='done'] .g-check{opacity:1;animation:g-draw .35s .1s ease-out forwards}
@@ -349,7 +357,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 @keyframes g-draw{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){.gauge-svg[data-state='done'] .g-hub,.gauge-svg[data-state='done'] .g-check{animation:none;stroke-dashoffset:0}}
 .tn-read{font:600 18px var(--font-body);min-height:1.5em;text-align:center;color:var(--muted)}
-.tn-read[data-state='in'],.tn-read[data-state='done']{color:var(--good)} .tn-read[data-state='near']{color:var(--warn)} .tn-read[data-state='far']{color:var(--bad)}
+.tn-read[data-state='in'],.tn-read[data-state='done']{color:var(--good-text)} .tn-read[data-state='near']{color:var(--warn-text)} .tn-read[data-state='far']{color:var(--bad)}
 .tn-mic{background:var(--surface-2);border-radius:10px;padding:10px 12px;max-width:52ch}
 .tn-head{width:100%;max-width:300px}
 .headstock{display:block;width:100%;height:auto}
@@ -360,7 +368,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .peg .peg-s{font:500 9.5px var(--font-mono);fill:var(--muted)}
 .peg.sel .peg-s{fill:var(--accent-ink)}
 .peg.sel circle{fill:var(--accent);stroke:var(--accent)} .peg.sel .peg-n{fill:var(--accent-ink)}
-.peg.done circle{fill:var(--good);stroke:var(--good)} .peg.done .peg-n{fill:var(--on-sem)}
+.peg.done circle{fill:var(--good);stroke:var(--good)} .peg.done .peg-n{fill:var(--good-ink)}
 .peg.done.sel circle{stroke:var(--accent);stroke-width:4}
 .peg:focus-visible circle{stroke:var(--accent);stroke-width:4}
 
@@ -371,7 +379,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .path li.done:not(:last-child)::after{background:var(--good)}
 .pnode{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;padding:8px 0 16px;color:var(--ink)}
 .pnum{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-size:22px;font-weight:700;background:var(--surface);border:2px solid var(--line);color:var(--muted)}
-.path li.done .pnum{background:var(--good);border-color:var(--good);color:var(--on-sem)}
+.path li.done .pnum{background:var(--good);border-color:var(--good-text);color:var(--good-ink)}
 .path li.cur .pnum{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .ptext{display:flex;flex-direction:column;gap:2px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;flex:1}
 .pnode:hover .ptext{border-color:var(--accent)}
@@ -386,9 +394,9 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .qzfb:empty{padding:0}
 .qzfb.ok{background:var(--good-soft)}
 .qzfb.no{background:var(--bad-soft)}
-.mk-d3 circle{fill:var(--d3);stroke:var(--d3)} .mk-d3 text{fill:var(--on-sem)}
-.mk-d5 circle{fill:var(--d5);stroke:var(--d5)} .mk-d5 text{fill:var(--on-sem)}
-.mk-d7 circle{fill:var(--d7);stroke:var(--d7)} .mk-d7 text{fill:var(--on-sem)}
+.mk-d3 circle{fill:var(--d3);stroke:var(--d3)} .mk-d3 text{fill:var(--d3-ink)}
+.mk-d5 circle{fill:var(--d5);stroke:var(--d5)} .mk-d5 text{fill:var(--d5-ink)}
+.mk-d7 circle{fill:var(--d7);stroke:var(--d7)} .mk-d7 text{fill:var(--d7-ink)}
 .lessonlink{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 
 /* exercises */
@@ -400,7 +408,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .prog i{display:block;height:100%;background:var(--accent)}
 .steps{display:flex;gap:6px;flex-wrap:wrap}
 .steps button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500}
-.steps button.done{border-color:var(--good);color:var(--good)}
+.steps button.done{border-color:var(--good-text);color:var(--good-text)}
 .steps button.next{border-color:var(--accent);border-style:dashed}
 .steps button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);border-style:solid}
 .hw{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
@@ -409,6 +417,10 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .tab-scroll input{display:block;width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
 .tab-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .pstatus{min-height:20px}
+.upcoming{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:var(--accent-soft);color:var(--ink);border:1px solid var(--line)}
+.upcoming.soon{border-color:var(--accent)}
+.upcoming-notes{font:500 12px var(--font-mono);color:var(--muted)}
+.upcoming .label{color:var(--accent)}
 .ptrans{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ptempo{display:flex;align-items:center;gap:10px;margin-left:auto}
 .round.sm{width:38px;height:38px;font-size:18px}
@@ -416,7 +428,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .tbar i{display:block;height:100%;background:var(--accent)} .tbar.over i{background:var(--good)}
 .bpmtap{font:600 16px var(--font-mono);background:none;border:0;border-bottom:1px dashed var(--muted);padding:0 1px;color:var(--ink);cursor:text}
 .bpmin{width:64px;font:600 15px var(--font-mono);padding:2px 4px;border:1px solid var(--accent);border-radius:6px;background:var(--surface);color:var(--ink)}
-#pOver{color:var(--good);font-weight:600}
+#pOver{color:var(--good-text);font-weight:600}
 .goaltap{font-size:13px;font-weight:600;color:var(--muted)} .goaltap.custom{color:var(--accent);border-bottom-color:var(--accent)}
 .goaled{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .ptoggles{gap:14px}
@@ -597,7 +609,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="card stack" id="essCard"></div>
   <div class="excards">
-    <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Browse chord types, fingerings and inversions across the neck, in any key.</span></button>
+    <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Open-string clusters, modal colors and compact extensions. Hear a sound, then use it in a study.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
     <button class="excard" type="button" data-go="rhythm"><h3>Rhythm</h3><span>Subdivisions, strumming, chugs, syncopation, odd meters and dotted-8th delay rhythms.</span></button>
     <button class="excard" type="button" data-go="exercises"><h3>Exercises</h3><span>Guided workouts for changes, fretboard fluency, arpeggios and technique.</span></button>
@@ -709,7 +721,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <p class="small muted"><button class="linkbtn" type="button" data-go="progress" id="exHistSum">Run history</button></p>
   </div>
   <div id="exPlayer" class="stack" hidden>
-    <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="row" style="gap:10px"><span class="small muted" id="pCat"></span><button class="btn" id="pFocusPick" type="button" aria-pressed="false">Make my focus</button><button class="btn favbtn" id="pFav" type="button" aria-pressed="false">☆ Favorite</button></span></div>
+    <div class="row" style="justify-content:space-between"><button class="btn" id="pBack" type="button">← All exercises</button><span class="row" style="gap:10px"><span class="small muted" id="pCat"></span><button class="btn" id="pFocusPick" type="button" aria-pressed="false">Make my focus</button><button class="btn" id="pSkip" type="button" aria-pressed="false">Too easy — skip</button><button class="btn favbtn" id="pFav" type="button" aria-pressed="false">☆ Favorite</button></span></div>
     <div class="card stack practice-workspace">
       <h2 id="pTitle">Exercise</h2>
       <div class="practice-layout">
@@ -745,6 +757,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
               <label class="f pctl-sec"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label>
             </div>
           </div>
+          <div class="upcoming" id="pUpcoming" hidden><span class="stack" style="gap:2px"><span class="label">Up next · prepare the opening</span><b id="pUpcomingName" aria-live="polite"></b></span><span class="small" id="pUpcomingWhen"></span><span class="upcoming-notes" id="pUpcomingNotes" aria-label="Opening notes, string and fret"></span></div>
           <div class="hw"><canvas id="pCanvas" role="img" aria-label="Exercise tab. Click a note to start there. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Exercise position"></div></div>
           <div class="tab-navigation small muted"><span>Scroll or click a note · Space play / pause</span><span class="row" style="gap:6px;align-items:center"><span id="pPosition"></span><button class="btn sm" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀</button><button class="btn sm" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">▶</button></span></div>
           <div class="finger-legend small muted" id="pFingerHint" aria-label="Fretting hand finger key" hidden></div>
@@ -776,7 +789,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <!-- VOICINGS -->
 <section class="view" id="view-voicings" hidden>
   <div class="stack chord-reference">
-    <div class="vhead"><div><span class="label">A practical chord book</span><h2>Chord Shapes</h2></div><p class="muted small">Start with the grips you will use most. Add a color or a smaller voicing when the music calls for it.</p></div>
+    <div class="vhead"><div><span class="label">Voicings worth discovering</span><h2>Chord Shapes</h2></div><p class="muted small">Hear a new color, follow the voice that gives it character, then develop it into a part.</p></div>
     <div class="chord-mode"><div class="seg chord-groups" id="chordGroup" aria-label="Chord shape group"><button type="button" data-group="open">Open chords</button><button type="button" data-group="movable">Movable shapes</button></div><p class="small muted" id="chordGroupHint"></p></div>
     <div class="card chord-controls"><label class="f"><span>Root</span><select id="chordRoot"></select></label><label class="f"><span>Genre</span><select id="chordGenre"></select></label><label class="f"><span>Diagram labels</span><select id="chordLabels"><option value="finger">Fingers</option><option value="note">Notes</option><option value="degree">Chord degrees</option></select></label></div>
     <div class="chord-summary"><h2 id="chordName"></h2><span class="small muted" id="chordCount" aria-live="polite"></span></div>
@@ -1015,7 +1028,7 @@ const DEF = {
   ear: { deg: { lv: 1, ans: {}, recent: [] }, iv: { lv: 1, ans: {}, recent: [] }, chord: { lv: 1, ans: {}, recent: [] } },
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
-  riffs: [], ex: {}, learn: {},
+  riffs: [], ex: {}, exskip: [], learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
   ui: { exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
@@ -2166,26 +2179,27 @@ function pedalFor(k, f) {
   c.sort((a, b) => Math.abs(a[1] - f) - Math.abs(b[1] - f)); return nt(c[0][0], c[0][1], 1);
 }
 const EXCATS = ['Fretboard fluency', 'Arpeggios and chords', 'Technique', 'Riff building'];
-/* ---------- essentials: the exercises worth most, in order ---------- */
+/* ---------- featured studies ---------- */
 const ESSENTIALS = [
-  { id: 'rh_sub', why: 'Timing is what a band notices first. Feeling the subdivision keeps you locked to the drummer.' },
-  { id: 'notemap', why: 'Know where every note is and you can move any riff or chord to any key or position.' },
-  { id: 'rh_pend', why: 'A hand that never stops keeps every strum pattern in time, even the syncopated ones.' },
-  { id: 'pentall', why: 'The scale most rock riffs and leads come from. Five boxes cover the whole neck.' },
-  { id: 'rh_chug', why: 'Palm-muted 8ths and gallops are the right-hand engine of rock riffs.' },
-  { id: 'triads', why: 'Small chords for parts that sit above the bass and the other guitar.' },
-  { id: 'dstops', why: 'Two-note riffs in 3rds and 6ths: the melodic glue of emo and indie guitar.' },
-  { id: 'v_emo_moving', why: 'A moving shape under ringing open strings: the core sound of emo, alternative and shoegaze.' },
-  { id: 'rh_sync', why: 'Pushes and anticipations make a riff groove instead of plod.' },
-  { id: 'octaves', why: 'One shape for big melodic lines that cut through a loud band.' },
-  { id: 'majcaged', why: 'The major scale, and its relative minor, in every position: the map behind melodies and progressions.' },
-  { id: 'cagedarp', why: 'The chord tones inside each position, so your lines land on the chord.' }
+  {"id":"adv_pedals","why":"Keep open strings ringing while the harmony changes underneath."},
+  {"id":"adv_inner","why":"Hold the outer notes still and make one inner voice change the mood."},
+  {"id":"adv_motif","why":"Develop a small melodic idea across changing harmony."},
+  {"id":"adv_displace","why":"Hear a three-note cell move across the bar without losing 4/4."},
+  {"id":"v_emo_facgce","why":"Explore an alternate tuning through overlapping voices and a two-bar answer."},
+  {"id":"adv_quartal","why":"Hear stacked fourths acquire new colors against a fixed bass."},
+  {"id":"v_gaze_bloom","why":"Shape a melody inside a sustained drone instead of changing every note."},
+  {"id":"rh_odd","why":"Make asymmetric groups feel like a phrase you could sing."},
+  {"id":"v_emo_maj9","why":"Turn a sliding extended voicing into a clear top-note melody."},
+  {"id":"v_alt_5add9","why":"Use ninths and register to give a heavy riff a different identity."},
+  {"id":"rh_echo","why":"Make the spaces between notes part of the rhythmic pattern."},
+  {"id":"twofive","why":"Connect chord changes with guide tones and controlled tension."}
 ];
 const ESS_IX = Object.fromEntries(ESSENTIALS.map((x, i) => [x.id, i]));
 function isEss(id) { return Object.prototype.hasOwnProperty.call(ESS_IX, id); }
 function essList() { return ESSENTIALS.map(x => ({ ...x, e: EX.find(e => e.id === x.id) })).filter(x => x.e); }
 function exComplete(e) { const st = exStat(e.id); return e.steps.every((_, i) => st.done[i]); }
-function essNext() { return essList().find(x => !exComplete(x.e)) || null; }
+function exSkipped(id) { return S.exskip.includes(id); }
+function essNext() { return essList().find(x => !exComplete(x.e) && !exSkipped(x.id)) || null; }
 const EX = [
   { id: 'pentall', cat: 'Positions and scales', title: 'Minor pentatonic: all five boxes', keyed: 'min', key0: 9, labels: 'degree', lvl: 'Intermediate', about: 'Link the five pentatonic boxes until the whole neck feels like one scale. Works in any key.', tip: 'Shift on the string where the boxes overlap. Watch the scale-degree labels: know where every root (1) and b3 is.', steps: [
     { n: 'Boxes 1 and 2', d: 'Up box 1, down box 2, in 8th notes.', bpm: 70, goal: 130, build: k => pad(seq(pentBox(k, 0).concat(rev(pentBox(k, 1))), 0.5)) },
@@ -2409,7 +2423,8 @@ function renderRhythm() {
   if (P.ex && P.host === 'rhythm' && !$('#exPlayer').hidden) { renderExPlayer(); return; }
   $('#rMain').hidden = false; const pl = $('#exPlayer'); if (pl.parentElement === $('#view-rhythm')) pl.hidden = true;
   const sec = (lab, xs) => xs.length ? `<div class="stack" style="gap:8px"><span class="label">${lab}</span><div class="excards">${xs.map(exCard).join('')}</div></div>` : '';
-  $('#rEx').innerHTML = sec('Essentials', RX.filter(e => isEss(e.id)).sort((a, b) => ESS_IX[a.id] - ESS_IX[b.id])) + sec('More rhythm', RX.filter(e => !isEss(e.id)));
+  const rhythm = EX.filter(e=>e.cat === 'Rhythm');
+  $('#rEx').innerHTML = sec('Featured studies', rhythm.filter(e => isEss(e.id)).sort((a, b) => ESS_IX[a.id] - ESS_IX[b.id])) + sec('More rhythm', rhythm.filter(e => !isEss(e.id)));
 }
 
 /* ---------- guided exercises: player ---------- */
@@ -2427,6 +2442,7 @@ function exRevOf(e, i, key) {
 function exDueList() {
   const t = dayKey(), out = [];
   for (const e of EX) {
+    if (exSkipped(e.id)) continue;
     exStat(e.id);
     const keys = e.keyed ? Object.keys(S.ex[e.id].contexts).map(Number) : [null];
     for (const key of keys) e.steps.forEach((_, i) => { const r = exRevOf(e, i, key); if (r && r.due <= t) out.push({ e, i, key, due: r.due }); });
@@ -2442,6 +2458,7 @@ const FOCUS = {
   'Chord Shapes': 'the open strings ringing under the moving notes. Keep that shimmer going between shapes.'
 };
 function focusCue(e, sd) {
+  if (sd.listen) return sd.listen;
   if (sd.create) return 'a riff you would want to play again. Keep the tempo steady and let the chord on beat 1 anchor each bar.';
   if (e.voicing && e.id.startsWith('v_shape_')) return e.id === 'v_shape_triads' ? 'the same chord tones in a new order. Follow the bass and top note through each inversion.' : e.id === 'v_shape_shells' ? 'the 3rd and 7th changing the chord quality. Keep each note clear and the changes unhurried.' : 'the one note that changes the chord quality. Keep the other notes steady and listen to that difference.';
   if (sd.drone) return `how each note feels against the drone. ${SC_COLOR[e.scale] ? `The ${SC_COLOR[e.scale].map(c => IVL[c]).join(' and ')} are what make it sound like ${scName(e.scale)}.` : ''}`;
@@ -2509,7 +2526,7 @@ function exData(keyPc) {
   const mn = nz.length ? Math.min(...nz) : 0, mx = Math.max(0, ...frets), bf = (frets.includes(0) || mn <= 3) ? 0 : mn - 1;
   return { keyPc, ev, L, bar, spot, echo: sd.echo || 0, groups: sd.groups || (bar === 7 ? [2, 2, 3] : null), click: sd.click || '', hasCnt: ev.some(e => e.cnt), swing: sd.swing || 0, tun: TUNE[tk].m, names: tuneNames(tk), tuneKey: tk, ppb: clamp(42 / gap, 90, 190), bf, bt: Math.min(20, Math.max(bf + 5, mx + 1)) };
 }
-function exRebuild() { Object.assign(P, exData(exKey())); }
+function exRebuild() { P.previous = null; P.forecast = null; Object.assign(P, exData(exKey())); }
 function exPlayEv(e, t, spb, dest, tuning) {
   const d = dest || P.bus, tun = tuning || P.tun;
   if (e.air) return;
@@ -2575,14 +2592,14 @@ function exPause() {
   renderExTransport();
 }
 function exStop() {
-  exPause(); P.cursor = 0; P.viewPos = 0; P.passStart = 0; P.loops = 0; P.reviewCold = false;
+  P.previous = null; exPause(); P.cursor = 0; P.viewPos = 0; P.passStart = 0; P.loops = 0; P.reviewCold = false;
   if (P.ev.length && !$('#exPlayer').hidden) { exDraw(0); exBoard(0); exStatus(0, true); }
   renderExTransport();
 }
 function exSeek(pos) {
   if (!P.ex) return;
   if (P.running) exPause();
-  P.viewPos = clamp(pos, 0, P.L); P.passStart = P.viewPos; P.reviewCold = false;
+  P.previous = null; P.viewPos = clamp(pos, 0, P.L); P.passStart = P.viewPos; P.reviewCold = false;
   P.cursor = evIndexAt(Math.min(P.viewPos, P.L - 1e-6)); P.lastIdx = -2;
   exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); renderExTransport();
 }
@@ -2643,11 +2660,8 @@ function exSched() {
     }
     const boundary = seg.startT + d.L * spb;
     if (boundary > hz || !S.ui.exopts.loop || P.preview) break;
-    const sd = P.ex.steps[P.step], full = seg.passStart === 0, technical = !sd.observe && !sd.create;
-    const key = full && technical && exCycleOn() ? (d.keyPc + 5) % 12 : d.keyPc;
-    const goal = exStat(P.ex.id, d.keyPc).done[P.step] ? 260 : sd.goal;
-    const bpm = full && technical && S.ui.exopts.ladder && seg.bpm < goal ? Math.min(goal, seg.bpm + 4) : seg.bpm;
-    const next = exSegment(key === d.keyPc ? d : exData(key), bpm, boundary, 0, 0);
+    const plan = exNextLoop(d,seg.bpm,seg.passStart===0);
+    const next = exSegment(plan.data,plan.bpm,boundary,0,0);
     P.loopQueue.push(next); P.audio = next;
   }
 }
@@ -2680,6 +2694,7 @@ function exFrame() {
   P.frame = requestAnimationFrame(exFrame);
 }
 function exLoopEnd(next) {
+  P.previous = {ev:P.ev,L:P.L,bar:P.bar,keyPc:P.keyPc,tun:P.tun,names:P.names,echo:P.echo,hasCnt:P.hasCnt};
   if (!P.preview && P.passStart === 0) { logRun('played', P.bpm); setTimeout(renderExHistPanel, 0); }
   const keyChange = next.data.keyPc !== P.keyPc, tempoChange = next.bpm !== P.bpm;
   Object.assign(P, next.data); P.bpm = next.bpm; P.startT = next.startT; P.startBeat = 0; P.countUntil = 0; P.passStart = 0; P.loops++; P.lastIdx = -2;
@@ -2710,7 +2725,7 @@ function exStepNote(dir) {
   exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor); renderExTransport();
   const s = `Note ${P.cursor + 1} of ${P.ev.length} · step-through mode`; P.status = s; $('#pStatus').textContent = s;
 }
-function exLabel(n) { const pc = (P.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return S.ui.exopts.fingers && n.fg ? String(n.fg) : (n.f === 0 ? 'O' : ''); }
+function exLabel(n, data = P) { const pc = (data.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - data.keyPc + 12) % 12]; return S.ui.exopts.fingers && n.fg ? String(n.fg) : (n.f === 0 ? 'O' : ''); }
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
@@ -2726,7 +2741,7 @@ let exC = null, exCF = 0;
 function exColors(force) {
   if (exC && !force && (exCF++ % 120)) return exC;
   const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
-  exC = { bg: v('--surface'), ink: v('--ink'), muted: v('--muted'), line: v('--line'), warn: v('--warn'), onSem: v('--on-sem'), accent: v('--accent') };
+  exC = { bg: v('--surface'), ink: v('--ink'), muted: v('--muted'), line: v('--line'), warn: v('--warn'), onSem: v('--warn-ink'), accent: v('--accent') };
   return exC;
 }
 function rrect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
@@ -2735,6 +2750,37 @@ function drawPick(g, x, y, p, col) {
   if (p === 'D') { g.moveTo(x - 5, y + 5); g.lineTo(x - 5, y - 4); g.lineTo(x + 5, y - 4); g.lineTo(x + 5, y + 5); g.stroke(); g.fillRect(x - 5, y - 5.5, 10, 2.6); }
   else { g.moveTo(x - 5, y - 5); g.lineTo(x, y + 5); g.lineTo(x + 5, y - 5); g.stroke(); }
 }
+function exNextLoop(data, bpm, full) {
+  const sd=P.ex.steps[P.step],technical=!sd.observe&&!sd.create;
+  const key=full&&exCycleOn()?(data.keyPc+5)%12:data.keyPc;
+  const goal=exStat(P.ex.id,data.keyPc).done[P.step]?260:sd.goal;
+  const tempo=full&&technical&&S.ui.exopts.ladder&&bpm<goal?Math.min(goal,bpm+4):bpm;
+  return {data:key===data.keyPc?data:exData(key),bpm:tempo};
+}
+function exForecast() {
+  if (!P.ex || !P.ex.steps[P.step] || !S.ui.exopts.loop || P.preview) return [];
+  const o=S.ui.exopts,sd=P.ex.steps[P.step];
+  const signature=[P.ex.id,P.step,P.keyPc,P.bpm,sd.goal,P.passStart,P.spot?.join('-'),o.keycycle,o.ladder,exStat(P.ex.id,P.keyPc).done[P.step],exStat(P.ex.id,(P.keyPc+5)%12).done[P.step]].join('|');
+  if(P.forecast?.signature===signature)return P.forecast.loops;
+  const loops=[];let data=exData(P.keyPc),bpm=P.bpm;
+  for(let i=0;i<2;i++){
+    const next=exNextLoop(data,bpm,i>0||P.passStart===0);
+    loops.push(next);data=next.data;bpm=next.bpm;
+  }
+  P.forecast={signature,loops};return loops;
+}
+function exUpcoming(pos, forecast) {
+  const panel=$('#pUpcoming'),next=forecast[0],change=next&&(next.data.keyPc!==P.keyPc||next.bpm!==P.bpm);
+  panel.hidden=!change;if(!change)return;
+  const keyChange=next.data.keyPc!==P.keyPc,name=(keyChange?keyName(next.data.keyPc,P.ex)+' · ':'')+next.bpm+' bpm';
+  const nameNode=$('#pUpcomingName');if(nameNode.textContent!==name)nameNode.textContent=name;
+  const remaining=Math.max(1,Math.ceil(P.L-Math.max(0,pos)-1e-6));
+  $('#pUpcomingWhen').textContent=P.running?'in '+remaining+' '+(P.bar===7?'eighths':'beats'):'after this loop';
+  panel.classList.toggle('soon',P.running&&remaining<=P.bar);
+  const first=next.data.ev.filter(e=>e.n.length).slice(0,4).flatMap(e=>e.n),seen=new Set(),opening=first.filter(n=>{const id=n.s+':'+n.f;if(seen.has(id))return false;seen.add(id);return true;}).slice(0,6).map(n=>next.data.names[n.s]+':'+n.f).join('  ');
+  const notes=$('#pUpcomingNotes');if(notes.textContent!==opening)notes.textContent=opening;
+}
+
 function exDraw(pos) {
   const cv = $('#pCanvas'); if (!cv || !P.ev.length || $('#exPlayer').hidden) return;
   const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
@@ -2742,6 +2788,10 @@ function exDraw(pos) {
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
   const C = exColors();
   g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
+  const forecast=exForecast(); exUpcoming(pos,forecast);
+  const segments=[]; if(P.previous)segments.push({data:P.previous,start:-P.previous.L,current:false});
+  segments.push({data:P,start:0,current:true}); let end=P.L;
+  if(S.ui.exopts.loop)for(let i=0;i<2;i++){const data=forecast[i]?.data||P;segments.push({data,start:end,current:false});end+=data.L;}
   const local = pos >= P.L && !P.running ? P.L : Math.max(0, pos % P.L);
   const scroll = $('#pScroll'); scroll.max = P.L; scroll.value = local;
   const location = local >= P.L ? 'End' : `Bar ${Math.floor(local / P.bar) + 1} · beat ${Math.floor(local % P.bar) + 1}`;
@@ -2749,13 +2799,13 @@ function exDraw(pos) {
   const top = 70, sh = 27, left = 24, bot = top + 5 * sh, ph = Math.round(Math.min(W * 0.28, 190)), ppb = P.ppb;
   g.textBaseline = 'middle';
   const b0 = Math.floor(pos - ph / ppb) - 1, b1 = Math.ceil(pos + (W - ph) / ppb) + 1;
-  for (let b = Math.max(0, b0); b <= b1; b++) {
+  for (let b = Math.max(P.previous?-P.previous.L:0, b0); b <= b1; b++) {
     if (!S.ui.exopts.loop && b > P.L) break;
     const x = ph + (b - pos) * ppb; if (x < left) continue;
-    const rel = b % P.L, bar = rel % P.bar === 0;
+    const segment=segments.find(d=>b>=d.start&&b<d.start+d.data.L)||segments.at(-1),rel=b-segment.start,bar=rel%segment.data.bar===0;
     g.strokeStyle = bar ? C.muted : C.line; g.lineWidth = bar ? 1.4 : 1; g.globalAlpha = bar ? 0.6 : 1;
     g.beginPath(); g.moveTo(x, top - 10); g.lineTo(x, bot + 10); g.stroke(); g.globalAlpha = 1;
-    if (bar && !P.hasCnt) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / P.bar + 1), x + 4, bot + 22); }
+    if (bar && !P.hasCnt) { g.fillStyle = C.muted; g.font = '500 10px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / segment.data.bar + 1), x + 4, bot + 22); }
   }
   for (let s = 0; s < 6; s++) {
     const y = top + s * sh; g.strokeStyle = C.muted; g.globalAlpha = 0.45; g.lineWidth = 0.8 + s * 0.3;
@@ -2764,15 +2814,18 @@ function exDraw(pos) {
   }
   let curK = -1, curIdx = -1;
   if (pos >= 0) { curK = Math.floor(pos / P.L); curIdx = evIndexAt(pos - curK * P.L); }
-  const kNow = Math.max(0, curK);
-  for (let k = kNow - 1; k <= kNow + 2; k++) {
-    if (k < 0 || (!S.ui.exopts.loop && k > 0)) continue;
-    P.ev.forEach((e, idx) => {
-      const st = k * P.L + swingT(e.t), x = ph + (st - pos) * ppb;
+  for (const segment of segments) {
+    const data=segment.data;
+    if(segment.start>0){
+      const edge=ph+(segment.start-pos)*ppb;
+      if(edge>=left&&edge<W){g.strokeStyle=C.accent;g.lineWidth=2;g.beginPath();g.moveTo(edge,top-16);g.lineTo(edge,bot+10);g.stroke();g.fillStyle=C.accent;g.font='600 11px '+SANS;g.textAlign='left';g.fillText(data.keyPc!==P.keyPc?keyName(data.keyPc,P.ex):'Next loop',Math.min(edge+5,W-90),H-10);}
+    }
+    data.ev.forEach((e, idx) => {
+      const st = segment.start + swingT(e.t), x = ph + (st - pos) * ppb;
       if (x < left - 30 || x > W + 40) return;
-      const cur = k === curK && idx === curIdx, past = !cur && st < pos;
+      const cur = segment.current && curK === 0 && idx === curIdx, past = !cur && st < pos;
       g.globalAlpha = past ? 0.32 : 1;
-      const prev = P.ev[(idx - 1 + P.ev.length) % P.ev.length];
+      const prev = data.ev[(idx - 1 + data.ev.length) % data.ev.length];
       if (e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % P.bar) < 1e-6 && P.L > 2 * P.bar))) { g.fillStyle = cur ? C.warn : C.ink; g.font = '600 15px ' + DISP; g.textAlign = 'left'; g.fillText(e.chord, x - 6, 16); }
       const col = cur ? C.warn : C.ink;
       if (e.cnt) { const beatN = /^\d/.test(e.cnt); g.fillStyle = cur ? C.warn : beatN ? C.ink : C.muted; g.font = (beatN ? '700 12px ' : '500 11px ') + SANS; g.textAlign = 'center'; g.fillText(e.cnt, x, bot + 22); }
@@ -2791,7 +2844,7 @@ function exDraw(pos) {
           rrect(g, x - w / 2, y - 10, w, 20, 6); g.fillStyle = cur ? C.warn : C.bg; g.fill();
           g.lineWidth = 1.5; g.strokeStyle = cur ? C.warn : C.ink; g.stroke();
           g.fillStyle = cur ? C.onSem : C.ink; g.font = '600 12px ' + MONO; g.textAlign = 'center'; g.fillText(txt, x, y + 0.5);
-          const sub = P.labels === 'finger' ? '' : exLabel(n);
+          const sub = P.labels === 'finger' ? '' : exLabel(n,data);
           if (sub) { g.fillStyle = cur ? C.warn : C.muted; g.font = '500 10px ' + SANS; g.textAlign = 'left'; g.fillText(sub, x + w / 2 + 3, y + 8); }
           if (S.ui.exopts.fingers && n.f > 0 && n.fg >= 1 && n.fg <= 4) {
             g.font = '600 11px ' + SANS; g.textAlign = 'right';
@@ -2800,7 +2853,7 @@ function exDraw(pos) {
           }
         });
         if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
-        if (P.echo && !past) e.n.forEach(n => { const ex = x + P.echo * ppb, y = top + n.s * sh; if (ex > W + 20) return; g.globalAlpha = 0.3; g.setLineDash([3, 3]); rrect(g, ex - 9.5, y - 10, 19, 20, 6); g.strokeStyle = C.ink; g.lineWidth = 1.2; g.stroke(); g.setLineDash([]); g.fillStyle = C.muted; g.font = '600 11px ' + MONO; g.textAlign = 'center'; g.fillText(String(n.f), ex, y + 0.5); g.globalAlpha = 1; });
+        if (data.echo && !past) e.n.forEach(n => { const ex = x + data.echo * ppb, y = top + n.s * sh; if (ex > W + 20) return; g.globalAlpha = 0.3; g.setLineDash([3, 3]); rrect(g, ex - 9.5, y - 10, 19, 20, 6); g.strokeStyle = C.ink; g.lineWidth = 1.2; g.stroke(); g.setLineDash([]); g.fillStyle = C.muted; g.font = '600 11px ' + MONO; g.textAlign = 'center'; g.fillText(String(n.f), ex, y + 0.5); g.globalAlpha = 1; });
         if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30); }
       }
       g.globalAlpha = 1;
@@ -2892,25 +2945,25 @@ function renderExLib() {
   const query = S.ui.exQuery.toLowerCase().trim();
   if ($('#exSearch').value !== S.ui.exQuery) $('#exSearch').value = S.ui.exQuery;
   $('#exRecent').hidden = !!query;
-  const hit = e => !query || [e.title, e.about, e.cat, isEss(e.id) ? 'essential ' + ESSENTIALS[ESS_IX[e.id]].why : ''].join(' ').toLowerCase().includes(query);
-  const cats = skip => EXCATS.map(cat => {
+  const hit = e => !query || [e.title, e.about, e.cat, isEss(e.id) ? 'featured study ' + ESSENTIALS[ESS_IX[e.id]].why : ''].join(' ').toLowerCase().includes(query);
+  const cats = skip => [...new Set(EX.map(e=>e.cat))].map(cat => {
     const items = EX.filter(e => e.cat === cat && hit(e) && !(skip && isEss(e.id))).sort((a, b) => isEss(b.id) - isEss(a.id)); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(exCard).join('')}</div></div>`;
   }).join('');
   if (!query) {
     const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, rest = EX.filter(e => EXCATS.includes(e.cat) && !isEss(e.id)).length;
-    $('#exList').innerHTML = `<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="label">Essentials: start here</span><span class="small muted">${done} of ${ess.length} complete</span></div><p class="small muted" style="margin:0">The ${ess.length} exercises that pay off most for playing and writing riffs in a band, in the order to learn them. They include rhythm and scale workouts, which open in their own sections. Everything else is extra.</p><div class="excards">${ess.map(x => exCard(x.e)).join('')}</div></div>` +
-      `<details class="more" id="exMore"${S.ui.exMore ? ' open' : ''}><summary>All other exercises (${rest})</summary><div class="stack" style="gap:18px;margin-top:14px">${cats(true)}</div></details>`;
+    $('#exList').innerHTML = `<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="label">Advanced studies: explore a sound</span><span class="small muted">${done} of ${ess.length} complete</span></div><p class="small muted" style="margin:0">${ess.length} studies for alternative, Midwest emo and shoegaze: discover a sound, isolate the challenge, then develop a phrase. Start anywhere; familiar technique and scale workouts remain below.</p><div class="excards">${ess.map(x => exCard(x.e)).join('')}</div></div>` +
+      `<details class="more" id="exMore"${S.ui.exMore ? ' open' : ''}><summary>All studies &amp; foundations (${rest})</summary><div class="stack" style="gap:18px;margin-top:14px">${cats(true)}</div></details>`;
     return;
   }
-  $('#exList').innerHTML = cats(false) || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a skill such as triads, legato or arpeggios.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
+  $('#exList').innerHTML = cats(false) || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a sound or skill such as Lydian, inner voice, motif or legato.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
 }
 function exCard(e) {
   {
       const st = exStat(e.id), done = e.steps.filter((_, i) => st.done[i]).length, ns = nextStep(e), bests = Object.values(st.best), best = bests.length ? Math.max(...bests) : 0;
       const lr = S.exlog.findLast ? S.exlog.findLast(x => x.id === e.id) : [...S.exlog].reverse().find(x => x.id === e.id);
       const ess = isEss(e.id) ? ESSENTIALS[ESS_IX[e.id]] : null;
-      return `<button class="excard${ess ? ' isess' : ''}" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed && !/any key/.test(e.lvl) ? ' · any key' : ''}</span></span>${ess ? `<span class="small"><span class="tag ess">Essential ${ESS_IX[e.id] + 1}</span>${esc(ess.why)}</span>` : `<span class="small muted">${esc(e.about)}</span>`}<span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
+      return `<button class="excard${ess ? ' isess' : ''}" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed && !/any key/.test(e.lvl) ? ' · any key' : ''}</span></span>${ess ? `<span class="small"><span class="tag ess">Study ${ESS_IX[e.id] + 1}</span>${esc(ess.why)}</span>` : `<span class="small muted">${esc(e.about)}</span>`}<span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${exSkipped(e.id) ? ' · Skipped recommendation' : ''}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
   }
 }
 function renderExTransport() {
@@ -2920,6 +2973,7 @@ function renderExTransport() {
   $('#pFingers').checked = !!S.ui.exopts.fingers;
   $('#pFingerHint').hidden = !S.ui.exopts.fingers;
   $('#pFingerHint').innerHTML = P.ev.some(e => e.n.some(n => n.fg)) ? fingerLegend() + '<span class="finger-reading">Small numbers = fingers · large tab numbers = frets</span>' : 'No finger suggestions for this step. Tab numbers show frets.';
+  if(P.ex)exUpcoming(P.running?exPos():P.viewPos,exForecast());
   renderMini();
 }
 function renderExMeta() {
@@ -2941,7 +2995,8 @@ function renderExSteps() {
 }
 function renderExPlayer() {
   const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step];
-  $('#pCat').textContent = `${isEss(e.id) ? `Essential ${ESS_IX[e.id] + 1} of ${ESSENTIALS.length} · ` : ''}${e.cat} · ${e.lvl}`;
+  $('#pCat').textContent = `${isEss(e.id) ? `Study ${ESS_IX[e.id] + 1} of ${ESSENTIALS.length} · ` : ''}${e.cat} · ${e.lvl}`;
+  $('#pSkip').setAttribute('aria-pressed',exSkipped(e.id)); $('#pSkip').textContent = exSkipped(e.id) ? 'Skipped · undo' : 'Too easy — skip';
   $('#pTitle').textContent = e.title; $('#pAbout').textContent = e.about;
   const focused = S.ui.focusEx === e.id; $('#pFocusPick').classList.add('focus-choice'); $('#pFocusPick').setAttribute('aria-pressed', focused); $('#pFocusPick').textContent = focused ? '✓ Current focus' : 'Make my focus';
   renderExSteps();
@@ -2949,7 +3004,7 @@ function renderExPlayer() {
   $('#pClean').textContent = sd.observe ? 'Heard it' : sd.create ? 'Good take' : 'Clean';
   $('#pCriteriaTitle').textContent = sd.observe ? 'What to listen for' : sd.create ? 'What makes a good take?' : 'What counts as clean?';
   $('#pNextStep').hidden = !(st.done[P.step] && P.step < e.steps.length - 1);
-  $('#pCrit').textContent = sd.observe ? 'Listen to each note and the whole chord. Mark Heard it when you can recognize the sound.' : sd.create ? 'Keep the pulse, use the shapes deliberately, and mark a version you would want to play again. Save or record it for next time.' : 'Clean: keep going with clear notes and a steady pulse. Almost: a few notes or changes need work. Messy: stopped or lost the beat. Two clean runs suggest a higher tempo.';
+  $('#pCrit').textContent = sd.criteria || (sd.observe ? 'Listen to each note and the whole chord. Mark Heard it when you can recognize the sound.' : sd.create ? 'Keep the pulse, use the shapes deliberately, and mark a version you would want to play again. Save or record it for next time.' : 'Clean: keep going with clear notes and a steady pulse. Almost: a few notes or changes need work. Messy: stopped or lost the beat. Two clean runs suggest a higher tempo.');
   $('#pLadder').disabled = !!(sd.observe || sd.create);
   $('#pTip').textContent = e.tip;
   const fresh = !st.done[P.step] && !st.bpm[P.step] && !sd.create, rv = exRevOf(e, P.step), due = rv && rv.due <= dayKey() && (st.rated || {})[P.step] !== dayKey();
@@ -3023,12 +3078,12 @@ function renderDue() {
   $('#dueBox').innerHTML = h ? '<div class="hr"></div><h3>Due for review</h3>' + h : '';
 }
 function renderUpNext() {
-  const ess = essList(), essOpen = ess.filter(x => !exComplete(x.e)).map(x => ({ e: x.e }));
-  const others = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => !isEss(x.e.id) && x.st.last && x.e.steps.some((_, i) => !x.st.done[i])).sort((a, b) => (a.st.last || '').localeCompare(b.st.last || ''));
+  const ess = essList(), essOpen = ess.filter(x => !exComplete(x.e) && !exSkipped(x.id)).map(x => ({ e: x.e }));
+  const others = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => !isEss(x.e.id) && !exSkipped(x.e.id) && x.st.last && x.e.steps.some((_, i) => !x.st.done[i])).sort((a, b) => (a.st.last || '').localeCompare(b.st.last || ''));
   const list = essOpen.slice(0, 3).concat(others).slice(0, 4);
-  $('#upNextSum').textContent = `Essentials: ${ess.length - essOpen.length} of ${ess.length} complete`;
-  const rr = recentRuns(1)[0], resume = rr && Date.now() - rr.x.t < 14 * 864e5 ? `<div class="weak"><div><div style="font-weight:500">Last time: ${esc(rr.e.title)}</div><div class="small muted">Step ${rr.x.s + 1}: ${esc(rr.e.steps[rr.x.s].n)}${runLine(rr.x, rr.e) ? ' · ' + esc(runLine(rr.x, rr.e)) : ''} · ${ago(rr.x.t)}</div></div><button class="btn primary" type="button" ${resAttr(rr.x)}>Resume</button></div>` : '';
-  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${isEss(e.id) ? `<span class="tag ess">Essential ${ESS_IX[e.id] + 1}</span>` : ''}${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">Every exercise is complete. Pick any one to keep it in your hands.</p>');
+  $('#upNextSum').textContent = `Featured studies: ${ess.filter(x=>exComplete(x.e)).length} complete · ${ess.filter(x=>exSkipped(x.id)).length} skipped`;
+  const rr = recentRuns(20).find(x=>!exSkipped(x.e.id)), resume = rr && Date.now() - rr.x.t < 14 * 864e5 ? `<div class="weak"><div><div style="font-weight:500">Last time: ${esc(rr.e.title)}</div><div class="small muted">Step ${rr.x.s + 1}: ${esc(rr.e.steps[rr.x.s].n)}${runLine(rr.x, rr.e) ? ' · ' + esc(runLine(rr.x, rr.e)) : ''} · ${ago(rr.x.t)}</div></div><button class="btn primary" type="button" ${resAttr(rr.x)}>Resume</button></div>` : '';
+  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${isEss(e.id) ? `<span class="tag ess">Study ${ESS_IX[e.id] + 1}</span>` : ''}${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">No unskipped studies remain. Revisit a favorite, or undo a skip in its player.</p>');
 }
 
 /* ---------- learn path: helpers ---------- */
@@ -3684,7 +3739,7 @@ function vBox(move, tune, big, labels = 'degree') {
     else {
       const y = top+(f-base)*fs+fs/2, kind = vKind(n.lab), label = labels === 'finger' ? n.fg || '' : labels === 'note' ? nn(n.midi%12) : n.lab;
       s += `<circle cx="${x}" cy="${y}" r="10" fill="${col[kind]}"/>`;
-      if (label) s += `<text class="chord-dot-label" x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="600" fill="${kind === 'note' ? 'var(--surface)' : 'var(--on-sem)'}" font-family="var(--font-mono)">${esc(label)}</text>`;
+      if (label) s += `<text class="chord-dot-label" x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="600" fill="${kind === 'note' ? 'var(--surface)' : `var(--${kind}-ink)`}" font-family="var(--font-mono)">${esc(label)}</text>`;
     }
     s += `<text class="chord-fret-label" x="${x}" y="${top+rows*fs+19}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="var(--font-mono)">${f == null ? '×' : f}</text>`;
     s += `<text x="${x}" y="${top+rows*fs+36}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
@@ -3694,6 +3749,20 @@ function vBox(move, tune, big, labels = 'degree') {
 
 /* ---------- chord reference ---------- */
 const CHORD_QUALITIES = {
+  "maj9":{"suffix":"maj9","iv":[0,4,7,11,2],"roles":["1","3","5","7","9"]},
+  "madd9":{"suffix":"m(add9)","iv":[0,3,7,2],"roles":["1","b3","5","9"]},
+  "maj7sharp11":{"suffix":"maj7#11","iv":[0,4,7,11,6],"roles":["1","3","5","7","#11"]},
+  "add9add11":{"suffix":"add9(add11)","iv":[0,4,7,2,5],"roles":["1","3","5","9","11"]},
+  "m11":{"suffix":"m11","iv":[0,3,7,10,2,5],"roles":["1","b3","5","b7","9","11"]},
+  "69":{"suffix":"6/9","iv":[0,4,7,9,2],"roles":["1","3","5","6","9"]},
+  "m9":{"suffix":"m9","iv":[0,3,7,10,2],"roles":["1","b3","5","b7","9"]},
+  "maj13sharp11":{"suffix":"maj13#11","iv":[0,4,7,11,2,6,9],"roles":["1","3","5","7","9","#11","13"]},
+  "13":{"suffix":"13","iv":[0,4,7,10,2,9],"roles":["1","3","5","b7","9","13"]},
+  "7flat9":{"suffix":"7b9","iv":[0,4,7,10,1],"roles":["1","3","5","b7","b9"]},
+  "m69":{"suffix":"m6/9","iv":[0,3,7,9,2],"roles":["1","b3","5","6","9"]},
+  "7sus4":{"suffix":"7sus4","iv":[0,5,7,10],"roles":["1","4","5","b7"]},
+  "mmaj9":{"suffix":"m(maj9)","iv":[0,3,7,11,2],"roles":["1","b3","5","7","9"]},
+  "7sharp11":{"suffix":"7#11","iv":[0,4,7,10,6],"roles":["1","3","5","b7","#11"]},
   major:{suffix:'',iv:[0,4,7],roles:['1','3','5']}, minor:{suffix:'m',iv:[0,3,7],roles:['1','b3','5']},
   '5':{suffix:'5',iv:[0,7],roles:['1','5']}, '7':{suffix:'7',iv:[0,4,7,10],roles:['1','3','5','b7']},
   m7:{suffix:'m7',iv:[0,3,7,10],roles:['1','b3','5','b7']}, maj7:{suffix:'maj7',iv:[0,4,7,11],roles:['1','3','5','7']},
@@ -3702,50 +3771,30 @@ const CHORD_QUALITIES = {
 };
 const CHORD_GENRES = {all:'All genres',rock:'Rock',alternative:'Alternative',blues:'Blues',emo:'Midwest emo',shoegaze:'Shoegaze',funk:'Funk',jazz:'Jazz',metal:'Metal'};
 const CHORD_GRIPS = [
-  {"id":"open-c","group":"open","root":0,"quality":"major","f":[null,3,2,0,1,0],"fingers":[0,3,2,0,1,0],"genres":["rock","alternative"],"use":"A starting point for open-position chord changes.","core":true},
-  {"id":"open-a","group":"open","root":9,"quality":"major","f":[null,0,2,2,2,0],"fingers":[0,0,1,2,3,0],"genres":["rock","blues"],"use":"Let the A string anchor a bright rhythm part.","core":true},
-  {"id":"open-g","group":"open","root":7,"quality":"major","f":[3,2,0,0,0,3],"fingers":[2,1,0,0,0,3],"genres":["rock","alternative"],"use":"A full six-string chord for broad strumming.","core":true},
-  {"id":"open-d","group":"open","root":2,"quality":"major","f":[null,null,0,2,3,2],"fingers":[0,0,0,1,3,2],"genres":["rock","alternative"],"use":"Keep the low strings out for a clear upper-string sound.","core":true},
-  {"id":"open-e","group":"open","root":4,"quality":"major","f":[0,2,2,1,0,0],"fingers":[0,2,3,1,0,0],"genres":["rock","blues"],"use":"A strong low-root chord for riffs and rhythm.","core":true},
-  {"id":"open-am","group":"open","root":9,"quality":"minor","f":[null,0,2,2,1,0],"fingers":[0,0,2,3,1,0],"genres":["rock","alternative"],"use":"Pairs naturally with C, Dm and E.","core":true},
-  {"id":"open-em","group":"open","root":4,"quality":"minor","f":[0,2,2,0,0,0],"fingers":[0,2,3,0,0,0],"genres":["rock","shoegaze"],"use":"Let the open strings sustain under a slow rhythm.","core":true},
-  {"id":"open-dm","group":"open","root":2,"quality":"minor","f":[null,null,0,2,3,1],"fingers":[0,0,0,2,3,1],"genres":["rock","alternative"],"use":"A compact minor sound on the top four strings.","core":true},
-  {"id":"open-a7","group":"open","root":9,"quality":"7","f":[null,0,2,0,2,0],"fingers":[0,0,1,0,2,0],"genres":["blues","rock"],"use":"Use beside D7 and E7 for a twelve-bar blues.","core":false},
-  {"id":"open-b7","group":"open","root":11,"quality":"7","f":[null,2,1,2,0,2],"fingers":[0,2,1,3,0,4],"genres":["blues","rock"],"use":"The turnaround chord in a blues in E.","core":false},
-  {"id":"open-c7","group":"open","root":0,"quality":"7","f":[null,3,2,3,1,0],"fingers":[0,3,2,4,1,0],"genres":["blues","jazz"],"use":"Add tension before moving to F.","core":false},
-  {"id":"open-d7","group":"open","root":2,"quality":"7","f":[null,null,0,2,1,2],"fingers":[0,0,0,2,1,3],"genres":["blues","rock"],"use":"A useful change from D, often resolving to G.","core":false},
-  {"id":"open-e7","group":"open","root":4,"quality":"7","f":[0,2,0,1,0,0],"fingers":[0,2,0,1,0,0],"genres":["blues","rock"],"use":"Use as the V chord in A, or as a blues tonic.","core":false},
-  {"id":"open-g7","group":"open","root":7,"quality":"7","f":[3,2,0,0,0,1],"fingers":[3,2,0,0,0,1],"genres":["blues","jazz"],"use":"Hear the tension release when it moves to C.","core":false},
-  {"id":"open-cadd9","group":"open","root":0,"quality":"add9","f":[null,3,2,0,3,3],"fingers":[0,2,1,0,3,4],"genres":["alternative","emo","shoegaze"],"use":"Keep the top strings ringing through an acoustic riff.","core":false},
-  {"id":"open-dsus2","group":"open","root":2,"quality":"sus2","f":[null,null,0,2,3,0],"fingers":[0,0,0,1,3,0],"genres":["alternative","shoegaze"],"use":"Lift the high-string finger from D for an open color.","core":false},
-  {"id":"open-dsus4","group":"open","root":2,"quality":"sus4","f":[null,null,0,2,3,3],"fingers":[0,0,0,1,3,4],"genres":["rock","alternative"],"use":"Resolve the high G down to F-sharp in D.","core":false},
-  {"id":"open-asus2","group":"open","root":9,"quality":"sus2","f":[null,0,2,2,0,0],"fingers":[0,0,1,2,0,0],"genres":["alternative","emo","shoegaze"],"use":"Open B and E give a light, ringing texture.","core":false},
-  {"id":"open-asus4","group":"open","root":9,"quality":"sus4","f":[null,0,2,2,3,0],"fingers":[0,0,1,2,3,0],"genres":["rock","alternative"],"use":"Move the B-string note down one fret to resolve to A.","core":false},
-  {"id":"open-cmaj7","group":"open","root":0,"quality":"maj7","f":[null,3,2,0,0,0],"fingers":[0,3,2,0,0,0],"genres":["emo","jazz"],"use":"Let the open B add a soft major-seventh color.","core":false},
-  {"id":"open-fmaj7","group":"open","root":5,"quality":"maj7","f":[null,null,3,2,1,0],"fingers":[0,0,3,2,1,0],"genres":["emo","shoegaze"],"use":"An airy upper-string alternative to a full F barre.","core":false},
-  {"id":"open-em7","group":"open","root":4,"quality":"m7","f":[0,2,2,0,3,0],"fingers":[0,2,3,0,4,0],"genres":["alternative","shoegaze","funk"],"use":"The high D adds color while the low E stays grounded.","core":false},
-  {"id":"open-am7","group":"open","root":9,"quality":"m7","f":[null,0,2,0,1,0],"fingers":[0,0,2,0,1,0],"genres":["funk","jazz"],"use":"Use a short strum and leave room between changes.","core":false},
-  {"id":"open-dm7","group":"open","root":2,"quality":"m7","f":[null,null,0,2,1,1],"fingers":[0,0,0,2,1,1],"genres":["jazz","funk"],"use":"Connect it with G7 and Cmaj7 for a ii–V–I.","core":false,"barres":[[4,5,1]]},
-  {"id":"power-e","group":"movable","root":5,"quality":"5","f":[1,3,3,null,null,null],"fingers":[1,3,4,0,0,0],"genres":["rock","metal","alternative"],"use":"Mute the upper strings and move the whole grip.","core":true,"form":"Low-E power chord"},
-  {"id":"power-a","group":"movable","root":0,"quality":"5","f":[null,3,5,5,null,null],"fingers":[0,1,3,4,0,0],"genres":["rock","metal","alternative"],"use":"The A-string root keeps power-chord riffs off the low E.","core":true,"form":"A-string power chord"},
-  {"id":"barre-e-major","group":"movable","root":5,"quality":"major","f":[1,3,3,2,1,1],"fingers":[1,3,4,2,1,1],"genres":["rock","alternative"],"use":"Find the root on the low E, then keep this shape.","core":true,"form":"E-form major","barres":[[0,5,1]]},
-  {"id":"barre-e-minor","group":"movable","root":5,"quality":"minor","f":[1,3,3,1,1,1],"fingers":[1,3,4,1,1,1],"genres":["rock","alternative","shoegaze"],"use":"Compare with E-form major: only the third changes.","core":true,"form":"E-form minor","barres":[[0,5,1]]},
-  {"id":"barre-a-major","group":"movable","root":0,"quality":"major","f":[null,3,5,5,5,3],"fingers":[0,1,3,3,3,1],"genres":["rock","alternative"],"use":"A movable major chord with its root on the A string.","core":true,"form":"A-form major","barres":[[1,5,3],[2,4,5]]},
-  {"id":"barre-a-minor","group":"movable","root":0,"quality":"minor","f":[null,3,5,5,4,3],"fingers":[0,1,3,4,2,1],"genres":["rock","alternative"],"use":"A useful partner to the E-form barre shapes.","core":true,"form":"A-form minor","barres":[[1,5,3]]},
-  {"id":"barre-e-7","group":"movable","root":5,"quality":"7","f":[1,3,1,2,1,1],"fingers":[1,3,1,2,1,1],"genres":["blues","rock"],"use":"Move it through I, IV and V in a blues.","core":true,"form":"E-form dominant 7","barres":[[0,5,1]]},
-  {"id":"barre-a-7","group":"movable","root":0,"quality":"7","f":[null,3,5,3,5,3],"fingers":[0,1,3,1,4,1],"genres":["blues","rock"],"use":"A second root position for dominant-seventh changes.","core":true,"form":"A-form dominant 7","barres":[[1,5,3]]},
-  {"id":"barre-e-m7","group":"movable","root":5,"quality":"m7","f":[1,3,1,1,1,1],"fingers":[1,3,1,1,1,1],"genres":["funk","jazz"],"use":"Try short, clipped strokes instead of a full ringing strum.","core":true,"form":"E-form minor 7","barres":[[0,5,1]]},
-  {"id":"barre-a-m7","group":"movable","root":0,"quality":"m7","f":[null,3,5,3,4,3],"fingers":[0,1,3,1,2,1],"genres":["funk","jazz"],"use":"Keep it near A-form dominant 7 for economical changes.","core":true,"form":"A-form minor 7","barres":[[1,5,3]]},
-  {"id":"barre-a-maj7","group":"movable","root":0,"quality":"maj7","f":[null,3,5,4,5,3],"fingers":[0,1,3,2,4,1],"genres":["emo","jazz"],"use":"Use the major seventh for a softer, less settled sound.","core":false,"form":"A-form major 7","barres":[[1,5,3]]},
-  {"id":"barre-a-sus2","group":"movable","root":0,"quality":"sus2","f":[null,3,5,5,3,3],"fingers":[0,1,3,4,1,1],"genres":["alternative","shoegaze"],"use":"A ringing sus color that follows an A-string root.","core":false,"form":"A-form sus2","barres":[[1,5,3]]},
-  {"id":"barre-e-sus4","group":"movable","root":5,"quality":"sus4","f":[1,3,3,3,1,1],"fingers":[1,3,3,3,1,1],"genres":["rock","alternative"],"use":"Resolve to E-form major by lowering its fourth.","core":false,"form":"E-form sus4","barres":[[0,5,1],[1,3,3]]},
-  {"id":"triad-root","group":"movable","root":0,"quality":"major","f":[null,null,null,5,5,3],"fingers":[0,0,0,3,3,1],"genres":["funk","emo","jazz"],"use":"A small major chord that leaves room for bass and drums.","core":false,"form":"G–B–e triad · root position","barres":[[3,4,5]]},
-  {"id":"triad-first","group":"movable","root":0,"quality":"major","f":[null,null,null,9,8,8],"fingers":[0,0,0,2,1,1],"genres":["funk","emo","jazz"],"use":"Put the third in the bass for a smooth nearby change.","core":false,"form":"G–B–e triad · first inversion","barres":[[4,5,8]]},
-  {"id":"triad-second","group":"movable","root":0,"quality":"major","f":[null,null,null,12,13,12],"fingers":[0,0,0,1,2,1],"genres":["funk","emo","jazz"],"use":"Put the fifth in the bass; listen to the top note.","core":false,"form":"G–B–e triad · second inversion","barres":[[3,5,12]]},
-  {"id":"shell-7","group":"movable","root":0,"quality":"7","f":[null,3,null,3,5,null],"fingers":[0,1,0,1,3,0],"genres":["jazz","blues"],"use":"Play only the marked strings: root, third and flat seventh.","core":false,"form":"Dominant 7 shell","barres":[[1,3,3]]},
-  {"id":"shell-maj7","group":"movable","root":0,"quality":"maj7","f":[null,3,null,4,5,null],"fingers":[0,1,0,2,3,0],"genres":["jazz","emo"],"use":"Root, third and major seventh give the chord its character.","core":false,"form":"Major 7 shell"},
-  {"id":"shell-m7","group":"movable","root":0,"quality":"m7","f":[null,3,null,3,4,null],"fingers":[0,1,0,1,2,0],"genres":["jazz","funk"],"use":"Use the root, minor third and flat seventh for sparse comping.","core":false,"form":"Minor 7 shell","barres":[[1,3,3]]},
-  {"id":"dominant-sharp9","group":"movable","root":4,"quality":"7sharp9","f":[null,7,6,7,8,null],"fingers":[0,2,1,3,4,0],"genres":["rock","blues","funk"],"use":"A tense dominant color for a gritty riff or accented stab.","core":false,"form":"7♯9 grip"}
+  {"id":"open-emaj9","group":"open","root":4,"quality":"maj9","f":[0,2,4,1,4,0],"fingers":[0,2,3,1,4,0],"genres":["alternative","emo"],"use":"F-sharp and D-sharp make the 9th/major-7th shimmer. Compare with the minor add9 below.","form":"Major-9 shimmer","lesson":"adv_pedals","core":true},
+  {"id":"open-emadd9","group":"open","root":4,"quality":"madd9","f":[0,2,4,0,0,0],"fingers":[0,1,3,0,0,0],"genres":["alternative","shoegaze"],"use":"The low F-sharp rubs against the open G. Pick them slowly before adding reverb.","form":"Close-second rub","lesson":"adv_pedals","core":true},
+  {"id":"open-amaj9","group":"open","root":9,"quality":"maj9","f":[null,0,6,6,0,0],"fingers":[0,0,2,3,0,0],"genres":["emo","shoegaze"],"use":"The open B and E sit above a compact major-7/3rd pair. Let the top notes outlast the bass.","form":"Open-string halo","lesson":"adv_pedals","core":true},
+  {"id":"open-cmaj9","group":"open","root":0,"quality":"maj9","f":[null,3,2,4,3,0],"fingers":[0,2,1,4,3,0],"genres":["emo","alternative","jazz"],"use":"Keep C and D still; move the B on the G string down to A for C6/9.","form":"Moving inner voice","lesson":"adv_inner","core":true,"omit":[7]},
+  {"id":"open-flydian","group":"open","root":5,"quality":"maj7sharp11","f":[null,null,3,2,0,0],"fingers":[0,0,2,1,0,0],"genres":["shoegaze","emo"],"use":"The open B is the sharp 11. Compare it with B-flat to hear Lydian brightness become a suspension.","form":"Lydian open strings","lesson":"adv_pedals","core":true,"omit":[7]},
+  {"id":"open-dcluster","group":"open","root":2,"quality":"add9add11","f":[null,5,4,0,3,0],"fingers":[0,3,2,0,1,0],"genres":["alternative","shoegaze"],"use":"F-sharp and G sit a semitone apart. Pick the inner pair, then let the open E hang above it.","form":"Major-third / fourth cluster","lesson":"adv_pedals","core":true,"omit":[7]},
+  {"id":"open-bm11","group":"open","root":11,"quality":"m11","f":[null,2,0,2,3,0],"fingers":[0,1,0,2,3,0],"genres":["emo","shoegaze"],"use":"Open D and E supply the minor third and 11th. Connect to Amaj9 without silencing the high E.","form":"Minor-11 pedal","lesson":"adv_pedals","core":true,"omit":[7,2]},
+  {"id":"open-dlydian","group":"open","root":2,"quality":"maj7sharp11","f":[null,null,0,1,2,2],"fingers":[0,0,0,1,2,3],"genres":["alternative","emo"],"use":"G-sharp, C-sharp and F-sharp float over the open D. Resolve G-sharp up to A.","form":"Compact Lydian tension","lesson":"adv_pedals","core":true,"omit":[7]},
+  {"id":"open-c69","group":"open","root":0,"quality":"69","f":[null,3,2,2,3,0],"fingers":[0,3,1,1,4,0],"genres":["emo","jazz"],"use":"Keep the top D as a melody; raise A on the G string to B to return to Cmaj9.","form":"6/9 with a shared top note","lesson":"adv_inner","core":false,"omit":[7],"barres":[[2,3,2]]},
+  {"id":"open-am9","group":"open","root":9,"quality":"m9","f":[null,0,5,5,0,0],"fingers":[0,0,2,3,0,0],"genres":["emo","funk","jazz"],"use":"Open B adds the 9th while G and C make a minor-7th shell. Alternate bass and upper notes.","form":"Minor-9 halo","lesson":"adv_pedals","core":false},
+  {"id":"open-e69","group":"open","root":4,"quality":"69","f":[0,4,4,1,0,0],"fingers":[0,3,4,1,0,0],"genres":["alternative","emo"],"use":"C-sharp and F-sharp add the 6th and 9th around an open E/B frame. Keep the G-sharp clear.","form":"6/9 across open strings","lesson":"adv_pedals","core":false},
+  {"id":"open-glydian","group":"open","root":7,"quality":"maj13sharp11","f":[3,null,4,4,2,0],"fingers":[2,0,3,4,1,0],"genres":["shoegaze","jazz"],"use":"C-sharp and open E add sharp-11/13 color. Let that E become the root of the next chord.","form":"Lydian with a common-tone E","lesson":"adv_pedals","core":false,"omit":[7,2]},
+  {"id":"color-maj9","group":"movable","root":0,"quality":"maj9","f":[null,3,2,4,3,null],"fingers":[0,2,1,4,3,0],"genres":["alternative","emo","jazz"],"use":"Hold the bass and top 9th still. Lower the inner major seventh to the sixth for the next color.","form":"Compact major 9","lesson":"adv_inner","core":true,"omit":[7]},
+  {"id":"color-m9","group":"movable","root":0,"quality":"m9","f":[null,3,1,3,3,null],"fingers":[0,2,1,3,4,0],"genres":["emo","funk","jazz"],"use":"Minor third, flat seventh and 9th make a complete character without the fifth. Try sparse offbeats.","form":"Compact minor 9","lesson":"adv_inner","core":true,"omit":[7]},
+  {"id":"color-69","group":"movable","root":0,"quality":"69","f":[null,3,2,2,3,3],"fingers":[0,2,1,1,3,4],"genres":["alternative","emo","jazz"],"use":"Use the 6th instead of a seventh for a suspended sense of rest. Keep the upper notes light.","form":"6/9 fan","lesson":"adv_inner","core":true,"barres":[[2,3,2]]},
+  {"id":"color-lydian","group":"movable","root":0,"quality":"maj7sharp11","f":[null,3,4,4,5,null],"fingers":[0,1,2,3,4,0],"genres":["shoegaze","emo","jazz"],"use":"The sharp 11 sits beside the major seventh. Arpeggiate before adding a slow glide strum.","form":"Lydian four-note grip","lesson":"adv_quartal","core":true,"omit":[7]},
+  {"id":"color-m11","group":"movable","root":0,"quality":"m11","f":[8,null,8,8,6,null],"fingers":[2,0,3,4,1,0],"genres":["alternative","emo","jazz"],"use":"Put the 11th on top for a small melody. Move that note down two frets to the minor third.","form":"Minor 11 on top","lesson":"adv_quartal","core":true,"omit":[7,2]},
+  {"id":"color-13","group":"movable","root":0,"quality":"13","f":[null,3,2,3,5,5],"fingers":[0,2,1,3,4,4],"genres":["funk","jazz","alternative"],"use":"The 13th softens a dominant chord. Hear the third and flat seventh pull into a new tonic.","form":"Dominant 13","lesson":"adv_inner","core":true,"omit":[7,2],"barres":[[4,5,5]]},
+  {"id":"color-add9","group":"movable","root":0,"quality":"add9","f":[null,null,10,9,8,10],"fingers":[0,0,3,2,1,4],"genres":["alternative","emo","shoegaze"],"use":"The top 9th turns a closed triad into a melodic hook. Move only that top note when writing a part.","form":"High-string add9","lesson":"adv_motif","core":true},
+  {"id":"color-quartal","group":"movable","root":0,"quality":"7sus4","f":[null,3,3,3,6,null],"fingers":[0,1,1,1,4,0],"genres":["alternative","shoegaze","jazz"],"use":"Root, fourth and flat seventh form stacked fourths. Keep the third out and let the bass supply direction.","form":"Stacked-fourth suspension","lesson":"adv_quartal","core":true,"omit":[7],"barres":[[1,3,3]]},
+  {"id":"color-flat9","group":"movable","root":0,"quality":"7flat9","f":[null,3,2,3,2,null],"fingers":[0,3,1,4,2,0],"genres":["jazz","alternative"],"use":"The flat 9 wants to fall into the fifth of a minor tonic. Play it briefly before resolving.","form":"Dominant flat 9","lesson":"adv_inner","core":false,"omit":[7]},
+  {"id":"color-m69","group":"movable","root":0,"quality":"m69","f":[8,null,7,8,8,10],"fingers":[2,0,1,3,3,4],"genres":["jazz","emo"],"use":"The natural sixth separates this from minor 7. Use the top 9th as a quiet melody.","form":"Minor 6/9 spread","lesson":"adv_quartal","core":false,"barres":[[3,4,8]]},
+  {"id":"color-minormaj9","group":"movable","root":0,"quality":"mmaj9","f":[null,3,1,4,3,null],"fingers":[0,2,1,4,3,0],"genres":["alternative","shoegaze","jazz"],"use":"Minor third against major seventh gives film-like tension. Lower that seventh for a minor-9 release.","form":"Minor / major-seventh tension","lesson":"adv_inner","core":false,"omit":[7]},
+  {"id":"color-domlydian","group":"movable","root":0,"quality":"7sharp11","f":[null,3,4,3,5,null],"fingers":[0,1,2,1,3,0],"genres":["funk","jazz","alternative"],"use":"Keep the sharp 11 while lowering the major seventh by one fret. Compare directly with the Lydian grip.","form":"Lydian dominant","lesson":"adv_quartal","core":false,"omit":[7],"barres":[[1,3,3]]}
 ];
 function chordCatalog(group, root = null) {
   return CHORD_GRIPS.filter(g=>g.group === group && (group === 'movable' || root == null || g.root === root)).map(g=>{
@@ -3755,10 +3804,10 @@ function chordCatalog(group, root = null) {
     const f = g.f.map(f=>f == null ? null : f+shift), barres = (g.barres || []).map(([a,b,f])=>[a,b,f+shift]);
     const roles = f.map((f,i)=>f == null ? '' : quality.roles[quality.iv.indexOf((TUNE.std.m[5-i]+f-key+120)%12)]);
     const move = {root:key,f,fingers:g.fingers,barres,roles};
-    const notes = vNotes(move,'std'), bass = notes[0].midi%12, missing5 = quality.iv.includes(7) && !notes.some(n=>(n.midi-key+120)%12 === 7);
+    const notes = vNotes(move,'std'), bass = notes[0].midi%12, omitted = quality.iv.filter(iv=>!notes.some(n=>(n.midi-key+120)%12 === iv)).map(iv=>quality.roles[quality.iv.indexOf(iv)]);
     move.name = nn(key)+quality.suffix+(bass === key ? '' : '/'+nn(bass));
     const held = f.filter(f=>f>0);
-    return {...g,root:key,move,missing5,low:held.length ? Math.min(...held) : 0,high:Math.max(0,...held)};
+    return {...g,root:key,move,omitted,low:held.length ? Math.min(...held) : 0,high:Math.max(0,...held)};
   });
 }
 const VO = {bus:null,timer:null,preview:null,results:[]};
@@ -3773,31 +3822,128 @@ function vSound(v, mv, mode) {
 function renderVoicings() {
   const o = S.ui.chordRef, open = o.group === 'open', root = open && o.openRoot === 'all' ? null : open ? +o.openRoot : S.ui.voKey || 0;
   $$('#chordGroup [data-group]').forEach(b=>{ b.setAttribute('aria-pressed', b.dataset.group === o.group); b.tabIndex = b.dataset.group === o.group ? 0 : -1; });
-  $('#chordGroupHint').textContent = open ? 'Familiar grips with open strings. Each chord stays in its own key.' : 'Power chords and E- and A-form barres first. Every sounding string is fretted, so the whole grip can move.';
+  $('#chordGroupHint').textContent = open ? 'Ringing pedals, close seconds and modal colors. Open strings give each grip a fixed root.' : 'Compact extensions, clusters and stacked fourths. Every sounding string is fretted; move the whole grip to a new root.';
   $('#chordRoot').innerHTML = (open ? '<option value="all">All open chords</option>' : '') + Array.from({length:12},(_,k)=>`<option value="${k}">${esc(nn(k))}</option>`).join('');
   $('#chordRoot').value = root == null ? 'all' : root;
-  $('#chordGenre').innerHTML = Object.entries(CHORD_GENRES).map(([id,name])=>`<option value="${id}">${name}</option>`).join(''); $('#chordGenre').value = o.genre;
+  if(o.genre !== 'all' && !CHORD_GRIPS.some(g=>g.genres.includes(o.genre)))o.genre = 'all';
+  $('#chordGenre').innerHTML = Object.entries(CHORD_GENRES).filter(([id])=>id === 'all'||CHORD_GRIPS.some(g=>g.genres.includes(id))).map(([id,name])=>`<option value="${id}">${name}</option>`).join(''); $('#chordGenre').value = o.genre;
   $('#chordLabels').value = o.labels;
   VO.results = chordCatalog(o.group,root).filter(g=>o.genre === 'all' || g.genres.includes(o.genre));
   const core = VO.results.filter(g=>g.core), extra = VO.results.filter(g=>!g.core), filtered = o.genre !== 'all' || open && root != null;
-  $('#chordName').textContent = open ? root == null ? 'Open essentials' : nn(root)+' open chords' : nn(root)+' movable shapes';
-  $('#chordCount').textContent = filtered ? `${VO.results.length} hand-picked grips` : `${core.length} essentials${extra.length ? ' · '+extra.length+' more when you need them' : ''}`;
+  $('#chordName').textContent = open ? root == null ? 'Open-string discoveries' : nn(root)+' open chords' : nn(root)+' movable shapes';
+  $('#chordCount').textContent = filtered ? `${VO.results.length} hand-picked grips` : `${core.length} featured colors${extra.length ? ' · '+extra.length+' more when you need them' : ''}`;
   $('#chordLegend').innerHTML = o.labels === 'finger' ? fingerLegend() : o.labels === 'note' ? 'Dots show note names. The row below each diagram shows fret numbers.' : 'Dots show chord degrees. The row below each diagram shows fret numbers.';
   const card = g=>{
     const i = VO.results.indexOf(g);
-    return `<article class="chord-card" data-grip="${g.id}"><div class="chord-card-heading"><b>${esc(g.move.name)}</b><span class="small muted">${open ? 'Open chord' : `Frets ${g.low}–${g.high}`}</span></div>${g.form ? `<span class="chord-form small">${esc(g.form)}</span>` : ''}${vBox(g.move,'std',true,o.labels)}<div class="chord-tags">${g.genres.map(id=>`<span class="tag">${CHORD_GENRES[id]}</span>`).join('')}</div><p class="chord-use small">${esc(g.use)}</p>${g.missing5 ? '<span class="small muted">5th omitted</span>' : ''}<div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">Arpeggio</button></div></article>`;
+    return `<article class="chord-card" data-grip="${g.id}"><div class="chord-card-heading"><b>${esc(g.move.name)}</b><span class="small muted">${open ? 'Open chord' : `Frets ${g.low}–${g.high}`}</span></div>${g.form ? `<span class="chord-form small">${esc(g.form)}</span>` : ''}${vBox(g.move,'std',true,o.labels)}<div class="chord-tags">${g.genres.map(id=>`<span class="tag">${CHORD_GENRES[id]}</span>`).join('')}</div><p class="chord-use small">${esc(g.use)}</p><span class="small muted chord-formula">${vNotes(g.move,'std').map(n=>n.lab).join(' · ')}${g.omitted.length ? ' · omits '+g.omitted.join(', ') : ''}</span><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">Arpeggio</button></div><button class="btn chord-study" type="button" data-study="${g.lesson}" data-index="${i}">Related study →</button></article>`;
   };
   $('#chordGrid').innerHTML = core.map(card).join('');
   $('#chordGrid').hidden = !core.length;
   $('#chordExtras').hidden = !extra.length;
   $('#chordExtras').open = !!(o.extras || filtered || !core.length);
-  $('#chordExtrasSummary').textContent = open ? `Sevenths, sus chords & colors · ${extra.length}` : `Colors, triads & shells · ${extra.length}`;
+  $('#chordExtrasSummary').textContent = open ? `More open-string colors · ${extra.length}` : `More tensions & resolutions · ${extra.length}`;
   $('#chordExtraGrid').innerHTML = extra.map(card).join('');
   const noOpen = open && root != null && !chordCatalog('open',root).length;
   $('#chordEmpty').hidden = !!VO.results.length;
   $('#chordEmpty').innerHTML = `<h3>${noOpen ? `No selected open grips for ${esc(nn(root))}` : 'No grips match this genre'}</h3><p class="small muted">${noOpen ? 'Open strings give these chords fixed keys. Use a movable grip for this root.' : 'Choose All genres to see this small set of practical shapes.'}</p><button class="btn" type="button" id="chordReset" data-movable="${noOpen}">${noOpen ? 'See movable shapes' : 'All genres'}</button>`;
   voPreviewState();
 }
+
+/* ---------- advanced studies: hear, isolate, develop ---------- */
+function studyGrips(ids, key) {
+  return ids.map(id => {
+    const g = CHORD_GRIPS.find(g=>g.id === id);
+    return chordCatalog(g.group,g.group === 'movable' ? key : g.root).find(x=>x.id === id).move;
+  });
+}
+function studyCycle(moves, mode = 'arp') {
+  const ev = [];
+  moves.forEach((m,b)=>{
+    const N = vNotes(m,'std');
+    const notes = mode === 'hold' ? [blk(N,'D',4)] : mode === 'space' ? [blk(N,'D',1),{n:[],d:3}] : mode === 'sync' ? null : VPAT.twinkle(N);
+    if (notes) { let t = b*4; notes.forEach(e=>{ev.push({...e,t,chord:m.name});t+=e.d;}); }
+    else ev.push(...strumBar('D>--U>--D>-',cleanN(N),2,b*4,{name:m.name}));
+  });
+  return {ev,L:moves.length*4};
+}
+function studyShift(move, key, ref = 0) {
+  let delta = (key-ref+12)%12;
+  if (Math.max(...move.f.filter(f=>f!=null))+delta>20) delta-=12;
+  return {...move,root:key,name:nn(key)+move.suffix,f:move.f.map(f=>f==null?null:f+delta)};
+}
+function innerMoves(key) {
+  return [
+    {suffix:'maj9',f:[null,3,2,4,3,null],fingers:[0,2,1,4,3,0]},
+    {suffix:'6/9',f:[null,3,2,2,3,null],fingers:[0,3,1,1,4,0]},
+    {suffix:'m6/9',f:[null,3,1,2,3,null],fingers:[0,3,1,2,4,0]},
+    {suffix:'m9',f:[null,3,1,3,3,null],fingers:[0,2,1,3,4,0]}
+  ].map(m=>studyShift(m,key));
+}
+function quartalMoves(key) {
+  return [
+    {suffix:'m11 (no root)',f:[null,null,5,5,6,null],fingers:[0,0,1,2,3,0]},
+    {suffix:'sus4',f:[null,null,7,7,8,null],fingers:[0,0,1,2,3,0]},
+    {suffix:'6/9 (no 3rd)',f:[null,null,9,9,10,null],fingers:[0,0,1,2,3,0]},
+    {suffix:'sus4',f:[null,null,7,7,8,null],fingers:[0,0,1,2,3,0]}
+  ].map(m=>studyShift(m,key,2));
+}
+function motifHarmony(key) {
+  return [['color-maj9',0],['color-m9',9],['color-lydian',5],['color-13',7]].map(([id,offset])=>studyGrips([id],(key+offset)%12)[0]);
+}
+function motifLine(key, mode) {
+  const phrases = [
+    [[1,5,3],[1,3,1],[0,3,1],[1,5,3],[1,4,2],[1,5,3]],
+    [[1,1,1],[2,4,3],[1,5,4],[1,1,1],[2,1,1],[2,2,2]],
+    [[0,5,3],[0,3,1],[2,4,2],[0,5,3],[1,5,3],[0,1,1]],
+    [[2,4,2],[2,2,1],[1,5,3],[1,3,1],[2,2,1],[2,0,0]]
+  ];
+  const ev=[],harmony=motifHarmony(key);
+  phrases.forEach((phrase,b)=>{
+    let t=b*4;
+    if(mode==='displaced'){ev.push({t,d:.5,n:[],chord:harmony[b].name});t+=.5;}
+    const notes=mode==='approach'?phrase:phrase.slice(0,3),dur=mode==='approach'?[.5,.5,1,.5,.5,1]:[.5,.5,1];
+    notes.forEach(([string,fret,finger],i)=>{ev.push({t,d:dur[i],n:[nt(string,fret+key,fret+key===0?0:finger||1)],chord:harmony[b].name,p:i%2?'U':'D'});t+=dur[i];});
+    if(t<(b+1)*4)ev.push({t,d:(b+1)*4-t,n:[],chord:harmony[b].name});
+  });return {ev,L:16};
+}
+function displacedCell(key, per) {
+  const cell=[[2,5,3],[1,3,1],[0,3,1]],count=12*per;
+  return {L:12,ev:Array.from({length:count},(_,i)=>{const [string,fret,finger]=cell[i%3];return {t:i/per,d:1/per,n:[nt(string,fret+key,finger)],p:i%2?'U':'D',acc:i%3===0,cnt:cntFor(i%(4*per),per),chord:nn(key)+'sus2'};})};
+}
+const ADVANCED_STUDIES = [
+  {id:'adv_pedals',cat:'Sound studies',title:'Open strings, changing harmony',lvl:'Advanced · alternative / emo / shoegaze',labels:'chord',about:'Compare major-9 shimmer, minor-second friction and Lydian color. Open strings become a melody that survives the changes.',tip:'Start clean. Use effects after you can hear the two notes making the tension. Let the top strings sustain; mute only the strings outside the grip.',steps:[
+    {n:'Hear the rub',observe:true,d:'Compare Emaj9 with Em(add9). Listen to the close F-sharp/G pair in the minor shape and the D-sharp in the major shape.',bpm:60,goal:60,build:()=>studyCycle(studyGrips(['open-emaj9','open-emadd9','open-emaj9','open-emadd9']),'hold')},
+    {n:'A common-tone phrase',d:'Cmaj9, Amaj9, Fmaj7#11, Bm11. Keep the open high E ringing as its role changes: third, fifth, major seventh, then 11th.',bpm:65,goal:90,listen:'the high E staying present while the bass changes its meaning.',criteria:'Keep the high E connected, make every inner note clear, and land each new bass exactly on beat 1.',build:()=>studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']))},
+    {n:'Leave a hole',d:'Use the same harmony in 3–3–2 accents. Let the held notes fill the spaces; avoid an extra strum to cover a shaky change.',bpm:65,goal:90,build:()=>studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']),'sync')},
+    {n:'A two-bar answer',create:true,d:'The guide gives four bass/harmony cues. Keep the open high E, invent a two-bar arpeggio, then answer it with a different final note. Record both versions.',bpm:65,goal:65,criteria:'Keep one recognizable motif, preserve the ringing high E, and make the second phrase answer the first.',build:()=>studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']),'space')}
+  ]},
+  {id:'adv_inner',cat:'Sound studies',title:'One inner voice changes the mood',keyed:'maj',key0:0,lvl:'Advanced · voice leading',labels:'chord',about:'Major 9 → 6/9 → minor 6/9 → minor 9. The bass and top ninth stay fixed while one inner voice moves at each of the first three changes.',tip:'Follow the inner melody B–A–A–B-flat in C. Then follow the third E–E–E-flat–E-flat. Use a light touch to keep the two outer voices connected.',steps:[
+    {n:'Hear the inner line',observe:true,d:'Four colors of one root. Listen for the one voice that moves at each change; the return to the start resets two voices.',bpm:60,goal:60,build:k=>studyCycle(innerMoves(k),'hold')},
+    {n:'Keep the outside still',d:'Pick the same four-note texture in eighths. Let bass and top ninth sustain while the two inner strings change.',bpm:60,goal:90,criteria:'Hold the outer voices, hear the inner melody, and make each change without a gap. Tempo is secondary to the connected sound.',build:k=>studyCycle(innerMoves(k))},
+    {n:'Displace the accents',d:'Use 3–3–2 chord accents. The inner melody must remain audible even though the changes feel less square.',bpm:65,goal:95,build:k=>studyCycle(innerMoves(k),'sync')},
+    {n:'Write an inner melody',create:true,d:'Keep the bass and top ninth. Make a new order from the four grips; change only an inner note at a time. Sing that line before playing it.',bpm:65,goal:65,criteria:'A listener should hear an intentional inner melody while the outer notes stay still.',build:k=>studyCycle(innerMoves(k),'space')}
+  ]},
+  {id:'adv_motif',cat:'Sound studies',title:'Make a motif survive the changes',keyed:'maj',key0:0,lvl:'Advanced · melody / phrasing',labels:'note',about:'A short question repeats over Imaj9, vi minor9, IVmaj7#11 and V13. Change its target notes and rhythm instead of running another scale shape.',tip:'Sing the phrase first. The silence is part of it. Keep the same contour recognizable when the harmony changes.',steps:[
+    {n:'Question and space',d:'Play a three-note cell in each bar, then leave two beats of space. Hear the target note as part of the named chord.',bpm:70,goal:100,criteria:'Keep the three-note question recognizable and leave the whole written rest. Make every target note sound deliberate.',build:k=>motifLine(k,'simple')},
+    {n:'Start on the and',d:'Move the same question half a beat later. Feel beat 1 without filling it with a note.',bpm:70,goal:100,build:k=>motifLine(k,'displaced')},
+    {n:'Approach and release',d:'Add a chromatic approach into the first two answers. In the third bar, let the sharp 11 ring briefly before releasing it.',bpm:65,goal:95,build:k=>motifLine(k,'approach')},
+    {n:'A phrase with an ending',create:true,d:'The guide sounds each chord on beat 1. Invent a three-note question, repeat its rhythm through the changes, then give bar 4 a clear ending. Record it before changing keys.',bpm:70,goal:70,criteria:'A recognizable motif, intentional rests, and a final phrase that sounds like an answer rather than a scale run.',build:k=>studyCycle(motifHarmony(k),'space')}
+  ]},
+  {id:'adv_displace',cat:'Rhythm',title:'Three-note cells across 4/4',keyed:'maj',key0:0,lvl:'Advanced · math rock',labels:'degree',about:'Repeat a three-note sus2 cell while your foot keeps four beats. The accent moves across bar lines and meets beat 1 again after three bars.',tip:'The meter stays 4/4. Accent every third note, not every new beat. Let the line cross the bar instead of restarting it there.',steps:[
+    {n:'Three across eighths',d:'Three bars of eighth notes. Accents repeat every three notes; count four beats underneath them.',bpm:70,goal:110,criteria:'Keep four steady beats under the moving three-note accents and arrive back on beat 1 after three bars.',build:k=>displacedCell(k,2)},
+    {n:'Three across sixteenths',d:'The same three-note cell in sixteenths. Keep accents distinct and the other notes light.',bpm:55,goal:95,build:k=>displacedCell(k,4)},
+    {n:'Own the pulse',d:'The click drops out every other bar. Keep the cell going and meet the returning click without resetting the phrase.',bpm:55,goal:90,click:'gap',build:k=>displacedCell(k,4)},
+    {n:'Keep the accent, change the phrase',create:true,d:'The tab gives the rhythmic frame. Keep every-third-note accents, replace the cell with three notes of your own, and add a deliberate ending after three bars.',bpm:65,goal:65,criteria:'The three-note accent cycle and four-beat pulse remain clear; the ending lands intentionally on the returning beat 1.',build:k=>displacedCell(k,2)}
+  ]},
+  {id:'adv_quartal',cat:'Sound studies',title:'Stacked fourths over one bass',keyed:'scale',scale:'dorian',scaleName:'Dorian',key0:2,lvl:'Advanced · modal texture',labels:'chord',about:'Three-note fourth stacks change color against a fixed Dorian root: minor 11, suspended fourth, then 6/9. Hear the bass create the chord identity.',tip:'Use the built-in drone, or ask a bass player to hold the root. Play only the D, G and B strings; these small voicings leave space for another guitar.',steps:[
+    {n:'Hear the bass decide',observe:true,drone:true,d:'Listen to the three upper voices against the root drone. Some shapes omit the root or third; the bass supplies the context.',bpm:60,goal:60,build:k=>studyCycle(quartalMoves(k),'hold')},
+    {n:'Three notes, three colors',drone:true,d:'Arpeggiate the four grips. Hear the natural sixth brighten the Dorian sound without turning the line into a major scale exercise.',bpm:65,goal:95,criteria:'Let the drone stay audible, keep the three voices balanced, and hear each tension as a color against the bass.',build:k=>studyCycle(quartalMoves(k))},
+    {n:'A floating rhythm part',drone:true,d:'Short 3–3–2 accents over the steady bass. Release pressure between the stabs so the texture has air.',bpm:65,goal:95,build:k=>studyCycle(quartalMoves(k),'sync')},
+    {n:'Write above the drone',drone:true,create:true,d:'Choose two grips and make a two-bar question/answer. Keep the root drone and use a top-note change as the hook.',bpm:65,goal:65,criteria:'The top note makes a singable hook and the sustained bass remains the center of the phrase.',build:k=>studyCycle(quartalMoves(k),'space')}
+  ]}
+];
+EX.push(...ADVANCED_STUDIES); EXCATS.push('Sound studies');
+ADVANCED_STUDIES.forEach(e=>{if(e.id!=='adv_displace')EX_UNIT[e.id]=e.id==='adv_inner'?'u8':'u9';});
 
 /* ---------- voicings: learn unit ---------- */
 const QUALS = [{ q: 'maj7', iv: [0, 4, 7, 11], f: '1 3 5 7' }, { q: 'add9', iv: [0, 4, 7, 2], f: '1 3 5 9' }, { q: 'sus2', iv: [0, 2, 7], f: '1 2 5' }, { q: '6', iv: [0, 4, 7, 9], f: '1 3 5 6' }, { q: 'm7', iv: [0, 3, 7, 10], f: '1 b3 5 b7' }, { q: 'm9', iv: [0, 3, 7, 10, 2], f: '1 b3 5 b7 9' }, { q: 'maj7#11', iv: [0, 4, 7, 11, 6], f: '1 3 5 7 #11' }];
@@ -3841,48 +3987,47 @@ UNITS.push({ id: 'u9', title: 'Chord shapes for riffs', sum: 'Color tones, open-
 const ROUTINES = {
   auto: { n: "Today's plan", auto: true, blocks: [] },
   quick: { n: 'Quick · 15', blocks: [
-    { tool: 'exercises', ex: 'rh_sub', m: 3, t: 'Warm-up: subdivisions', d: 'Relaxed hands, locked to the click.' },
-    { tool: 'exercises', ex: 'notemap', m: 3, t: 'One note, the whole neck', d: 'Name it before you play it.' },
-    { tool: 'exercises', ex: 'pentall', m: 4, t: 'Pentatonic boxes', d: 'Link two boxes. Try a new key.' },
-    { tool: 'exercises', ex: 'triads', m: 3, t: 'Triads', d: 'Spot the root in every shape.' },
+    { tool: 'exercises', ex: 'adv_inner', m: 4, t: 'One inner voice', d: 'Hold the outside notes and hear the inner line.' },
+    { tool: 'exercises', ex: 'adv_displace', m: 4, t: 'Move the accent', d: 'Keep four beats under the three-note cell.' },
+    { tool: 'exercises', ex: 'adv_motif', m: 5, t: 'Develop a phrase', d: 'Keep the motif; change its target and ending.' },
     { tool: 'ear', m: 2, t: 'Ear training', d: 'Scale degrees. Sing it back first.', setup: () => { S.ui.emode = 'deg'; renderEar(); } } ] },
   deep: { n: 'Deep · 45', blocks: [
-    { tool: 'exercises', ex: 'legato', m: 3, t: 'Warm-up: legato and slides', d: 'Connect the boxes with slides.' },
-    { tool: 'fretboard', m: 3, t: 'Fretboard notes', d: 'Your slow and missed notes come up more often.' },
-    { tool: 'exercises', ex: 'pentall', m: 4, t: 'All five pentatonic boxes', d: 'Turn on the key change each loop.' },
-    { tool: 'exercises', ex: 'majcaged', m: 4, t: 'Major scale positions', d: 'One position, then link it to the next.' },
-    { tool: 'exercises', ex: 'cagedarp', m: 4, t: 'CAGED arpeggios', d: 'Know where every 3rd is.' },
-    { tool: 'exercises', ex: 'rh_pend', m: 4, t: 'Pendulum strumming', d: 'Keep the hand moving through every rest.' },
-    { tool: 'exercises', ex: 'triads', m: 4, t: 'Triad inversions', d: 'Voice-led progressions.' },
-    { tool: 'exercises', ex: 'rh_chug', m: 4, t: 'Chugs and gallops', d: 'Even palm mutes, accents that jump out.' },
-    { tool: 'exercises', ex: 'dstops', m: 4, t: '3rds and 6ths', d: 'Then make a riff from them.' },
-    { tool: 'exercises', ex: 'octaves', m: 3, t: 'Octave riffs', d: 'Mute the string in between.' },
-    { tool: 'exercises', ex: 'rh_sync', m: 3, t: 'Syncopation', d: 'Land the pushes early, then stop dead.' },
-    { tool: 'learn', m: 5, t: 'Lesson', d: 'Next lesson card or unit check.' } ] },
+    { tool:'exercises',ex:'legato',m:2,t:'Warm-up',d:'Relaxed hands and an even sound.' },
+    { tool:'exercises',ex:'adv_pedals',m:7,t:'Open-string colors',d:'Hear the tension, then keep the upper voice connected.' },
+    { tool:'exercises',ex:'adv_inner',m:7,t:'Moving inner voices',d:'Sing the moving note before playing it.' },
+    { tool:'exercises',ex:'adv_motif',m:7,t:'A motif through changes',d:'Keep the contour recognizable.' },
+    { tool:'exercises',ex:'adv_displace',m:6,t:'Rhythmic displacement',d:'Accents cross the bar; your foot stays in four.' },
+    { tool:'exercises',ex:'adv_quartal',m:6,t:'Fourth stacks over a drone',d:'Listen to the bass change the meaning.' },
+    { tool:'exercises',ex:'v_emo_facgce',step:3,m:5,t:'A phrase in another tuning',d:'Write a two-bar question and answer.' },
+    { tool:'ear',m:5,t:'Hear, sing, find',d:'Sing a phrase before finding it on the guitar.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
     { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Compare a few shapes in one key. Listen for the bass and top notes.' },
-    { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 1, m: 5, t: 'Play-along: move the shape', d: 'Two clean runs in a row, then try the variation.' },
-    { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 7, t: 'Your riff', d: 'Write two bars of your own inside the constraint. Record your favorite take on your phone.' },
-    { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 5, t: 'Develop the idea', d: 'Keep the strongest phrase. Change its rhythm or final note, then play the whole idea again.' } ] }
+    { tool: 'exercises', ex: () => 'adv_inner', step: 1, m: 5, t: 'Play-along: move the shape', d: 'Two clean runs in a row, then try the variation.' },
+    { tool: 'exercises', ex: () => 'adv_pedals', step: 3, m: 7, t: 'Your riff', d: 'Write two bars of your own inside the constraint. Record your favorite take on your phone.' },
+    { tool: 'exercises', ex: () => 'adv_pedals', step: 3, m: 5, t: 'Develop the idea', d: 'Keep the strongest phrase. Change its rhythm or final note, then play the whole idea again.' } ] }
 };
 function focusEx() {
-  const chosen = EX.find(e => e.id === S.ui.focusEx); if (chosen) return chosen;
-  const open = EX.filter(e => e.id !== 'legato' && (!e.id.startsWith('sc_') || exStat(e.id).last) && e.steps.some((_, i) => !exStat(e.id).done[i]));
+  const chosen = EX.find(e => e.id === S.ui.focusEx && !exSkipped(e.id)); if (chosen) return chosen;
+  const open = EX.filter(e => !exSkipped(e.id) && e.id !== 'legato' && (!e.id.startsWith('sc_') || exStat(e.id).last) && e.steps.some((_, i) => !exStat(e.id).done[i]));
   const recent = open.filter(e => exStat(e.id).last && dayDiff(exStat(e.id).last, dayKey()) <= 7).sort((a, b) => exStat(b.id).last.localeCompare(exStat(a.id).last));
   if (recent.length) return recent[0];
   const en = essNext(); if (en) return en.e;
+  const advanced = open.find(e=>/advanced/i.test(e.lvl)); if(advanced)return advanced;
   const nu = nextUnit(), linked = open.find(e => EX_UNIT[e.id] === nu.id);
   return linked || open[0] || null;
 }
 function autoBlocks() {
   const minutes = clamp(Math.round(S.ui.planMinutes || S.settings.goal), 5, 90), f = focusEx(), b = [];
-  if (minutes >= 15 && (!f || !f.tuning || f.tuning === 'std')) b.push({ tool: 'exercises', ex: 'legato', m: 2, t: 'Warm-up', d: 'Relaxed hands and an even sound. Save the review material for its first attempt.' });
+  if (minutes >= 15 && !exSkipped('legato') && (!f || !f.tuning || f.tuning === 'std')) b.push({ tool: 'exercises', ex: 'legato', m: 2, t: 'Warm-up', d: 'Relaxed hands and an even sound. Save the review material for its first attempt.' });
   const due = exDueList().slice(0, minutes >= 20 ? 3 : minutes >= 10 ? 1 : 0);
   due.forEach(x => b.push({ tool: 'exercises', ex: x.e.id, step: x.i, key: x.key, m: 1, t: `Review: ${x.e.title}${x.key == null ? '' : ' · ' + keyName(x.key, x.e)}`, d: 'Try the first run before listening or rehearsing.' }));
-  if (minutes >= 20) b.push(lnDue().length ? { tool: 'learn', review: true, m: 3, t: 'Mixed review', d: 'Recall the concepts before revealing an answer.' } : { tool: 'learn', m: 3, t: 'Learn', d: 'Continue your lesson, then connect it to your playing.' });
+  if (minutes >= 20) {
+    if (lnDue().length) b.push({tool:'learn',review:true,m:3,t:'Mixed review',d:'Recall the concepts before revealing an answer.'});
+    else if(f && f.steps.some(s=>s.observe)) b.push({tool:'exercises',ex:f.id,step:f.steps.findIndex(s=>s.observe),key:f.keyed?exStat(f.id).key??f.key0:null,m:3,t:'Hear & map the sound',d:'Hear the color and locate the voice that gives it its character.'});
+  }
   const spare = minutes - b.reduce((n, x) => n + x.m, 0), apply = Math.max(1, Math.floor(spare * 0.3));
   if (f) {
-    const step = nextStep(f), creative = f.steps.findIndex(x => x.create), key = f.keyed ? exStat(f.id).key ?? f.key0 : null;
+    const next = nextStep(f), heard = b.some(x=>x.ex === f.id && f.steps[x.step]?.observe), practice = f.steps.findIndex((s,i)=>i>=next && !s.observe && !s.create), step = heard && practice>=0 ? practice : next, creative = f.steps.findIndex(x => x.create), key = f.keyed ? exStat(f.id).key ?? f.key0 : null;
     b.push({ tool: 'exercises', ex: f.id, step, key, m: spare - apply, t: `Focus: ${f.title}`, d: 'Listen if it is unfamiliar. Work on one change or phrase until it feels comfortable.' });
     b.push({ tool: 'exercises', ex: f.id, step: creative >= 0 ? creative : step, key, m: apply, t: creative >= 0 ? 'Apply: your own riff' : 'Apply: play with less help', d: creative >= 0 ? 'Use the same shapes to make a short riff worth keeping.' : 'Turn off the guide notes, then try a short phrase from memory. Keep the musical pulse.' });
   } else b.push({ tool: 'ear', m: spare, t: 'Hear and sing', d: 'Hear the scale degree, sing it back, then find it on your guitar.' });
@@ -3931,7 +4076,7 @@ function renderPill() {
 function renderRoutine() {
   $('#rtMinutes').value = S.ui.planMinutes || S.settings.goal; $('#rtMinutes').disabled = R.running || S.rtPick !== 'auto';
   const fOpt = e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`;
-  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + `<optgroup label="Essentials">${essList().map(x => fOpt(x.e)).join('')}</optgroup><optgroup label="Everything else">${EX.filter(e => !e.id.startsWith('sc_') && !isEss(e.id)).map(fOpt).join('')}</optgroup>`; $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
+  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + `<optgroup label="Featured studies">${essList().map(x => fOpt(x.e)).join('')}</optgroup><optgroup label="Everything else">${EX.filter(e => !e.id.startsWith('sc_') && !isEss(e.id)).map(fOpt).join('')}</optgroup>`; $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
   if (!ROUTINES[S.rtPick]) S.rtPick = 'auto';
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.auto ? r.n : r.n + ' min'}</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = { n: ROUTINES[key].n, blocks: R.running ? R.blocks : rtBlocks(key) };
@@ -3979,12 +4124,12 @@ function renderWeak() {
 }
 function renderLibrary() {
   const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, nx = essNext();
-  const pill = x => `<button class="esspill${exComplete(x.e) ? ' done' : ''}${nx && nx.id === x.id ? ' next' : ''}" type="button" data-openex="${x.id}" title="${esc(x.e.title)}">${exComplete(x.e) ? '✓' : ESS_IX[x.id] + 1}</button>`;
-  $('#essCard').innerHTML = `<div class="row" style="justify-content:space-between;align-items:baseline"><h3>Essentials</h3><span class="small muted">${done} of ${ess.length} complete</span></div>
-    <p class="small muted" style="margin:0">The ${ess.length} exercises that pay off most for playing and writing riffs in a band, in order: timing, the neck, the pentatonic, rhythm guitar, then the shapes and lines riffs are built from. The rest of the library is extra.</p>
+  const pill = x => `<button class="esspill${exComplete(x.e) ? ' done' : ''}${nx && nx.id === x.id ? ' next' : ''}" type="button" data-openex="${x.id}" title="${esc(x.e.title)}">${exComplete(x.e) ? '✓' : exSkipped(x.id) ? '↷' : ESS_IX[x.id] + 1}</button>`;
+  $('#essCard').innerHTML = `<div class="row" style="justify-content:space-between;align-items:baseline"><h3>Explore &amp; develop</h3><span class="small muted">${done} complete · ${ess.filter(x=>exSkipped(x.id)).length} skipped · ${ess.length} studies</span></div>
+    <p class="small muted" style="margin:0">${ess.length} studies for players who already know the usual shapes. Open-string colors, moving inner voices, melodic development and rhythmic displacement. Choose the sound that makes you want to play.</p>
     <div class="esspills">${ess.map(pill).join('')}</div>
-    ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button></div>` : '<p class="small">All twelve complete. They will keep coming back as reviews; pick anything in the library to go further.</p>'}
-    <div><button class="btn" type="button" data-go="exercises">See all essentials</button></div>`;
+    ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button><button class="btn" type="button" data-skipex="${nx.id}">Too easy — skip</button></div>` : '<p class="small">All featured studies complete. Revisit them in another key, or build a new phrase from one sound.</p>'}
+    <div><button class="btn" type="button" data-go="exercises">See all studies</button></div>`;
 }
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
@@ -4114,6 +4259,8 @@ $('#chordExtrasSummary').addEventListener('click', () => { S.ui.chordRef.extras 
 $('#chordCards').addEventListener('click', e => {
   const reset = e.target.closest('#chordReset');
   if (reset) { voStop(); if (reset.dataset.movable === 'true') S.ui.chordRef.group = 'movable'; S.ui.chordRef.genre = 'all'; save(); renderVoicings(); $('#chordRoot').focus({preventScroll:true}); return; }
+  const study = e.target.closest('[data-study]');
+  if (study) { const shape = VO.results[+study.dataset.index], lesson = EX.find(x=>x.id === study.dataset.study); voStop(); if (lesson.keyed) exStat(lesson.id).key = shape.root; exOpen(lesson.id,0,'voicings'); return; }
   const b = e.target.closest('[data-chord-sound]'); if (!b) return;
   if (VO.preview === b.dataset.chordSound) { voStop(); return; }
   const shape = VO.results[+b.dataset.index]; vSound({tune:'std'},shape.move,b.dataset.mode); VO.preview = b.dataset.chordSound; voPreviewState();
@@ -4149,7 +4296,17 @@ $('#pBack').onclick = () => {
   $('#exLib').hidden = false;
   switchTab(TABS.includes(origin) ? origin : P.host || 'exercises'); window.scrollTo({ top: 0 });
 };
-$('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' : P.ex.id; save(); renderExPlayer(); toast(S.ui.focusEx ? 'Your next session will focus on this exercise.' : 'Automatic practice recommendations restored.'); };
+function skipExercise(id) {
+  const skipped = exSkipped(id);
+  S.exskip = skipped ? S.exskip.filter(x=>x!==id) : [...S.exskip,id];
+  if (!skipped && S.ui.focusEx === id) S.ui.focusEx = '';
+  save(); renderLibrary(); if(curTab === 'today') renderToday(); if(curTab === 'exercises' && $('#exPlayer').hidden) renderExLib();
+  if(P.ex && P.ex.id === id) { $('#pSkip').setAttribute('aria-pressed',!skipped); $('#pSkip').textContent = skipped ? 'Too easy — skip' : 'Skipped · undo'; }
+  toast(skipped ? 'Included in recommendations again.' : 'Skipped in recommendations. Progress stays as it was; undo in the player.');
+}
+$('#pSkip').onclick = () => skipExercise(P.ex.id);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-skipex]');if(b)skipExercise(b.dataset.skipex);});
+$('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' : P.ex.id; if(S.ui.focusEx)S.exskip=S.exskip.filter(id=>id!==P.ex.id); save(); renderExPlayer(); toast(S.ui.focusEx ? 'Your next session will focus on this exercise.' : 'Automatic practice recommendations restored.'); };
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pFingers').onchange = e => { S.ui.exopts.fingers = e.target.checked; save(); renderExTransport(); exDraw(exPos()); exBoard(P.running ? evIndexAt(Math.min(exPos(), P.L - 1e-6)) : P.cursor); };
 $('#pPlay').onclick = exToggle;
@@ -4170,7 +4327,19 @@ $('#pCanvas').addEventListener('wheel', e => {
 $('#pCanvas').addEventListener('click', e => {
   if (!P.ev.length) return;
   const cv = $('#pCanvas'), x = e.clientX - cv.getBoundingClientRect().left, ph = Math.round(Math.min(cv.clientWidth * 0.28, 190));
-  const beat = (P.running ? exPos() % P.L : P.viewPos) + (x - ph) / P.ppb;
+  let beat = (P.running ? exPos() % P.L : P.viewPos) + (x - ph) / P.ppb;
+  if (beat >= P.L && S.ui.exopts.loop) {
+    const future = exForecast(); let start = P.L;
+    for (const next of future) {
+      if (beat < start + next.data.L) {
+        exPause(); Object.assign(P,next.data); P.previous = null; P.forecast = null; P.bpm = next.bpm;
+        P.viewPos = 0; P.passStart = 0; P.loops = 0;
+        if(P.ex.keyed)exStat(P.ex.id).key = P.keyPc;
+        save(); renderExPlayer(); beat -= start; break;
+      }
+      start += next.data.L;
+    }
+  }
   const nearest = P.ev.reduce((best, ev) => Math.abs(swingT(ev.t) - beat) < Math.abs(swingT(best.t) - beat) ? ev : best);
   exSeek(swingT(nearest.t));
 });
@@ -4195,7 +4364,7 @@ $('#pListen').onclick = exListen; $('#pSpot').onchange = e => exSetSpot(e.target
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
 $('#pKey').onchange = e => { exStat(P.ex.id).key = +e.target.value; save(); exLoad(P.step); renderExPlayer(); };
 $('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= cur) k++; exStat(P.ex.id).key = k; save(); exLoad(P.step); renderExPlayer(); toast(`Key: ${keyName(k)}`); };
-$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = Infinity; exReanchor(P.bpm); } } };
+$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = Infinity; exReanchor(P.bpm); } } renderExTransport(); exDraw(P.running?exPos():P.viewPos); };
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { exColors(true); if (P.ex && !$('#exPlayer').hidden) exDraw(exPos()); });
