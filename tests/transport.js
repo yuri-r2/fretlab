@@ -118,7 +118,7 @@ fs.writeFileSync(tmp, source);
       P.labels = 'finger'; S.ui.exopts.fingers = false;
       check(window.__T.exLabel({s:0,f:3,fg:2}) === '', 'finger labels hide on the fretboard');
       S.ui.exopts.fingers = true;
-      check(window.__T.exLabel({s:0,f:3,fg:2}) === '2', 'finger labels show on the fretboard');
+      check(window.__T.exLabel({s:0,f:3,fg:2}) === '', 'None keeps the main marker empty when finger annotations are enabled');
       exStop(); delete AU.ctx.currentTime;
       return failures;
     });

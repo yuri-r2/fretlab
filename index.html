@@ -462,7 +462,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .finger-key b{color:var(--accent);font:600 12px var(--font-mono)}
 .finger-reading{flex-basis:100%;font-size:12px}
 .finger-open{white-space:nowrap}
-.mk .fb-finger{fill:var(--ink);stroke:var(--surface);stroke-width:3px;paint-order:stroke;font-size:10px;font-weight:600;text-anchor:start}
+.mk .fb-finger{fill:var(--ink);stroke:var(--surface);stroke-width:3px;paint-order:stroke;font-size:11px;font-weight:600;text-anchor:start}
 .chord-reference{gap:16px}
 .chord-mode{display:flex;align-items:center;gap:18px}
 .chord-mode>p{flex:1}
@@ -483,13 +483,13 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .chord-card .vbox{width:190px;max-width:100%;height:auto}
 .chord-form{color:var(--muted);font-size:12px;min-height:18px;text-align:center}
 .chord-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;min-height:24px}
-.chord-tags .tag{margin:0;font-size:10px}
+.chord-tags .tag{margin:0;font-size:11px}
 .chord-use{color:var(--muted);font-size:12px;text-align:center;min-height:36px;margin:0}
 .chord-extras>summary{cursor:pointer;font-weight:600;padding:14px 0;border-top:1px solid var(--line)}
 .chord-extras[open]>summary{margin-bottom:12px}
 .chord-audio{justify-content:center;width:100%;margin-top:auto;gap:6px}
 .chord-audio .btn{padding:7px 10px;font-size:12px}
-@media(min-width:1100px){.chord-controls{position:sticky;top:76px;z-index:3;box-shadow:0 4px 18px #00000008}}
+@media(min-width:1100px){.chord-controls{position:sticky;top:calc(var(--hdr-h,65px) + 12px);z-index:3;box-shadow:0 4px 18px #00000008}}
 @media(max-width:620px){.chord-mode{align-items:flex-start;flex-direction:column;gap:10px}.chord-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chord-card{padding:12px 6px}.chord-card-heading{flex-direction:column;gap:0;align-items:center}.chord-card .vbox{width:100%}.chord-use{font-size:11px}.chord-controls label.f{min-width:120px}.chord-audio{flex-wrap:wrap}.chord-summary>#chordCount{margin-left:0}}
 
 .focus-choice[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
@@ -566,9 +566,9 @@ body:has(#settings:not([hidden])){overflow:hidden}
   <div class="volpop" id="volPop" role="dialog" aria-label="Volume" hidden>
     <div class="vhd"><b>Volume</b><button class="btn vmute" id="vMute" type="button" aria-pressed="false">Mute</button></div>
     <div class="vrow"><span>Master</span><input type="range" class="vctl" data-ch="master" min="0" max="100" step="1" aria-label="Master volume"><b class="vval" data-ch="master"></b></div>
-    <div class="vrow"><span>Guitar notes</span><input type="range" class="vctl" data-ch="notes" min="0" max="150" step="1" aria-label="Guitar notes volume"><b class="vval" data-ch="notes"></b></div>
+    <div class="vrow"><span>Notes &amp; tones</span><input type="range" class="vctl" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"><b class="vval" data-ch="notes"></b></div>
     <div class="vrow"><span>Click &amp; drums</span><input type="range" class="vctl" data-ch="click" min="0" max="150" step="1" aria-label="Click and drums volume"><b class="vval" data-ch="click"></b></div>
-    <p class="small muted">Guitar notes is the guide sound in exercises and play-alongs. Click and drums covers the metronome, count-ins and drum backing. Press M anywhere to mute.</p>
+    <p class="small muted">Notes and tones covers exercises, chord previews, ear training and drones. Click and drums covers the metronome, count-ins and drum backing. Press M anywhere to mute.</p>
   </div>
   <div class="inner">
     <div class="brand">
@@ -753,7 +753,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
               <label class="chip"><input type="checkbox" id="pLoop"> Loop</label>
               <label class="chip"><input type="checkbox" id="pCount"> Count-in</label>
               <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
-              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Guitar notes volume"></span>
+              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"></span>
               <label class="chip" title="Speed up 4 bpm every loop"><input type="checkbox" id="pLadder"> +4 bpm / loop</label>
               <label class="chip" id="pKeyCycleChip" title="Move up a 4th every loop to play through all 12 keys"><input type="checkbox" id="pKeyCycle"> New key / loop</label>
             </div>
@@ -1159,7 +1159,7 @@ function ac() {
   if (AU.ctx.state === 'suspended') AU.ctx.resume();
   return AU.ctx;
 }
-function bus(parent) { const g = AU.ctx.createGain(); g.connect(parent || AU.master); return g; }
+function bus(parent) { const g = AU.ctx.createGain(); g.connect(parent || AU.notes); return g; }
 const volGain = (v, max) => Math.pow(Math.max(0, v), 2) * max;
 function volApply() {
   if (!AU.ctx) return; const t = AU.ctx.currentTime, st = S.settings;
@@ -1168,12 +1168,13 @@ function volApply() {
 }
 function killBus(g) { if (!g || !AU.ctx) return; try { g.gain.cancelScheduledValues(0); g.gain.setValueAtTime(g.gain.value, AU.ctx.currentTime); g.gain.linearRampToValueAtTime(0, AU.ctx.currentTime + 0.03); setTimeout(() => { try { g.disconnect(); } catch (e) {} }, 120); } catch (e) {} }
 function env(g, t, peak, dur) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); }
-function ksBuffer(m) {
-  const key = m + '@' + S.settings.a4;
+function ksBuffer(m, dur = 1.8) {
+  const seconds = Math.max(2.2, Math.ceil((dur + 0.04) * 2) / 2);
+  const key = m + '@' + S.settings.a4 + ':' + seconds;
   if (AU.ks.has(key)) return AU.ks.get(key);
   const c = AU.ctx, sr = c.sampleRate, f = mtof(m);
   const N = Math.max(2, Math.round(sr / f - 0.5));
-  const len = Math.floor(sr * 2.2);
+  const len = Math.ceil(sr * seconds);
   const b = c.createBuffer(1, len, sr), d = b.getChannelData(0);
   const decay = m < 48 ? 0.9975 : m < 60 ? 0.996 : m < 70 ? 0.994 : 0.991;
   let prev = 0;
@@ -1186,11 +1187,12 @@ function ksBuffer(m) {
 }
 function pluck(m, t, dest, gain = 0.7, dur = 1.8) {
   const c = ac(); t = t || c.currentTime;
-  const src = c.createBufferSource(); src.buffer = ksBuffer(m);
+  const src = c.createBufferSource(); src.buffer = ksBuffer(m, dur);
   const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3800;
-  const g = c.createGain(); g.gain.setValueAtTime(gain, t); g.gain.setTargetAtTime(0.0001, t + Math.max(0.05, dur - 0.12), 0.04);
-  src.connect(lp); lp.connect(g); g.connect(dest || AU.master);
-  src.start(t); src.stop(t + dur + 0.3);
+  const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.002);
+  g.gain.setValueAtTime(gain, t + Math.max(0.002, dur - 0.12)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(lp); lp.connect(g); g.connect(dest || AU.notes);
+  src.start(t); src.stop(t + dur + 0.02);
 }
 function strum(ms, t, dest, gap = 0.028, gain = 0.5, dur = 1.6) { ms.forEach((m, i) => pluck(m, t + i * gap, dest, gain, dur)); }
 const SND = {
@@ -1203,12 +1205,12 @@ const SND = {
   hat(t, v, d, open) { const c = AU.ctx; const n = c.createBufferSource(); n.buffer = AU.noise; const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 7200; const g = c.createGain(); const dur = open ? 0.22 : 0.045; g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); n.connect(hp); hp.connect(g); g.connect(d); n.start(t, Math.random() * 0.5); n.stop(t + dur + 0.02); }
 };
 function tone(m, dest, type = 'warm') {
-  const c = ac(); const f = mtof(m); const out = c.createGain(); out.gain.value = 0; out.connect(dest || AU.master);
+  const c = ac(); const f = mtof(m); const out = c.createGain(); out.gain.value = 0; out.connect(dest || AU.notes);
   const nodes = [];
   const add = (freq, wave, gain) => { const o = c.createOscillator(); o.type = wave; o.frequency.value = freq; const g = c.createGain(); g.gain.value = gain; o.connect(g); g.connect(out); o.start(); nodes.push(o); };
   if (type === 'pure') { add(f, 'sine', 0.5); add(f * 2, 'sine', 0.08); }
   else if (type === 'fifth') { add(f, 'triangle', 0.35); add(f * 1.5, 'triangle', 0.2); add(f / 2, 'sine', 0.25); }
-  else { const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400; out.disconnect(); out.connect(lp); lp.connect(dest || AU.master); add(f, 'sawtooth', 0.18); add(f * 1.003, 'sawtooth', 0.12); add(f / 2, 'sine', 0.3); }
+  else { const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400; out.disconnect(); out.connect(lp); lp.connect(dest || AU.notes); add(f, 'sawtooth', 0.18); add(f * 1.003, 'sawtooth', 0.12); add(f / 2, 'sine', 0.3); }
   out.gain.linearRampToValueAtTime(0.7, c.currentTime + 0.15);
   return { stop() { const t = c.currentTime; out.gain.cancelScheduledValues(t); out.gain.setValueAtTime(out.gain.value, t); out.gain.linearRampToValueAtTime(0, t + 0.2); setTimeout(() => { nodes.forEach(o => { try { o.stop(); } catch (e) {} }); try { out.disconnect(); } catch (e) {} }, 300); } };
 }
@@ -1237,7 +1239,7 @@ function defaultAccents(num, den) {
 }
 function mStart() {
   ac(); if (M.running) return;
-  if (P.running) exStop();
+  if (P.running) exPause();
   const cfg = S.metro;
   if (cfg.trainer.on) { cfg.bpm = cfg.trainer.start; renderBpm(); }
   M.bus = bus(AU.click); M.beat = 0; M.bar = cfg.countIn ? -1 : 0; M.next = AU.ctx.currentTime + 0.08; M.running = true; M.q.length = 0;
@@ -1509,7 +1511,7 @@ function fDrawQ(msg = '', cls = '') {
   if (q.type === 'find') qhtml = `Find <em>${nn(q.pc)}</em> on the ${SLONG[q.s]} string`;
   else if (q.type === 'name') qhtml = `Name this note`;
   else if (q.type === 'iv') qhtml = `Find the <em>${q.iv}</em> of ${nn(pcOf(q.s, q.f))}`;
-  const sub = q.type === 'iv' ? `<div class="small muted">${IVNAME[q.iv]}, within 5 frets of the orange root</div>` : '';
+  const sub = q.type === 'iv' ? `<div class="small muted">${IVNAME[q.iv]}, within 5 frets of the highlighted root</div>` : '';
   $('#fPrompt').innerHTML = `<div class="q">${qhtml}</div>${sub}<div class="fb-msg ${cls}">${msg}</div>${scoreBar()}`;
   const mk = [];
   if (q.type === 'name') mk.push({ s: q.s, f: q.f, k: 'ask', l: '?' });
@@ -2570,19 +2572,20 @@ function exSegment(data, bpm, startT, startBeat, passStart) {
 function exSync() {
   while (P.running && P.loopQueue.length && P.loopQueue[0].startT <= AU.ctx.currentTime) exLoopEnd(P.loopQueue.shift());
 }
-function exStart() {
+function exStart(preview = false) {
   if (!P.ex) return;
   ac(); if (M.running) mStop();
   if (P.running) exPause();
+  P.preview = preview;
   if (P.viewPos >= P.L - 1e-6) { P.viewPos = 0; P.passStart = 0; }
   const st = exStat(P.ex.id); st.prepared = st.prepared || {};
   if (P.viewPos === 0) P.reviewCold = st.prepared[P.step] !== dayKey();
   st.prepared[P.step] = dayKey(); save();
   P.bus = bus(AU.notes); P.cbus = bus(AU.click);
-  const spb = 60 / P.bpm, now = AU.ctx.currentTime + 0.1, ci = S.ui.exopts.count ? 4 : 0;
+  const spb = 60 / P.bpm, now = AU.ctx.currentTime + 0.1, ci = !preview && S.ui.exopts.count ? 4 : 0;
   P.startBeat = P.viewPos; P.countUntil = now + ci * spb; P.startT = P.countUntil - P.startBeat * spb;
   for (let j = 0; j < ci; j++) SND.beep(now + j * spb, j === 0 ? 3 : 1, P.cbus);
-  P.audio = exSegment(exData(P.keyPc), P.bpm, P.startT, P.startBeat, P.passStart); P.loopQueue = []; P.completed = false; P.endBeat = S.ui.exopts.loop ? Infinity : P.L;
+  P.audio = exSegment(exData(P.keyPc), P.bpm, P.startT, P.startBeat, P.passStart); P.loopQueue = []; P.completed = false; P.endBeat = !P.preview && S.ui.exopts.loop ? Infinity : P.L;
   P.running = true; P.lastIdx = -2;
   P.timer = setInterval(exSched, 25); exSched(); exDrone(); wakeSync();
   P.frame = requestAnimationFrame(exFrame); renderExTransport();
@@ -2615,8 +2618,7 @@ function exToggle() { P.running ? exPause() : exStart(); }
 function exListen() {
   if (!P.ex) return; if (P.running) { exPause(); return; }
   exStop();
-  const o = S.ui.exopts, keep = [o.loop, o.count, o.keycycle]; o.loop = false; o.count = false; o.keycycle = false;
-  exStart(); P.preview = true; o.loop = keep[0]; o.count = keep[1]; o.keycycle = keep[2];
+  exStart(true);
   P.reviewCold = false;
   P.endBeat = P.L; renderExTransport();
 }
@@ -2729,19 +2731,19 @@ function exStepNote(dir) {
   ac();
   P.cursor = ((P.cursor + dir) % P.ev.length + P.ev.length) % P.ev.length;
   P.viewPos = swingT(P.ev[P.cursor].t); P.passStart = P.viewPos;
-  exPlayEv(P.ev[P.cursor], AU.ctx.currentTime + 0.01, 60 / P.bpm, AU.master);
+  exPlayEv(P.ev[P.cursor], AU.ctx.currentTime + 0.01, 60 / P.bpm, AU.notes);
   exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor); renderExTransport();
   const s = `Note ${P.cursor + 1} of ${P.ev.length} · step-through mode`; P.status = s; $('#pStatus').textContent = s;
 }
-function exLabel(n, data = P) { const pc = (data.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - data.keyPc + 12) % 12]; return S.ui.exopts.fingers && n.fg ? String(n.fg) : (n.f === 0 ? 'O' : ''); }
+function exLabel(n, data = P) { const pc = (data.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - data.keyPc + 12) % 12]; return ''; }
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
   const cur = P.ev[idx], nx = P.ev[(idx + 1) % P.ev.length];
-  if (preview) { cur.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n), finger: P.labels !== 'finger' && S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 })); }
+  if (preview) { cur.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n), finger: S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 })); }
   else {
-    if (nx && nx !== cur && !nx.strum) nx.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n), finger: P.labels !== 'finger' && S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }));
-    cur.n.forEach(n => { const k = key(n); map.delete(k); map.set(k, { s: n.s, f: n.f, k: cur.strum ? 'chord' : 'play', l: exLabel(n), finger: P.labels !== 'finger' && S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }); });
+    if (nx && nx !== cur && !nx.strum) nx.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n), finger: S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }));
+    cur.n.forEach(n => { const k = key(n); map.delete(k); map.set(k, { s: n.s, f: n.f, k: cur.strum ? 'chord' : 'play', l: exLabel(n), finger: S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }); });
   }
   pBoard.draw({ from: P.bf, to: P.bt, markers: [...map.values()], win: null, names: P.names });
 }
@@ -3028,13 +3030,13 @@ function renderExPlayer() {
   $('#pLab').value = P.labels; $$('#pLabSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === P.labels)); renderExKey();
   const selfTime = !!P.click; $('#pGuide').disabled = selfTime; $('#pGuideChip').title = selfTime ? 'Notes stay silent in this step so you keep the time. Listen first plays them once.' : '';
   renderExMeta(); renderExTransport();
-  requestAnimationFrame(() => { exColors(true); exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); });
+  requestAnimationFrame(() => { const pos = exPos(), idx = P.running ? evIndexAt(pos) : P.cursor; exColors(true); exDraw(pos); exBoard(idx); exStatus(pos, true); });
 }
 function renderExKey() {
   const e = P.ex, row = $('#pKeyRow'); if (!e) return;
   row.hidden = !e.keyed; $('#pKeyCycleChip').hidden = !e.keyed; if (!e.keyed) return;
   $('#pKey').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(pc => `<option value="${pc}">${esc(keyName(pc))}</option>`).join('');
-  $('#pKey').value = exKey(); $('#pKeyCycle').checked = !!S.ui.exopts.keycycle;
+  $('#pKey').value = exKey(); $('#pKeyCycle').checked = !!S.ui.exopts.keycycle; $('#pKeyCycle').disabled = !!(e.steps[P.step].observe || e.steps[P.step].create);
 }
 function renderExercises() { if (P.ex && P.host === 'exercises' && !$('#exPlayer').hidden) renderExPlayer(); else { $('#exLib').hidden = false; renderExLib(); } }
 function exFeedback(kind) {
@@ -3146,7 +3148,7 @@ function qNameNote(strings, lo, hi, nat) {
   do { s = pick(strings); f = lo + rnd(hi - lo + 1); pc = pcOf(s, f); } while (nat && !NATURAL.includes(pc));
   const names = nat ? NATURAL : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const options = names.map(p => nn(p));
-  return { type: 'mc', prompt: 'Name the orange note', board: { from: Math.min(lo, 0), to: Math.max(hi, 5), markers: [mk(s, f, 'ask', '?')] }, options, answer: names.indexOf(pc), explain: anchorHint(s, f), reveal: [mk(s, f, 'hit')], sound: [OPEN[s] + f] };
+  return { type: 'mc', prompt: 'Name the note marked ?', board: { from: Math.min(lo, 0), to: Math.max(hi, 5), markers: [mk(s, f, 'ask', '?')] }, options, answer: names.indexOf(pc), explain: anchorHint(s, f), reveal: [mk(s, f, 'hit')], sound: [OPEN[s] + f] };
 }
 function qFindNote(strings, lo, hi, nat) {
   let s, f, pc;
@@ -3172,13 +3174,13 @@ function ivTarget(rs, rf, iv) {
 function qNameInterval(set) {
   const rs = 2 + rnd(4), rf = 2 + rnd(7), iv = pick(set), t = ivTarget(rs, rf, iv);
   const { options, answer } = mcOpts(iv, set);
-  return { type: 'mc', prompt: 'What interval is the blue note above the orange root?', board: { from: 0, to: 14, markers: [mk(rs, rf, 'root', 'R'), mk(t.s, t.f, 'd3', '?')] }, options, answer, explain: `${IVNAME[iv] ? IVNAME[iv][0].toUpperCase() + IVNAME[iv].slice(1) : iv} (${iv}): ${shapeDesc(rs, rf, t.s, t.f)}.`, reveal: [mk(rs, rf, 'root', 'R'), mk(t.s, t.f, 'hit', iv)], sound: [OPEN[rs] + rf, OPEN[t.s] + t.f] };
+  return { type: 'mc', prompt: 'What interval is the note marked ? above the root R?', board: { from: 0, to: 14, markers: [mk(rs, rf, 'root', 'R'), mk(t.s, t.f, 'd3', '?')] }, options, answer, explain: `${IVNAME[iv] ? IVNAME[iv][0].toUpperCase() + IVNAME[iv].slice(1) : iv} (${iv}): ${shapeDesc(rs, rf, t.s, t.f)}.`, reveal: [mk(rs, rf, 'root', 'R'), mk(t.s, t.f, 'hit', iv)], sound: [OPEN[rs] + rf, OPEN[t.s] + t.f] };
 }
 function qFindInterval(set) {
   const rs = 2 + rnd(4), rf = 2 + rnd(7), iv = pick(set), rm = OPEN[rs] + rf, sem = IVSEMI[iv];
   const ok = []; for (let s = 0; s < 6; s++) for (let f = Math.max(0, rf - 5); f <= rf + 5; f++) { const m = OPEN[s] + f; if (iv === '8' ? Math.abs(m - rm) === 12 : ((m - rm - sem) % 12 + 12) % 12 === 0 && !(s === rs && f === rf)) ok.push([s, f]); }
   const t = ivTarget(rs, rf, iv);
-  return { type: 'tap', prompt: `Tap a <em>${iv}</em> (${IVNAME[iv]}) of the orange root, within 5 frets`, board: { from: 0, to: 14, markers: [mk(rs, rf, 'root', 'R')] }, accept: (s, f) => ok.some(([a, b]) => a === s && b === f), explain: `The closest one is ${shapeDesc(rs, rf, t.s, t.f)}. Green dots show every ${iv} nearby.`, reveal: [mk(rs, rf, 'root', 'R'), ...ok.map(([s, f]) => mk(s, f, 'hit', iv))], sound: [rm, OPEN[t.s] + t.f] };
+  return { type: 'tap', prompt: `Tap a <em>${iv}</em> (${IVNAME[iv]}) of the root marked R, within 5 frets`, board: { from: 0, to: 14, markers: [mk(rs, rf, 'root', 'R')] }, accept: (s, f) => ok.some(([a, b]) => a === s && b === f), explain: `The closest one is ${shapeDesc(rs, rf, t.s, t.f)}. The answer dots show every ${iv} nearby.`, reveal: [mk(rs, rf, 'root', 'R'), ...ok.map(([s, f]) => mk(s, f, 'hit', iv))], sound: [rm, OPEN[t.s] + t.f] };
 }
 function qCagedShape() {
   const key = rnd(12), shape = pick(['C', 'A', 'G', 'E', 'D']), cells = cagedChord(key, shape);
@@ -3198,7 +3200,7 @@ function qDegree(ton) {
   const key = rnd(12), scale = ton === 'min' ? MINP : MAJ, w = pick(cagedWins(key, ton)), pcs = pcsOf(key, scale);
   const cells = degCells(key, pcs, w.lo, w.hi, [0, 1, 2, 3, 4, 5], ''), pool = cells.filter(c => c.f > 0), t = pick(pool.length ? pool : cells), rel = (pcOf(t.s, t.f) - key + 12) % 12;
   const opts = scale.map(i => IVL[i]);
-  return { type: 'mc', prompt: `${nn(key)} ${ton === 'min' ? 'minor pentatonic' : 'major scale'}. Which degree is the orange note?`, board: Object.assign(rangeOf(cells), { markers: cells.map(c => c.s === t.s && c.f === t.f ? mk(c.s, c.f, 'ask', '?') : mk(c.s, c.f, pcOf(c.s, c.f) === key ? 'root' : 'note', pcOf(c.s, c.f) === key ? '1' : '')), win: [w.lo, w.hi] }), options: opts, answer: opts.indexOf(IVL[rel]), explain: `It's ${nn(pcOf(t.s, t.f))}, the ${IVL[rel]} of ${nn(key)}. Count from the nearest root (orange 1).`, reveal: degCells(key, pcs, w.lo, w.hi), sound: [OPEN[t.s] + t.f] };
+  return { type: 'mc', prompt: `${nn(key)} ${ton === 'min' ? 'minor pentatonic' : 'major scale'}. Which degree is the note marked ?`, board: Object.assign(rangeOf(cells), { markers: cells.map(c => c.s === t.s && c.f === t.f ? mk(c.s, c.f, 'ask', '?') : mk(c.s, c.f, pcOf(c.s, c.f) === key ? 'root' : 'note', pcOf(c.s, c.f) === key ? '1' : '')), win: [w.lo, w.hi] }), options: opts, answer: opts.indexOf(IVL[rel]), explain: `It's ${nn(pcOf(t.s, t.f))}, the ${IVL[rel]} of ${nn(key)}. Count from the nearest root marked 1.`, reveal: degCells(key, pcs, w.lo, w.hi), sound: [OPEN[t.s] + t.f] };
 }
 function qFindDegree(ton, degs) {
   const key = rnd(12), scale = ton === 'min' ? MINP : MAJ, w = pick(cagedWins(key, ton)), pcs = pcsOf(key, scale), d = pick(degs), pc = (key + IVSEMI[d] % 12) % 12;
@@ -3216,7 +3218,7 @@ function qTriadQuality() {
   const key = rnd(12), minor = Math.random() < 0.5, pcs = pcsOf(key, minor ? [0, 3, 7] : [0, 4, 7]);
   const set = pick([SETS.gbe, SETS.dgb]), v = pick(voicings(set, pcs)), cells = v.map((f, i) => ({ s: set[i], f }));
   const opts = ['Major', 'Minor'];
-  return { type: 'mc', prompt: 'The orange note is the root. Major or minor?', board: board(cells.map(c => pcOf(c.s, c.f) === key ? mk(c.s, c.f, 'root', 'R') : mk(c.s, c.f, 'note', ''))), options: opts, answer: minor ? 1 : 0, explain: `The 3rd is ${minor ? '3' : '4'} half steps above the root (${minor ? 'minor' : 'major'} 3rd), so this is ${nn(key)} ${minor ? 'minor' : 'major'}.`, reveal: cells.map(c => { const rel = (pcOf(c.s, c.f) - key + 12) % 12; return mk(c.s, c.f, degKind(rel), IVL[rel]); }), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b) };
+  return { type: 'mc', prompt: 'The note marked R is the root. Major or minor?', board: board(cells.map(c => pcOf(c.s, c.f) === key ? mk(c.s, c.f, 'root', 'R') : mk(c.s, c.f, 'note', ''))), options: opts, answer: minor ? 1 : 0, explain: `The 3rd is ${minor ? '3' : '4'} half steps above the root (${minor ? 'minor' : 'major'} 3rd), so this is ${nn(key)} ${minor ? 'minor' : 'major'}.`, reveal: cells.map(c => { const rel = (pcOf(c.s, c.f) - key + 12) % 12; return mk(c.s, c.f, degKind(rel), IVL[rel]); }), sound: cells.map(c => OPEN[c.s] + c.f).sort((a, b) => a - b) };
 }
 function qTriadRoot() {
   const key = rnd(12), set = pick([SETS.gbe, SETS.dgb]), v = pick(voicings(set, chordPcs3(key, 0))), cells = v.map((f, i) => ({ s: set[i], f }));
@@ -3751,7 +3753,7 @@ function vBox(move, tune, big, labels = 'degree') {
       if (label) s += `<text class="chord-dot-label" x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="600" fill="${kind === 'note' ? 'var(--surface)' : `var(--${kind}-ink)`}" font-family="var(--font-mono)">${esc(label)}</text>`;
     }
     s += `<text class="chord-fret-label" x="${x}" y="${top+rows*fs+19}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="var(--font-mono)">${f == null ? '×' : f}</text>`;
-    s += `<text x="${x}" y="${top+rows*fs+36}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
+    s += `<text x="${x}" y="${top+rows*fs+36}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
   });
   return s+'</svg>';
 }
@@ -3966,7 +3968,7 @@ function qVoicingTone() {
   const labs = [...new Set(N.map(n => n.lab))];
   const { options, answer } = mcOpts(t.lab, labs.concat(['3', 'b3', '5', '9', '7', 'b7', '6', '11', '#11']));
   const markers = N.map(n => n === t ? mk(n.s, n.f, 'ask', '?') : mk(n.s, n.f, vKind(n.lab), n.lab));
-  return { type: 'mc', prompt: `${mv.name}${v.tune !== 'std' ? ` in ${TUNE[v.tune].name} tuning` : ''}. What is the orange note's role in the chord?`, board: Object.assign(board(markers), { names: tuneNames(v.tune) }), options, answer, explain: `It's ${nn(t.midi % 12)}, the ${t.lab} of ${nn(mv.root)}. ${t.f === 0 ? 'It is an open string, so it stays the same while the shape moves; against a different root it becomes a different interval.' : ''}`, reveal: N.map(n => mk(n.s, n.f, vKind(n.lab), n.lab)), sound: N.map(n => n.midi), strum: true };
+  return { type: 'mc', prompt: `${mv.name}${v.tune !== 'std' ? ` in ${TUNE[v.tune].name} tuning` : ''}. What is the role of the note marked ? in the chord?`, board: Object.assign(board(markers), { names: tuneNames(v.tune) }), options, answer, explain: `It's ${nn(t.midi % 12)}, the ${t.lab} of ${nn(mv.root)}. ${t.f === 0 ? 'It is an open string, so it stays the same while the shape moves; against a different root it becomes a different interval.' : ''}`, reveal: N.map(n => mk(n.s, n.f, vKind(n.lab), n.lab)), sound: N.map(n => n.midi), strum: true };
 }
 const VPOOL = [
   ['What chord do the open strings of FACGCE tuning make?', ['Fmaj9', 'Cadd9', 'F6', 'Am7'], 'F A C G C E contains F, A, C, E and G: the root, 3rd, 5th, 7th and 9th of F.'],
@@ -4048,7 +4050,7 @@ function routineStart() {
   const key = S.rtPick; R.key = key; R.blocks = rtBlocks(key); R.idx = 0; R.running = true; R.paused = false; R.waiting = false; routineBlock(); renderRoutine();
 }
 function routineBlock() {
-  const b = R.blocks[R.idx]; R.rem = b.m * 60;
+  const b = R.blocks[R.idx]; R.rem = b.m * 60; R.resume = null;
   R.activeEx = typeof b.ex === 'function' ? b.ex() : b.ex; R.player = null; R.unit = null;
   if (b.key != null && R.activeEx) exStat(R.activeEx).key = b.key;
   if (b.review) { openReview(); }
@@ -4079,6 +4081,7 @@ function routineOpenCurrent() {
 }
 function routineNext() {
   if (!R.running) return;
+  if (P.running) exPause(); if (M.running) mStop(); R.resume = null;
   R.waiting = false; R.paused = false; R.idx++;
   if (R.idx >= R.blocks.length) {
     const k = dayKey(); (S.routines[k] = S.routines[k] || []).push(R.key); save();
@@ -4093,7 +4096,22 @@ function routineTick() {
   if (!R.rem) { R.waiting = true; chime(); toast('Time is up. Finish your phrase, then choose Next block.'); }
   renderPill(); if (curTab === 'today') renderRoutine();
 }
-function routineStop() { R.running = false; renderPill(); renderRoutine(); }
+function routinePause() {
+  if (!R.running || R.waiting) return;
+  if (!R.paused) {
+    const playing = P.running, preview = P.preview, metro = M.running;
+    if (playing) exPause();
+    if (metro) mStop();
+    R.resume = { ex: playing ? { id: P.ex.id, step: P.step, key: P.keyPc, pos: P.viewPos, preview } : null, metro };
+  } else {
+    const saved = R.resume;
+    if (saved?.ex && !P.running && playerVisible() && P.ex?.id === saved.ex.id && P.step === saved.ex.step && P.keyPc === saved.ex.key && Math.abs(P.viewPos - saved.ex.pos) < 1e-6) exStart(saved.ex.preview);
+    else if (saved?.metro && curTab === 'metronome' && !M.running && !P.running) mStart();
+    R.resume = null;
+  }
+  R.paused = !R.paused; renderPill();
+}
+function routineStop() { if (P.running) exPause(); if (M.running) mStop(); R.running = false; R.resume = null; renderPill(); renderRoutine(); }
 function renderPill() {
   const p = $('#routinePill');
   if (!R.running) { p.hidden = true; updateHdrH(); return; }
@@ -4344,7 +4362,7 @@ $('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' 
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pFingers').onchange = e => { S.ui.exopts.fingers = e.target.checked; save(); renderExTransport(); exDraw(exPos()); exBoard(P.running ? evIndexAt(Math.min(exPos(), P.L - 1e-6)) : P.cursor); };
 $('#pPlay').onclick = exToggle;
-$('#pRestart').onclick = () => { const run = P.running; exStop(); if (run) exStart(); };
+$('#pRestart').onclick = () => { const run = P.running, preview = P.preview; exStop(); if (run) exStart(preview); };
 $('#pScroll').addEventListener('input', e => exSeek(+e.target.value));
 $('#pScroll').addEventListener('keydown', e => {
   const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -P.bar, PageDown: P.bar };
@@ -4391,14 +4409,14 @@ $('#pBpm').onclick = () => { const i = $('#pBpmIn'); i.value = P.bpm; $('#pBpm')
 const bpmDone = ok => { const i = $('#pBpmIn'); if (i.hidden) return; if (ok && i.value) exSetBpm(+i.value); i.hidden = true; $('#pBpm').hidden = false; renderExMeta(); };
 $('#pBpmIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); bpmDone(true); } else if (e.key === 'Escape') { e.preventDefault(); bpmDone(false); } });
 $('#pBpmIn').addEventListener('blur', () => bpmDone(true));
-[['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop') { if (!S.ui.exopts.loop) { S.ui.exopts.keycycle = false; $('#pKeyCycle').checked = false; } if (P.running) { P.endBeat = S.ui.exopts.loop ? Infinity : P.L; exReanchor(P.bpm); } else exDraw(P.viewPos); renderExTransport(); save(); } }; });
+[['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop') { if (!S.ui.exopts.loop) { S.ui.exopts.keycycle = false; $('#pKeyCycle').checked = false; } if (P.running) { P.endBeat = !P.preview && S.ui.exopts.loop ? Infinity : P.L; exReanchor(P.bpm); } save(); } renderExTransport(); exDraw(exPos()); }; });
 $('#pLabSeg').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; const s = $('#pLab'); s.value = b.dataset.v; s.dispatchEvent(new Event('change')); $$('#pLabSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
 $('#pListen').onclick = exListen; $('#pSpot').onchange = e => exSetSpot(e.target.value);
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
 $('#pKey').onchange = e => { exStat(P.ex.id).key = +e.target.value; save(); exLoad(P.step); renderExPlayer(); };
 $('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= cur) k++; exStat(P.ex.id).key = k; save(); exLoad(P.step); renderExPlayer(); toast(`Key: ${keyName(k)}`); };
-$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = Infinity; exReanchor(P.bpm); } } renderExTransport(); exDraw(P.running?exPos():P.viewPos); };
+$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = P.preview ? P.L : Infinity; exReanchor(P.bpm); } } renderExTransport(); exDraw(P.running?exPos():P.viewPos); };
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { exColors(true); if (P.ex && !$('#exPlayer').hidden) exDraw(exPos()); });
@@ -4421,7 +4439,7 @@ $('#rpOpen').onclick = routineOpenCurrent;
 
 $('#view-today').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex, undefined, 'today'); });
 $('#essCard').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex); });
-$('#rpPause').onclick = () => { R.paused = !R.paused; renderPill(); };
+$('#rpPause').onclick = routinePause;
 $('#rpSkip').onclick = routineNext;
 $('#rtMinutes').onchange = e => { S.ui.planMinutes = clamp(Math.round(+e.target.value || S.settings.goal), 5, 90); save(); renderRoutine(); };
 $('#rtFocus').onchange = e => { S.ui.focusEx = e.target.value; save(); renderRoutine(); };
