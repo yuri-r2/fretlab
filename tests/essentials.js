@@ -43,9 +43,9 @@ const fail = []; const ok = (c, m) => { if (!c) fail.push(m); };
   ok(t.up[0] === d.ids[1] && t.up.every(id => d.ids.includes(id)), 'Today lists open essentials up next: ' + t.up);
   ok(t.grp === 'Essentials,Everything else', 'focus picker groups essentials first');
   await p.goto('file://' + tmp + '?d#voicings'); await p.waitForTimeout(300);
-  ok((await p.evaluate(() => document.querySelector('#voGrid [data-vo]')?.dataset.vo)) === 'emo_moving', 'Chord Shapes shows the essential collection first');
+  ok((await p.locator('#chordRoot button').count()) === 12 && (await p.locator('#chordGrid .chord-card').count()) > 0, 'Chord Shapes opens the independent root-based reference');
   await b.close();
   if (errs.length) fail.push('page errors: ' + errs.join(' | '));
   if (fail.length) { console.log('FAIL\n' + fail.join('\n')); process.exit(1); }
-  console.log('12 essentials surfaced in Library, Exercises, Rhythm, Chord Shapes, Today and the player; focus follows the order\nOK');
+  console.log('12 essentials surfaced in Library, Exercises, Rhythm, Today and the player; focus follows the order\nOK');
 })();

@@ -314,11 +314,6 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .jnote{width:100%;min-height:58px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);font:inherit}
 .revres{margin:4px 0 0;padding-left:18px}
 /* voicings */
-.vogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
-.vocard{display:flex;gap:12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink);min-width:0}
-.vocard:hover{border-color:var(--accent)}
-.vobox{flex:none}
-.votext{display:flex;flex-direction:column;gap:5px;min-width:0}
 .tag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-right:4px}
 .esspills{display:flex;flex-wrap:wrap;gap:6px}
 .esspill{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:500 13px var(--font-mono);display:inline-flex;align-items:center;justify-content:center}
@@ -326,9 +321,6 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .esspill.next{border-color:var(--accent);color:var(--ink);border-width:2px}
 .tag.ess{background:var(--accent-soft);color:var(--accent);margin-right:6px}
 details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
-.vodetail{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.vobig{flex:none}
-.vodetail>.stack{flex:1 1 300px}
 .vbox{display:block;max-width:100%;height:auto}
 /* tuner (gauge adapted from KotoLab) */
 .tuner{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
@@ -443,16 +435,45 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .catalog-search{flex:1;min-width:220px}
 .catalog-search input{width:100%;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
 .catalog-meta{justify-content:space-between;min-height:28px}
-.vocard{display:flex;flex-direction:column;gap:0;padding:0;align-items:stretch;overflow:hidden}
-.vo-open{display:flex;gap:14px;align-items:center;text-align:left;padding:16px;background:none;border:0;color:inherit;flex:1;min-width:0}
-.vo-open .vobox{width:136px}
-.vo-open .votext b{font-size:16px;line-height:1.35}
-.vo-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:9px 14px}
-.vo-card-footer .btn{padding:5px 10px;font-size:13px}
-.vo-card-footer .favbtn{min-width:36px}
 .vo-empty{grid-column:1/-1;padding:40px;text-align:center;background:var(--surface);border:1px dashed var(--line);border-radius:14px}
 .vo-empty p{max-width:42ch;margin:8px auto 16px}
-.shape-choices button{min-width:64px;padding:9px 14px}
+
+.finger-legend{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px}
+.finger-key{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.finger-key b{color:var(--accent);font:600 12px var(--font-mono)}
+.finger-reading{flex-basis:100%;font-size:12px}
+.finger-open{white-space:nowrap}
+.mk .fb-finger{fill:var(--ink);stroke:var(--surface);stroke-width:3px;paint-order:stroke;font-size:10px;font-weight:600;text-anchor:start}
+.chord-reference{gap:16px}
+.chord-mode{display:flex;align-items:center;gap:18px}
+.chord-mode>p{flex:1}
+.chord-groups{flex:none;align-self:flex-start}
+.chord-groups button{padding:10px 20px}
+#chordGroupHint{max-width:95ch;min-height:20px}
+.chord-controls{gap:18px}
+.chord-controls>.row{gap:14px;align-items:flex-end}
+.chord-controls label.f{flex:1;min-width:140px}
+.chord-controls select{width:100%}
+.chord-roots{flex-wrap:wrap;width:fit-content}
+.chord-roots button{min-width:42px;padding:9px 13px;font-family:var(--font-mono)}
+.chord-summary{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.chord-summary h2{font-size:36px;min-width:70px}
+.chord-summary>#chordCount{margin-left:auto}
+.chord-formula{display:flex;flex-wrap:wrap;gap:8px}
+.chord-formula>span{padding:6px 10px;border-radius:8px;background:var(--surface-2);font-size:13px}
+.chord-formula b{margin-right:5px;color:var(--muted);font-family:var(--font-mono);font-size:11px}
+.chord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(208px,1fr));gap:16px}
+.chord-card{display:flex;flex-direction:column;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:16px 12px;gap:8px;min-width:0}
+.chord-card-heading{display:flex;justify-content:space-between;align-items:baseline;width:100%;gap:8px}
+.chord-card-heading>b{font-family:var(--font-display);font-size:23px}
+.chord-card-heading>span{font-size:11px}
+.chord-card .vbox{width:190px;max-width:100%;height:auto}
+.chord-caption{color:var(--muted);font-size:12px;text-align:center;min-height:18px}
+.chord-audio{justify-content:center;width:100%;margin-top:auto;gap:6px}
+.chord-audio .btn{padding:7px 10px;font-size:12px}
+@media(min-width:1100px){.chord-controls{position:sticky;top:76px;z-index:3;box-shadow:0 4px 18px #00000008}}
+@media(max-width:620px){.chord-mode{align-items:flex-start;flex-direction:column;gap:10px}.chord-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chord-card{padding:12px 6px}.chord-card-heading{flex-direction:column;gap:0;align-items:center}.chord-card .vbox{width:100%}.chord-caption{font-size:11px}.chord-controls label.f{min-width:120px}.chord-roots button{min-width:36px;padding:7px 10px}.chord-audio{flex-wrap:wrap}.chord-summary>#chordCount{margin-left:0}}
+
 .focus-choice[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
 .practice-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}
 .practice-stage,.practice-aside{min-width:0}
@@ -577,7 +598,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="card stack" id="essCard"></div>
   <div class="excards">
-    <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Related grips, inversions and chord colors. Hear the difference, then use it in a riff.</span></button>
+    <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Browse chord types, fingerings and inversions across the neck, in any key.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
     <button class="excard" type="button" data-go="rhythm"><h3>Rhythm</h3><span>Subdivisions, strumming, chugs, syncopation, odd meters and dotted-8th delay rhythms.</span></button>
     <button class="excard" type="button" data-go="exercises"><h3>Exercises</h3><span>Guided workouts for changes, fretboard fluency, arpeggios and technique.</span></button>
@@ -719,15 +740,15 @@ body:has(#settings:not([hidden])){overflow:hidden}
               <label class="chip" id="pKeyCycleChip" title="Move up a 4th every loop to play through all 12 keys"><input type="checkbox" id="pKeyCycle"> New key / loop</label>
             </div>
             <div class="pctl-row" role="group" aria-label="Display"><span class="pctl-lab">Show</span>
-              <div class="seg pseg" id="pLabSeg"><button type="button" data-v="finger">Fingers</button><button type="button" data-v="degree">Degrees</button><button type="button" data-v="chord">Chord tones</button><button type="button" data-v="note">Notes</button></div>
-              <select id="pLab" hidden aria-hidden="true" tabindex="-1"><option value="finger">Finger numbers</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select>
-              <label class="chip" title="Small finger numbers next to each note"><input type="checkbox" id="pFingers"> + fingers</label>
+              <div class="seg pseg" id="pLabSeg"><button type="button" data-v="finger">None</button><button type="button" data-v="degree">Degrees</button><button type="button" data-v="chord">Chord tones</button><button type="button" data-v="note">Notes</button></div>
+              <select id="pLab" hidden aria-hidden="true" tabindex="-1"><option value="finger">None</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select>
+              <label class="chip" title="Small finger numbers next to each note"><input type="checkbox" id="pFingers" aria-describedby="pFingerHint"> Show fingers</label>
               <label class="f pctl-sec"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label>
             </div>
           </div>
           <div class="hw"><canvas id="pCanvas" role="img" aria-label="Exercise tab. Click a note to start there. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Exercise position"></div></div>
           <div class="tab-navigation small muted"><span>Scroll or click a note · Space play / pause</span><span class="row" style="gap:6px;align-items:center"><span id="pPosition"></span><button class="btn sm" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀</button><button class="btn sm" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">▶</button></span></div>
-          <div class="small muted" id="pFingerHint" hidden>Fingers: 1 index · 2 middle · 3 ring · 4 little</div>
+          <div class="finger-legend small muted" id="pFingerHint" aria-label="Fretting hand finger key" hidden></div>
           <div class="pstatus small muted" id="pStatus"></div>
           <p class="small pfocus" id="pFocus"></p>
           <div class="scroll-x"><div id="pBoard"></div></div>
@@ -755,34 +776,20 @@ body:has(#settings:not([hidden])){overflow:hidden}
 
 <!-- VOICINGS -->
 <section class="view" id="view-voicings" hidden>
-  <div id="voList" class="stack" style="gap:16px">
-    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Chord vocabulary</span><h2>Chord Shapes</h2></div><p class="muted small">Learn related shapes, compare their sound, and use them in music. Start with movable grips and triads, then explore sevenths, chord colors, drones and alternate tunings. Genre collections turn these sounds into riffs.</p></div>
-    <div class="catalog-toolbar"><label class="f catalog-search"><span>Find a sound or shape</span><input id="voSearch" type="search" maxlength="120" placeholder="Search maj7, triads, open strings…" autocomplete="off"></label><label class="f"><span>Shape family</span><select id="voFamily"></select></label><label class="toggle"><input id="voSaved" type="checkbox"> Favorites</label><button class="btn" id="voReset" type="button">Clear filters</button></div>
-    <div class="seg" id="voStyle"><button type="button" data-v="all">All genres</button><button type="button" data-v="rock">Rock</button><button type="button" data-v="alt">Alternative</button><button type="button" data-v="emo">Midwest emo</button><button type="button" data-v="gaze">Shoegaze</button></div>
-    <div class="row catalog-meta"><span class="small muted" id="voCount" aria-live="polite"></span><button class="linkbtn" id="voTriads" type="button">Practice triads across the neck →</button></div>
-    <div class="vogrid" id="voGrid"></div>
-    <p class="small muted">New to color tones and open-string drones? <button class="btn" type="button" data-openunit="u9">Read the lesson: Voicings for riffs</button></p>
-  </div>
-  <div id="voDetail" class="stack" hidden>
-    <div class="row" style="justify-content:space-between"><button class="btn" id="voBack" type="button">← All chord shapes</button><span class="row" id="voTags" style="gap:6px"></span></div>
-    <div class="card stack">
-      <h2 id="voTitle">Voicing</h2>
-      <p class="small muted" id="voWhy" style="max-width:80ch"></p>
-      <div class="row"><label class="f" id="voKeyRow" hidden><span>Root</span><select id="voKey"></select></label><label class="f"><span>Diagram labels</span><select id="voLabels"><option value="degree">Chord tones</option><option value="note">Notes</option><option value="finger">Fingers</option></select></label><button class="btn" id="voFocus" type="button" aria-pressed="false">Make my practice focus</button></div>
-      <div class="seg shape-choices" id="voMoves" aria-label="Related chord shapes"></div>
-      <p class="small muted" id="voPosition"></p>
-      <div class="vodetail">
-        <div id="voBox" class="vobig"></div>
-        <div class="stack" style="min-width:0">
-          <div class="scroll-x"><div id="voBoard"></div></div>
-          <p class="small" id="voNotes"></p>
-          <div class="row"><button class="btn" id="voStrum" type="button">▶ Strum</button><button class="btn" id="voArp" type="button">▶ Arpeggio</button><button class="btn primary" id="voPlayAlong" type="button">Practice these shapes →</button></div>
-        </div>
-      </div>
-      <h3>Riff ideas</h3>
-      <ul class="method small" id="voIdeas"></ul>
-      <div class="legend"><span><i style="background:var(--root)"></i>Root</span><span><i style="background:var(--d3)"></i>3rd</span><span><i style="background:var(--d5)"></i>5th</span><span><i style="background:var(--d7)"></i>7th</span><span><i style="background:var(--surface);border:1.5px solid var(--ink)"></i>Color tones (9, 11, 6, #11)</span></div>
+  <div class="stack chord-reference">
+    <div class="vhead"><div><span class="label">Guitar chord reference</span><h2>Chord Shapes</h2></div><p class="muted small">Choose a root and chord type. Compare shapes, inversions and fingerings across the neck.</p></div>
+    <div class="chord-mode"><div class="seg chord-groups" id="chordGroup" aria-label="Chord shape group"><button type="button" data-group="open">Open chords</button><button type="button" data-group="movable">Movable shapes</button></div>
+    <p class="small muted" id="chordGroupHint"></p></div>
+    <div class="card stack chord-controls">
+      <div class="f"><span>Root / key</span><div class="seg chord-roots" id="chordRoot" aria-label="Chord root"></div></div>
+      <div class="row"><label class="f"><span>Chord type</span><select id="chordType"></select></label><label class="f"><span>Shapes</span><select id="chordKind"><option value="all">All shapes</option><option value="barre">Barre shapes</option><option value="triads">Three-note grips</option><option value="four">Four-note grips</option><option value="shell">Three-note shells (no 5th)</option></select></label><label class="f"><span>Bass</span><select id="chordBass"><option value="all">Any bass</option><option value="root">Root in bass</option><option value="inversion">Inversions</option></select></label><label class="f"><span>Diagram labels</span><select id="chordLabels"><option value="finger">Fingers</option><option value="note">Notes</option><option value="degree">Chord degrees</option></select></label><label class="f"><span>Neck area</span><select id="chordPosition"><option value="all">Full neck</option><option value="0-4">Open position (0–4)</option><option value="5-9">Starts at fret 5–9</option><option value="10-15">Starts at fret 10–15</option><option value="16-20">Starts at fret 16–20</option></select></label><label class="f"><span>Tuning</span><select id="chordTuning"></select></label></div>
     </div>
+    <div class="chord-summary"><h2 id="chordName"></h2><div id="chordFormula" class="chord-formula"></div><span class="small muted" id="chordCount" aria-live="polite"></span></div>
+    <div class="finger-legend small muted" id="chordLegend"></div>
+    <div id="chordGrid" class="chord-grid"></div>
+    <button class="btn" id="chordMore" type="button" hidden>Show more shapes</button>
+    <p class="small muted">Frets 0–20 · up to four frets per grip · at most four fretting fingers. Open circles mean open strings; × means skip the string. Wide bars show one finger across several strings. Fret numbers follow the string names below each diagram. Fingerings are suggestions; use a comfortable grip.</p>
+    <p class="small muted">Looking for a workout? <button class="linkbtn" data-go="exercises" type="button">Open Exercises →</button></p>
   </div>
 </section>
 
@@ -1012,7 +1019,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
-  ui: { exQuery: '', exMore: false, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { exQuery: '', exMore: false, chordRef: { group: 'open', type: 'major', kind: 'all', bass: 'all', position: '0-4', tuning: 'std', labels: 'finger' }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -1375,7 +1382,7 @@ function makeBoard(host, onTap) {
     for (const m of b.markers) {
       if (m.f < from || m.f > to) continue;
       const x = X(cx(m.f)), y = top + m.s * sh;
-      s += `<g class="mk mk-${m.k}"><circle cx="${x}" cy="${y}" r="11"/>${m.l ? `<text x="${x}" y="${y}" dy="0.36em" text-anchor="middle">${esc(m.l)}</text>` : ''}</g>`;
+      s += `<g class="mk mk-${m.k}"><circle cx="${x}" cy="${y}" r="11"/>${m.l ? `<text x="${x}" y="${y}" dy="0.36em" text-anchor="middle">${esc(m.l)}</text>` : ''}${m.finger >= 1 && m.finger <= 4 ? `<text class="fb-finger" x="${x+15}" y="${y-5}">${m.finger}</text>` : ''}</g>`;
     }
     if (b.onTap) for (let i = 0; i < 6; i++) for (let f = from; f <= to; f++) {
       const xa = f === 0 ? G : cx(f) - fw / 2, xb = f === 0 ? base - 3 : cx(f) + fw / 2;
@@ -2705,15 +2712,15 @@ function exStepNote(dir) {
   exDraw(P.viewPos); P.lastIdx = -2; exBoard(P.cursor); renderExTransport();
   const s = `Note ${P.cursor + 1} of ${P.ev.length} · step-through mode`; P.status = s; $('#pStatus').textContent = s;
 }
-function exLabel(n) { const pc = (P.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return S.ui.exopts.fingers && n.fg ? String(n.fg) : (n.f === 0 ? '0' : ''); }
+function exLabel(n) { const pc = (P.tun[n.s] + n.f) % 12; if (P.labels === 'chord') return n.lab || nn(pc); if (P.labels === 'note' || (P.labels === 'degree' && !P.ex.keyed)) return nn(pc); if (P.labels === 'degree') return IVL[(pc - P.keyPc + 12) % 12]; return S.ui.exopts.fingers && n.fg ? String(n.fg) : (n.f === 0 ? 'O' : ''); }
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
   const cur = P.ev[idx], nx = P.ev[(idx + 1) % P.ev.length];
-  if (preview) { cur.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n) })); }
+  if (preview) { cur.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n), finger: P.labels !== 'finger' && S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 })); }
   else {
-    if (nx && nx !== cur && !nx.strum) nx.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n) }));
-    cur.n.forEach(n => { const k = key(n); map.delete(k); map.set(k, { s: n.s, f: n.f, k: cur.strum ? 'chord' : 'play', l: cur.strum ? '' : exLabel(n) }); });
+    if (nx && nx !== cur && !nx.strum) nx.n.forEach(n => map.set(key(n), { s: n.s, f: n.f, k: 'note', l: exLabel(n), finger: P.labels !== 'finger' && S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }));
+    cur.n.forEach(n => { const k = key(n); map.delete(k); map.set(k, { s: n.s, f: n.f, k: cur.strum ? 'chord' : 'play', l: exLabel(n), finger: P.labels !== 'finger' && S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }); });
   }
   pBoard.draw({ from: P.bf, to: P.bt, markers: [...map.values()], win: null, names: P.names });
 }
@@ -2786,11 +2793,12 @@ function exDraw(pos) {
           rrect(g, x - w / 2, y - 10, w, 20, 6); g.fillStyle = cur ? C.warn : C.bg; g.fill();
           g.lineWidth = 1.5; g.strokeStyle = cur ? C.warn : C.ink; g.stroke();
           g.fillStyle = cur ? C.onSem : C.ink; g.font = '600 12px ' + MONO; g.textAlign = 'center'; g.fillText(txt, x, y + 0.5);
-          const sub = P.labels === 'finger' ? (S.ui.exopts.fingers && n.fg ? String(n.fg) : '') : exLabel(n);
-          if (sub) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 9.5px ' + SANS; g.textAlign = 'left'; g.fillText(sub, x + w / 2 + 2, y + 9); }
-          if (P.labels !== 'finger' && S.ui.exopts.fingers && n.fg) {
-            g.beginPath(); g.arc(x - w / 2 - 2, y - 11, 6, 0, Math.PI * 2); g.fillStyle = cur ? C.warn : C.ink; g.fill();
-            g.fillStyle = cur ? C.onSem : C.bg; g.font = '600 9px ' + SANS; g.textAlign = 'center'; g.fillText(String(n.fg), x - w / 2 - 2, y - 10.5);
+          const sub = P.labels === 'finger' ? '' : exLabel(n);
+          if (sub) { g.fillStyle = cur ? C.warn : C.muted; g.font = '500 10px ' + SANS; g.textAlign = 'left'; g.fillText(sub, x + w / 2 + 3, y + 8); }
+          if (S.ui.exopts.fingers && n.f > 0 && n.fg >= 1 && n.fg <= 4) {
+            g.font = '600 11px ' + SANS; g.textAlign = 'right';
+            g.lineWidth = 3; g.strokeStyle = C.bg; g.strokeText(String(n.fg), x - w / 2 - 5, y - 5);
+            g.fillStyle = cur ? C.warn : C.accent; g.fillText(String(n.fg), x - w / 2 - 5, y - 5);
           }
         });
         if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
@@ -2913,7 +2921,7 @@ function renderExTransport() {
   $('#pListen').textContent = P.running && P.preview ? 'Pause' : 'Listen first';
   $('#pFingers').checked = !!S.ui.exopts.fingers;
   $('#pFingerHint').hidden = !S.ui.exopts.fingers;
-  $('#pFingerHint').textContent = P.ev.some(e => e.n.some(n => n.fg)) ? 'Suggested fingers: 1 index · 2 middle · 3 ring · 4 little' : 'Finger suggestions are not specified for this step.';
+  $('#pFingerHint').innerHTML = P.ev.some(e => e.n.some(n => n.fg)) ? fingerLegend() + '<span class="finger-reading">Small numbers = fingers · large tab numbers = frets</span>' : 'No finger suggestions for this step. Tab numbers show frets.';
   renderMini();
 }
 function renderExMeta() {
@@ -3653,94 +3661,171 @@ EX.push(...VEX); EXCATS.push('Chord Shapes');
 VEX.forEach(e => { EX_UNIT[e.id] = e.id === 'v_shape_triads' ? 'u7' : e.id === 'v_shape_shells' ? 'u8' : e.id.startsWith('v_shape_') ? 'u4' : 'u9'; });
 
 /* ---------- voicings: chord diagram ---------- */
+function fingerLegend() { return '<span>Fretting hand</span>' + ['Index','Middle','Ring','Little'].map((name,i)=>`<span class="finger-key"><b>${i+1}</b>${name}</span>`).join('') + '<span class="finger-open">O = open string</span>'; }
 function vBox(move, tune, big, labels = 'degree') {
-  const N = vNotes(move, tune), fr = move.f.filter(f => f != null && f > 0);
+  const N = vNotes(move,tune), fr = move.f.filter(f=>f != null && f > 0);
   const mn = fr.length ? Math.min(...fr) : 1, mx = fr.length ? Math.max(...fr) : 1;
-  const base = mx <= 5 ? 1 : mn, rows = Math.max(5, mx - base + 1);
-  const sp = big ? 26 : 20, fs = big ? 26 : 20, left = big ? 30 : 24, top = big ? 34 : 28, W = left * 2 + sp * 5, H = top + rows * fs + (big ? 64 : 56);
-  const col = { root: 'var(--root)', d3: 'var(--d3)', d5: 'var(--d5)', d7: 'var(--d7)', note: 'var(--ink)' };
-  const kOf = vKind;
-  let s = `<svg class="vbox" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(move.name)} chord diagram. Low to high: ${move.f.map(f => f == null ? 'muted' : f === 0 ? 'open' : 'fret ' + f).join(', ')}">`;
-  for (let i = 0; i < 6; i++) s += `<line x1="${left + i * sp}" y1="${top}" x2="${left + i * sp}" y2="${top + rows * fs}" stroke="var(--muted)" stroke-width="1"/>`;
-  for (let j = 0; j <= rows; j++) s += `<line x1="${left}" y1="${top + j * fs}" x2="${left + 5 * sp}" y2="${top + j * fs}" stroke="var(--muted)" stroke-width="${j === 0 && base === 1 ? 4 : 1}"/>`;
-  if (base > 1) s += `<text x="${left - 8}" y="${top + fs / 2 + 4}" text-anchor="end" font-size="${big ? 13 : 11}" fill="var(--muted)" font-family="var(--font-mono)">${base}</text>`;
-  if (move.barre) { const [a,b,f] = move.barre; const y = top + (f - base) * fs + fs / 2; s += `<line x1="${left + a * sp}" x2="${left + b * sp}" y1="${y}" y2="${y}" stroke="var(--muted)" stroke-width="${big ? 11 : 8}" stroke-linecap="round"/>`; }
+  const base = mx <= 5 ? 1 : mn, rows = Math.max(5,mx-base+1);
+  const sp = big ? 26 : 20, fs = big ? 26 : 20, left = big ? 30 : 24, top = big ? 34 : 28, W = left*2+sp*5, H = top+rows*fs+58;
+  const stringX = i => left+(S.settings.lefty ? 5-i : i)*sp;
+  const col = {root:'var(--root)',d3:'var(--d3)',d5:'var(--d5)',d7:'var(--d7)',note:'var(--ink)'};
+  const description = move.f.map((f,i)=>f == null ? 'skip' : f === 0 ? 'open' : `fret ${f}${move.fingers && move.fingers[i] ? ', finger '+move.fingers[i] : ''}`).join('; ');
+  let s = `<svg class="vbox" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(move.name)}. Low to high: ${esc(description)}"><title>${esc(move.name)}: ${esc(description)}</title>`;
+  for (let i=0;i<6;i++) s += `<line x1="${left+i*sp}" y1="${top}" x2="${left+i*sp}" y2="${top+rows*fs}" stroke="var(--muted)" stroke-width="1"/>`;
+  for (let j=0;j<=rows;j++) s += `<line x1="${left}" y1="${top+j*fs}" x2="${left+5*sp}" y2="${top+j*fs}" stroke="var(--muted)" stroke-width="${j === 0 && base === 1 ? 4 : 1}"/>`;
+  if (base > 1) s += `<text x="${left-8}" y="${top+fs/2+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--font-mono)">${base}</text>`;
+  for (const [a,b,f] of move.barres || (move.barre ? [move.barre] : [])) {
+    const y = top+(f-base)*fs+fs/2, finger = move.fingers && move.fingers[a];
+    s += `<line class="chord-barre" x1="${stringX(a)}" x2="${stringX(b)}" y1="${y}" y2="${y}" stroke="var(--muted)" stroke-width="11" stroke-linecap="round"><title>Barre${finger ? ' with finger '+finger : ''} at fret ${f}</title></line>`;
+  }
   const names = tuneNames(tune).slice().reverse();
-  move.f.forEach((f, i) => {
-    const x = left + i * sp, n = N.find(q => q.s === 5 - i);
-    if (f == null) s += `<text x="${x}" y="${top - 9}" text-anchor="middle" font-size="12" fill="var(--muted)">×</text>`;
-    else if (f === 0) s += `<circle cx="${x}" cy="${top - 12}" r="${big ? 6 : 5}" fill="none" stroke="${col[kOf(n.lab)]}" stroke-width="2"/>`;
-    else { const y = top + (f - base) * fs + fs / 2; s += `<circle cx="${x}" cy="${y}" r="${big ? 10 : 8}" fill="${col[kOf(n.lab)]}"/>`; const label = big ? labels === 'finger' ? n.fg || '' : labels === 'note' ? nn(n.midi % 12) : n.lab : ''; if (label) s += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" fill="var(--surface)" font-family="var(--font-mono)">${esc(label)}</text>`; }
-    s += `<text x="${x}" y="${top + rows * fs + 16}" text-anchor="middle" font-size="${big ? 12 : 10.5}" font-weight="600" fill="${f == null ? 'var(--line)' : col[kOf(n.lab)]}" font-family="var(--font-mono)">${f == null ? '' : esc(n.lab)}</text>`;
-    s += `<text x="${x}" y="${top + rows * fs + (big ? 34 : 31)}" text-anchor="middle" font-size="${big ? 11 : 9.5}" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
+  move.f.forEach((f,i)=>{
+    const x = stringX(i), n = N.find(q=>q.s === 5-i);
+    if (f == null) s += `<text x="${x}" y="${top-9}" text-anchor="middle" font-size="14" fill="var(--muted)">×</text>`;
+    else if (f === 0) s += `<circle class="chord-open" cx="${x}" cy="${top-12}" r="6" fill="none" stroke="${col[vKind(n.lab)]}" stroke-width="2"><title>Open ${esc(names[i])} string</title></circle>`;
+    else {
+      const y = top+(f-base)*fs+fs/2, kind = vKind(n.lab), label = labels === 'finger' ? n.fg || '' : labels === 'note' ? nn(n.midi%12) : n.lab;
+      s += `<circle cx="${x}" cy="${y}" r="10" fill="${col[kind]}"/>`;
+      if (label) s += `<text class="chord-dot-label" x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="600" fill="${kind === 'note' ? 'var(--surface)' : 'var(--on-sem)'}" font-family="var(--font-mono)">${esc(label)}</text>`;
+    }
+    s += `<text class="chord-fret-label" x="${x}" y="${top+rows*fs+19}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="var(--font-mono)">${f == null ? '×' : f}</text>`;
+    s += `<text x="${x}" y="${top+rows*fs+36}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="var(--font-mono)">${esc(names[i])}</text>`;
   });
-  s += `<text x="${W / 2}" y="${H - 6}" text-anchor="middle" font-size="${big ? 17 : 14}" font-weight="600" fill="var(--ink)" font-family="var(--font-display)">${esc(move.name)}</text></svg>`;
-  return s;
+  return s+'</svg>';
 }
 
-/* ---------- voicings: UI ---------- */
-const VO = { ...S.ui.voBrowser, family: VFAMILIES[S.ui.voBrowser.family] ? S.ui.voBrowser.family : 'all', style: STYLE_NAME[S.ui.voBrowser.style] ? S.ui.voBrowser.style : 'all', query: String(S.ui.voBrowser.query || '').slice(0, 120), id: null, move: 0, bus: null, timer: null, preview: null };
-function voRemember() { const { family, style, query, saved, labels } = VO; S.ui.voBrowser = { family, style, query, saved, labels }; save(); }
-const vBoardEl = makeBoard($('#voBoard'), (s, f) => { const v = VOICINGS.find(x => x.id === VO.id); pluck(TUNE[v ? v.tune : 'std'].m[s] + f, 0, null, 0.6, 1.3); });
-function voPreviewState() {
-  $$('#voGrid [data-preview]').forEach(b => { const active = b.dataset.preview === VO.preview; b.setAttribute('aria-pressed', active); b.textContent = active ? '■ Stop' : '▶ Hear'; });
+/* ---------- chord reference ---------- */
+const CHORD_TYPES = [
+  {id:'major',name:'Major',suffix:'',iv:[0,4,7],roles:['1','3','5']},
+  {id:'minor',name:'Minor',suffix:'m',iv:[0,3,7],roles:['1','b3','5']},
+  {id:'5',name:'Power chord',suffix:'5',iv:[0,7],roles:['1','5']},
+  {id:'sus2',name:'Suspended 2nd',suffix:'sus2',iv:[0,2,7],roles:['1','2','5']},
+  {id:'sus4',name:'Suspended 4th',suffix:'sus4',iv:[0,5,7],roles:['1','4','5']},
+  {id:'dim',name:'Diminished',suffix:'dim',iv:[0,3,6],roles:['1','b3','b5']},
+  {id:'aug',name:'Augmented',suffix:'aug',iv:[0,4,8],roles:['1','3','#5']},
+  {id:'6',name:'Major 6th',suffix:'6',iv:[0,4,7,9],roles:['1','3','5','6'],omit5:true},
+  {id:'m6',name:'Minor 6th',suffix:'m6',iv:[0,3,7,9],roles:['1','b3','5','6'],omit5:true},
+  {id:'7',name:'Dominant 7th',suffix:'7',iv:[0,4,7,10],roles:['1','3','5','b7'],omit5:true},
+  {id:'maj7',name:'Major 7th',suffix:'maj7',iv:[0,4,7,11],roles:['1','3','5','7'],omit5:true},
+  {id:'m7',name:'Minor 7th',suffix:'m7',iv:[0,3,7,10],roles:['1','b3','5','b7'],omit5:true},
+  {id:'m7b5',name:'Half diminished',suffix:'m7b5',iv:[0,3,6,10],roles:['1','b3','b5','b7']},
+  {id:'dim7',name:'Diminished 7th',suffix:'dim7',iv:[0,3,6,9],roles:['1','b3','b5','bb7']},
+  {id:'7sus4',name:'Dominant 7th sus4',suffix:'7sus4',iv:[0,5,7,10],roles:['1','4','5','b7'],omit5:true},
+  {id:'add9',name:'Added 9th',suffix:'add9',iv:[0,4,7,2],roles:['1','3','5','9']},
+  {id:'madd9',name:'Minor added 9th',suffix:'m(add9)',iv:[0,3,7,2],roles:['1','b3','5','9']},
+  {id:'9',name:'Dominant 9th',suffix:'9',iv:[0,4,7,10,2],roles:['1','3','5','b7','9'],omit5:true},
+  {id:'maj9',name:'Major 9th',suffix:'maj9',iv:[0,4,7,11,2],roles:['1','3','5','7','9'],omit5:true},
+  {id:'m9',name:'Minor 9th',suffix:'m9',iv:[0,3,7,10,2],roles:['1','b3','5','b7','9'],omit5:true},
+  {id:'7b9',name:'Dominant 7th flat 9',suffix:'7b9',iv:[0,4,7,10,1],roles:['1','3','5','b7','b9'],omit5:true},
+  {id:'7sharp9',name:'Dominant 7th sharp 9',suffix:'7#9',iv:[0,4,7,10,3],roles:['1','3','5','b7','#9'],omit5:true},
+  {id:'7b5',name:'Dominant 7th flat 5',suffix:'7b5',iv:[0,4,6,10],roles:['1','3','b5','b7']},
+  {id:'7sharp5',name:'Dominant 7th sharp 5',suffix:'7#5',iv:[0,4,8,10],roles:['1','3','#5','b7']},
+  {id:'mmaj7',name:'Minor major 7th',suffix:'m(maj7)',iv:[0,3,7,11],roles:['1','b3','5','7'],omit5:true},
+  {id:'69',name:'Major 6/9',suffix:'6/9',iv:[0,4,7,9,2],roles:['1','3','5','6','9'],omit5:true},
+  {id:'m69',name:'Minor 6/9',suffix:'m6/9',iv:[0,3,7,9,2],roles:['1','b3','5','6','9'],omit5:true},
+  {id:'maj7sharp11',name:'Major 7th sharp 11',suffix:'maj7#11',iv:[0,4,7,11,6],roles:['1','3','5','7','#11'],omit5:true}
+];
+function chordFingers(f) {
+  const frets = [...new Set(f.filter(n => n > 0))].sort((a,b) => a-b);
+  if (!frets.length) return { fingers:f.map(()=>0), barres:[] };
+  let best = null;
+  const search = (i, groups, barres) => {
+    if (groups.length > 4) return;
+    if (i === frets.length) {
+      const fingers = f.map(()=>0); let last = 0;
+      groups.forEach((g,j) => {
+        const remaining = groups.length-j-1, finger = Math.min(4-remaining, Math.max(last+1, g.f-frets[0]+1));
+        g.strings.forEach(s => fingers[s] = finger); last = finger;
+      });
+      const open = f.includes(0);
+      const score = groups.length + barres.reduce((sum,[a,b,fret])=>sum+(open ? 5 : fret === frets[0] ? 0.5 : f.slice(a,b+1).filter(n=>n === fret).length >= 3 ? 1 : 3),0);
+      if (!best || score < best.score) best = { fingers, barres, score };
+      return;
+    }
+    const fret = frets[i], strings = f.map((n,s)=>n === fret ? s : -1).filter(s=>s>=0);
+    search(i+1, groups.concat(strings.map(s=>({f:fret,strings:[s]}))), barres);
+    if (strings.length > 1) {
+      const a = strings[0], b = strings[strings.length-1];
+      if (f.slice(a,b+1).every(n=>n == null || n >= fret)) search(i+1, groups.concat({f:fret,strings}), barres.concat([[a,b,fret]]));
+    }
+  };
+  search(0,[],[]); return best;
 }
+const CHORD_CACHE = new Map();
+function chordShapes(root, typeId, tuning = 'std') {
+  const cacheKey = root+':'+typeId+':'+tuning+':'+S.settings.acc;
+  if (CHORD_CACHE.has(cacheKey)) return CHORD_CACHE.get(cacheKey);
+  const type = CHORD_TYPES.find(t=>t.id === typeId), tun = TUNE[tuning].m.slice().reverse();
+  const allowed = type.iv.map(i=>(root+i)%12), required = type.iv.filter(i=>!(type.omit5 && i === 7)).map(i=>(root+i)%12);
+  const found = new Map(), minNotes = type.id === '5' ? 2 : 3;
+  for (let low = 1; low <= 20; low++) {
+    const options = tun.map(m => [null].concat(allowed.includes(m%12) ? [0] : [], Array.from({length:Math.min(4,21-low)},(_,i)=>low+i).filter(f=>allowed.includes((m+f)%12))));
+    const walk = (s, frets, pcs, count) => {
+      if (count + 6-s < Math.max(minNotes,required.length)) return;
+      if (s < 6) { options[s].forEach(f=>walk(s+1, frets.concat(f), f == null ? pcs : pcs.concat((tun[s]+f)%12), count+(f == null ? 0 : 1))); return; }
+      if (count < minNotes || required.some(p=>!pcs.includes(p))) return;
+      const positive = frets.filter(f=>f>0);
+      if (positive.length ? Math.min(...positive) !== low : low !== 1) return;
+      const fingers = chordFingers(frets); if (!fingers) return;
+      const bassMidi = Math.min(...frets.flatMap((f,i)=>f == null ? [] : [tun[i]+f])), bass = bassMidi%12;
+      const missing5 = type.omit5 && !pcs.includes((root+7)%12), role = type.roles[type.iv.indexOf((bass-root+12)%12)];
+      const name = nn(root)+type.suffix+(bass === root ? '' : '/'+nn(bass));
+      const move = {name,root,f:frets,fingers:fingers.fingers,barre:fingers.barres[0],barres:fingers.barres,roles:frets.map((f,i)=>f == null ? '' : type.roles[type.iv.indexOf((tun[i]+f-root+12)%12)])};
+      found.set(frets.join(','), {move,count,bass,bassMidi,role,missing5,open:frets.includes(0),low:positive.length ? Math.min(...positive) : 0,high:Math.max(0,...positive)});
+    };
+    walk(0,[],[],0);
+  }
+  const list = [...found.values()].sort((a,b)=>a.low-b.low || Number(a.bass!==root)-Number(b.bass!==root) || b.count-a.count || a.high-b.high || a.move.f.join(',').localeCompare(b.move.f.join(',')));
+  if (CHORD_CACHE.size >= 12) CHORD_CACHE.delete(CHORD_CACHE.keys().next().value);
+  CHORD_CACHE.set(cacheKey,list); return list;
+}
+function chordCanMove(shape) {
+  if (!shape.open) return true;
+  const shifted = shape.move.f.map(f=>f == null ? null : f+1), held = shifted.filter(f=>f>0);
+  return Math.max(...held)-Math.min(...held) <= 3 && !!chordFingers(shifted);
+}
+function chordUnique(shapes) {
+  return shapes.filter(s=>!shapes.some(other=>other.count>s.count && other.bassMidi===s.bassMidi && !!other.missing5===!!s.missing5 && s.move.f.every((f,i)=>f == null || other.move.f[i]===f) && other.move.f.every((f,i)=>s.move.f[i] != null || f == null || f === 0)));
+}
+const VO = { bus:null,timer:null,preview:null,limit:24,results:[] };
 function voStop() { clearTimeout(VO.timer); killBus(VO.bus); VO.bus = null; VO.preview = null; voPreviewState(); }
+function voPreviewState() { $$('#chordGrid [data-chord-sound]').forEach(b=>{ const active = VO.preview === b.dataset.chordSound; b.setAttribute('aria-pressed',active); b.textContent = active ? '■ Stop' : b.dataset.mode === 'arp' ? 'Arpeggio' : '▶ Hear'; }); }
 function vSound(v, mv, mode) {
   voStop(); ac(); VO.bus = bus(AU.notes);
-  const N = vNotes(mv, v.tune), t = AU.ctx.currentTime + 0.05;
+  const N = vNotes(mv,v.tune), t = AU.ctx.currentTime+0.05;
   if (mode === 'arp') {
-    const notes = N.concat(N.slice(0, -1).reverse());
-    notes.forEach((n, i) => pluck(n.midi, t + i * 0.2, VO.bus, 0.62, 1.6));
-    VO.timer = setTimeout(voStop, notes.length * 200 + 1700);
-  } else { strum(N.map(n => n.midi), t, VO.bus, 0.035, 0.5, 2.4); VO.timer = setTimeout(voStop, 2800); }
+    N.forEach((n,i)=>pluck(n.midi,t+i*0.24,VO.bus,0.62,1.6)); VO.timer = setTimeout(voStop,N.length*240+1700);
+  } else { strum(N.map(n=>n.midi),t,VO.bus,0.035,0.5,2.4); VO.timer = setTimeout(voStop,2800); }
 }
-function voReset() { voStop(); VO.family = 'all'; VO.style = 'all'; VO.query = ''; VO.saved = false; voRemember(); renderVoList(); $('#voSearch').focus(); }
-function voFavorite(id) {
-  const ex = 'v_' + id, i = S.exfav.indexOf(ex);
-  if (i < 0) S.exfav.unshift(ex); else S.exfav.splice(i, 1);
-  save(); renderVoList();
-}
-function renderVoicings() { if (VO.id && !$('#voDetail').hidden) renderVoDetail(); else renderVoList(); }
-function renderVoList() {
-  $$('#voStyle button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === VO.style));
-  if ($('#voSearch').value !== VO.query) $('#voSearch').value = VO.query;
-  $('#voSaved').checked = !!VO.saved;
-  $('#voFamily').innerHTML = Object.entries(VFAMILIES).map(([id,name]) => `<option value="${id}" ${VO.family === id ? 'selected' : ''}>${name}</option>`).join('');
-  const query = VO.query.toLowerCase().replace(/♯/g, '#').replace(/♭/g, 'b').trim();
-  const list = VOICINGS.map(v => ({ v, current: vCurrent(v) })).filter(({v, current}) =>
-    (VO.style === 'all' || v.style === VO.style) && (VO.family === 'all' || v.family === VO.family) &&
-    (!VO.saved || S.exfav.includes('v_' + v.id)) &&
-    (!query || [v.name, v.why, STYLE_NAME[v.style], VFAMILIES[v.family], TUNE[v.tune].name, ...current.moves.map(m => m.name)].join(' ').toLowerCase().includes(query)))
-    .sort((a, b) => isEss('v_' + b.v.id) - isEss('v_' + a.v.id));
-  $('#voCount').textContent = `${list.length === VOICINGS.length ? list.length : list.length + ' of ' + VOICINGS.length} collections`;
-  $('#voReset').hidden = !(query || VO.saved || VO.family !== 'all' || VO.style !== 'all');
-  $('#voGrid').innerHTML = list.map(({v, current}) => `<article class="vocard"><button class="vo-open" type="button" data-vo="${v.id}"><span class="vobox">${vBox(current.moves[0], v.tune)}</span><span class="votext"><b>${esc(v.name)}</b><span class="small muted">${current.moves.map(m => esc(m.name)).join(' → ')}</span><span class="small">${isEss('v_' + v.id) ? '<span class="tag ess">Essential</span>' : ''}<span class="tag">${v.style === 'study' ? 'Movable study' : STYLE_NAME[v.style]}</span>${v.tune !== 'std' ? `<span class="tag">${TUNE[v.tune].name}</span>` : ''}</span></span></button><div class="vo-card-footer"><span class="small muted">${esc(VFAMILIES[v.family])}</span><span class="row" style="gap:6px"><button class="btn" type="button" data-preview="${v.id}" aria-label="Hear ${esc(v.name)}" aria-pressed="false">▶ Hear</button><button class="btn favbtn" type="button" data-vfavorite="${v.id}" aria-label="Favorite ${esc(v.name)}" aria-pressed="${S.exfav.includes('v_' + v.id)}">${S.exfav.includes('v_' + v.id) ? '★' : '☆'}</button></span></div></article>`).join('') || '<div class="vo-empty"><h3>No matching chord shapes</h3><p class="small muted">Try a chord name such as maj7, choose another family, or clear the filters to explore all collections.</p><button class="btn" type="button" data-reset-vo>Clear filters</button></div>';
+function renderVoicings() {
+  const o = S.ui.chordRef, type = CHORD_TYPES.find(t=>t.id === o.type) || CHORD_TYPES[0]; o.type = type.id;
+  const root = S.ui.voKey || 0;
+  $$('#chordGroup [data-group]').forEach(b=>{ b.setAttribute('aria-pressed', b.dataset.group === o.group); b.tabIndex = b.dataset.group === o.group ? 0 : -1; });
+  $('#chordGroupHint').textContent = o.group === 'open' ? 'Grips with open strings, unique to this root and chord type. Some roots have fewer open shapes. Redundant muted-string variants are collapsed.' : 'Closed grips and transferable open forms. Move every sounding note together; for an open form, replace the nut with a barre and adjust the other fingers. A movable open form also appears under Open chords.';
+  $('#chordRoot').innerHTML = Array.from({length:12},(_,k)=>`<button type="button" data-root="${k}" aria-pressed="${root === k}" tabindex="${root === k ? 0 : -1}">${esc(nn(k))}</button>`).join('');
+  $('#chordType').innerHTML = CHORD_TYPES.map(t=>`<option value="${t.id}">${esc(t.name)} (${esc(nn(root)+t.suffix)})</option>`).join(''); $('#chordType').value = type.id;
+  $('#chordTuning').innerHTML = Object.entries(TUNE).map(([id,t])=>`<option value="${id}">${esc(t.name)}</option>`).join(''); $('#chordTuning').value = o.tuning;
+  $('#chordKind').value = o.kind; $('#chordLabels').value = o.labels; $('#chordBass').value = o.bass; $('#chordPosition').value = o.position;
+  $('#chordName').textContent = nn(root)+type.suffix;
+  $('#chordFormula').innerHTML = type.roles.map((r,i)=>`<span><b>${esc(r)}</b> ${esc(nn(root+type.iv[i]))}</span>`).join('');
+  const allShapes = chordShapes(root,type.id,o.tuning);
+  const matches = allShapes.filter(s=>{
+    const group = o.group === 'open' ? s.open : chordCanMove(s);
+    const kind = o.kind === 'all' || o.kind === 'barre' && s.move.barres.length || o.kind === 'triads' && s.count === 3 || o.kind === 'four' && s.count === 4 || o.kind === 'shell' && s.count === 3 && s.missing5;
+    const bass = o.bass === 'all' || o.bass === 'root' && s.bass === root || o.bass === 'inversion' && s.bass !== root;
+    const position = o.position === 'all' || (o.position === '0-4' ? s.high <= 4 : s.low >= +o.position.split('-')[0] && s.low <= +o.position.split('-')[1]);
+    return group && kind && bass && position;
+  });
+  VO.results = chordUnique(matches);
+  $('#chordCount').textContent = `${VO.results.length} ${o.group === 'open' ? 'unique open grips' : 'movable shapes'} · ${TUNE[o.tuning].name} tuning`;
+  $('#chordLegend').innerHTML = o.labels === 'finger' ? fingerLegend() : o.labels === 'note' ? 'Dots show note names. The row below each diagram shows fret numbers.' : 'Dots show chord degrees. The row below each diagram shows fret numbers.';
+  const noOpen = o.group === 'open' && !allShapes.some(s=>s.open);
+  const emptyTitle = noOpen ? `No open ${nn(root)+type.suffix} shapes in this tuning` : 'No shapes match these filters';
+  const emptyCopy = noOpen ? 'Use a movable form to play this chord in the same key.' : 'Try All shapes, Any bass or Full neck to see more positions.';
+  const empty = `<div class="vo-empty"><h3>${esc(emptyTitle)}</h3><p class="small muted">${esc(emptyCopy)}</p><button class="btn" type="button" id="chordReset" data-movable="${noOpen}">${noOpen ? 'See movable shapes' : 'Clear filters'}</button></div>`;
+  $('#chordGrid').innerHTML = VO.results.slice(0,VO.limit).map((s,i)=>`<article class="chord-card"><div class="chord-card-heading"><b>${esc(s.move.name)}</b><span class="small muted">${s.low === 0 ? 'Open strings' : `Frets ${s.low}–${s.high}`}</span></div>${vBox(s.move,o.tuning,true,o.labels)}<div class="chord-caption small">${s.bass === root ? 'Root in bass' : esc(s.role)+' in bass'}${s.missing5 ? ' · 5th omitted' : ''}${s.move.barres.length ? ' · Barre' : ''}${s.open && chordCanMove(s) ? ' · Movable open form' : ''}</div><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(s.move.name)}, shape ${i+1}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(s.move.name)}, shape ${i+1}">Arpeggio</button></div></article>`).join('') || empty;
+  $('#chordMore').hidden = VO.limit >= VO.results.length; $('#chordMore').textContent = `Show more shapes (${Math.min(VO.limit,VO.results.length)} of ${VO.results.length})`;
   voPreviewState();
-}
-function openVoicing(id) { voStop(); VO.id = id; VO.move = 0; S.ui.lastVo = id; save(); $('#voList').hidden = true; $('#voDetail').hidden = false; $('#libraryNav').hidden = true; renderVoDetail(); window.scrollTo({ top: 0 }); }
-function renderVoDetail() {
-  const v = VOICINGS.find(x => x.id === VO.id); if (!v) return;
-  const current = vCurrent(v), mv = current.moves[VO.move];
-  $('#voKeyRow').hidden = !v.keyed; $('#voKey').innerHTML = Array.from({length:12}, (_,k) => `<option value="${k}">${esc(nn(k))}</option>`).join(''); $('#voKey').value = S.ui.voKey || 0;
-  const labels = VO.labels === 'finger' && !mv.fingers ? 'degree' : VO.labels;
-  $('#voLabels').value = labels; $('#voLabels option[value="finger"]').disabled = !mv.fingers;
-  $('#voLabels').title = mv.fingers ? 'Choose notes, fingers or chord tones' : 'Fingerings are available in the movable studies';
-  const focused = S.ui.focusEx === 'v_' + v.id;
-  $('#voFocus').classList.add('focus-choice'); $('#voFocus').setAttribute('aria-pressed', focused); $('#voFocus').textContent = focused ? '✓ Current practice focus' : 'Make my practice focus';
-  $('#voTitle').textContent = v.name;
-  $('#voTags').innerHTML = `<span class="tag">${VFAMILIES[v.family]}</span><span class="tag">${TUNE[v.tune].name} tuning${v.tune !== 'std' ? ` (${tuneLowHigh(v.tune)})` : ''}</span>`;
-  $('#voWhy').textContent = v.why;
-  $('#voMoves').innerHTML = current.moves.map((m, i) => `<button type="button" data-mv="${i}" aria-pressed="${i === VO.move}">${esc(m.name)}</button>`).join('');
-  $('#voBox').innerHTML = vBox(mv, v.tune, true, labels);
-  const N = vNotes(mv, v.tune);
-  const markers = N.map(n => ({ s: n.s, f: n.f, k: vKind(n.lab), l: labels === 'finger' ? String(n.fg || (n.f === 0 ? '0' : '')) : labels === 'note' ? nn(n.midi % 12) : n.lab }));
-  const fr = mv.f.filter(f => f != null), nz = fr.filter(f => f > 0), mx = Math.max(...fr), from = !fr.includes(0) && nz.length && Math.min(...nz) > 3 ? Math.min(...nz) - 1 : 0;
-  $('#voPosition').textContent = 'Root: ' + N.filter(n => n.lab === '1').map(n => `${SLONG[n.s]} string, ${n.f === 0 ? 'open' : 'fret ' + n.f}`).join(' · ');
-  vBoardEl.draw({ from, to: Math.min(20, Math.max(from + 5, mx + 1)), markers, win: null, names: tuneNames(v.tune) });
-  $('#voNotes').innerHTML = `Notes, low to high: ${N.map(n => `<b>${nn(n.midi % 12)}</b> <span class="muted">(${esc(n.lab)})</span>`).join(' · ')}`;
-  $('#voIdeas').innerHTML = v.ideas.map(t => `<li>${esc(t)}</li>`).join('');
-  $('#voPlayAlong').dataset.ex = 'v_' + v.id;
 }
 
 /* ---------- voicings: learn unit ---------- */
@@ -3779,7 +3864,7 @@ UNITS.push({ id: 'u9', title: 'Chord shapes for riffs', sum: 'Color tones, open-
     { t: 'From voicing to riff', body: ['A voicing becomes a riff when you give it movement and rhythm. Three tools cover most of it:', '<b>Pattern:</b> arpeggiate it (twinkly 8ths, hammer-ons onto one note, a rolling bass-middle-top pattern). <b>Movement:</b> slide the fretted part to two or three other spots while open strings ring. <b>Rhythm:</b> chug the bass with palm mutes and stab the chord, strum it slowly with a tremolo-arm glide, or play it in 7/8.', 'Each collection in Chord Shapes has a four-step play-along: hear it, compare the shapes, try a variation and make a riff.'],
       show: () => { const v = VOICINGS.find(x => x.id === 'gaze_bloom'); return board(vNotes(v.moves[0], v.tune).map(n => mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab))); }, legend: [['root', 'Root'], ['d5', '5th'], ['note', '9th'], ['dim', '#11']] } ],
   quiz: () => rep10([[qChordColor, 4], [qVoicingTone, 3], [qVPool, 3]]),
-  practice: [{ l: 'Browse Chord Shapes', d: 'Hear each voicing and its moves.', a: () => switchTab('voicings') }, { l: 'Play along: major 7ths with open strings', d: 'Midwest emo twinkle and 7/8.', a: () => openEx('v_emo_cmaj7') }, { l: 'Play along: two-finger shape over open strings', d: 'Alternative chugs and strums.', a: () => openEx('v_alt_emdrone') }, { l: 'Play along: A drone with a sliding shape', d: 'Shoegaze glide strums.', a: () => openEx('v_gaze_bloom') }] });
+  practice: [{ l: 'Browse Chord Shapes', d: 'Compare chord types, shapes and inversions in any key.', a: () => switchTab('voicings') }, { l: 'Play along: major 7ths with open strings', d: 'Midwest emo twinkle and 7/8.', a: () => openEx('v_emo_cmaj7') }, { l: 'Play along: two-finger shape over open strings', d: 'Alternative chugs and strums.', a: () => openEx('v_alt_emdrone') }, { l: 'Play along: A drone with a sliding shape', d: 'Shoegaze glide strums.', a: () => openEx('v_gaze_bloom') }] });
 
 /* ---------- routines ---------- */
 const ROUTINES = {
@@ -3804,7 +3889,7 @@ const ROUTINES = {
     { tool: 'exercises', ex: 'rh_sync', m: 3, t: 'Syncopation', d: 'Land the pushes early, then stop dead.' },
     { tool: 'learn', m: 5, t: 'Lesson', d: 'Next lesson card or unit check.' } ] },
   writer: { n: 'Riff writer · 20', blocks: [
-    { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Strum every move of a few voicings. Pick the one that fits the song in your head.' },
+    { tool: 'voicings', m: 3, t: 'Choose a voicing', d: 'Compare a few shapes in one key. Listen for the bass and top notes.' },
     { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 1, m: 5, t: 'Play-along: move the shape', d: 'Two clean runs in a row, then try the variation.' },
     { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 7, t: 'Your riff', d: 'Write two bars of your own inside the constraint. Record your favorite take on your phone.' },
     { tool: 'exercises', ex: () => 'v_' + (S.ui.lastVo || 'emo_cmaj7'), step: 3, m: 5, t: 'Develop the idea', d: 'Keep the strongest phrase. Change its rhythm or final note, then play the whole idea again.' } ] }
@@ -3950,7 +4035,7 @@ function switchTab(t, fromHash) {
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
   ({ library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
-  $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible() || (t === 'voicings' && VO.id && !$('#voDetail').hidden);
+  $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible();
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
   renderMini();
   const tb = $(`.tab[data-tab="${LIBRARY_TABS.includes(t) ? 'library' : t}"]`); if (tb && tb.scrollIntoView) tb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -4037,35 +4122,35 @@ $('#rEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]
 $('#xEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]'); if (!c) return; const x = EX.find(q => q.id === c.dataset.ex); if (x && x.keyed) { exStat(x.id).key = S.ui.xkey; save(); } exOpen(c.dataset.ex); });
 $('#xPos').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.xpos = +b.dataset.p; save(); renderExplorer(); });
 $('#xPlay').onclick = xPlay; $('#xDrone').onclick = xDrone;
-// voicings
-$('#voFamily').onchange = e => { voStop(); VO.family = e.target.value; voRemember(); renderVoList(); };
-$('#voSearch').oninput = e => { voStop(); VO.query = e.target.value; voRemember(); renderVoList(); };
-$('#voSaved').onchange = e => { voStop(); VO.saved = e.target.checked; voRemember(); renderVoList(); };
-$('#voReset').onclick = voReset;
-$('#voTriads').onclick = () => exOpen('triads');
-$('#voKey').onchange = e => { voStop(); S.ui.voKey = +e.target.value; save(); renderVoDetail(); };
-$('#voLabels').onchange = e => { VO.labels = e.target.value; voRemember(); renderVoDetail(); };
-$('#voFocus').onclick = () => {
-  const id = 'v_' + VO.id, v = VOICINGS.find(v => v.id === VO.id);
-  S.ui.focusEx = S.ui.focusEx === id ? '' : id;
-  if (v.keyed && S.ui.focusEx) exStat(id).key = S.ui.voKey || 0;
-  save(); renderVoDetail(); toast(S.ui.focusEx ? 'Your next session will use these shapes.' : 'Automatic practice recommendations restored.');
-};
-$('#voStyle').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; voStop(); VO.style = b.dataset.v; voRemember(); renderVoList(); });
-$('#voGrid').addEventListener('click', e => {
-  const reset = e.target.closest('[data-reset-vo]'); if (reset) { voReset(); return; }
-  const favorite = e.target.closest('[data-vfavorite]'); if (favorite) { voFavorite(favorite.dataset.vfavorite); return; }
-  const preview = e.target.closest('[data-preview]');
-  if (preview) { const id = preview.dataset.preview; if (VO.preview === id) voStop(); else { const v = vCurrent(VOICINGS.find(v => v.id === id)); vSound(v, v.moves[0], 'strum'); VO.preview = id; voPreviewState(); } return; }
-  const b = e.target.closest('[data-vo]'); if (b) openVoicing(b.dataset.vo);
+// chord reference
+function chordChooseRoot(root) {
+  voStop(); S.ui.voKey = root; VO.limit = 24; save(); renderVoicings();
+  $(`#chordRoot [data-root="${root}"]`).focus({preventScroll:true});
+}
+$('#chordRoot').addEventListener('click', e => { const b = e.target.closest('[data-root]'); if (b) chordChooseRoot(+b.dataset.root); });
+$('#chordRoot').addEventListener('keydown', e => {
+  if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+  e.preventDefault(); e.stopPropagation();
+  chordChooseRoot(e.key === 'Home' ? 0 : e.key === 'End' ? 11 : ((S.ui.voKey || 0)+(e.key === 'ArrowRight' ? 1 : 11))%12);
 });
-$('#voBack').onclick = () => { voStop(); $('#voDetail').hidden = true; $('#voList').hidden = false; VO.id = null; $('#libraryNav').hidden = false; renderVoList(); };
-function voMove(i) { const v = vCurrent(VOICINGS.find(v => v.id === VO.id)); VO.move = (i + v.moves.length) % v.moves.length; renderVoDetail(); vSound(v, v.moves[VO.move], 'strum'); $(`#voMoves [data-mv="${VO.move}"]`).focus({ preventScroll: true }); }
-$('#voMoves').addEventListener('click', e => { const b = e.target.closest('[data-mv]'); if (b) voMove(+b.dataset.mv); });
-$('#voMoves').addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); voMove(VO.move + (e.key === 'ArrowRight' ? 1 : -1)); } });
-$('#voStrum').onclick = () => { const v = vCurrent(VOICINGS.find(x => x.id === VO.id)); vSound(v, v.moves[VO.move], 'strum'); };
-$('#voArp').onclick = () => { const v = vCurrent(VOICINGS.find(x => x.id === VO.id)); vSound(v, v.moves[VO.move], 'arp'); };
-$('#voPlayAlong').onclick = () => { const id = $('#voPlayAlong').dataset.ex, e = EX.find(e => e.id === id); if (e.keyed) exStat(id).key = S.ui.voKey || 0; openEx(id); };
+$('#chordGroup').addEventListener('click', e => {
+  const b = e.target.closest('[data-group]'); if (!b) return;
+  const group = b.dataset.group; voStop(); S.ui.chordRef.group = group; S.ui.chordRef.position = group === 'open' ? '0-4' : 'all'; VO.limit = 24; save(); renderVoicings();
+  $(`#chordGroup [data-group="${group}"]`).focus({preventScroll:true});
+});
+$('#chordGroup').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  e.preventDefault(); $(`#chordGroup [data-group="${S.ui.chordRef.group === 'open' ? 'movable' : 'open'}"]`).click();
+});
+[['#chordPosition','position'],['#chordType','type'],['#chordKind','kind'],['#chordBass','bass'],['#chordLabels','labels'],['#chordTuning','tuning']].forEach(([id,key])=>{ $(id).onchange = e => { voStop(); S.ui.chordRef[key] = e.target.value; VO.limit = 24; save(); renderVoicings(); }; });
+$('#chordMore').onclick = () => { const start = VO.limit; VO.limit += 24; renderVoicings(); const card = $$('#chordGrid .chord-card')[start]; if (card) { card.scrollIntoView({block:'center'}); card.querySelector('button').focus({preventScroll:true}); } };
+$('#chordGrid').addEventListener('click', e => {
+  const reset = e.target.closest('#chordReset');
+  if (reset) { voStop(); if (reset.dataset.movable === 'true') S.ui.chordRef.group = 'movable'; S.ui.chordRef.kind = 'all'; S.ui.chordRef.bass = 'all'; S.ui.chordRef.position = 'all'; VO.limit = 24; save(); renderVoicings(); $('#chordType').focus({preventScroll:true}); return; }
+  const b = e.target.closest('[data-chord-sound]'); if (!b) return;
+  if (VO.preview === b.dataset.chordSound) { voStop(); return; }
+  const shape = VO.results[+b.dataset.index]; vSound({tune:S.ui.chordRef.tuning},shape.move,b.dataset.mode); VO.preview = b.dataset.chordSound; voPreviewState();
+});
 // learn
 $('#lnUnits').addEventListener('click', e => { const b = e.target.closest('[data-unit]'); if (b) openUnit(b.dataset.unit); });
 $('#lnBack').onclick = () => { $('#lnUnit').hidden = true; $('#lnPath').hidden = false; LN.unit = null; renderPath(); };
