@@ -450,29 +450,28 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .chord-groups{flex:none;align-self:flex-start}
 .chord-groups button{padding:10px 20px}
 #chordGroupHint{max-width:95ch;min-height:20px}
-.chord-controls{gap:18px}
-.chord-controls>.row{gap:14px;align-items:flex-end}
+.chord-controls{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
 .chord-controls label.f{flex:1;min-width:140px}
 .chord-controls select{width:100%}
-.chord-roots{flex-wrap:wrap;width:fit-content}
-.chord-roots button{min-width:42px;padding:9px 13px;font-family:var(--font-mono)}
 .chord-summary{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .chord-summary h2{font-size:36px;min-width:70px}
 .chord-summary>#chordCount{margin-left:auto}
-.chord-formula{display:flex;flex-wrap:wrap;gap:8px}
-.chord-formula>span{padding:6px 10px;border-radius:8px;background:var(--surface-2);font-size:13px}
-.chord-formula b{margin-right:5px;color:var(--muted);font-family:var(--font-mono);font-size:11px}
 .chord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(208px,1fr));gap:16px}
 .chord-card{display:flex;flex-direction:column;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:16px 12px;gap:8px;min-width:0}
 .chord-card-heading{display:flex;justify-content:space-between;align-items:baseline;width:100%;gap:8px}
 .chord-card-heading>b{font-family:var(--font-display);font-size:23px}
 .chord-card-heading>span{font-size:11px}
 .chord-card .vbox{width:190px;max-width:100%;height:auto}
-.chord-caption{color:var(--muted);font-size:12px;text-align:center;min-height:18px}
+.chord-form{color:var(--muted);font-size:12px;min-height:18px;text-align:center}
+.chord-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;min-height:24px}
+.chord-tags .tag{margin:0;font-size:10px}
+.chord-use{color:var(--muted);font-size:12px;text-align:center;min-height:36px;margin:0}
+.chord-extras>summary{cursor:pointer;font-weight:600;padding:14px 0;border-top:1px solid var(--line)}
+.chord-extras[open]>summary{margin-bottom:12px}
 .chord-audio{justify-content:center;width:100%;margin-top:auto;gap:6px}
 .chord-audio .btn{padding:7px 10px;font-size:12px}
 @media(min-width:1100px){.chord-controls{position:sticky;top:76px;z-index:3;box-shadow:0 4px 18px #00000008}}
-@media(max-width:620px){.chord-mode{align-items:flex-start;flex-direction:column;gap:10px}.chord-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chord-card{padding:12px 6px}.chord-card-heading{flex-direction:column;gap:0;align-items:center}.chord-card .vbox{width:100%}.chord-caption{font-size:11px}.chord-controls label.f{min-width:120px}.chord-roots button{min-width:36px;padding:7px 10px}.chord-audio{flex-wrap:wrap}.chord-summary>#chordCount{margin-left:0}}
+@media(max-width:620px){.chord-mode{align-items:flex-start;flex-direction:column;gap:10px}.chord-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.chord-card{padding:12px 6px}.chord-card-heading{flex-direction:column;gap:0;align-items:center}.chord-card .vbox{width:100%}.chord-use{font-size:11px}.chord-controls label.f{min-width:120px}.chord-audio{flex-wrap:wrap}.chord-summary>#chordCount{margin-left:0}}
 
 .focus-choice[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
 .practice-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}
@@ -777,19 +776,18 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <!-- VOICINGS -->
 <section class="view" id="view-voicings" hidden>
   <div class="stack chord-reference">
-    <div class="vhead"><div><span class="label">Guitar chord reference</span><h2>Chord Shapes</h2></div><p class="muted small">Choose a root and chord type. Compare shapes, inversions and fingerings across the neck.</p></div>
-    <div class="chord-mode"><div class="seg chord-groups" id="chordGroup" aria-label="Chord shape group"><button type="button" data-group="open">Open chords</button><button type="button" data-group="movable">Movable shapes</button></div>
-    <p class="small muted" id="chordGroupHint"></p></div>
-    <div class="card stack chord-controls">
-      <div class="f"><span>Root / key</span><div class="seg chord-roots" id="chordRoot" aria-label="Chord root"></div></div>
-      <div class="row"><label class="f"><span>Chord type</span><select id="chordType"></select></label><label class="f"><span>Shapes</span><select id="chordKind"><option value="all">All shapes</option><option value="barre">Barre shapes</option><option value="triads">Three-note grips</option><option value="four">Four-note grips</option><option value="shell">Three-note shells (no 5th)</option></select></label><label class="f"><span>Bass</span><select id="chordBass"><option value="all">Any bass</option><option value="root">Root in bass</option><option value="inversion">Inversions</option></select></label><label class="f"><span>Diagram labels</span><select id="chordLabels"><option value="finger">Fingers</option><option value="note">Notes</option><option value="degree">Chord degrees</option></select></label><label class="f"><span>Neck area</span><select id="chordPosition"><option value="all">Full neck</option><option value="0-4">Open position (0–4)</option><option value="5-9">Starts at fret 5–9</option><option value="10-15">Starts at fret 10–15</option><option value="16-20">Starts at fret 16–20</option></select></label><label class="f"><span>Tuning</span><select id="chordTuning"></select></label></div>
-    </div>
-    <div class="chord-summary"><h2 id="chordName"></h2><div id="chordFormula" class="chord-formula"></div><span class="small muted" id="chordCount" aria-live="polite"></span></div>
+    <div class="vhead"><div><span class="label">A practical chord book</span><h2>Chord Shapes</h2></div><p class="muted small">Start with the grips you will use most. Add a color or a smaller voicing when the music calls for it.</p></div>
+    <div class="chord-mode"><div class="seg chord-groups" id="chordGroup" aria-label="Chord shape group"><button type="button" data-group="open">Open chords</button><button type="button" data-group="movable">Movable shapes</button></div><p class="small muted" id="chordGroupHint"></p></div>
+    <div class="card chord-controls"><label class="f"><span>Root</span><select id="chordRoot"></select></label><label class="f"><span>Genre</span><select id="chordGenre"></select></label><label class="f"><span>Diagram labels</span><select id="chordLabels"><option value="finger">Fingers</option><option value="note">Notes</option><option value="degree">Chord degrees</option></select></label></div>
+    <div class="chord-summary"><h2 id="chordName"></h2><span class="small muted" id="chordCount" aria-live="polite"></span></div>
     <div class="finger-legend small muted" id="chordLegend"></div>
-    <div id="chordGrid" class="chord-grid"></div>
-    <button class="btn" id="chordMore" type="button" hidden>Show more shapes</button>
-    <p class="small muted">Frets 0–20 · up to four frets per grip · at most four fretting fingers. Open circles mean open strings; × means skip the string. Wide bars show one finger across several strings. Fret numbers follow the string names below each diagram. Fingerings are suggestions; use a comfortable grip.</p>
-    <p class="small muted">Looking for a workout? <button class="linkbtn" data-go="exercises" type="button">Open Exercises →</button></p>
+    <div id="chordCards" class="stack">
+      <div id="chordGrid" class="chord-grid"></div>
+      <details id="chordExtras" class="chord-extras"><summary id="chordExtrasSummary"></summary><div id="chordExtraGrid" class="chord-grid"></div></details>
+      <div class="vo-empty" id="chordEmpty" hidden></div>
+    </div>
+    <p class="small muted">Standard tuning · O = open string · × = skip this string · A bar holds several strings with one finger. Genre tags suggest musical uses. Fingerings are suggestions.</p>
+    <p class="small muted">Ready to play them in time? <button class="linkbtn" data-go="exercises" type="button">Open Exercises →</button></p>
   </div>
 </section>
 
@@ -1019,7 +1017,7 @@ const DEF = {
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
-  ui: { exQuery: '', exMore: false, chordRef: { group: 'open', type: 'major', kind: 'all', bass: 'all', position: '0-4', tuning: 'std', labels: 'finger' }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -3695,136 +3693,109 @@ function vBox(move, tune, big, labels = 'degree') {
 }
 
 /* ---------- chord reference ---------- */
-const CHORD_TYPES = [
-  {id:'major',name:'Major',suffix:'',iv:[0,4,7],roles:['1','3','5']},
-  {id:'minor',name:'Minor',suffix:'m',iv:[0,3,7],roles:['1','b3','5']},
-  {id:'5',name:'Power chord',suffix:'5',iv:[0,7],roles:['1','5']},
-  {id:'sus2',name:'Suspended 2nd',suffix:'sus2',iv:[0,2,7],roles:['1','2','5']},
-  {id:'sus4',name:'Suspended 4th',suffix:'sus4',iv:[0,5,7],roles:['1','4','5']},
-  {id:'dim',name:'Diminished',suffix:'dim',iv:[0,3,6],roles:['1','b3','b5']},
-  {id:'aug',name:'Augmented',suffix:'aug',iv:[0,4,8],roles:['1','3','#5']},
-  {id:'6',name:'Major 6th',suffix:'6',iv:[0,4,7,9],roles:['1','3','5','6'],omit5:true},
-  {id:'m6',name:'Minor 6th',suffix:'m6',iv:[0,3,7,9],roles:['1','b3','5','6'],omit5:true},
-  {id:'7',name:'Dominant 7th',suffix:'7',iv:[0,4,7,10],roles:['1','3','5','b7'],omit5:true},
-  {id:'maj7',name:'Major 7th',suffix:'maj7',iv:[0,4,7,11],roles:['1','3','5','7'],omit5:true},
-  {id:'m7',name:'Minor 7th',suffix:'m7',iv:[0,3,7,10],roles:['1','b3','5','b7'],omit5:true},
-  {id:'m7b5',name:'Half diminished',suffix:'m7b5',iv:[0,3,6,10],roles:['1','b3','b5','b7']},
-  {id:'dim7',name:'Diminished 7th',suffix:'dim7',iv:[0,3,6,9],roles:['1','b3','b5','bb7']},
-  {id:'7sus4',name:'Dominant 7th sus4',suffix:'7sus4',iv:[0,5,7,10],roles:['1','4','5','b7'],omit5:true},
-  {id:'add9',name:'Added 9th',suffix:'add9',iv:[0,4,7,2],roles:['1','3','5','9']},
-  {id:'madd9',name:'Minor added 9th',suffix:'m(add9)',iv:[0,3,7,2],roles:['1','b3','5','9']},
-  {id:'9',name:'Dominant 9th',suffix:'9',iv:[0,4,7,10,2],roles:['1','3','5','b7','9'],omit5:true},
-  {id:'maj9',name:'Major 9th',suffix:'maj9',iv:[0,4,7,11,2],roles:['1','3','5','7','9'],omit5:true},
-  {id:'m9',name:'Minor 9th',suffix:'m9',iv:[0,3,7,10,2],roles:['1','b3','5','b7','9'],omit5:true},
-  {id:'7b9',name:'Dominant 7th flat 9',suffix:'7b9',iv:[0,4,7,10,1],roles:['1','3','5','b7','b9'],omit5:true},
-  {id:'7sharp9',name:'Dominant 7th sharp 9',suffix:'7#9',iv:[0,4,7,10,3],roles:['1','3','5','b7','#9'],omit5:true},
-  {id:'7b5',name:'Dominant 7th flat 5',suffix:'7b5',iv:[0,4,6,10],roles:['1','3','b5','b7']},
-  {id:'7sharp5',name:'Dominant 7th sharp 5',suffix:'7#5',iv:[0,4,8,10],roles:['1','3','#5','b7']},
-  {id:'mmaj7',name:'Minor major 7th',suffix:'m(maj7)',iv:[0,3,7,11],roles:['1','b3','5','7'],omit5:true},
-  {id:'69',name:'Major 6/9',suffix:'6/9',iv:[0,4,7,9,2],roles:['1','3','5','6','9'],omit5:true},
-  {id:'m69',name:'Minor 6/9',suffix:'m6/9',iv:[0,3,7,9,2],roles:['1','b3','5','6','9'],omit5:true},
-  {id:'maj7sharp11',name:'Major 7th sharp 11',suffix:'maj7#11',iv:[0,4,7,11,6],roles:['1','3','5','7','#11'],omit5:true}
+const CHORD_QUALITIES = {
+  major:{suffix:'',iv:[0,4,7],roles:['1','3','5']}, minor:{suffix:'m',iv:[0,3,7],roles:['1','b3','5']},
+  '5':{suffix:'5',iv:[0,7],roles:['1','5']}, '7':{suffix:'7',iv:[0,4,7,10],roles:['1','3','5','b7']},
+  m7:{suffix:'m7',iv:[0,3,7,10],roles:['1','b3','5','b7']}, maj7:{suffix:'maj7',iv:[0,4,7,11],roles:['1','3','5','7']},
+  sus2:{suffix:'sus2',iv:[0,2,7],roles:['1','2','5']}, sus4:{suffix:'sus4',iv:[0,5,7],roles:['1','4','5']},
+  add9:{suffix:'add9',iv:[0,4,7,2],roles:['1','3','5','9']}, '7sharp9':{suffix:'7#9',iv:[0,4,7,10,3],roles:['1','3','5','b7','#9']}
+};
+const CHORD_GENRES = {all:'All genres',rock:'Rock',alternative:'Alternative',blues:'Blues',emo:'Midwest emo',shoegaze:'Shoegaze',funk:'Funk',jazz:'Jazz',metal:'Metal'};
+const CHORD_GRIPS = [
+  {"id":"open-c","group":"open","root":0,"quality":"major","f":[null,3,2,0,1,0],"fingers":[0,3,2,0,1,0],"genres":["rock","alternative"],"use":"A starting point for open-position chord changes.","core":true},
+  {"id":"open-a","group":"open","root":9,"quality":"major","f":[null,0,2,2,2,0],"fingers":[0,0,1,2,3,0],"genres":["rock","blues"],"use":"Let the A string anchor a bright rhythm part.","core":true},
+  {"id":"open-g","group":"open","root":7,"quality":"major","f":[3,2,0,0,0,3],"fingers":[2,1,0,0,0,3],"genres":["rock","alternative"],"use":"A full six-string chord for broad strumming.","core":true},
+  {"id":"open-d","group":"open","root":2,"quality":"major","f":[null,null,0,2,3,2],"fingers":[0,0,0,1,3,2],"genres":["rock","alternative"],"use":"Keep the low strings out for a clear upper-string sound.","core":true},
+  {"id":"open-e","group":"open","root":4,"quality":"major","f":[0,2,2,1,0,0],"fingers":[0,2,3,1,0,0],"genres":["rock","blues"],"use":"A strong low-root chord for riffs and rhythm.","core":true},
+  {"id":"open-am","group":"open","root":9,"quality":"minor","f":[null,0,2,2,1,0],"fingers":[0,0,2,3,1,0],"genres":["rock","alternative"],"use":"Pairs naturally with C, Dm and E.","core":true},
+  {"id":"open-em","group":"open","root":4,"quality":"minor","f":[0,2,2,0,0,0],"fingers":[0,2,3,0,0,0],"genres":["rock","shoegaze"],"use":"Let the open strings sustain under a slow rhythm.","core":true},
+  {"id":"open-dm","group":"open","root":2,"quality":"minor","f":[null,null,0,2,3,1],"fingers":[0,0,0,2,3,1],"genres":["rock","alternative"],"use":"A compact minor sound on the top four strings.","core":true},
+  {"id":"open-a7","group":"open","root":9,"quality":"7","f":[null,0,2,0,2,0],"fingers":[0,0,1,0,2,0],"genres":["blues","rock"],"use":"Use beside D7 and E7 for a twelve-bar blues.","core":false},
+  {"id":"open-b7","group":"open","root":11,"quality":"7","f":[null,2,1,2,0,2],"fingers":[0,2,1,3,0,4],"genres":["blues","rock"],"use":"The turnaround chord in a blues in E.","core":false},
+  {"id":"open-c7","group":"open","root":0,"quality":"7","f":[null,3,2,3,1,0],"fingers":[0,3,2,4,1,0],"genres":["blues","jazz"],"use":"Add tension before moving to F.","core":false},
+  {"id":"open-d7","group":"open","root":2,"quality":"7","f":[null,null,0,2,1,2],"fingers":[0,0,0,2,1,3],"genres":["blues","rock"],"use":"A useful change from D, often resolving to G.","core":false},
+  {"id":"open-e7","group":"open","root":4,"quality":"7","f":[0,2,0,1,0,0],"fingers":[0,2,0,1,0,0],"genres":["blues","rock"],"use":"Use as the V chord in A, or as a blues tonic.","core":false},
+  {"id":"open-g7","group":"open","root":7,"quality":"7","f":[3,2,0,0,0,1],"fingers":[3,2,0,0,0,1],"genres":["blues","jazz"],"use":"Hear the tension release when it moves to C.","core":false},
+  {"id":"open-cadd9","group":"open","root":0,"quality":"add9","f":[null,3,2,0,3,3],"fingers":[0,2,1,0,3,4],"genres":["alternative","emo","shoegaze"],"use":"Keep the top strings ringing through an acoustic riff.","core":false},
+  {"id":"open-dsus2","group":"open","root":2,"quality":"sus2","f":[null,null,0,2,3,0],"fingers":[0,0,0,1,3,0],"genres":["alternative","shoegaze"],"use":"Lift the high-string finger from D for an open color.","core":false},
+  {"id":"open-dsus4","group":"open","root":2,"quality":"sus4","f":[null,null,0,2,3,3],"fingers":[0,0,0,1,3,4],"genres":["rock","alternative"],"use":"Resolve the high G down to F-sharp in D.","core":false},
+  {"id":"open-asus2","group":"open","root":9,"quality":"sus2","f":[null,0,2,2,0,0],"fingers":[0,0,1,2,0,0],"genres":["alternative","emo","shoegaze"],"use":"Open B and E give a light, ringing texture.","core":false},
+  {"id":"open-asus4","group":"open","root":9,"quality":"sus4","f":[null,0,2,2,3,0],"fingers":[0,0,1,2,3,0],"genres":["rock","alternative"],"use":"Move the B-string note down one fret to resolve to A.","core":false},
+  {"id":"open-cmaj7","group":"open","root":0,"quality":"maj7","f":[null,3,2,0,0,0],"fingers":[0,3,2,0,0,0],"genres":["emo","jazz"],"use":"Let the open B add a soft major-seventh color.","core":false},
+  {"id":"open-fmaj7","group":"open","root":5,"quality":"maj7","f":[null,null,3,2,1,0],"fingers":[0,0,3,2,1,0],"genres":["emo","shoegaze"],"use":"An airy upper-string alternative to a full F barre.","core":false},
+  {"id":"open-em7","group":"open","root":4,"quality":"m7","f":[0,2,2,0,3,0],"fingers":[0,2,3,0,4,0],"genres":["alternative","shoegaze","funk"],"use":"The high D adds color while the low E stays grounded.","core":false},
+  {"id":"open-am7","group":"open","root":9,"quality":"m7","f":[null,0,2,0,1,0],"fingers":[0,0,2,0,1,0],"genres":["funk","jazz"],"use":"Use a short strum and leave room between changes.","core":false},
+  {"id":"open-dm7","group":"open","root":2,"quality":"m7","f":[null,null,0,2,1,1],"fingers":[0,0,0,2,1,1],"genres":["jazz","funk"],"use":"Connect it with G7 and Cmaj7 for a ii–V–I.","core":false,"barres":[[4,5,1]]},
+  {"id":"power-e","group":"movable","root":5,"quality":"5","f":[1,3,3,null,null,null],"fingers":[1,3,4,0,0,0],"genres":["rock","metal","alternative"],"use":"Mute the upper strings and move the whole grip.","core":true,"form":"Low-E power chord"},
+  {"id":"power-a","group":"movable","root":0,"quality":"5","f":[null,3,5,5,null,null],"fingers":[0,1,3,4,0,0],"genres":["rock","metal","alternative"],"use":"The A-string root keeps power-chord riffs off the low E.","core":true,"form":"A-string power chord"},
+  {"id":"barre-e-major","group":"movable","root":5,"quality":"major","f":[1,3,3,2,1,1],"fingers":[1,3,4,2,1,1],"genres":["rock","alternative"],"use":"Find the root on the low E, then keep this shape.","core":true,"form":"E-form major","barres":[[0,5,1]]},
+  {"id":"barre-e-minor","group":"movable","root":5,"quality":"minor","f":[1,3,3,1,1,1],"fingers":[1,3,4,1,1,1],"genres":["rock","alternative","shoegaze"],"use":"Compare with E-form major: only the third changes.","core":true,"form":"E-form minor","barres":[[0,5,1]]},
+  {"id":"barre-a-major","group":"movable","root":0,"quality":"major","f":[null,3,5,5,5,3],"fingers":[0,1,3,3,3,1],"genres":["rock","alternative"],"use":"A movable major chord with its root on the A string.","core":true,"form":"A-form major","barres":[[1,5,3],[2,4,5]]},
+  {"id":"barre-a-minor","group":"movable","root":0,"quality":"minor","f":[null,3,5,5,4,3],"fingers":[0,1,3,4,2,1],"genres":["rock","alternative"],"use":"A useful partner to the E-form barre shapes.","core":true,"form":"A-form minor","barres":[[1,5,3]]},
+  {"id":"barre-e-7","group":"movable","root":5,"quality":"7","f":[1,3,1,2,1,1],"fingers":[1,3,1,2,1,1],"genres":["blues","rock"],"use":"Move it through I, IV and V in a blues.","core":true,"form":"E-form dominant 7","barres":[[0,5,1]]},
+  {"id":"barre-a-7","group":"movable","root":0,"quality":"7","f":[null,3,5,3,5,3],"fingers":[0,1,3,1,4,1],"genres":["blues","rock"],"use":"A second root position for dominant-seventh changes.","core":true,"form":"A-form dominant 7","barres":[[1,5,3]]},
+  {"id":"barre-e-m7","group":"movable","root":5,"quality":"m7","f":[1,3,1,1,1,1],"fingers":[1,3,1,1,1,1],"genres":["funk","jazz"],"use":"Try short, clipped strokes instead of a full ringing strum.","core":true,"form":"E-form minor 7","barres":[[0,5,1]]},
+  {"id":"barre-a-m7","group":"movable","root":0,"quality":"m7","f":[null,3,5,3,4,3],"fingers":[0,1,3,1,2,1],"genres":["funk","jazz"],"use":"Keep it near A-form dominant 7 for economical changes.","core":true,"form":"A-form minor 7","barres":[[1,5,3]]},
+  {"id":"barre-a-maj7","group":"movable","root":0,"quality":"maj7","f":[null,3,5,4,5,3],"fingers":[0,1,3,2,4,1],"genres":["emo","jazz"],"use":"Use the major seventh for a softer, less settled sound.","core":false,"form":"A-form major 7","barres":[[1,5,3]]},
+  {"id":"barre-a-sus2","group":"movable","root":0,"quality":"sus2","f":[null,3,5,5,3,3],"fingers":[0,1,3,4,1,1],"genres":["alternative","shoegaze"],"use":"A ringing sus color that follows an A-string root.","core":false,"form":"A-form sus2","barres":[[1,5,3]]},
+  {"id":"barre-e-sus4","group":"movable","root":5,"quality":"sus4","f":[1,3,3,3,1,1],"fingers":[1,3,3,3,1,1],"genres":["rock","alternative"],"use":"Resolve to E-form major by lowering its fourth.","core":false,"form":"E-form sus4","barres":[[0,5,1],[1,3,3]]},
+  {"id":"triad-root","group":"movable","root":0,"quality":"major","f":[null,null,null,5,5,3],"fingers":[0,0,0,3,3,1],"genres":["funk","emo","jazz"],"use":"A small major chord that leaves room for bass and drums.","core":false,"form":"G–B–e triad · root position","barres":[[3,4,5]]},
+  {"id":"triad-first","group":"movable","root":0,"quality":"major","f":[null,null,null,9,8,8],"fingers":[0,0,0,2,1,1],"genres":["funk","emo","jazz"],"use":"Put the third in the bass for a smooth nearby change.","core":false,"form":"G–B–e triad · first inversion","barres":[[4,5,8]]},
+  {"id":"triad-second","group":"movable","root":0,"quality":"major","f":[null,null,null,12,13,12],"fingers":[0,0,0,1,2,1],"genres":["funk","emo","jazz"],"use":"Put the fifth in the bass; listen to the top note.","core":false,"form":"G–B–e triad · second inversion","barres":[[3,5,12]]},
+  {"id":"shell-7","group":"movable","root":0,"quality":"7","f":[null,3,null,3,5,null],"fingers":[0,1,0,1,3,0],"genres":["jazz","blues"],"use":"Play only the marked strings: root, third and flat seventh.","core":false,"form":"Dominant 7 shell","barres":[[1,3,3]]},
+  {"id":"shell-maj7","group":"movable","root":0,"quality":"maj7","f":[null,3,null,4,5,null],"fingers":[0,1,0,2,3,0],"genres":["jazz","emo"],"use":"Root, third and major seventh give the chord its character.","core":false,"form":"Major 7 shell"},
+  {"id":"shell-m7","group":"movable","root":0,"quality":"m7","f":[null,3,null,3,4,null],"fingers":[0,1,0,1,2,0],"genres":["jazz","funk"],"use":"Use the root, minor third and flat seventh for sparse comping.","core":false,"form":"Minor 7 shell","barres":[[1,3,3]]},
+  {"id":"dominant-sharp9","group":"movable","root":4,"quality":"7sharp9","f":[null,7,6,7,8,null],"fingers":[0,2,1,3,4,0],"genres":["rock","blues","funk"],"use":"A tense dominant color for a gritty riff or accented stab.","core":false,"form":"7♯9 grip"}
 ];
-function chordFingers(f) {
-  const frets = [...new Set(f.filter(n => n > 0))].sort((a,b) => a-b);
-  if (!frets.length) return { fingers:f.map(()=>0), barres:[] };
-  let best = null;
-  const search = (i, groups, barres) => {
-    if (groups.length > 4) return;
-    if (i === frets.length) {
-      const fingers = f.map(()=>0); let last = 0;
-      groups.forEach((g,j) => {
-        const remaining = groups.length-j-1, finger = Math.min(4-remaining, Math.max(last+1, g.f-frets[0]+1));
-        g.strings.forEach(s => fingers[s] = finger); last = finger;
-      });
-      const open = f.includes(0);
-      const score = groups.length + barres.reduce((sum,[a,b,fret])=>sum+(open ? 5 : fret === frets[0] ? 0.5 : f.slice(a,b+1).filter(n=>n === fret).length >= 3 ? 1 : 3),0);
-      if (!best || score < best.score) best = { fingers, barres, score };
-      return;
-    }
-    const fret = frets[i], strings = f.map((n,s)=>n === fret ? s : -1).filter(s=>s>=0);
-    search(i+1, groups.concat(strings.map(s=>({f:fret,strings:[s]}))), barres);
-    if (strings.length > 1) {
-      const a = strings[0], b = strings[strings.length-1];
-      if (f.slice(a,b+1).every(n=>n == null || n >= fret)) search(i+1, groups.concat({f:fret,strings}), barres.concat([[a,b,fret]]));
-    }
-  };
-  search(0,[],[]); return best;
+function chordCatalog(group, root = null) {
+  return CHORD_GRIPS.filter(g=>g.group === group && (group === 'movable' || root == null || g.root === root)).map(g=>{
+    const key = group === 'movable' ? root ?? 0 : g.root, quality = CHORD_QUALITIES[g.quality];
+    let shift = group === 'movable' ? (key-g.root+12)%12 : 0;
+    if (group === 'movable' && Math.min(...g.f.filter(f=>f != null))+shift > 12) shift -= 12;
+    const f = g.f.map(f=>f == null ? null : f+shift), barres = (g.barres || []).map(([a,b,f])=>[a,b,f+shift]);
+    const roles = f.map((f,i)=>f == null ? '' : quality.roles[quality.iv.indexOf((TUNE.std.m[5-i]+f-key+120)%12)]);
+    const move = {root:key,f,fingers:g.fingers,barres,roles};
+    const notes = vNotes(move,'std'), bass = notes[0].midi%12, missing5 = quality.iv.includes(7) && !notes.some(n=>(n.midi-key+120)%12 === 7);
+    move.name = nn(key)+quality.suffix+(bass === key ? '' : '/'+nn(bass));
+    const held = f.filter(f=>f>0);
+    return {...g,root:key,move,missing5,low:held.length ? Math.min(...held) : 0,high:Math.max(0,...held)};
+  });
 }
-const CHORD_CACHE = new Map();
-function chordShapes(root, typeId, tuning = 'std') {
-  const cacheKey = root+':'+typeId+':'+tuning+':'+S.settings.acc;
-  if (CHORD_CACHE.has(cacheKey)) return CHORD_CACHE.get(cacheKey);
-  const type = CHORD_TYPES.find(t=>t.id === typeId), tun = TUNE[tuning].m.slice().reverse();
-  const allowed = type.iv.map(i=>(root+i)%12), required = type.iv.filter(i=>!(type.omit5 && i === 7)).map(i=>(root+i)%12);
-  const found = new Map(), minNotes = type.id === '5' ? 2 : 3;
-  for (let low = 1; low <= 20; low++) {
-    const options = tun.map(m => [null].concat(allowed.includes(m%12) ? [0] : [], Array.from({length:Math.min(4,21-low)},(_,i)=>low+i).filter(f=>allowed.includes((m+f)%12))));
-    const walk = (s, frets, pcs, count) => {
-      if (count + 6-s < Math.max(minNotes,required.length)) return;
-      if (s < 6) { options[s].forEach(f=>walk(s+1, frets.concat(f), f == null ? pcs : pcs.concat((tun[s]+f)%12), count+(f == null ? 0 : 1))); return; }
-      if (count < minNotes || required.some(p=>!pcs.includes(p))) return;
-      const positive = frets.filter(f=>f>0);
-      if (positive.length ? Math.min(...positive) !== low : low !== 1) return;
-      const fingers = chordFingers(frets); if (!fingers) return;
-      const bassMidi = Math.min(...frets.flatMap((f,i)=>f == null ? [] : [tun[i]+f])), bass = bassMidi%12;
-      const missing5 = type.omit5 && !pcs.includes((root+7)%12), role = type.roles[type.iv.indexOf((bass-root+12)%12)];
-      const name = nn(root)+type.suffix+(bass === root ? '' : '/'+nn(bass));
-      const move = {name,root,f:frets,fingers:fingers.fingers,barre:fingers.barres[0],barres:fingers.barres,roles:frets.map((f,i)=>f == null ? '' : type.roles[type.iv.indexOf((tun[i]+f-root+12)%12)])};
-      found.set(frets.join(','), {move,count,bass,bassMidi,role,missing5,open:frets.includes(0),low:positive.length ? Math.min(...positive) : 0,high:Math.max(0,...positive)});
-    };
-    walk(0,[],[],0);
-  }
-  const list = [...found.values()].sort((a,b)=>a.low-b.low || Number(a.bass!==root)-Number(b.bass!==root) || b.count-a.count || a.high-b.high || a.move.f.join(',').localeCompare(b.move.f.join(',')));
-  if (CHORD_CACHE.size >= 12) CHORD_CACHE.delete(CHORD_CACHE.keys().next().value);
-  CHORD_CACHE.set(cacheKey,list); return list;
-}
-function chordCanMove(shape) {
-  if (!shape.open) return true;
-  const shifted = shape.move.f.map(f=>f == null ? null : f+1), held = shifted.filter(f=>f>0);
-  return Math.max(...held)-Math.min(...held) <= 3 && !!chordFingers(shifted);
-}
-function chordUnique(shapes) {
-  return shapes.filter(s=>!shapes.some(other=>other.count>s.count && other.bassMidi===s.bassMidi && !!other.missing5===!!s.missing5 && s.move.f.every((f,i)=>f == null || other.move.f[i]===f) && other.move.f.every((f,i)=>s.move.f[i] != null || f == null || f === 0)));
-}
-const VO = { bus:null,timer:null,preview:null,limit:24,results:[] };
+const VO = {bus:null,timer:null,preview:null,results:[]};
 function voStop() { clearTimeout(VO.timer); killBus(VO.bus); VO.bus = null; VO.preview = null; voPreviewState(); }
-function voPreviewState() { $$('#chordGrid [data-chord-sound]').forEach(b=>{ const active = VO.preview === b.dataset.chordSound; b.setAttribute('aria-pressed',active); b.textContent = active ? '■ Stop' : b.dataset.mode === 'arp' ? 'Arpeggio' : '▶ Hear'; }); }
+function voPreviewState() { $$('#chordCards [data-chord-sound]').forEach(b=>{ const active = VO.preview === b.dataset.chordSound; b.setAttribute('aria-pressed',active); b.textContent = active ? '■ Stop' : b.dataset.mode === 'arp' ? 'Arpeggio' : '▶ Hear'; }); }
 function vSound(v, mv, mode) {
   voStop(); ac(); VO.bus = bus(AU.notes);
   const N = vNotes(mv,v.tune), t = AU.ctx.currentTime+0.05;
-  if (mode === 'arp') {
-    N.forEach((n,i)=>pluck(n.midi,t+i*0.24,VO.bus,0.62,1.6)); VO.timer = setTimeout(voStop,N.length*240+1700);
-  } else { strum(N.map(n=>n.midi),t,VO.bus,0.035,0.5,2.4); VO.timer = setTimeout(voStop,2800); }
+  if (mode === 'arp') { N.forEach((n,i)=>pluck(n.midi,t+i*0.24,VO.bus,0.62,1.6)); VO.timer = setTimeout(voStop,N.length*240+1700); }
+  else { strum(N.map(n=>n.midi),t,VO.bus,0.035,0.5,2.4); VO.timer = setTimeout(voStop,2800); }
 }
 function renderVoicings() {
-  const o = S.ui.chordRef, type = CHORD_TYPES.find(t=>t.id === o.type) || CHORD_TYPES[0]; o.type = type.id;
-  const root = S.ui.voKey || 0;
+  const o = S.ui.chordRef, open = o.group === 'open', root = open && o.openRoot === 'all' ? null : open ? +o.openRoot : S.ui.voKey || 0;
   $$('#chordGroup [data-group]').forEach(b=>{ b.setAttribute('aria-pressed', b.dataset.group === o.group); b.tabIndex = b.dataset.group === o.group ? 0 : -1; });
-  $('#chordGroupHint').textContent = o.group === 'open' ? 'Grips with open strings, unique to this root and chord type. Some roots have fewer open shapes. Redundant muted-string variants are collapsed.' : 'Closed grips and transferable open forms. Move every sounding note together; for an open form, replace the nut with a barre and adjust the other fingers. A movable open form also appears under Open chords.';
-  $('#chordRoot').innerHTML = Array.from({length:12},(_,k)=>`<button type="button" data-root="${k}" aria-pressed="${root === k}" tabindex="${root === k ? 0 : -1}">${esc(nn(k))}</button>`).join('');
-  $('#chordType').innerHTML = CHORD_TYPES.map(t=>`<option value="${t.id}">${esc(t.name)} (${esc(nn(root)+t.suffix)})</option>`).join(''); $('#chordType').value = type.id;
-  $('#chordTuning').innerHTML = Object.entries(TUNE).map(([id,t])=>`<option value="${id}">${esc(t.name)}</option>`).join(''); $('#chordTuning').value = o.tuning;
-  $('#chordKind').value = o.kind; $('#chordLabels').value = o.labels; $('#chordBass').value = o.bass; $('#chordPosition').value = o.position;
-  $('#chordName').textContent = nn(root)+type.suffix;
-  $('#chordFormula').innerHTML = type.roles.map((r,i)=>`<span><b>${esc(r)}</b> ${esc(nn(root+type.iv[i]))}</span>`).join('');
-  const allShapes = chordShapes(root,type.id,o.tuning);
-  const matches = allShapes.filter(s=>{
-    const group = o.group === 'open' ? s.open : chordCanMove(s);
-    const kind = o.kind === 'all' || o.kind === 'barre' && s.move.barres.length || o.kind === 'triads' && s.count === 3 || o.kind === 'four' && s.count === 4 || o.kind === 'shell' && s.count === 3 && s.missing5;
-    const bass = o.bass === 'all' || o.bass === 'root' && s.bass === root || o.bass === 'inversion' && s.bass !== root;
-    const position = o.position === 'all' || (o.position === '0-4' ? s.high <= 4 : s.low >= +o.position.split('-')[0] && s.low <= +o.position.split('-')[1]);
-    return group && kind && bass && position;
-  });
-  VO.results = chordUnique(matches);
-  $('#chordCount').textContent = `${VO.results.length} ${o.group === 'open' ? 'unique open grips' : 'movable shapes'} · ${TUNE[o.tuning].name} tuning`;
+  $('#chordGroupHint').textContent = open ? 'Familiar grips with open strings. Each chord stays in its own key.' : 'Power chords and E- and A-form barres first. Every sounding string is fretted, so the whole grip can move.';
+  $('#chordRoot').innerHTML = (open ? '<option value="all">All open chords</option>' : '') + Array.from({length:12},(_,k)=>`<option value="${k}">${esc(nn(k))}</option>`).join('');
+  $('#chordRoot').value = root == null ? 'all' : root;
+  $('#chordGenre').innerHTML = Object.entries(CHORD_GENRES).map(([id,name])=>`<option value="${id}">${name}</option>`).join(''); $('#chordGenre').value = o.genre;
+  $('#chordLabels').value = o.labels;
+  VO.results = chordCatalog(o.group,root).filter(g=>o.genre === 'all' || g.genres.includes(o.genre));
+  const core = VO.results.filter(g=>g.core), extra = VO.results.filter(g=>!g.core), filtered = o.genre !== 'all' || open && root != null;
+  $('#chordName').textContent = open ? root == null ? 'Open essentials' : nn(root)+' open chords' : nn(root)+' movable shapes';
+  $('#chordCount').textContent = filtered ? `${VO.results.length} hand-picked grips` : `${core.length} essentials${extra.length ? ' · '+extra.length+' more when you need them' : ''}`;
   $('#chordLegend').innerHTML = o.labels === 'finger' ? fingerLegend() : o.labels === 'note' ? 'Dots show note names. The row below each diagram shows fret numbers.' : 'Dots show chord degrees. The row below each diagram shows fret numbers.';
-  const noOpen = o.group === 'open' && !allShapes.some(s=>s.open);
-  const emptyTitle = noOpen ? `No open ${nn(root)+type.suffix} shapes in this tuning` : 'No shapes match these filters';
-  const emptyCopy = noOpen ? 'Use a movable form to play this chord in the same key.' : 'Try All shapes, Any bass or Full neck to see more positions.';
-  const empty = `<div class="vo-empty"><h3>${esc(emptyTitle)}</h3><p class="small muted">${esc(emptyCopy)}</p><button class="btn" type="button" id="chordReset" data-movable="${noOpen}">${noOpen ? 'See movable shapes' : 'Clear filters'}</button></div>`;
-  $('#chordGrid').innerHTML = VO.results.slice(0,VO.limit).map((s,i)=>`<article class="chord-card"><div class="chord-card-heading"><b>${esc(s.move.name)}</b><span class="small muted">${s.low === 0 ? 'Open strings' : `Frets ${s.low}–${s.high}`}</span></div>${vBox(s.move,o.tuning,true,o.labels)}<div class="chord-caption small">${s.bass === root ? 'Root in bass' : esc(s.role)+' in bass'}${s.missing5 ? ' · 5th omitted' : ''}${s.move.barres.length ? ' · Barre' : ''}${s.open && chordCanMove(s) ? ' · Movable open form' : ''}</div><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(s.move.name)}, shape ${i+1}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(s.move.name)}, shape ${i+1}">Arpeggio</button></div></article>`).join('') || empty;
-  $('#chordMore').hidden = VO.limit >= VO.results.length; $('#chordMore').textContent = `Show more shapes (${Math.min(VO.limit,VO.results.length)} of ${VO.results.length})`;
+  const card = g=>{
+    const i = VO.results.indexOf(g);
+    return `<article class="chord-card" data-grip="${g.id}"><div class="chord-card-heading"><b>${esc(g.move.name)}</b><span class="small muted">${open ? 'Open chord' : `Frets ${g.low}–${g.high}`}</span></div>${g.form ? `<span class="chord-form small">${esc(g.form)}</span>` : ''}${vBox(g.move,'std',true,o.labels)}<div class="chord-tags">${g.genres.map(id=>`<span class="tag">${CHORD_GENRES[id]}</span>`).join('')}</div><p class="chord-use small">${esc(g.use)}</p>${g.missing5 ? '<span class="small muted">5th omitted</span>' : ''}<div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">Arpeggio</button></div></article>`;
+  };
+  $('#chordGrid').innerHTML = core.map(card).join('');
+  $('#chordGrid').hidden = !core.length;
+  $('#chordExtras').hidden = !extra.length;
+  $('#chordExtras').open = !!(o.extras || filtered || !core.length);
+  $('#chordExtrasSummary').textContent = open ? `Sevenths, sus chords & colors · ${extra.length}` : `Colors, triads & shells · ${extra.length}`;
+  $('#chordExtraGrid').innerHTML = extra.map(card).join('');
+  const noOpen = open && root != null && !chordCatalog('open',root).length;
+  $('#chordEmpty').hidden = !!VO.results.length;
+  $('#chordEmpty').innerHTML = `<h3>${noOpen ? `No selected open grips for ${esc(nn(root))}` : 'No grips match this genre'}</h3><p class="small muted">${noOpen ? 'Open strings give these chords fixed keys. Use a movable grip for this root.' : 'Choose All genres to see this small set of practical shapes.'}</p><button class="btn" type="button" id="chordReset" data-movable="${noOpen}">${noOpen ? 'See movable shapes' : 'All genres'}</button>`;
   voPreviewState();
 }
 
@@ -4123,33 +4094,29 @@ $('#xEx').addEventListener('click', e => { const c = e.target.closest('[data-ex]
 $('#xPos').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.ui.xpos = +b.dataset.p; save(); renderExplorer(); });
 $('#xPlay').onclick = xPlay; $('#xDrone').onclick = xDrone;
 // chord reference
-function chordChooseRoot(root) {
-  voStop(); S.ui.voKey = root; VO.limit = 24; save(); renderVoicings();
-  $(`#chordRoot [data-root="${root}"]`).focus({preventScroll:true});
-}
-$('#chordRoot').addEventListener('click', e => { const b = e.target.closest('[data-root]'); if (b) chordChooseRoot(+b.dataset.root); });
-$('#chordRoot').addEventListener('keydown', e => {
-  if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
-  e.preventDefault(); e.stopPropagation();
-  chordChooseRoot(e.key === 'Home' ? 0 : e.key === 'End' ? 11 : ((S.ui.voKey || 0)+(e.key === 'ArrowRight' ? 1 : 11))%12);
-});
+$('#chordRoot').onchange = e => {
+  const value = e.target.value; voStop();
+  if (S.ui.chordRef.group === 'open') S.ui.chordRef.openRoot = value;
+  if (value !== 'all') S.ui.voKey = +value;
+  save(); renderVoicings(); $('#chordRoot').focus({preventScroll:true});
+};
 $('#chordGroup').addEventListener('click', e => {
   const b = e.target.closest('[data-group]'); if (!b) return;
-  const group = b.dataset.group; voStop(); S.ui.chordRef.group = group; S.ui.chordRef.position = group === 'open' ? '0-4' : 'all'; VO.limit = 24; save(); renderVoicings();
+  const group = b.dataset.group; voStop(); S.ui.chordRef.group = group; save(); renderVoicings();
   $(`#chordGroup [data-group="${group}"]`).focus({preventScroll:true});
 });
 $('#chordGroup').addEventListener('keydown', e => {
   if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
   e.preventDefault(); $(`#chordGroup [data-group="${S.ui.chordRef.group === 'open' ? 'movable' : 'open'}"]`).click();
 });
-[['#chordPosition','position'],['#chordType','type'],['#chordKind','kind'],['#chordBass','bass'],['#chordLabels','labels'],['#chordTuning','tuning']].forEach(([id,key])=>{ $(id).onchange = e => { voStop(); S.ui.chordRef[key] = e.target.value; VO.limit = 24; save(); renderVoicings(); }; });
-$('#chordMore').onclick = () => { const start = VO.limit; VO.limit += 24; renderVoicings(); const card = $$('#chordGrid .chord-card')[start]; if (card) { card.scrollIntoView({block:'center'}); card.querySelector('button').focus({preventScroll:true}); } };
-$('#chordGrid').addEventListener('click', e => {
+[['#chordGenre','genre'],['#chordLabels','labels']].forEach(([id,key])=>{ $(id).onchange = e => { voStop(); S.ui.chordRef[key] = e.target.value; save(); renderVoicings(); }; });
+$('#chordExtrasSummary').addEventListener('click', () => { S.ui.chordRef.extras = !$('#chordExtras').open; save(); });
+$('#chordCards').addEventListener('click', e => {
   const reset = e.target.closest('#chordReset');
-  if (reset) { voStop(); if (reset.dataset.movable === 'true') S.ui.chordRef.group = 'movable'; S.ui.chordRef.kind = 'all'; S.ui.chordRef.bass = 'all'; S.ui.chordRef.position = 'all'; VO.limit = 24; save(); renderVoicings(); $('#chordType').focus({preventScroll:true}); return; }
+  if (reset) { voStop(); if (reset.dataset.movable === 'true') S.ui.chordRef.group = 'movable'; S.ui.chordRef.genre = 'all'; save(); renderVoicings(); $('#chordRoot').focus({preventScroll:true}); return; }
   const b = e.target.closest('[data-chord-sound]'); if (!b) return;
   if (VO.preview === b.dataset.chordSound) { voStop(); return; }
-  const shape = VO.results[+b.dataset.index]; vSound({tune:S.ui.chordRef.tuning},shape.move,b.dataset.mode); VO.preview = b.dataset.chordSound; voPreviewState();
+  const shape = VO.results[+b.dataset.index]; vSound({tune:'std'},shape.move,b.dataset.mode); VO.preview = b.dataset.chordSound; voPreviewState();
 });
 // learn
 $('#lnUnits').addEventListener('click', e => { const b = e.target.closest('[data-unit]'); if (b) openUnit(b.dataset.unit); });
