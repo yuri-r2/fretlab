@@ -8,7 +8,7 @@ The desktop web app uses a persistent navigation rail and a wider practice works
 
 Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Chord Shapes, Scales, Rhythm, Exercises, Fretboard, and Ear training. **Tuner** and **Metronome** buttons sit in the header on every screen (icons on phones), and the drone lives on the Tuner page. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
 
-Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase.
+Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase. The persistent session bar has an **Open block** button: return to the current exercise from any page with its step, key, tempo and practice position. Opening it keeps the block timer and paused state.
 
 ## Explore & develop
 
@@ -101,7 +101,9 @@ The speaker button in the header opens a mixer: **Master** with **Mute**, plus s
 
 ## Appearance
 
-Catppuccin Latte in light mode and Mocha in dark mode follow your system appearance. Mauve accents, peach roots, blue thirds, teal fifths and mauve sevenths share the same meaning across chord diagrams and the fretboard. Small marker labels use a contrasting foreground for each color. Palette adapted from [Catppuccin](https://catppuccin.com/palette/).
+Near-white (`#fafafa`) light mode and near-black (`#08090b`) dark mode follow your system appearance. Neutral panels, clear borders and violet accents keep the workspace legible. Root, third, fifth and seventh markers retain consistent hues, with individually contrasting labels. Normal text and marker-label pairs are checked against a 7:1 target; control boundaries use stronger contrast than the earlier soft palette. The direction draws on the neutral schemes in [Figma's color-scheme collection](https://www.figma.com/resource-library/website-color-schemes/) and [WCAG contrast guidance](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html).
+
+For the palette comparison, measured ratios and sources, see [Color and contrast research](COLOR_THEME_RESEARCH.md).
 
 ## Install and offline use
 

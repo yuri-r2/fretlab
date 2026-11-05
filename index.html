@@ -6,8 +6,8 @@
 <meta name="description" content="Guitar practice for fretboard fluency, chord shapes, scales and musical ideas. Guided lessons and exercises, with a tuner, metronome and ear training.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#eff1f5" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1e1e2e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#08090b" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,34 +22,34 @@
 <style>
 /* The header transport follows the active practice tool. Fretboards scroll inside their own containers on narrow screens. */
 :root{
-  --bg:#eff1f5; --surface:#ffffff; --surface-2:#e6e9ef; --ink:#4c4f69; --muted:#5c5f77; --line:#ccd0da;
-  --accent:#8839ef; --accent-ink:#ffffff; --accent-soft:#e9dcfb;
-  --root:#fe640b; --root-ink:#11111b; --root-soft:#fbe2d6; --root-text:#a83c09;
-  --good:#40a02b; --good-ink:#11111b; --good-text:#287820; --warn:#df8e1d; --warn-ink:#11111b; --warn-text:#8b5a0b; --bad:#d20f39; --bad-ink:#ffffff;
-  --good-soft:#e2efdc; --bad-soft:#f7dfe6; --warn-soft:#f8ead2;
-  --wood:#e6e9ef; --wood-2:#ccd0da; --fret:#8c8fa1; --string:#7c7f93; --inlay:#9ca0b0;
-  --d3:#1e66f5; --d3-ink:#ffffff; --d5:#179299; --d5-ink:#11111b; --d7:#8839ef; --d7-ink:#ffffff;
+  --bg:#fafafa; --surface:#ffffff; --surface-2:#eceef1; --ink:#16181d; --muted:#3e424b; --line:#6c7078;
+  --accent:#7d22ce; --accent-ink:#ffffff; --accent-soft:#f1e6fb;
+  --root:#943900; --root-ink:#ffffff; --root-soft:#fae5d8; --root-text:#943900;
+  --good:#095f1c; --good-ink:#ffffff; --good-text:#095f1c; --warn:#7a4700; --warn-ink:#ffffff; --warn-text:#7a4700; --bad:#b00030; --bad-ink:#ffffff;
+  --good-soft:#e2f3e5; --bad-soft:#fae3e9; --warn-soft:#faebd4;
+  --wood:#f6f7f8; --wood-2:#e3e6eb; --fret:#626873; --string:#555c67; --inlay:#737a85;
+  --d3:#0050aa; --d3-ink:#ffffff; --d5:#00604e; --d5-ink:#ffffff; --d7:#6e2b91; --d7-ink:#ffffff;
   --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
   --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1e1e2e; --surface:#313244; --surface-2:#45475a; --ink:#cdd6f4; --muted:#bac2de; --line:#585b70;
-  --accent:#cba6f7; --accent-ink:#11111b; --accent-soft:#453754;
-  --root:#fab387; --root-ink:#11111b; --root-soft:#4b3740; --root-text:#fab387;
-  --good:#a6e3a1; --good-ink:#11111b; --good-text:#a6e3a1; --warn:#f9e2af; --warn-ink:#11111b; --warn-text:#f9e2af; --bad:#f38ba8; --bad-ink:#11111b;
-  --good-soft:#34473f; --bad-soft:#4b3548; --warn-soft:#494335;
-  --wood:#313244; --wood-2:#45475a; --fret:#7f849c; --string:#a6adc8; --inlay:#6c7086;
-  --d3:#89b4fa; --d3-ink:#11111b; --d5:#94e2d5; --d5-ink:#11111b; --d7:#cba6f7; --d7-ink:#11111b; color-scheme:dark;
+  --bg:#08090b; --surface:#202328; --surface-2:#30343b; --ink:#ffffff; --muted:#e0e4eb; --line:#949aa5;
+  --accent:#d7b0ff; --accent-ink:#08090b; --accent-soft:#372044;
+  --root:#ffb164; --root-ink:#08090b; --root-soft:#3e2614; --root-text:#ffb164;
+  --good:#77e08c; --good-ink:#08090b; --good-text:#77e08c; --warn:#ffe092; --warn-ink:#08090b; --warn-text:#ffe092; --bad:#ff91ad; --bad-ink:#08090b;
+  --good-soft:#163b23; --bad-soft:#421c2a; --warn-soft:#3d2c0d;
+  --wood:#181b20; --wood-2:#30343b; --fret:#989fab; --string:#c6ccd6; --inlay:#7d8592;
+  --d3:#7fb9ff; --d3-ink:#08090b; --d5:#5de5bf; --d5-ink:#08090b; --d7:#d7b0ff; --d7-ink:#08090b; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#1e1e2e; --surface:#313244; --surface-2:#45475a; --ink:#cdd6f4; --muted:#bac2de; --line:#585b70;
-  --accent:#cba6f7; --accent-ink:#11111b; --accent-soft:#453754;
-  --root:#fab387; --root-ink:#11111b; --root-soft:#4b3740; --root-text:#fab387;
-  --good:#a6e3a1; --good-ink:#11111b; --good-text:#a6e3a1; --warn:#f9e2af; --warn-ink:#11111b; --warn-text:#f9e2af; --bad:#f38ba8; --bad-ink:#11111b;
-  --good-soft:#34473f; --bad-soft:#4b3548; --warn-soft:#494335;
-  --wood:#313244; --wood-2:#45475a; --fret:#7f849c; --string:#a6adc8; --inlay:#6c7086;
-  --d3:#89b4fa; --d3-ink:#11111b; --d5:#94e2d5; --d5-ink:#11111b; --d7:#cba6f7; --d7-ink:#11111b; color-scheme:dark;
+  --bg:#08090b; --surface:#202328; --surface-2:#30343b; --ink:#ffffff; --muted:#e0e4eb; --line:#949aa5;
+  --accent:#d7b0ff; --accent-ink:#08090b; --accent-soft:#372044;
+  --root:#ffb164; --root-ink:#08090b; --root-soft:#3e2614; --root-text:#ffb164;
+  --good:#77e08c; --good-ink:#08090b; --good-text:#77e08c; --warn:#ffe092; --warn-ink:#08090b; --warn-text:#ffe092; --bad:#ff91ad; --bad-ink:#08090b;
+  --good-soft:#163b23; --bad-soft:#421c2a; --warn-soft:#3d2c0d;
+  --wood:#181b20; --wood-2:#30343b; --fret:#989fab; --string:#c6ccd6; --inlay:#7d8592;
+  --d3:#7fb9ff; --d3-ink:#08090b; --d5:#5de5bf; --d5-ink:#08090b; --d7:#d7b0ff; --d7-ink:#08090b; color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -101,7 +101,14 @@ p{margin:0}
 .mixctl .mvol{width:92px}
 .iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:36px;height:36px;display:grid;place-items:center}
 .pill{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:4px 6px 4px 12px;font-size:13px}
-.pill button{border:0;background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12px}
+.pill button{border:0;background:var(--surface);border-radius:7px;padding:6px 10px;font-size:13px;white-space:nowrap}
+#routinePill{order:9;flex-basis:100%;width:100%;border-radius:10px;padding:5px 7px;flex-wrap:wrap}
+#rpOpen{display:flex;align-items:center;gap:12px;flex:1;min-width:160px;background:transparent;text-align:left;white-space:normal}
+#rpOpen:hover{background:var(--surface)}
+#rpOpen .rp-action{color:var(--accent);font-weight:600;white-space:nowrap}
+#rpText{overflow-wrap:anywhere}
+#rpTime{font-size:13px;white-space:nowrap}
+@media(max-width:680px){#rpOpen{flex-basis:calc(100% - 75px)}}
 .tabs{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr-h,57px));z-index:19}
 .tabs .inner{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tabs .inner::-webkit-scrollbar{display:none}
@@ -574,7 +581,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
       <span class="hide-sm">· <b id="hdrStreak">0</b>-day streak</span>
     </div>
     <div class="pill" id="routinePill" hidden>
-      <span id="rpText">Warm-up · 2:00</span>
+      <button id="rpOpen" type="button"><span class="rp-action">Open block ↗</span><span id="rpText">Warm-up</span></button><span id="rpTime" class="mono" aria-label="Block time remaining">2:00</span>
       <button id="rpPause" type="button">Pause</button>
       <button id="rpSkip" type="button">Skip</button>
       <button id="rpStop" type="button" aria-label="End routine">End</button>
@@ -2487,6 +2494,7 @@ function evIndexAt(w) { let lo = 0; for (let i = 0; i < P.ev.length; i++) { if (
 function exHostOf(e) { return e && e.cat === 'Scales' ? 'explorer' : e && e.cat === 'Rhythm' ? 'rhythm' : 'exercises'; }
 function exOpen(id, step, origin) {
   const e = EX.find(x => x.id === id); if (!e) return;
+  routineRemember();
   P.origin = origin || (curTab === P.host && !$('#exPlayer').hidden ? P.origin : curTab);
   exStop(); if (X.bus) { killBus(X.bus); X.bus = null; } if (X.drone) { X.drone.stop(); X.drone = null; }
   const host = exHostOf(e); P.host = host; P.ex = null;
@@ -2987,6 +2995,7 @@ function renderExMeta() {
   const free = sd.observe || sd.create;
   $('#pGoal').parentElement.hidden = !!free; $('#pTempoBar').parentElement.hidden = !!free;
   if (free) $('#pBest').textContent = st.done[P.step] ? sd.observe ? 'Sound explored' : 'A riff worth keeping' : 'Use a comfortable tempo';
+  if(!P.running)exUpcoming(P.viewPos,exForecast());
   renderMini();
 }
 function renderExSteps() {
@@ -4040,11 +4049,33 @@ function routineStart() {
 }
 function routineBlock() {
   const b = R.blocks[R.idx]; R.rem = b.m * 60;
-  if (b.key != null && b.ex) exStat(b.ex).key = b.key;
+  R.activeEx = typeof b.ex === 'function' ? b.ex() : b.ex; R.player = null; R.unit = null;
+  if (b.key != null && R.activeEx) exStat(R.activeEx).key = b.key;
   if (b.review) { openReview(); }
-  else { switchTab(b.tool); if (b.ex) exOpen(typeof b.ex === 'function' ? b.ex() : b.ex, b.step, 'today'); if (b.tool === 'learn') openUnit(nextUnit().id); }
-  if (b.setup) b.setup();
+  else { switchTab(b.tool); if (R.activeEx) exOpen(R.activeEx, b.step, 'today'); if (b.tool === 'learn') { openUnit(nextUnit().id); R.unit = LN.unit.id; } }
+  if (b.setup) b.setup(); R.player = null;
   toast(`${b.t}: ${b.d}`); renderPill();
+}
+function routineRemember() {
+  if(!R.running || !R.activeEx || P.ex?.id !== R.activeEx || $('#exPlayer').hidden)return;
+  const pos=P.running?exPos():P.viewPos;
+  R.player={id:P.ex.id,step:P.step,key:P.keyPc,pos,bpm:P.bpm,spot:P.spot?.slice()||null,labels:P.labels};
+}
+function routineOpenCurrent() {
+  if(!R.running)return;
+  const b=R.blocks[R.idx],id=R.activeEx;
+  if(id){
+    if(P.ex?.id===id && !$('#exPlayer').hidden)switchTab(P.host);
+    else {
+      const saved=R.player;
+      if(saved && EX.find(e=>e.id===id)?.keyed)exStat(id).key=saved.key;
+      exOpen(id,saved?.step??b.step,'today');
+      if(saved){P.spot=saved.spot;exRebuild();P.bpm=saved.bpm;P.labels=saved.labels;exSeek(saved.pos);renderExPlayer();}
+    }
+  } else if(b.review){if(LN.unit===REVIEW_UNIT)switchTab('learn');else openReview();}
+  else if(b.tool==='learn' && R.unit && LN.unit?.id!==R.unit){switchTab('learn');openUnit(R.unit);}
+  else switchTab(b.tool);
+  window.scrollTo({top:0});
 }
 function routineNext() {
   if (!R.running) return;
@@ -4067,10 +4098,12 @@ function renderPill() {
   const p = $('#routinePill');
   if (!R.running) { p.hidden = true; updateHdrH(); return; }
   const b = R.blocks[R.idx];
-  p.hidden = false; $('#rpText').textContent = `${R.idx + 1}/${R.blocks.length} ${b.t} · ${fmtTime(Math.max(0, R.rem))}`;
+  p.hidden = false; $('#rpText').textContent = `${R.idx + 1}/${R.blocks.length} · ${b.t}`;
+  $('#rpTime').textContent = R.waiting ? 'Ready' : fmtTime(Math.max(0,R.rem));
+  $('#rpOpen').setAttribute('aria-label',`Open current block: ${b.t}`);
   $('#rpPause').textContent = R.paused ? 'Resume' : 'Pause'; $('#rpPause').disabled = !!R.waiting;
   $('#rpSkip').textContent = R.idx === R.blocks.length - 1 ? 'Finish session' : 'Next block';
-  if (R.waiting) $('#rpText').textContent = `${b.t} · ready when you are`;
+
   updateHdrH();
 }
 function renderRoutine() {
@@ -4142,7 +4175,7 @@ function switchTab(t, fromHash) {
   if (!TABS.includes(t)) t = 'today';
   if (curTab === 'voicings' && t !== 'voicings') voStop();
   if (curTab === 'ear' && t !== 'ear') { clearTimeout(E.nextT); killBus(E.bus); }
-  if (curTab === (P.host || 'exercises') && t !== curTab && P.running) exStop();
+  if (curTab === (P.host || 'exercises') && t !== curTab) { routineRemember(); if(P.running)exPause(); }
   if (curTab === 'tuner' && t !== 'tuner') { if (T.listening) tnStop(); if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } }
   if (curTab === 'explorer' && t !== 'explorer' && X.bus) { killBus(X.bus); X.bus = null; $('#xPlay').textContent = 'Play this position'; }
   curTab = t;
@@ -4289,6 +4322,7 @@ $('#pFav').onclick = () => { const id = P.ex && P.ex.id; if (!id) return; const 
 $('#pHist').addEventListener('click', e => { const b = e.target.closest('[data-gostep]'); if (!b) return; exLoad(+b.dataset.gostep); renderExPlayer(); });
 $('#pHistWrap').addEventListener('toggle', () => { S.ui.histOpen = $('#pHistWrap').open; save(); });
 $('#pBack').onclick = () => {
+  routineRemember();
   const origin = P.origin, e = P.ex; exStop(); $('#exPlayer').hidden = true;
   if (origin === 'voicings' && e.voicing && e.keyed) { S.ui.voKey = exKey(); save(); }
   if (P.host === 'explorer') { if (e && e.scale) { S.ui.xscale = e.scale; if (e.keyed) S.ui.xkey = exKey(); save(); } $('#xMain').hidden = false; }
@@ -4381,7 +4415,8 @@ $('#drGo').onclick = drToggle;
 // today
 $('#jBox').addEventListener('click', e => { if (!e.target.closest('#jSave')) return; const v = $('#jNote').value.trim(); if (!v) return; S.journal[dayKey()] = v.slice(0, 400); R.reflect = false; save(); renderRoutine(); toast('Saved. You will see it at the start of your next session.'); });
 $('#rtSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || R.running) return; S.rtPick = b.dataset.k; save(); renderRoutine(); });
-$('#rtStart').onclick = () => { if (R.running) switchTab(R.blocks[R.idx].tool); else routineStart(); };
+$('#rtStart').onclick = () => { if (R.running) routineOpenCurrent(); else routineStart(); };
+$('#rpOpen').onclick = routineOpenCurrent;
 
 
 $('#view-today').addEventListener('click', e => { const o = e.target.closest('[data-openex]'); if (o) exOpen(o.dataset.openex, undefined, 'today'); });

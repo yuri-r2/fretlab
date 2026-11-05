@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')
-  .replace('/* ---------- boot ---------- */', 'window.__T = { EX, VOICINGS, vCurrent, vNotes, vConstraint, exStat, exDueList, exOpen, autoBlocks, routineTick, routineNext, exFeedback, exListen, switchTab, S, P, R, LN, dayKey, dayAdd };\n/* ---------- boot ---------- */');
+  .replace('/* ---------- boot ---------- */', 'window.__T = { EX, VOICINGS, vCurrent, vNotes, vConstraint, exStat, exDueList, exOpen, autoBlocks, routineTick, routineNext, routineBlock, renderPill, exSeek, exFeedback, exListen, switchTab, S, P, R, LN, dayKey, dayAdd };\n/* ---------- boot ---------- */');
 const tmp = path.join(os.tmpdir(), 'fretlab-practice.html');
 fs.writeFileSync(tmp, source);
 (async () => {
@@ -44,7 +44,7 @@ fs.writeFileSync(tmp, source);
     assert.equal(await page.locator('#chordGenre').inputValue(), 'alternative', 'reference keeps its genre');
     assert.equal(await page.locator('#chordRoot').inputValue(), '8', 'reference keeps its root');
     const failures = await page.evaluate(() => {
-      const { EX, VOICINGS, vCurrent, vNotes, vConstraint, exStat, exDueList, exOpen, autoBlocks, routineTick, routineNext, exFeedback, exListen, switchTab, S, P, R, dayKey, dayAdd } = window.__T;
+      const { EX, VOICINGS, vCurrent, vNotes, vConstraint, exStat, exDueList, exOpen, autoBlocks, routineTick, routineNext, routineBlock, renderPill, exSeek, exFeedback, exListen, switchTab, S, P, R, dayKey, dayAdd } = window.__T;
       const failures = [], check = (ok, message) => { if (!ok) failures.push(message); };
       const formulas = { '': [0,4,7], m: [0,3,7], sus2: [0,2,7], sus4: [0,5,7], 'maj7 (no 5th)': [0,4,11], 'm7 (no 5th)': [0,3,10], '7 (no 5th)': [0,4,10], '6 (no 5th)': [0,4,9] };
       for (const v of VOICINGS.filter(v => v.keyed)) for (let key = 0; key < 12; key++) for (const m of vCurrent(v, key).moves) {
@@ -84,6 +84,24 @@ fs.writeFileSync(tmp, source);
       check(exStat(id).rev[0].k === 0 && exStat(id).rev[0].due === dayAdd(1), 'listening before a review does not advance cold recall');
       return failures;
     });
+    await page.evaluate(()=>{
+      const t=window.__T;t.R.running=false;t.exOpen('adv_inner',1);
+      Object.assign(t.R,{key:'auto',blocks:[{tool:'exercises',ex:'adv_inner',step:1,m:4,t:'One inner voice',d:'Keep the outside still.'}],idx:0,rem:215,running:true,paused:true,waiting:false,activeEx:'adv_inner',player:null});
+      t.P.bpm=74;t.exSeek(6);t.renderPill();t.switchTab('voicings');
+    });
+    assert.ok(await page.locator('#rpOpen').isVisible());await page.click('#rpOpen');
+    let current=await page.evaluate(()=>{const {P,R}=window.__T;return {id:P.ex.id,step:P.step,pos:P.viewPos,bpm:P.bpm,rem:R.rem,paused:R.paused};});
+    assert.deepEqual(current,{id:'adv_inner',step:1,pos:6,bpm:74,rem:215,paused:true},'Open block preserves the timer and practice position');
+    await page.evaluate(()=>window.__T.exOpen('triads',0));await page.click('#rpOpen');
+    assert.equal(await page.evaluate(()=>window.__T.P.ex.id),'adv_inner','Open block returns from a different exercise');
+    assert.equal(await page.evaluate(()=>window.__T.P.viewPos),6,'returning restores the original position');
+    await page.click('#pBack');await page.click('#rpOpen');
+    assert.equal(await page.evaluate(()=>window.__T.P.viewPos),6,'closing the player retains the active block position');
+    await page.click('.tab[data-tab="today"]');await page.click('#rtStart');
+    assert.equal(await page.evaluate(()=>window.__T.P.ex.id),'adv_inner','Today opens the actual active exercise');
+    assert.equal(await page.evaluate(()=>window.__T.R.rem),215,'opening from Today does not restart the block timer');
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'session bar fits '+width);}
+    await page.evaluate(()=>window.__T.R.running=false);
     assert.deepEqual([...errors, ...failures], []);
     console.log('Lesson resume, return navigation, tempo, chord formulas in all keys, progress isolation, review preparation, plans and timer transitions: OK');
   } finally { await browser.close(); fs.unlinkSync(tmp); }

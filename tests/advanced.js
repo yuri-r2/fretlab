@@ -32,6 +32,8 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
   await page.click('#pSkip');assert.equal(await page.locator('#pSkip').textContent(),'Skipped · undo');await page.waitForTimeout(1600);await page.reload();
   assert.equal(await page.evaluate(()=>window.__A.S.exskip.includes('adv_pedals')),true,'skip survives reload');
   await page.evaluate(()=>{window.__A.exOpen('adv_pedals',0);window.__A.skipExercise('adv_pedals');});
+  await page.evaluate(()=>window.__A.exOpen('triads',0));await page.check('#pKeyCycle');await page.check('#pLadder');await page.click('#pBpm');await page.fill('#pBpmIn','80');await page.press('#pBpmIn','Enter');
+  assert.match(await page.locator('#pUpcomingName').textContent(),/84 bpm/,'editing a paused tempo refreshes the upcoming tempo immediately');
   const transition=await page.evaluate(()=>{
    const {S,P,AU,exOpen,exStart,exStop,exForecast,exDraw,exPos,exSched,exSync}=window.__A,failures=[],check=(ok,msg)=>{if(!ok)failures.push(msg);};
    exOpen('triads',0);Object.assign(S.ui.exopts,{loop:true,count:false,keycycle:true,ladder:true});P.bpm=80;exStart();clearInterval(P.timer);cancelAnimationFrame(P.frame);
@@ -55,9 +57,9 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
   for(const colorScheme of ['light','dark']){
    await page.emulateMedia({colorScheme});
    const colors=await page.evaluate(()=>{const cs=getComputedStyle(document.documentElement),v=k=>cs.getPropertyValue('--'+k).trim();return {bg:v('bg'),pairs:['root','d3','d5','d7','good','warn','bad','accent'].map(k=>[k,v(k),v(k+'-ink')]),surfaces:['bg','surface','surface-2'].map(k=>[v(k),v('muted')])};});
-   assert.equal(colors.bg,colorScheme==='light'?'#eff1f5':'#1e1e2e');
+   assert.equal(colors.bg,colorScheme==='light'?'#fafafa':'#08090b');
    const lum=h=>h.slice(1).match(/../g).map(n=>parseInt(n,16)/255).map(n=>n<=.04045?n/12.92:((n+.055)/1.055)**2.4).reduce((s,n,i)=>s+n*[.2126,.7152,.0722][i],0),ratio=(a,b)=>(Math.max(lum(a),lum(b))+.05)/(Math.min(lum(a),lum(b))+.05);
-   colors.pairs.forEach(([name,bg,fg])=>assert.ok(ratio(bg,fg)>=4.5,name+' marker contrast '+colorScheme));colors.surfaces.forEach(([bg,fg])=>assert.ok(ratio(bg,fg)>=4.5,'muted text '+colorScheme));
+   colors.pairs.forEach(([name,bg,fg])=>assert.ok(ratio(bg,fg)>=7,name+' marker contrast '+colorScheme));colors.surfaces.forEach(([bg,fg])=>assert.ok(ratio(bg,fg)>=7,'muted text '+colorScheme));
    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'player fits '+width);}
   }
   assert.deepEqual(errors,[]);console.log('Advanced voice leading and modal harmony, transfer tasks, reversible skipping, early key/tempo preparation, future notation, contrast and layouts\nOK');
