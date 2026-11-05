@@ -10,9 +10,13 @@ Four main destinations keep the learning flow close at hand: **Today**, **Learn*
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase.
 
-## Essentials
+## Explore & develop
 
-Twelve exercises, chosen as the ones that pay off most for playing and writing riffs in a band, form an ordered path: Subdivision ladder, One note on the whole neck, Pendulum strumming, Minor pentatonic boxes, Palm-muted chugs and gallops, Triad inversions, 3rds and 6ths, Moving shape under open B and E, Syncopation and pushes, Octave riffs, Major scale positions, and CAGED arpeggios. Timing and rhythm guitar come early because they are what a band hears first. The Library shows your place in the path and the next one to play. Exercises lists the twelve first and tucks everything else under *All other exercises*; Rhythm shows its essentials first; Chord Shapes remains a reference independent of the workout order. Today's plan picks the next unfinished essential as its focus unless you chose one or practiced something else this week, reviews of essentials come first, and the Quick and Deep routines are built from them. Everything else stays in the library and in search.
+Twelve featured studies lead with advanced alternative, Midwest emo and shoegaze ideas. Five original four-step studies cover open-string changing harmony, one moving inner voice, motifs through changes, three-note cells across 4/4 and fourth stacks over a drone. They join FACGCE, drone/maj9/power-add9 studies, odd meters, delay rhythm and guide tones. Each new study ends with a constrained phrase-writing task; criteria describe voice balance, sustain, rests or pulse as well as clean notes.
+
+Choose any study. Today's automatic plan uses a short listening/map stage when the focus has one, then practice and application. Foundations and technique remain available through Learn and the full exercise search. **Too easy — skip** removes an exercise from automatic recommendations and reviews without marking it complete or altering its records. Reopen it and choose **Skipped · undo** to include it again.
+
+The sources, app critique and remaining validation questions are in [Advanced practice research](ADVANCED_PRACTICE_RESEARCH.md).
 
 ## Learn path
 
@@ -56,13 +60,9 @@ Counts ("1 e & a") sit under every stroke. A faint dashed arrow is an air strum 
 
 ## Chord Shapes
 
-A small, hand-picked chord book in standard tuning. **Open chords** starts with eight familiar major/minor grips; sixteen useful sevenths, sus chords and colors sit under an expandable heading. **Movable shapes** starts with ten power/barre workhorses, followed by ten colors, triads and shells when you need them. There is no generated catalog or pagination.
+A discovery reference in standard tuning: twelve fixed **open-string colors** and twelve fully fretted **movable shapes**, with eight featured grips shown first in each group. Major/minor ninths, 6/9 colors, Lydian sharp-11 voicings, fourth stacks, clusters and selected dominant tensions offer material beyond familiar open and barre chords. Four additional colors in each group stay in an expandable section.
 
-The groups are mutually exclusive. Open chords always contain an actual open string and retain their original key. Movable shapes have every sounding string fretted; changing the root transposes the whole grip, including its barres. Open A is only in Open chords; the A-form barre is in Movable shapes. Choose All open chords or a specific root; the number of selected open chords varies by root. Closed forms can be shown in all twelve roots.
-
-The simple toolbar has Root, Genre and Diagram labels. Genre tags suggest common uses in rock, alternative, blues, Midwest emo, shoegaze, funk, jazz and metal; these are Fretlab's editorial application suggestions. Each card gives one practical musical cue and can be heard as a strum or arpeggio. Selecting a genre reveals matching color/compact grips. Root, genre, labels and the extra-grips disclosure are remembered. Existing generated-catalog preferences are retained in backups but no longer drive the interface.
-
-The organization adapts the open/barre/power division of [Hal Leonard's Playbook – Guitar Chords](https://www.halleonard.com/product/14043451/playbook-guitar-chords) and the small-step, chord-change approach described in [Joseph Alexander's The First 100 Chords for Guitar](https://www.fundamental-changes.com/book/first-100-chords-guitar/). [Fretboard Logic's FAQ](https://www.fretboardlogic.com/faq/) distinguishes knowing the CAGED map from immediately playing its harder full G/D forms; the default movable set emphasizes practical E/A forms. Fretlab uses its own selected data, diagrams, genre tags and musical cues. This adapts the teaching structure, rather than reproducing the books' pages or exercises.
+The groups are mutually exclusive. Open strings give a grip a fixed root, so unsupported roots show an honest empty state and a route to movable shapes. Every sounding string in a movable template remains fretted in all twelve keys. Root, Genre and Diagram labels are the only filters. Each card gives an original musical-use cue, sounding degrees, declared omissions, strum/arpeggio previews and a related study. Fingerings and barres are authored rather than enumerated.
 
 Finger numbers sit inside diagram dots, with fret positions on a separate row. Open circles mean open strings, × means skip the string, and a wide bar holds several strings with one finger. Left-handed settings mirror the diagrams. In exercises, Show fingers controls the smaller finger annotations independently of note/degree labels. Suggestions use the conventional index 1, middle 2, ring 3, little finger 4; an open string uses no finger.
 
@@ -70,11 +70,15 @@ The 26 existing shape and genre workouts remain in **Exercises**, retaining thei
 
 Playback and display controls sit open in a bar above the tab, one tap each: Loop, Count-in, Click and Notes (each with its own volume), +4 bpm per loop, a new key per loop, the note labels (none, degrees, chord tones, notes), Show fingers, and the section to loop. The run rating and your history stay quietly in the side panel.
 
+With New key / loop or the tempo ladder enabled, **Up next** shows the destination and opening frets before the boundary, with a beat countdown while playing. The tab renders the approaching key's notes in advance and preserves the previous notes as they pass the playhead. Click upcoming notation to pause and prepare that key at the selected note. Audio and visual previews share the next-loop plan.
+
 Completion, best tempos, and review schedules for keyed exercises are stored separately for each key. Existing progress is retained in its saved key (or the exercise's default key when none was saved). Listening or stepping through a due exercise before rating it postpones that review to tomorrow rather than advancing its cold-review interval. Ratings remain self-reported; Fretlab does not assess the guitar performance automatically.
 
 ## Checks
 
-Install Playwright and Chromium, then run all eight suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, `node tests/chords.js`, `node tests/rhythm.js`, and `node tests/essentials.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Rhythm and Essentials checks verify bar counts, click modes, priority ordering and focus selection. Chord checks verify all 44 authored grips, all twelve transpositions of the movable forms, pitches, fingers, barres, exclusive open/movable classification, genre filters and small default sets.
+Advanced checks verify the moving inner voices and modal spellings, creative tasks, reversible skip behavior, early key/tempo previews, future-note selection, light/dark label contrast and responsive layouts.
+
+Install Playwright and Chromium, then run all nine suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, `node tests/chords.js`, `node tests/rhythm.js`, `node tests/essentials.js`, and `node tests/advanced.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Rhythm and featured-study checks verify bar counts, click modes, priority ordering and focus selection. Chord checks verify all 24 discovery voicings, all twelve transpositions of the movable forms, pitches, fingers, barres, exclusive open/movable classification, genre filters and small default sets.
 
 ## Other tools
 
@@ -94,6 +98,10 @@ In an exercise: **Space** plays or stops, **1** / **2** / **3** rate the run Cle
 ## Volume
 
 The speaker button in the header opens a mixer: **Master** with **Mute**, plus separate **Guitar notes** (the guide sound in exercises and play-alongs) and **Click & drums** (metronome, count-ins and drum backing) levels, each up to 150%. The same two sliders sit next to the *Hear the notes* and *Click* switches inside every exercise. Press **M** anywhere to mute or unmute. On iPhone, sound plays even with the silent switch on.
+
+## Appearance
+
+Catppuccin Latte in light mode and Mocha in dark mode follow your system appearance. Mauve accents, peach roots, blue thirds, teal fifths and mauve sevenths share the same meaning across chord diagrams and the fretboard. Small marker labels use a contrasting foreground for each color. Palette adapted from [Catppuccin](https://catppuccin.com/palette/).
 
 ## Install and offline use
 

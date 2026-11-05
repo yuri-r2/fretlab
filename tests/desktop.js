@@ -91,6 +91,7 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
     assert.equal(await page.locator('#view-voicings').isVisible(), true, 'old links lead to chord practice');
     assert.equal(await page.evaluate(() => window.__D.S.riffs[0].id), 'legacy-idea', 'older saved ideas remain in backups');
     await page.goto('file://' + artifact + '#exercises');
+    await page.fill('#exSearch','Triad inversions');
     await page.click('#exList [data-ex="triads"]');
     assert.equal(await page.locator('#pNextStep').isVisible(), false, 'body-only deployment preserves hidden controls');
     assert.equal(await page.locator('#view-progress').isVisible(), false);
