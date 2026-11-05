@@ -1,6 +1,6 @@
 # Fretlab color and contrast direction
 
-The workspace uses near-white (`#fafafa`) in light mode and near-black (`#08090b`) in dark mode. Color belongs primarily in actions, selected states and musical markers. The app currently uses violet accents; three alternative accent treatments are previewed for selection.
+The workspace uses near-white (`#fafafa`) in light mode and near-black (`#08090b`) in dark mode. Color belongs primarily in actions, selected states and musical markers. The selected Inked treatment uses deep teal actions in light mode and bright teal actions in dark mode.
 
 ## Why a palette name is not enough
 
@@ -29,11 +29,11 @@ These are original app adaptations informed by [Figma's website color-scheme col
 
 | Direction | Figma reference | Light action | Dark action | Design judgment for Fretlab |
 |---|---|---|---|---|
-| Inked | Scheme 51 | `#004f52` | `#2de0de` | Recommended: a crisp teal action color separates controls from the amber playhead. |
+| Inked | Scheme 51 | `#004f52` | `#2de0de` | Selected: a crisp teal action color separates controls from the amber playhead. |
 | Clockwork | Scheme 46 | `#7a2900` | `#ffb164` | A warmer, equipment-like feel. Actions and the playhead need clear shapes/labels as well as hue. |
 | Lapis velvet evening | Scheme 24 | `#5b1d7d` | `#d7b0ff` | A violet direction for the atmospheric material, supported by neutral high-contrast surfaces. |
 
-The proposed choices concern accent personality, not a different background tint. They remain previews until selected. The shipped violet treatment uses `#7d22ce` in light mode and `#d7b0ff` in dark mode.
+All three treatments share the neutral foundation. Inked is the shipped theme; Clockwork and Lapis velvet evening remain design alternatives. The amber playhead and harmonic marker hues stay consistent across the options.
 
 ## Musical information
 
