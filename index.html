@@ -361,6 +361,11 @@ table.t td{padding:7px 8px;border-bottom:1px solid var(--line)}
 /* voicings */
 .tag{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin-right:4px}
 .esspills{display:flex;flex-wrap:wrap;gap:6px}
+.ess-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.ess-actions .btn.sm{color:var(--muted);background:transparent}
+.skipped-folder{border-top:1px solid var(--line);padding-block:12px}
+.skipped-folder>summary{cursor:pointer;font-size:13px;font-weight:500;color:var(--muted)}
+#skippedList{margin-top:14px}
 .esspill{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:500 13px var(--font-mono);display:inline-flex;align-items:center;justify-content:center}
 .esspill.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
 .esspill.next{border-color:var(--accent);color:var(--ink);border-width:2px}
@@ -647,6 +652,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="card stack" id="essCard"></div>
+  <details class="skipped-folder" id="skippedExercises"><summary>Skipped exercises <span id="skippedCount"></span></summary><div class="stack" id="skippedList"></div></details>
   <div class="excards">
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Open-string clusters, modal colors and compact extensions. Hear a sound, then use it in a study.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
@@ -1781,7 +1787,7 @@ function xWindow(i) {
 }
 function xLabel(rel) { if (S.ui.xscale === 'lydian' && rel === 6) return '#4'; return IVL[rel]; }
 function renderXPractice() {
-  const id = S.ui.xscale, list = (SC_EX[id] || []).map(x => EX.find(e => e.id === x)).filter(Boolean);
+  const id = S.ui.xscale, list = (SC_EX[id] || []).map(x => EX.find(e => e.id === x)).filter(e => e && !exSkipped(e.id));
   $('#xPracTitle').textContent = `Practice ${nn(S.ui.xkey)} ${SCALES[id].n}`;
   $('#xEx').innerHTML = list.map(exCard).join('');
 }
@@ -2237,7 +2243,7 @@ const ESSENTIALS = [
 ];
 const ESS_IX = Object.fromEntries(ESSENTIALS.map((x, i) => [x.id, i]));
 function isEss(id) { return Object.prototype.hasOwnProperty.call(ESS_IX, id); }
-function essList() { return ESSENTIALS.map(x => ({ ...x, e: EX.find(e => e.id === x.id) })).filter(x => x.e); }
+function essList() { return ESSENTIALS.map(x => ({ ...x, e: EX.find(e => e.id === x.id) })).filter(x => x.e && !exSkipped(x.id)); }
 function exComplete(e) { const st = exStat(e.id); return e.steps.every((_, i) => st.done[i]); }
 function exSkipped(id) { return S.exskip.includes(id); }
 function essNext() { return essList().find(x => !exComplete(x.e) && !exSkipped(x.id)) || null; }
@@ -2464,7 +2470,7 @@ function renderRhythm() {
   if (P.ex && P.host === 'rhythm' && !$('#exPlayer').hidden) { renderExPlayer(); return; }
   $('#rMain').hidden = false; const pl = $('#exPlayer'); if (pl.parentElement === $('#view-rhythm')) pl.hidden = true;
   const sec = (lab, xs) => xs.length ? `<div class="stack" style="gap:8px"><span class="label">${lab}</span><div class="excards">${xs.map(exCard).join('')}</div></div>` : '';
-  const rhythm = EX.filter(e=>e.cat === 'Rhythm');
+  const rhythm = EX.filter(e=>e.cat === 'Rhythm' && !exSkipped(e.id));
   $('#rEx').innerHTML = sec('Featured studies', rhythm.filter(e => isEss(e.id)).sort((a, b) => ESS_IX[a.id] - ESS_IX[b.id])) + sec('More rhythm', rhythm.filter(e => !isEss(e.id)));
 }
 
@@ -2528,6 +2534,7 @@ function evIndexAt(w) { let lo = 0; for (let i = 0; i < P.ev.length; i++) { if (
 function exHostOf(e) { return e && e.cat === 'Scales' ? 'explorer' : e && e.cat === 'Rhythm' ? 'rhythm' : 'exercises'; }
 function exOpen(id, step, origin) {
   const e = EX.find(x => x.id === id); if (!e) return;
+  if (exSkipped(id)) { openSkippedExercises(); return; }
   routineRemember();
   P.origin = origin || (curTab === P.host && !$('#exPlayer').hidden ? P.origin : curTab);
   exStop(); if (X.bus) { killBus(X.bus); X.bus = null; } if (X.drone) { X.drone.stop(); X.drone = null; }
@@ -2930,12 +2937,12 @@ function resAttr(x) { return `data-res="${x.id}" data-step="${x.s}" data-key="${
 function runLine(x, e) { return [e.keyed && x.k != null ? keyName(x.k, e) : '', x.b ? x.b + ' bpm' : ''].filter(Boolean).join(' · '); }
 function recentRuns(n) {
   const seen = new Set(), out = [];
-  for (let i = S.exlog.length - 1; i >= 0 && out.length < n; i--) { const x = S.exlog[i], e = EX.find(q => q.id === x.id); if (!e || !e.steps[x.s]) continue; const k = x.id + ':' + x.s; if (seen.has(k)) continue; seen.add(k); out.push({ x, e }); }
+  for (let i = S.exlog.length - 1; i >= 0 && out.length < n; i--) { const x = S.exlog[i], e = EX.find(q => q.id === x.id); if (!e || exSkipped(e.id) || !e.steps[x.s]) continue; const k = x.id + ':' + x.s; if (seen.has(k)) continue; seen.add(k); out.push({ x, e }); }
   return out;
 }
 function rcard(x, e) { return `<button class="rcard" type="button" ${resAttr(x)}><b>${esc(e.title)}</b><span class="small">Step ${x.s + 1}: ${esc(e.steps[x.s].n)}</span><span class="small muted">${esc(runLine(x, e))}${runLine(x, e) ? ' · ' : ''}<span class="rchip ${x.r}">${RLAB[x.r]}</span> · ${ago(x.t)}</span><span class="go">Resume →</span></button>`; }
 function renderExRecent() {
-  const rec = recentRuns(4), favs = S.exfav.map(id => EX.find(e => e.id === id)).filter(Boolean);
+  const rec = recentRuns(4), favs = S.exfav.map(id => EX.find(e => e.id === id)).filter(e => e && !exSkipped(e.id));
   let h = '';
   if (rec.length) h += `<div class="stack" style="gap:8px"><span class="label">Pick up where you left off</span><div class="rstrip">${rec.map(({ x, e }) => rcard(x, e)).join('')}</div></div>`;
   if (favs.length) h += `<div class="stack" style="gap:8px"><span class="label">Favorites</span><div class="rstrip">${favs.map(e => { const ns = nextStep(e), st = exStat(e.id); return `<button class="rcard" type="button" data-ex="${e.id}"><b>★ ${esc(e.title)}</b><span class="small">Step ${ns + 1}: ${esc(e.steps[ns].n)}</span><span class="small muted">${e.keyed ? esc(keyName(st.key != null ? st.key : e.key0, e)) + ' · ' : ''}${st.bpm[ns] || e.steps[ns].bpm} bpm</span><span class="go">Open →</span></button>`; }).join('')}</div></div>`;
@@ -2944,8 +2951,8 @@ function renderExRecent() {
   $('#exHistSum').textContent = `Run history: ${S.exlog.length} run${S.exlog.length === 1 ? '' : 's'} over ${days.size} day${days.size === 1 ? '' : 's'} →`; $('#exHistSum').parentElement.hidden = !S.exlog.length;
 }
 function renderExHist() {
-  const f = S.ui.histFilter || '', L = S.exlog.filter(x => (!f || x.id === f) && EX.some(e => e.id === x.id));
-  const ids = [...new Set(S.exlog.map(x => x.id))].map(id => EX.find(e => e.id === id)).filter(Boolean);
+  const f = exSkipped(S.ui.histFilter) ? '' : S.ui.histFilter || '', L = S.exlog.filter(x => !exSkipped(x.id) && (!f || x.id === f) && EX.some(e => e.id === x.id));
+  const ids = [...new Set(S.exlog.map(x => x.id))].map(id => EX.find(e => e.id === id)).filter(e => e && !exSkipped(e.id));
   let h = `<label class="f" style="flex-direction:row;align-items:center;gap:8px;max-width:420px"><span>Show</span><select id="exHistFilter"><option value="">All exercises</option>${ids.map(e => `<option value="${e.id}" ${f === e.id ? 'selected' : ''}>${esc(e.title)}</option>`).join('')}</select></label>`;
   if (!L.length) { $('#exHist').innerHTML = h + '<p class="small muted">Nothing yet. Every run you play or rate is saved here with its step, key and tempo, so you can jump straight back to it.</p>'; return; }
   const groups = new Map();
@@ -2990,11 +2997,11 @@ function renderExLib() {
   $('#exRecent').hidden = !!query;
   const hit = e => !query || [e.title, e.about, e.cat, isEss(e.id) ? 'featured study ' + ESSENTIALS[ESS_IX[e.id]].why : ''].join(' ').toLowerCase().includes(query);
   const cats = skip => [...new Set(EX.map(e=>e.cat))].map(cat => {
-    const items = EX.filter(e => e.cat === cat && hit(e) && !(skip && isEss(e.id))).sort((a, b) => isEss(b.id) - isEss(a.id)); if (!items.length) return '';
+    const items = EX.filter(e => e.cat === cat && !exSkipped(e.id) && hit(e) && !(skip && isEss(e.id))).sort((a, b) => isEss(b.id) - isEss(a.id)); if (!items.length) return '';
     return `<div class="stack" style="gap:8px"><span class="label">${esc(cat)}</span><div class="excards">${items.map(exCard).join('')}</div></div>`;
   }).join('');
   if (!query) {
-    const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, rest = EX.filter(e => EXCATS.includes(e.cat) && !isEss(e.id)).length;
+    const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, rest = EX.filter(e => EXCATS.includes(e.cat) && !exSkipped(e.id) && !isEss(e.id)).length;
     $('#exList').innerHTML = `<div class="stack" style="gap:8px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="label">Advanced studies: explore a sound</span><span class="small muted">${done} of ${ess.length} complete</span></div><p class="small muted" style="margin:0">${ess.length} studies for alternative, Midwest emo and shoegaze: discover a sound, isolate the challenge, then develop a phrase. Start anywhere; familiar technique and scale workouts remain below.</p><div class="excards">${ess.map(x => exCard(x.e)).join('')}</div></div>` +
       `<details class="more" id="exMore"${S.ui.exMore ? ' open' : ''}><summary>All studies &amp; foundations (${rest})</summary><div class="stack" style="gap:18px;margin-top:14px">${cats(true)}</div></details>`;
     return;
@@ -3002,11 +3009,12 @@ function renderExLib() {
   $('#exList').innerHTML = cats(false) || '<div class="vo-empty"><h3>No matching exercises</h3><p class="small muted">Try a sound or skill such as Lydian, inner voice, motif or legato.</p><button class="btn" id="exClearSearch" type="button">Clear search</button></div>';
 }
 function exCard(e) {
+  if (exSkipped(e.id)) return '';
   {
       const st = exStat(e.id), done = e.steps.filter((_, i) => st.done[i]).length, ns = nextStep(e), bests = Object.values(st.best), best = bests.length ? Math.max(...bests) : 0;
       const lr = S.exlog.findLast ? S.exlog.findLast(x => x.id === e.id) : [...S.exlog].reverse().find(x => x.id === e.id);
       const ess = isEss(e.id) ? ESSENTIALS[ESS_IX[e.id]] : null;
-      return `<button class="excard${ess ? ' isess' : ''}" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed && !/any key/.test(e.lvl) ? ' · any key' : ''}</span></span>${ess ? `<span class="small"><span class="tag ess">Study ${ESS_IX[e.id] + 1}</span>${esc(ess.why)}</span>` : `<span class="small muted">${esc(e.about)}</span>`}<span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${exSkipped(e.id) ? ' · Skipped recommendation' : ''}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
+      return `<button class="excard${ess ? ' isess' : ''}" type="button" data-ex="${e.id}"><span class="exrow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.lvl)}${e.keyed && !/any key/.test(e.lvl) ? ' · any key' : ''}</span></span>${ess ? `<span class="small"><span class="tag ess">Study ${ESS_IX[e.id] + 1}</span>${esc(ess.why)}</span>` : `<span class="small muted">${esc(e.about)}</span>`}<span class="prog" aria-hidden="true"><i style="width:${Math.round(done / e.steps.length * 100)}%"></i></span><span class="small">${done === e.steps.length ? 'All steps done. Keep it warm.' : `Step ${ns + 1} of ${e.steps.length}: ${esc(e.steps[ns].n)}`}${best ? ` · best ${best} bpm` : ''}${lr ? ` · ${ago(lr.t)}` : ''}</span></button>`;
   }
 }
 function renderExTransport() {
@@ -3040,7 +3048,7 @@ function renderExSteps() {
 function renderExPlayer() {
   const e = P.ex; if (!e) return; const st = exStat(e.id), sd = e.steps[P.step];
   $('#pCat').textContent = `${isEss(e.id) ? `Study ${ESS_IX[e.id] + 1} of ${ESSENTIALS.length} · ` : ''}${e.cat} · ${e.lvl}`;
-  $('#pSkip').setAttribute('aria-pressed',exSkipped(e.id)); $('#pSkip').textContent = exSkipped(e.id) ? 'Skipped · undo' : 'Too easy — skip';
+  $('#pSkip').setAttribute('aria-pressed',exSkipped(e.id)); $('#pSkip').textContent = 'Too easy — skip';
   $('#pTitle').textContent = e.title; $('#pAbout').textContent = e.about;
   const focused = S.ui.focusEx === e.id; $('#pFocusPick').classList.add('focus-choice'); $('#pFocusPick').setAttribute('aria-pressed', focused); $('#pFocusPick').textContent = focused ? '✓ Current focus' : 'Make my focus';
   renderExSteps();
@@ -3125,9 +3133,9 @@ function renderUpNext() {
   const ess = essList(), essOpen = ess.filter(x => !exComplete(x.e) && !exSkipped(x.id)).map(x => ({ e: x.e }));
   const others = EX.map(e => ({ e, st: exStat(e.id) })).filter(x => !isEss(x.e.id) && !exSkipped(x.e.id) && x.st.last && x.e.steps.some((_, i) => !x.st.done[i])).sort((a, b) => (a.st.last || '').localeCompare(b.st.last || ''));
   const list = essOpen.slice(0, 3).concat(others).slice(0, 4);
-  $('#upNextSum').textContent = `Featured studies: ${ess.filter(x=>exComplete(x.e)).length} complete · ${ess.filter(x=>exSkipped(x.id)).length} skipped`;
+  $('#upNextSum').textContent = `Featured studies: ${ess.filter(x=>exComplete(x.e)).length} complete · ${ess.length} available`;
   const rr = recentRuns(20).find(x=>!exSkipped(x.e.id)), resume = rr && Date.now() - rr.x.t < 14 * 864e5 ? `<div class="weak"><div><div style="font-weight:500">Last time: ${esc(rr.e.title)}</div><div class="small muted">Step ${rr.x.s + 1}: ${esc(rr.e.steps[rr.x.s].n)}${runLine(rr.x, rr.e) ? ' · ' + esc(runLine(rr.x, rr.e)) : ''} · ${ago(rr.x.t)}</div></div><button class="btn primary" type="button" ${resAttr(rr.x)}>Resume</button></div>` : '';
-  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${isEss(e.id) ? `<span class="tag ess">Study ${ESS_IX[e.id] + 1}</span>` : ''}${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">No unskipped studies remain. Revisit a favorite, or undo a skip in its player.</p>');
+  $('#upNext').innerHTML = resume + (list.length ? list.map(({ e }) => { const ns = nextStep(e); return `<div class="weak"><div><div style="font-weight:500">${isEss(e.id) ? `<span class="tag ess">Study ${ESS_IX[e.id] + 1}</span>` : ''}${esc(e.title)}</div><div class="small muted">Step ${ns + 1}: ${esc(e.steps[ns].n)} · goal ${e.steps[ns].goal} bpm</div></div><button class="btn" type="button" data-openex="${e.id}">Practice</button></div>`; }).join('') : '<p class="small muted">No studies remain here. Restore exercises from Skipped exercises in the Library.</p>');
 }
 
 /* ---------- learn path: helpers ---------- */
@@ -3315,7 +3323,7 @@ const UNITS = [
       { t: 'Why these two strings first', body: ['Almost every movable shape has its root on the low E or A string: barre chords, power chords and scale boxes.', 'If you can name those two strings instantly, you can play any of those shapes in any key. Here is C major as an E-shape barre (root on the low E, fret 8) and an A-shape barre (root on the A string, fret 3).'],
         show: () => board(cagedChord(0, 'E').concat(cagedChord(0, 'A')).map(c => mk(c.s, c.f, pcOf(c.s, c.f) === 0 ? 'root' : 'note', pcOf(c.s, c.f) === 0 ? 'C' : ''))), legend: [['root', 'Root (C)'], ['note', 'Other chord tones']] } ],
     quiz: () => rep10([[() => qNameNote([5, 4], 0, 12, true), 4], [() => qFindNote([5, 4], 0, 12, true), 3], [() => qNameNote([5, 4], 0, 12, false), 3]]),
-    practice: [{ l: 'Fretboard trainer: find the note', d: 'Low E and A strings, natural notes.', a: () => presetFret('find', [false, false, false, false, true, true], '0-12', true) }, { l: 'Exercise: cycle of fourths on the low E', d: 'All 12 notes in time.', a: () => openEx('cycle4', 0) }, { l: 'Exercise: cycle of fourths on the A string', d: 'Same drill, A string.', a: () => openEx('cycle4', 1) }] },
+    practice: [{ l: 'Fretboard trainer: find the note', d: 'Low E and A strings, natural notes.', a: () => presetFret('find', [false, false, false, false, true, true], '0-12', true) }, { l: 'Exercise: cycle of fourths on the low E', d: 'All 12 notes in time.', ex: 'cycle4', a: () => openEx('cycle4', 0) }, { l: 'Exercise: cycle of fourths on the A string', d: 'Same drill, A string.', ex: 'cycle4', a: () => openEx('cycle4', 1) }] },
   { id: 'u2', title: 'Octaves: one note, many places', sum: 'Octave shapes and the B-string shift connect every note across all six strings.',
     cards: [
       { t: 'The octave shape', body: ['From a note on the low E or A string, the same note an octave higher is <b>two strings up and two frets higher</b>. Mute the string in between and you have the classic octave shape.', 'Here: A on the low E at fret 5 and its octave on the D string at fret 7. C on the A string at fret 3 and its octave on the G string at fret 5.'],
@@ -3325,7 +3333,7 @@ const UNITS = [
       { t: 'Chain them together', body: ['Combine octave shapes with unisons: the same pitch on the next string down is five frets higher (four when moving from the B to the G string).', 'Chained together, every note connects across the neck. Learn the low E and A strings first, then find notes on the D, G, B and high e strings by octave.', 'Here is every A from the nut to fret 15.'],
         show: () => board(allPos(9, 15).map(([s, f]) => mk(s, f, 'root'))), legend: [['root', 'Every A']] } ],
     quiz: () => rep10([[() => qEvery(pick(NATURAL)), 3], [() => qOctave(), 4], [() => qNameNote([3, 2, 1, 0], 0, 12, true), 3]]),
-    practice: [{ l: 'Fretboard trainer: find them all', d: 'Every place a note lives, timed.', a: () => presetFret('all', [true, true, true, true, true, true], '0-12', false) }, { l: 'Exercise: one note, the whole neck', d: 'With octave shapes, in any key.', a: () => openEx('notemap', 1) }, { l: 'Fretboard trainer: name the note', d: 'D, G, B and high e strings.', a: () => presetFret('name', [true, true, true, true, false, false], '0-12', true) }] },
+    practice: [{ l: 'Fretboard trainer: find them all', d: 'Every place a note lives, timed.', a: () => presetFret('all', [true, true, true, true, true, true], '0-12', false) }, { l: 'Exercise: one note, the whole neck', d: 'With octave shapes, in any key.', ex: 'notemap', a: () => openEx('notemap', 1) }, { l: 'Fretboard trainer: name the note', d: 'D, G, B and high e strings.', a: () => presetFret('name', [true, true, true, true, false, false], '0-12', true) }] },
   { id: 'u3', title: 'Intervals as shapes', sum: 'Every interval is a fixed shape, so it works from any root.',
     cards: [
       { t: 'Intervals are shapes', body: ['An interval is the distance between two notes. On guitar each interval is a fixed shape, so once you know it from one root, you know it from every root.', 'Here are the most important ones from a C on the A string (fret 3).'],
@@ -3345,7 +3353,7 @@ const UNITS = [
       { t: 'The order repeats', body: ['Moving up the neck, the shapes always follow the same order: <b>C, A, G, E, D</b>, then C again an octave higher. Start from any shape and continue the cycle.', 'Neighboring shapes share notes, so you can shift from one to the next without losing your place. The shaded area is the E shape of C major (frets 7 to 10). The D shape starts right where it ends.'],
         show: () => { const w = cagedWins(0, 'maj'); return Object.assign(board(degCells(0, [0, 4, 7], w[1].lo, w[2].hi)), { win: [w[1].lo, w[1].hi] }); }, legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th']] } ],
     quiz: () => rep10([[qCagedShape, 4], [qFindRoot, 3], [qChordName, 3]]),
-    practice: [{ l: 'Exercise: CAGED arpeggios', d: 'All five shapes, any key.', a: () => openEx('cagedarp') }, { l: 'Scales explorer', d: 'Step through the five positions.', a: () => switchTab('explorer') }] },
+    practice: [{ l: 'Exercise: CAGED arpeggios', d: 'All five shapes, any key.', ex: 'cagedarp', a: () => openEx('cagedarp') }, { l: 'Scales explorer', d: 'Step through the five positions.', a: () => switchTab('explorer') }] },
   { id: 'u5', title: 'Pentatonic boxes', sum: 'The five-note scale behind most rock and blues, and how its boxes fit CAGED.',
     cards: [
       { t: 'Five notes', body: ['Minor pentatonic uses the <b>1, b3, 4, 5 and b7</b> of the minor scale. Major pentatonic uses 1, 2, 3, 5 and 6.', 'A minor pentatonic and C major pentatonic share all five notes. Only the home note changes. That pairing is called <b>relative</b> minor and major; the relative major is three frets above the minor root.', 'Here is A minor pentatonic across the neck, colored by degree.'],
@@ -3355,7 +3363,7 @@ const UNITS = [
       { t: 'Play the targets', body: ['The root sounds resolved. The b3 says minor. The b7 gives the bluesy pull. The 5th is strong and stable.', 'When you improvise, aim phrases at those colored notes instead of running the box up and down. Over a chord change, move your target to that chord\'s root or 3rd.'],
         show: () => { const w = cagedWins(9, 'min')[1]; return Object.assign(board(degCells(9, pcsOf(9, MINP), w.lo, w.hi)), { win: [w.lo, w.hi] }); }, legend: [['root', 'Root'], ['d3', 'b3'], ['d5', '5th'], ['d7', 'b7'], ['note', '4th']] } ],
     quiz: () => rep10([[() => qDegree('min'), 4], [() => qFindDegree('min', ['b3', '5', 'b7']), 4], [qRelative, 2]]),
-    practice: [{ l: 'Exercise: all five pentatonic boxes', d: 'Linked boxes, any key.', a: () => openEx('pentall') }, { l: 'Scales explorer: minor pentatonic', d: 'See each box with degree colors.', a: () => { S.ui.xscale = 'minPent'; S.ui.xchord = true; S.ui.xlab = 'iv'; save(); switchTab('explorer'); } }] },
+    practice: [{ l: 'Exercise: all five pentatonic boxes', d: 'Linked boxes, any key.', ex: 'pentall', a: () => openEx('pentall') }, { l: 'Scales explorer: minor pentatonic', d: 'See each box with degree colors.', a: () => { S.ui.xscale = 'minPent'; S.ui.xchord = true; S.ui.xlab = 'iv'; save(); switchTab('explorer'); } }] },
   { id: 'u6', title: 'The major scale', sum: 'The formula, five positions, three-notes-per-string patterns, and the scale as a line along the strings.',
     cards: [
       { t: 'The formula', body: ['The major scale is <b>whole, whole, half, whole, whole, whole, half</b>. On one string that\'s 2, 2, 1, 2, 2, 2, 1 frets.', 'The half steps fall between degrees 3 and 4, and 7 and 1. Every other scale and mode is described by how it differs from this one.', 'Here is G major along the low E string.'],
@@ -3367,7 +3375,7 @@ const UNITS = [
       { t: 'Lines, not just boxes', body: ['Boxes keep your hand in one place. Riffs and melodies often run along one or two strings instead, sliding between positions.', 'Here is G major across the whole neck on the G and B strings. Follow it up one string and you can link all five positions. The same pairs of strings carry the 3rds you\'ll play in the two-note riff exercise.'],
         show: () => board(degCells(7, pcsOf(7, MAJ), 0, 15, [2, 1])), legend: [['root', 'Root'], ['d3', '3rd'], ['d5', '5th'], ['d7', '7th'], ['note', '2, 4, 6']] } ],
     quiz: () => rep10([[() => qDegree('maj'), 4], [() => qFindDegree('maj', ['3', '4', '5', '7']), 3], [qScaleNote, 3]]),
-    practice: [{ l: 'Exercise: major scale in five positions', d: 'Any key.', a: () => openEx('majcaged') }, { l: 'Exercise: three notes per string', d: 'Patterns, legato and sixes.', a: () => openEx('nps3') }, { l: 'Exercise: scale sequences', d: 'Threes, fours, 3rds and 4ths.', a: () => openEx('seqs') }, { l: 'Exercise: scales on one string', d: 'See the formula along the neck.', a: () => openEx('onestring') }, { l: 'Exercise: 3rds and 6ths', d: 'The scale in pairs, the basis of two-note riffs.', a: () => openEx('dstops') }] },
+    practice: [{ l: 'Exercise: major scale in five positions', d: 'Any key.', ex: 'majcaged', a: () => openEx('majcaged') }, { l: 'Exercise: three notes per string', d: 'Patterns, legato and sixes.', ex: 'nps3', a: () => openEx('nps3') }, { l: 'Exercise: scale sequences', d: 'Threes, fours, 3rds and 4ths.', ex: 'seqs', a: () => openEx('seqs') }, { l: 'Exercise: scales on one string', d: 'See the formula along the neck.', ex: 'onestring', a: () => openEx('onestring') }, { l: 'Exercise: 3rds and 6ths', d: 'The scale in pairs, the basis of two-note riffs.', ex: 'dstops', a: () => openEx('dstops') }] },
   { id: 'u7', title: 'Triads and inversions', sum: 'Three-note chords on each string set, and how to move between them smoothly.',
     cards: [
       { t: 'Three notes', body: ['A triad is the <b>root, 3rd and 5th</b>. Major has a major 3rd (4 half steps above the root). Minor has a minor 3rd (3 half steps). Every bigger chord is a triad with notes added.', 'Here is every G major triad on the G, B and high e strings.'],
@@ -3377,7 +3385,7 @@ const UNITS = [
       { t: 'Voice leading', body: ['When the chord changes, move each note to the nearest note of the next chord. With triads on one string set, a whole progression can stay inside four frets.', 'Here: G major (frets 7-8-7) moves to C major (frets 9-8-8). The G on the B string stays put; the other two notes move one or two frets.'],
         show: () => board([mk(2, 7, 'd5', 'D'), mk(1, 8, 'root', 'G'), mk(0, 7, 'd3', 'B'), mk(2, 9, 'd7', 'E'), mk(0, 8, 'd7', 'C')]), legend: [['root', 'Common tone (G)'], ['d5', 'G chord'], ['d3', 'G chord'], ['d7', 'C chord: notes that move']] } ],
     quiz: () => rep10([[qInversion, 5], [qTriadQuality, 3], [qTriadRoot, 2]]),
-    practice: [{ l: 'Exercise: triad inversions', d: 'Every string set, voice-led progressions.', a: () => openEx('triads') }, { l: 'Ear trainer: chord types', d: 'Hear major vs minor.', a: () => { switchTab('ear'); S.ui.emode = 'chord'; save(); renderEar(); } }] },
+    practice: [{ l: 'Exercise: triad inversions', d: 'Every string set, voice-led progressions.', ex: 'triads', a: () => openEx('triads') }, { l: 'Ear trainer: chord types', d: 'Hear major vs minor.', a: () => { switchTab('ear'); S.ui.emode = 'chord'; save(); renderEar(); } }] },
   { id: 'u8', title: 'Chords in a key', sum: 'The chords of a key, the progressions songs lean on, borrowed chords, the ii–V–I and guide tones.',
     cards: [
       { t: 'Chords from the scale', body: ['Build a chord on each note of the major scale using only notes from the key and you get <b>I, ii, iii, IV, V, vi and vii°</b>. Uppercase is major, lowercase is minor.', 'In G that\'s G, Am, Bm, C, D, Em and F#°. Add one more scale note on top and I and IV become <b>maj7</b> chords, the soft, open color of emo and indie.', 'All of these chords live inside every scale position. Here is the E-shape position of G major.'],
@@ -3391,7 +3399,7 @@ const UNITS = [
       { t: 'Guide tones', body: ['The 3rd and 7th of each chord carry its sound. In a ii–V–I, the 7th of each chord falls a half step to the 3rd of the next.', 'In C: C (7th of Dm7) falls to B (3rd of G7), and F (7th of G7) falls to E (3rd of Cmaj7). Play only those notes and the changes are clear even without a band.'],
         show: () => board([mk(3, 10, 'd7', 'C'), mk(3, 9, 'd3', 'B'), mk(2, 10, 'd7', 'F'), mk(2, 9, 'd3', 'E')]), legend: [['d7', '7th of the chord'], ['d3', '3rd of the next chord']] } ],
     quiz: () => rep10([[qChordIn3, 2], [qProg, 2], [qBorrow, 2], [qQuality, 2], [qGuide, 2]]),
-    practice: [{ l: 'Exercise: triad progressions', d: 'I–vi–IV–V and I–V–vi–IV, voice-led.', a: () => openEx('triads', 4) }, { l: 'Exercise: CAGED arpeggios with maj7', d: 'The maj7 sound in all five shapes.', a: () => openEx('cagedarp', 4) }, { l: 'Exercise: diatonic 7th arpeggios', d: 'All seven chords in one position.', a: () => openEx('dia7') }, { l: 'Exercise: ii–V–I and guide tones', d: 'Arpeggios, then the guide-tone line.', a: () => openEx('twofive') }, { l: 'Voicings', d: 'Real riff shapes built from these chords.', a: () => switchTab('voicings') }] }
+    practice: [{ l: 'Exercise: triad progressions', d: 'I–vi–IV–V and I–V–vi–IV, voice-led.', ex: 'triads', a: () => openEx('triads', 4) }, { l: 'Exercise: CAGED arpeggios with maj7', d: 'The maj7 sound in all five shapes.', ex: 'cagedarp', a: () => openEx('cagedarp', 4) }, { l: 'Exercise: diatonic 7th arpeggios', d: 'All seven chords in one position.', ex: 'dia7', a: () => openEx('dia7') }, { l: 'Exercise: ii–V–I and guide tones', d: 'Arpeggios, then the guide-tone line.', ex: 'twofive', a: () => openEx('twofive') }, { l: 'Voicings', d: 'Real riff shapes built from these chords.', a: () => switchTab('voicings') }] }
 ];
 const EX_UNIT = { nps3: 'u6', seqs: 'u6', dia7: 'u8', twofive: 'u8', sweeps: 'u7', pentall: 'u5', legato: 'u5', octaves: 'u2', majcaged: 'u6', onestring: 'u6', dstops: 'u6', cagedarp: 'u4', triads: 'u7', cycle4: 'u1', notemap: 'u2' };
 
@@ -3465,7 +3473,7 @@ function renderCard() {
 }
 function renderPractice() {
   const u = LN.unit;
-  $('#lnPractice').innerHTML = `<p class="small muted">Lessons explain it, the check tests it, practice makes it automatic. Spend a few minutes on each of these, then come back to the next unit.</p>` + u.practice.map((p, i) => `<div class="weak"><div><div style="font-weight:500">${esc(p.l)}</div><div class="small muted">${esc(p.d)}</div></div><button class="btn" type="button" data-prac="${i}">Go</button></div>`).join('');
+  $('#lnPractice').innerHTML = `<p class="small muted">Lessons explain it, the check tests it, practice makes it automatic. Spend a few minutes on each of these, then come back to the next unit.</p>` + u.practice.map((p, i) => p.ex && exSkipped(p.ex) ? '' : `<div class="weak"><div><div style="font-weight:500">${esc(p.l)}</div><div class="small muted">${esc(p.d)}</div></div><button class="btn" type="button" data-prac="${i}">Go</button></div>`).join('');
 }
 function qzStart() {
   const u = LN.unit, i = UNITS.indexOf(u); QZ.res = [];
@@ -3879,7 +3887,7 @@ function renderVoicings() {
   $('#chordLegend').innerHTML = o.labels === 'finger' ? fingerLegend() : o.labels === 'note' ? 'Dots show note names. The row below each diagram shows fret numbers.' : 'Dots show chord degrees. The row below each diagram shows fret numbers.';
   const card = g=>{
     const i = VO.results.indexOf(g);
-    return `<article class="chord-card" data-grip="${g.id}"><div class="chord-card-heading"><b>${esc(g.move.name)}</b><span class="small muted">${open ? 'Open chord' : `Frets ${g.low}–${g.high}`}</span></div>${g.form ? `<span class="chord-form small">${esc(g.form)}</span>` : ''}${vBox(g.move,'std',true,o.labels)}<div class="chord-tags">${g.genres.map(id=>`<span class="tag">${CHORD_GENRES[id]}</span>`).join('')}</div><p class="chord-use small">${esc(g.use)}</p><span class="small muted chord-formula">${vNotes(g.move,'std').map(n=>n.lab).join(' · ')}${g.omitted.length ? ' · omits '+g.omitted.join(', ') : ''}</span><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">Arpeggio</button></div><button class="btn chord-study" type="button" data-study="${g.lesson}" data-index="${i}">Related study →</button></article>`;
+    return `<article class="chord-card" data-grip="${g.id}"><div class="chord-card-heading"><b>${esc(g.move.name)}</b><span class="small muted">${open ? 'Open chord' : `Frets ${g.low}–${g.high}`}</span></div>${g.form ? `<span class="chord-form small">${esc(g.form)}</span>` : ''}${vBox(g.move,'std',true,o.labels)}<div class="chord-tags">${g.genres.map(id=>`<span class="tag">${CHORD_GENRES[id]}</span>`).join('')}</div><p class="chord-use small">${esc(g.use)}</p><span class="small muted chord-formula">${vNotes(g.move,'std').map(n=>n.lab).join(' · ')}${g.omitted.length ? ' · omits '+g.omitted.join(', ') : ''}</span><div class="row chord-audio"><button class="btn" type="button" data-chord-sound="${i}:strum" data-index="${i}" data-mode="strum" aria-pressed="false" aria-label="Hear ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">▶ Hear</button><button class="btn" type="button" data-chord-sound="${i}:arp" data-index="${i}" data-mode="arp" aria-pressed="false" aria-label="Arpeggiate ${esc(g.move.name)}, ${esc(g.form || 'open chord')}">Arpeggio</button></div>${exSkipped(g.lesson) ? '' : `<button class="btn chord-study" type="button" data-study="${g.lesson}" data-index="${i}">Related study →</button>`}</article>`;
   };
   $('#chordGrid').innerHTML = core.map(card).join('');
   $('#chordGrid').hidden = !core.length;
@@ -4025,7 +4033,7 @@ UNITS.push({ id: 'u9', title: 'Chord shapes for riffs', sum: 'Color tones, open-
     { t: 'From voicing to riff', body: ['A voicing becomes a riff when you give it movement and rhythm. Three tools cover most of it:', '<b>Pattern:</b> arpeggiate it (twinkly 8ths, hammer-ons onto one note, a rolling bass-middle-top pattern). <b>Movement:</b> slide the fretted part to two or three other spots while open strings ring. <b>Rhythm:</b> chug the bass with palm mutes and stab the chord, strum it slowly with a tremolo-arm glide, or play it in 7/8.', 'Each collection in Chord Shapes has a four-step play-along: hear it, compare the shapes, try a variation and make a riff.'],
       show: () => { const v = VOICINGS.find(x => x.id === 'gaze_bloom'); return board(vNotes(v.moves[0], v.tune).map(n => mk(n.s, n.f, degKind(VLAB.indexOf(n.lab)), n.lab))); }, legend: [['root', 'Root'], ['d5', '5th'], ['note', '9th'], ['dim', '#11']] } ],
   quiz: () => rep10([[qChordColor, 4], [qVoicingTone, 3], [qVPool, 3]]),
-  practice: [{ l: 'Browse Chord Shapes', d: 'Compare chord types, shapes and inversions in any key.', a: () => switchTab('voicings') }, { l: 'Play along: major 7ths with open strings', d: 'Midwest emo twinkle and 7/8.', a: () => openEx('v_emo_cmaj7') }, { l: 'Play along: two-finger shape over open strings', d: 'Alternative chugs and strums.', a: () => openEx('v_alt_emdrone') }, { l: 'Play along: A drone with a sliding shape', d: 'Shoegaze glide strums.', a: () => openEx('v_gaze_bloom') }] });
+  practice: [{ l: 'Browse Chord Shapes', d: 'Compare chord types, shapes and inversions in any key.', a: () => switchTab('voicings') }, { l: 'Play along: major 7ths with open strings', d: 'Midwest emo twinkle and 7/8.', ex: 'v_emo_cmaj7', a: () => openEx('v_emo_cmaj7') }, { l: 'Play along: two-finger shape over open strings', d: 'Alternative chugs and strums.', ex: 'v_alt_emdrone', a: () => openEx('v_alt_emdrone') }, { l: 'Play along: A drone with a sliding shape', d: 'Shoegaze glide strums.', ex: 'v_gaze_bloom', a: () => openEx('v_gaze_bloom') }] });
 
 /* ---------- routines ---------- */
 const ROUTINES = {
@@ -4077,7 +4085,7 @@ function autoBlocks() {
   } else b.push({ tool: 'ear', m: spare, t: 'Hear and sing', d: 'Hear the scale degree, sing it back, then find it on your guitar.' });
   return b;
 }
-function rtBlocks(key) { const r = ROUTINES[key]; return r.auto ? autoBlocks() : r.blocks; }
+function rtBlocks(key) { const r = ROUTINES[key]; return r.auto ? autoBlocks() : r.blocks.filter(b => !exSkipped(typeof b.ex === 'function' ? b.ex() : b.ex)); }
 const R = { key: null, idx: 0, rem: 0, running: false, paused: false };
 function routineStart() {
   const key = S.rtPick; R.key = key; R.blocks = rtBlocks(key); R.idx = 0; R.running = true; R.paused = false; R.waiting = false; routineBlock(); renderRoutine();
@@ -4160,7 +4168,7 @@ function renderPill() {
 function renderRoutine() {
   $('#rtMinutes').value = S.ui.planMinutes || S.settings.goal; $('#rtMinutes').disabled = R.running || S.rtPick !== 'auto';
   const fOpt = e => `<option value="${e.id}" ${e.id === S.ui.focusEx ? 'selected' : ''}>${esc(e.title)}</option>`;
-  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + `<optgroup label="Featured studies">${essList().map(x => fOpt(x.e)).join('')}</optgroup><optgroup label="Everything else">${EX.filter(e => !e.id.startsWith('sc_') && !isEss(e.id)).map(fOpt).join('')}</optgroup>`; $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
+  $('#rtFocus').innerHTML = '<option value="">Recommend a focus</option>' + `<optgroup label="Featured studies">${essList().map(x => fOpt(x.e)).join('')}</optgroup><optgroup label="Everything else">${EX.filter(e => !e.id.startsWith('sc_') && !exSkipped(e.id) && !isEss(e.id)).map(fOpt).join('')}</optgroup>`; $('#rtFocus').disabled = R.running || S.rtPick !== 'auto';
   if (!ROUTINES[S.rtPick]) S.rtPick = 'auto';
   $('#rtSeg').innerHTML = Object.entries(ROUTINES).map(([k, r]) => `<button type="button" data-k="${k}" aria-pressed="${S.rtPick === k}">${r.auto ? r.n : r.n + ' min'}</button>`).join('');
   const key = R.running ? R.key : S.rtPick, r = { n: ROUTINES[key].n, blocks: R.running ? R.blocks : rtBlocks(key) };
@@ -4206,14 +4214,24 @@ function renderWeak() {
   if (tl) items.push({ t: 'Tempo', d: tl.log.length ? `${tl.name}: best ${Math.max(...tl.log.map(e => e.bpm))} bpm. Try 4 bpm faster.` : `${tl.name}: find your clean tempo and log it.`, tab: 'metronome' });
   $('#weakList').innerHTML = items.map(i => `<div class="weak"><div><div style="font-weight:500">${i.t}</div><div class="small muted">${esc(i.d)}</div></div><button class="btn" type="button" data-go="${i.tab}">Practice</button></div>`).join('');
 }
+function renderSkippedExercises() {
+  const skipped = EX.filter(e => exSkipped(e.id));
+  $('#skippedCount').textContent = `(${skipped.length})`;
+  $('#skippedList').innerHTML = !$('#skippedExercises').open ? '' : skipped.length ? `<p class="small muted">Restore an exercise to show it in your library again. Your progress is kept.</p>` + skipped.map(e => `<div class="weak" data-skipped-ex="${e.id}"><div><b>${esc(e.title)}</b><div class="small muted">${esc(e.cat)} · ${esc(e.lvl)}</div></div><button class="btn sm" type="button" data-skipex="${e.id}" aria-label="Restore ${esc(e.title)}">Restore</button></div>`).join('') : '<p class="small muted">No skipped exercises.</p>';
+}
+function openSkippedExercises() {
+  switchTab('library'); $('#skippedExercises').open = true; renderSkippedExercises();
+  $('#skippedExercises').scrollIntoView({block:'center'}); $('#skippedExercises summary').focus();
+}
 function renderLibrary() {
   const ess = essList(), done = ess.filter(x => exComplete(x.e)).length, nx = essNext();
-  const pill = x => `<button class="esspill${exComplete(x.e) ? ' done' : ''}${nx && nx.id === x.id ? ' next' : ''}" type="button" data-openex="${x.id}" title="${esc(x.e.title)}">${exComplete(x.e) ? '✓' : exSkipped(x.id) ? '↷' : ESS_IX[x.id] + 1}</button>`;
-  $('#essCard').innerHTML = `<div class="row" style="justify-content:space-between;align-items:baseline"><h3>Explore &amp; develop</h3><span class="small muted">${done} complete · ${ess.filter(x=>exSkipped(x.id)).length} skipped · ${ess.length} studies</span></div>
-    <p class="small muted" style="margin:0">${ess.length} studies for players who already know the usual shapes. Open-string colors, moving inner voices, melodic development and rhythmic displacement. Choose the sound that makes you want to play.</p>
+  const pill = x => `<button class="esspill${exComplete(x.e) ? ' done' : ''}${nx && nx.id === x.id ? ' next' : ''}" type="button" data-openex="${x.id}" title="${esc(x.e.title)}">${exComplete(x.e) ? '✓' : ESS_IX[x.id] + 1}</button>`;
+  $('#essCard').innerHTML = `<div class="row" style="justify-content:space-between;align-items:baseline"><h3>Explore &amp; develop</h3><span class="small muted">${done} complete · ${ess.length} studies</span></div>
+    <p class="small muted" style="margin:0">Studies for players who already know the usual shapes. Open-string colors, moving inner voices, melodic development and rhythmic displacement. Choose the sound that makes you want to play.</p>
     <div class="esspills">${ess.map(pill).join('')}</div>
-    ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button><button class="btn" type="button" data-skipex="${nx.id}">Too easy — skip</button></div>` : '<p class="small">All featured studies complete. Revisit them in another key, or build a new phrase from one sound.</p>'}
+    ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><div class="ess-actions"><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button><button class="btn sm" type="button" data-skipex="${nx.id}" aria-label="Too easy? Skip ${esc(nx.e.title)}" title="Move to Skipped exercises">Skip</button></div></div>` : ess.length ? '<p class="small">All available featured studies complete. Revisit them in another key, or build a new phrase from one sound.</p>' : '<p class="small">All featured studies are skipped. <button class="linkbtn" type="button" data-show-skipped>Open Skipped exercises</button> to restore one.</p>'}
     <div><button class="btn" type="button" data-go="exercises">See all studies</button></div>`;
+  renderSkippedExercises();
 }
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
 
@@ -4382,13 +4400,39 @@ $('#pBack').onclick = () => {
   switchTab(TABS.includes(origin) ? origin : P.host || 'exercises'); window.scrollTo({ top: 0 });
 };
 function skipExercise(id) {
-  const skipped = exSkipped(id);
+  const skipped = exSkipped(id), selected = P.ex?.id === id && !$('#exPlayer').hidden;
   S.exskip = skipped ? S.exskip.filter(x=>x!==id) : [...S.exskip,id];
   if (!skipped && S.ui.focusEx === id) S.ui.focusEx = '';
-  save(); renderLibrary(); if(curTab === 'today') renderToday(); if(curTab === 'exercises' && $('#exPlayer').hidden) renderExLib();
-  if(P.ex && P.ex.id === id) { $('#pSkip').setAttribute('aria-pressed',!skipped); $('#pSkip').textContent = skipped ? 'Too easy — skip' : 'Skipped · undo'; }
-  toast(skipped ? 'Included in recommendations again.' : 'Skipped in recommendations. Progress stays as it was; undo in the player.');
+  save();
+  if (!skipped && selected) {
+    if (playerVisible()) $('#pBack').click();
+    else {
+      exStop(); $('#exPlayer').hidden = true;
+      $('#exLib').hidden = false; $('#xMain').hidden = false; $('#rMain').hidden = false;
+    }
+  }
+  if (!skipped && R.running) {
+    const keep = b => (typeof b.ex === 'function' ? b.ex() : b.ex) !== id, active = R.activeEx === id;
+    R.idx = R.blocks.slice(0,R.idx).filter(keep).length; R.blocks = R.blocks.filter(keep);
+    if (active) { R.idx--; routineNext(); } else renderPill();
+  }
+  renderLibrary();
+  if (!P.running) {
+    if (curTab === 'today') renderToday();
+    else if (curTab === 'exercises' && $('#exPlayer').hidden) renderExLib();
+    else if (curTab === 'rhythm' && $('#exPlayer').hidden) renderRhythm();
+    else if (curTab === 'explorer' && $('#exPlayer').hidden) renderExplorer();
+    else if (curTab === 'voicings') renderVoicings();
+    else if (curTab === 'progress') renderProgress();
+  }
+  if (curTab === 'library') {
+    const next = skipped ? $('#skippedList [data-skipex]') || $('#skippedExercises summary') : $('#essCard .ess-actions [data-openex]') || $('#skippedExercises summary');
+    next.focus();
+  }
+  toast(skipped ? 'Exercise restored.' : 'Moved to Skipped exercises.');
 }
+$('#skippedExercises').addEventListener('toggle', renderSkippedExercises);
+document.addEventListener('click',e=>{if(e.target.closest('[data-show-skipped]'))openSkippedExercises();});
 $('#pSkip').onclick = () => skipExercise(P.ex.id);
 document.addEventListener('click',e=>{const b=e.target.closest('[data-skipex]');if(b)skipExercise(b.dataset.skipex);});
 $('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' : P.ex.id; if(S.ui.focusEx)S.exskip=S.exskip.filter(id=>id!==P.ex.id); save(); renderExPlayer(); toast(S.ui.focusEx ? 'Your next session will focus on this exercise.' : 'Automatic practice recommendations restored.'); };
