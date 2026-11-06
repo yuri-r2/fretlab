@@ -1181,7 +1181,7 @@ function renderHeaderStats() {
 }
 
 /* ---------- audio ---------- */
-const AU = { ctx: null, master: null, noise: null, ks: new Map() };
+const AU = { ctx: null, master: null, noise: null, ks: new Map(), pick: 0 };
 function ac() {
   if (!AU.ctx) {
     const C = window.AudioContext || window.webkitAudioContext;
@@ -1207,33 +1207,61 @@ function volApply() {
 }
 function killBus(g) { if (!g || !AU.ctx) return; try { g.gain.cancelScheduledValues(0); g.gain.setValueAtTime(g.gain.value, AU.ctx.currentTime); g.gain.linearRampToValueAtTime(0, AU.ctx.currentTime + 0.03); setTimeout(() => { try { g.disconnect(); } catch (e) {} }, 120); } catch (e) {} }
 function env(g, t, peak, dur) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); }
-function ksBuffer(m, dur = 1.8) {
+function ksBuffer(m, dur = 1.8, variant = 0) {
   const seconds = Math.max(2.2, Math.ceil((dur + 0.04) * 2) / 2);
-  const key = m + '@' + S.settings.a4 + ':' + seconds;
-  if (AU.ks.has(key)) return AU.ks.get(key);
   const c = AU.ctx, sr = c.sampleRate, f = mtof(m);
-  const N = Math.max(2, Math.round(sr / f - 0.5));
-  const len = Math.ceil(sr * seconds);
-  const b = c.createBuffer(1, len, sr), d = b.getChannelData(0);
-  const decay = m < 48 ? 0.9975 : m < 60 ? 0.996 : m < 70 ? 0.994 : 0.991;
-  let prev = 0;
-  for (let i = 0; i < N; i++) { const r = Math.random() * 2 - 1; prev = prev * 0.45 + r * 0.55; d[i] = prev; }
-  for (let i = N; i < len; i++) d[i] = decay * 0.5 * (d[i - N] + d[i - N + 1]);
-  let peak = 0; for (let i = 0; i < len; i++) peak = Math.max(peak, Math.abs(d[i]));
-  if (peak > 0) for (let i = 0; i < len; i++) d[i] /= peak;
+  const key = m + '@' + S.settings.a4 + ':' + sr + ':' + seconds + ':' + variant;
+  if (AU.ks.has(key)) return AU.ks.get(key);
+  const w = 2 * Math.PI * f / sr, damping = clamp(0.42 - (m - 40) * 0.006, 0.1, 0.42);
+  const phase = Math.atan2(damping * Math.sin(w), 1 - damping + damping * Math.cos(w)) / w;
+  const N = Math.max(2, Math.floor(sr / f - phase) - 1), fraction = sr / f - phase - N;
+  // Compensate the damping filter's phase as well as the fractional string length.
+  const eta = Math.tan(w * fraction / 2) / Math.tan(w / 2), ap = (1 - eta) / (1 + eta);
+  const decay = Math.pow(0.001, 1 / (f * clamp(5.8 - (m - 40) * 0.055, 2.8, 6.2)));
+  const len = Math.ceil(sr * seconds), b = c.createBuffer(1, len, sr), d = b.getChannelData(0);
+  const line = new Float32Array(N), noise = new Float32Array(N), position = 0.2 + variant * 0.013, pick = Math.max(1, Math.round(N * position));
+  let seed = (m * 2654435761 + variant * 1013904223) >>> 0, smooth = 0, mean = 0;
+  for (let i = 0; i < N; i++) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    smooth = smooth * 0.6 + (seed / 2147483648 - 1) * 0.4; noise[i] = smooth;
+  }
+  for (let i = 0; i < N; i++) {
+    const x = i / N, triangle = x < position ? x / position : (1 - x) / (1 - position);
+    line[i] = 0.65 * (triangle * 2 - 1) + 0.35 * (noise[i] - noise[(i + N - pick) % N]); mean += line[i];
+  }
+  for (let i = 0; i < N; i++) line[i] -= mean / N;
+  let previous = line[N - 1], apIn = 0, apOut = 0, index = 0;
+  for (let i = 0; i < len; i++) {
+    const value = line[index], filtered = decay * ((1 - damping) * value + damping * previous);
+    const next = ap * filtered + apIn - ap * apOut;
+    previous = value; apIn = filtered; apOut = next; line[index] = next;
+    d[i] = value; if (++index === N) index = 0;
+  }
+  let peak = 0, energy = 0; const window = Math.min(len, Math.round(sr * 0.06));
+  for (let i = 0; i < len; i++) { peak = Math.max(peak, Math.abs(d[i])); if (i < window) energy += d[i] * d[i]; }
+  const level = Math.min(0.8 / peak, 0.24 / Math.sqrt(energy / window));
+  for (let i = 0; i < len; i++) d[i] *= level;
+  if (AU.ks.size >= 96) AU.ks.delete(AU.ks.keys().next().value);
   AU.ks.set(key, b);
   return b;
 }
 function pluck(m, t, dest, gain = 0.7, dur = 1.8) {
   const c = ac(); t = t || c.currentTime;
-  const src = c.createBufferSource(); src.buffer = ksBuffer(m, dur);
-  const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3800;
-  const g = c.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.002);
-  g.gain.setValueAtTime(gain, t + Math.max(0.002, dur - 0.12)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  src.connect(lp); lp.connect(g); g.connect(dest || AU.notes);
+  const src = c.createBufferSource(); src.buffer = ksBuffer(m, dur, AU.pick++ % 3);
+  const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 38; hp.Q.value = 0.5;
+  const body = c.createBiquadFilter(); body.type = 'peaking'; body.frequency.value = 195; body.Q.value = 0.8; body.gain.value = 2.5;
+  const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 0.5;
+  const f = mtof(m), strength = clamp(gain, 0.2, 1);
+  lp.frequency.setValueAtTime(Math.min(c.sampleRate * 0.4, Math.max(2200, f * 7) * (0.7 + strength * 0.3)), t);
+  lp.frequency.exponentialRampToValueAtTime(Math.min(c.sampleRate * 0.4, Math.max(1300, f * 3.5)), t + Math.min(0.22, dur * 0.6));
+  const release = Math.min(0.18, dur * 0.45), g = c.createGain();
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(gain, t + 0.003);
+  g.gain.setValueAtTime(gain, t + Math.max(0.003, dur - release)); g.gain.exponentialRampToValueAtTime(0.00001, t + dur);
+  src.connect(hp); hp.connect(body); body.connect(lp); lp.connect(g); g.connect(dest || AU.notes);
+  src.onended = () => { src.disconnect(); hp.disconnect(); body.disconnect(); lp.disconnect(); g.disconnect(); };
   src.start(t); src.stop(t + dur + 0.02);
 }
-function strum(ms, t, dest, gap = 0.028, gain = 0.5, dur = 1.6) { ms.forEach((m, i) => pluck(m, t + i * gap, dest, gain, dur)); }
+function strum(ms, t, dest, gap = 0.028, gain = 0.5, dur = 1.6) { const level = gain * Math.min(1, Math.sqrt(3 / ms.length)); ms.forEach((m, i) => pluck(m, t + i * gap, dest, level * (1 - i * 0.025), dur)); }
 const SND = {
   click(t, l, d) { const c = AU.ctx, o = c.createOscillator(), g = c.createGain(); o.type = 'square'; o.frequency.value = l >= 3 ? 2100 : l >= 2 ? 1700 : l >= 1 ? 1300 : 950; env(g, t, l >= 1 ? 0.22 : 0.09, 0.03); o.connect(g); g.connect(d); o.start(t); o.stop(t + 0.05); },
   wood(t, l, d) { const c = AU.ctx, o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; const f = l >= 3 ? 1250 : l >= 2 ? 1050 : l >= 1 ? 880 : 700; o.frequency.setValueAtTime(f * 1.6, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.012); env(g, t, l >= 1 ? 0.9 : 0.35, 0.06); o.connect(g); g.connect(d); o.start(t); o.stop(t + 0.08); },
