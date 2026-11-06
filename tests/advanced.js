@@ -104,7 +104,7 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
    check(P.loopQueue.length===0,'visual preparation begins before audio lookahead');
    check(!document.getElementById('pUpcoming').hidden && document.getElementById('pUpcomingWhen').textContent==='in 4 beats','the final bar has an explicit countdown');
    const edge=Math.round(Math.min(cv.clientWidth*.28,190))+(P.L-pos)*P.ppb,first=next.data.ev[0];
-   check(first.n.every(n=>draws.some(d=>d.t===String(n.f)&&Math.abs(d.x-edge)<1 && Math.abs(d.y-(70+n.s*27+.5))<1)),'the approaching loop contains the actual new-key fret numbers');
+   check(first.n.every(n=>draws.some(d=>d.t===String(n.f)&&Math.abs(d.x-edge)<1 && Math.abs(d.y-(128+n.s*27+.5))<1)),'the approaching loop contains the actual new-key fret numbers');
    now=boundary-.12;exSched();now=boundary+.001;exSync();
    check(P.keyPc===next.data.keyPc && P.bpm===next.bpm,'preview and audio arrive at the same key/tempo');
    check(P.previous.keyPc===old && P.bus===bus,'previous-key notation and sounding audio survive the boundary');

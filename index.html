@@ -541,6 +541,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .practice-aside .feedback{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;background:transparent;gap:8px}
 .practice-aside .feedback .label,.practice-aside #pBest,.practice-aside #pNextStep{grid-column:1/-1;width:100%}
 .practice-aside #pBest{font-size:12px;color:var(--muted)}
+#pCanvas.has-chords{height:308px}
 .practice-aside .feedback .btn{min-width:0;padding:6px 4px;font-size:13px;background:transparent}
 .practice-help>summary{cursor:pointer;font-size:13px;font-weight:500}
 .practice-help[open]>summary{margin-bottom:12px}
@@ -2561,9 +2562,38 @@ function exLoad(i) {
   P.bpm = exStat(e.id).bpm[P.step] || e.steps[P.step].bpm;
   P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
 }
+function exGrip(notes, name) {
+  const strings = new Map();
+  for (const n of notes) {
+    if (strings.has(n.s) && strings.get(n.s).f !== n.f) return null;
+    strings.set(n.s,n);
+  }
+  if (strings.size < 2) return null;
+  const fretted = [...strings.values()].map(n=>n.f).filter(f=>f>0);
+  if (fretted.length && Math.max(...fretted)-Math.min(...fretted)>4) return null;
+  const f = Array(6).fill(null), fingers = Array(6).fill(0);
+  strings.forEach(n=>{f[5-n.s]=n.f;fingers[5-n.s]=n.fg || 0;});
+  return {name:name || 'Fretting shape',f,fingers};
+}
+function exWithGrips(events) {
+  const ev = []; let previous = '', gripAt = -1;
+  for (let start=0;start<events.length;) {
+    const name=events[start].chord; let end=start+1;
+    if(name)while(end<events.length && events[end].chord===name && !(events[end].n.length>1 && !events[end].mute && !events[end].air))end++;
+    const inferred=exGrip(events.slice(start,end).filter(e=>!e.air&&!e.mute).flatMap(e=>e.n),name);
+    for(let i=start;i<end;i++) {
+      const e=events[i],authored=e.grip && (e.n.length<2 || e.n.every(n=>e.grip.f[5-n.s]===n.f));
+      const grip=authored ? e.grip : inferred, signature=grip ? JSON.stringify([grip.name,grip.f,grip.fingers,grip.barre,grip.barres]) : '';
+      if(signature!==previous)gripAt=i;
+      ev.push({...e,grip,gripAt,gripStart:!!signature && signature!==previous}); previous=signature;
+    }
+    start=end;
+  }
+  return ev;
+}
 function exData(keyPc) {
   const sd = P.ex.steps[P.step], b = sd.build(keyPc), bar = sd.bar || 4;
-  let ev = b.ev, L = b.L, spot = P.spot;
+  let ev = exWithGrips(b.ev), L = b.L, spot = P.spot;
   if (P.spot) {
     const a0 = P.spot[0] * bar, b0 = (P.spot[1] + 1) * bar;
     const sub = ev.filter(e => e.t >= a0 - 1e-6 && e.t < b0 - 1e-6).map(e => Object.assign({}, e, { t: e.t - a0, d: Math.min(e.d, b0 - e.t) }));
@@ -2786,6 +2816,9 @@ function exBoard(idx, preview) {
     cur.n.forEach(n => { const k = key(n); map.delete(k); map.set(k, { s: n.s, f: n.f, k: cur.strum ? 'chord' : 'play', l: exLabel(n), finger: S.ui.exopts.fingers && n.f > 0 ? n.fg : 0 }); });
   }
   pBoard.draw({ from: P.bf, to: P.bt, markers: [...map.values()], win: null, names: P.names });
+  const grip=cur.grip, description=grip ? `${grip.name}. ${TUNE[P.tuneKey].name} tuning. Low to high: ${grip.f.map((f,i)=>f==null ? 'skip' : f===0 ? 'open' : 'fret '+f+(S.ui.exopts.fingers && grip.fingers?.[i] ? ', finger '+grip.fingers[i] : '')).join('; ')}. ` : '';
+  const label='Exercise tab. '+description+'Click a note to start there. Scroll horizontally to move through the exercise.', canvas=$('#pCanvas');
+  if(canvas.getAttribute('aria-label')!==label)canvas.setAttribute('aria-label',label);
 }
 let exC = null, exCF = 0;
 function exColors(force) {
@@ -2831,8 +2864,29 @@ function exUpcoming(pos, forecast) {
   const notes=$('#pUpcomingNotes');if(notes.textContent!==opening)notes.textContent=opening;
 }
 
+function drawTabGrip(g, move, x, color) {
+  const frets=move.f.filter(f=>f!=null && f>0), base=frets.length && Math.max(...frets)>5 ? Math.min(...frets) : 1;
+  const rows=Math.max(5,frets.length ? Math.max(...frets)-base+1 : 5);
+  if(rows>7)return;
+  const left=x-15, top=29, height=28, row=height/rows, string=i=>left+(S.settings.lefty ? 5-i : i)*6;
+  g.strokeStyle=color; g.fillStyle=color; g.lineWidth=.7;
+  for(let i=0;i<6;i++){g.beginPath();g.moveTo(left+i*6,top);g.lineTo(left+i*6,top+height);g.stroke();}
+  for(let j=0;j<=rows;j++){g.lineWidth=j===0 && base===1 ? 1.8 : .7;g.beginPath();g.moveTo(left,top+j*row);g.lineTo(left+30,top+j*row);g.stroke();}
+  if(base>1){g.font='500 7px '+MONO;g.textAlign='right';g.fillText(String(base),left-4,top+row/2);}
+  for(const [a,b,f] of move.barres || (move.barre ? [move.barre] : [])){
+    const y=top+(f-base+.5)*row;g.lineWidth=4;g.lineCap='round';g.beginPath();g.moveTo(string(a),y);g.lineTo(string(b),y);g.stroke();g.lineCap='butt';
+  }
+  move.f.forEach((f,i)=>{
+    const sx=string(i);g.lineWidth=.9;
+    if(f==null){g.beginPath();g.moveTo(sx-1.8,top-8.8);g.lineTo(sx+1.8,top-5.2);g.moveTo(sx+1.8,top-8.8);g.lineTo(sx-1.8,top-5.2);g.stroke();}
+    else if(f===0){g.beginPath();g.arc(sx,top-7,2,0,Math.PI*2);g.stroke();}
+    else {g.beginPath();g.arc(sx,top+(f-base+.5)*row,2.4,0,Math.PI*2);g.fill();}
+    if(S.ui.exopts.fingers && f>0 && move.fingers?.[i]){g.font='600 7px '+MONO;g.textAlign='center';g.fillText(String(move.fingers[i]),sx,top+height+7);}
+  });
+}
 function exDraw(pos) {
   const cv = $('#pCanvas'); if (!cv || !P.ev.length || $('#exPlayer').hidden) return;
+  const hasGrips=P.ev.some(e=>e.grip); cv.classList.toggle('has-chords',hasGrips);
   const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
   if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -2846,7 +2900,8 @@ function exDraw(pos) {
   const scroll = $('#pScroll'); scroll.max = P.L; scroll.value = local;
   const location = local >= P.L ? 'End' : `Bar ${Math.floor(local / P.bar) + 1} · beat ${Math.floor(local % P.bar) + 1}`;
   scroll.setAttribute('aria-valuetext', location); $('#pPosition').textContent = location + ` / ${Math.ceil(P.L / P.bar)} bars`;
-  const top = 70, sh = 27, left = 24, bot = top + 5 * sh, ph = Math.round(Math.min(W * 0.28, 190)), ppb = P.ppb;
+  const extra=hasGrips ? 58 : 0;
+  const top = 70+extra, sh = 27, left = 24, bot = top + 5 * sh, ph = Math.round(Math.min(W * 0.28, 190)), ppb = P.ppb;
   g.textBaseline = 'middle';
   const b0 = Math.floor(pos - ph / ppb) - 1, b1 = Math.ceil(pos + (W - ph) / ppb) + 1;
   for (let b = Math.max(P.previous?-P.previous.L:0, b0); b <= b1; b++) {
@@ -2864,7 +2919,7 @@ function exDraw(pos) {
   }
   g.strokeStyle = C.warn; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, top - 16); g.lineTo(ph, bot + 12); g.stroke();
   g.fillStyle = C.warn; g.beginPath(); g.moveTo(ph - 6, top - 22); g.lineTo(ph + 6, top - 22); g.lineTo(ph, top - 14); g.closePath(); g.fill();
-  let curK = -1, curIdx = -1;
+  let curK = -1, curIdx = -1, currentGripVisible = false;
   if (pos >= 0) { curK = Math.floor(pos / P.L); curIdx = evIndexAt(pos - curK * P.L); }
   for (const segment of segments) {
     const data=segment.data;
@@ -2878,18 +2933,28 @@ function exDraw(pos) {
       const cur = segment.current && curK === 0 && idx === curIdx, past = !cur && st < pos;
       g.globalAlpha = past ? 0.32 : 1;
       const prev = data.ev[(idx - 1 + data.ev.length) % data.ev.length];
-      if (e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % P.bar) < 1e-6 && P.L > 2 * P.bar))) { g.fillStyle = cur ? C.warn : C.ink; g.font = '600 15px ' + DISP; g.textAlign = 'left'; g.fillText(e.chord, x - 6, 16); }
+      const chordMark=e.chord && (idx === 0 || prev.chord !== e.chord || (Math.abs(e.t % P.bar) < 1e-6 && P.L > 2 * P.bar));
+      if(chordMark || e.grip && (idx===0 || e.gripStart)) {
+        const activeGrip=segment.current && curK===0 && e.grip && e.gripAt===data.ev[curIdx]?.gripAt;
+        if(!activeGrip || x>=left+24) {
+          g.globalAlpha=activeGrip ? 1 : past ? .32 : 1;
+          g.fillStyle=cur || activeGrip ? C.warn : C.ink;g.font='600 13px '+DISP;g.textAlign='center';if(e.chord)g.fillText(e.chord,x,12);
+          if(e.grip)drawTabGrip(g,e.grip,x,cur || activeGrip ? C.warn : C.ink);
+          if(activeGrip)currentGripVisible=true;
+        }
+        g.globalAlpha=past ? .32 : 1;
+      }
       const col = cur ? C.warn : C.ink;
       if (e.cnt) { const beatN = /^\d/.test(e.cnt); g.fillStyle = cur ? C.warn : beatN ? C.ink : C.muted; g.font = (beatN ? '700 12px ' : '500 11px ') + SANS; g.textAlign = 'center'; g.fillText(e.cnt, x, bot + 22); }
-      if (e.acc) { g.fillStyle = cur ? C.warn : C.ink; g.font = '700 15px ' + SANS; g.textAlign = 'center'; g.fillText('>', x, e.x ? 18 : 30); }
+      if (e.acc) { g.fillStyle = cur ? C.warn : C.ink; g.font = '700 15px ' + SANS; g.textAlign = 'center'; g.fillText('>', x, (e.x ? 18 : 30)+extra); }
       if (e.strum) {
         if (e.air) { g.globalAlpha = past ? 0.15 : 0.3; g.setLineDash([4, 4]); }
         g.strokeStyle = col; g.fillStyle = col; g.lineWidth = cur ? 4 : 3; g.lineCap = 'round';
         const ya = top - 4, yb = bot + 4; g.beginPath(); g.moveTo(x, ya); g.lineTo(x, yb); g.stroke(); g.setLineDash([]);
         g.beginPath(); if (e.p === 'D') { g.moveTo(x - 7, yb - 9); g.lineTo(x, yb + 3); g.lineTo(x + 7, yb - 9); } else { g.moveTo(x - 7, ya + 9); g.lineTo(x, ya - 3); g.lineTo(x + 7, ya + 9); } g.closePath(); g.fill(); g.lineCap = 'butt';
         if (e.mute) { g.fillStyle = C.bg; g.beginPath(); g.arc(x, (ya + yb) / 2, 10, 0, Math.PI * 2); g.fill(); g.strokeStyle = col; g.lineWidth = 2.4; g.beginPath(); const m = (ya + yb) / 2; g.moveTo(x - 6, m - 6); g.lineTo(x + 6, m + 6); g.moveTo(x + 6, m - 6); g.lineTo(x - 6, m + 6); g.stroke(); }
-        g.fillStyle = col; g.font = '600 11px ' + SANS; g.textAlign = 'center'; g.fillText(e.p === 'D' ? '↓' : '↑', x, 44);
-        if (e.x === 'PM') { g.font = '600 10.5px ' + SANS; g.fillText('PM', x, 30); }
+        g.fillStyle = col; g.font = '600 11px ' + SANS; g.textAlign = 'center'; g.fillText(e.p === 'D' ? '↓' : '↑', x, 44+extra);
+        if (e.x === 'PM') { g.font = '600 10.5px ' + SANS; g.fillText('PM', x, 30+extra); }
       } else {
         e.n.forEach(n => {
           const y = top + n.s * sh, txt = String(n.f), w = txt.length > 1 ? 24 : 19;
@@ -2904,12 +2969,18 @@ function exDraw(pos) {
             g.fillStyle = cur ? C.warn : C.accent; g.fillText(String(n.fg), x - w / 2 - 5, y - 5);
           }
         });
-        if (e.p) drawPick(g, x, 44, e.p, cur ? C.warn : C.muted);
+        if (e.p) drawPick(g, x, 44+extra, e.p, cur ? C.warn : C.muted);
         if (data.echo && !past) e.n.forEach(n => { const ex = x + data.echo * ppb, y = top + n.s * sh; if (ex > W + 20) return; g.globalAlpha = 0.3; g.setLineDash([3, 3]); rrect(g, ex - 9.5, y - 10, 19, 20, 6); g.strokeStyle = C.ink; g.lineWidth = 1.2; g.stroke(); g.setLineDash([]); g.fillStyle = C.muted; g.font = '600 11px ' + MONO; g.textAlign = 'center'; g.fillText(String(n.f), ex, y + 0.5); g.globalAlpha = 1; });
-        if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30); }
+        if (e.x) { g.fillStyle = cur ? C.warn : C.muted; g.font = '600 10.5px ' + SANS; g.textAlign = 'center'; g.fillText(e.x === '/' ? 'sl' : e.x, x, 30+extra); }
       }
       g.globalAlpha = 1;
     });
+  }
+  const currentGrip=curK===0 && P.ev[curIdx]?.grip;
+  if(currentGrip && !currentGripVisible) {
+    g.fillStyle=C.bg;g.fillRect(left-2,0,70,82);
+    g.fillStyle=C.warn;g.font='600 13px '+DISP;g.textAlign='center';if(P.ev[curIdx].chord)g.fillText(P.ev[curIdx].chord,left+24,12);
+    drawTabGrip(g,currentGrip,left+24,C.warn);
   }
   if (exCount() > 0) { g.fillStyle = C.warn; g.font = '700 60px ' + DISP; g.textAlign = 'center'; g.fillText(String(Math.max(1, Math.ceil(exCount() - 1e-6))), ph + (W - ph) / 2, top + 2.5 * sh); }
 }
@@ -3740,7 +3811,7 @@ const VPAT = {
   drone: N => { const fr = N.filter(n => n.f > 0), op = N.filter(n => n.f === 0); if (!fr.length || !op.length) return VPAT.strum8(N); return Array.from({ length: 8 }, (_, k) => k % 2 ? blk(op, 'U', 0.5) : blk(fr, 'D', 0.5)); }
 };
 const PATNAME = { arp: 'arpeggio', twinkle: 'twinkly 8th-note arpeggio', hammer: 'hammer-on arpeggio', odd7: 'arpeggio in 7/8', strum: 'big strums', strum8: '8th-note strumming', glide: 'slow glide strums', chug: 'palm-muted chugs with chord stabs', drone: 'shape and drone, alternating', boogie: '5–6 boogie shuffle' };
-function vMoveEvents(v, pat) { return v.moves.flatMap(mv => { const N = vNotes(mv, v.tune); return VPAT[pat](N).map(e => Object.assign(e, { chord: mv.name })); }); }
+function vMoveEvents(v, pat) { return v.moves.flatMap(mv => { const N = vNotes(mv, v.tune); return VPAT[pat](N).map(e => Object.assign(e, { chord: mv.name, grip: mv })); }); }
 function vToEx(v) {
   const [b0, g0] = v.bpm, main = v.pats[0], alt = v.pats[1];
   const tuneTxt = v.tune === 'std' ? '' : ` Tuning: ${TUNE[v.tune].name} (${tuneLowHigh(v.tune)}, low to high).`;
@@ -3750,12 +3821,12 @@ function vToEx(v) {
     about: v.why, tip: v.ideas.join(' '),
     steps: [
       { n: 'Hear the shape', observe: true, d: `The first shape in your chosen root, one string at a time, then strummed. Labels show each note's role in the chord.` + tuneTxt, bpm: b0, goal: g0, tuning: v.tune, bar: 4,
-        build: key => { const first = vCurrent(v, key).moves[0], N = vNotes(first, v.tune); const l = N.concat(N.slice(1, -1).reverse()).map((n, i) => Object.assign(one(n, '', i % 2 ? 'U' : 'D'), { d: 0.5, chord: first.name })); l.push(Object.assign(blk(N, 'D', 2), { chord: first.name })); return pad(seq(l, 0.5, 'none')); } },
+        build: key => { const first = vCurrent(v, key).moves[0], N = vNotes(first, v.tune); const l = N.concat(N.slice(1, -1).reverse()).map((n, i) => Object.assign(one(n, '', i % 2 ? 'U' : 'D'), { d: 0.5, chord: first.name, grip: first })); l.push(Object.assign(blk(N, 'D', 2), { chord: first.name, grip: first })); return pad(seq(l, 0.5, 'none')); } },
       step('Riff: move the shape', `Compare the four shapes with a ${PATNAME[main]}. One bar each. For movable studies, all shapes follow your chosen root.`, main, b0, g0),
       step('Variation', `The same moves as ${PATNAME[alt]}.${alt === 'odd7' ? ' The tempo counts 8th notes, grouped 2 + 2 + 3.' : ''}${alt === 'glide' ? ' The ~ mark means a gentle tremolo-arm dip while the chord rings (or a slow vibrato if your guitar has no arm).' : ''}`, alt, alt === 'odd7' ? b0 * 2 : b0, alt === 'odd7' ? g0 * 2 : g0),
       { n: 'Your riff', create: true, bpm: b0, goal: b0, tuning: v.tune, bar: 4,
         get d() { return `Make up your own riff with these shapes. Today's constraint: ${vConstraint(v)}. Each chord sounds once on beat 1 as a cue; fill the rest of the bar yourself. Mark Good take when you play a version you'd keep, then record it on your phone.` + tuneTxt; },
-        build: key => pad(seq(vCurrent(v, key).moves.map(m => Object.assign(blk(vNotes(m, v.tune), 'D', 4), { chord: m.name })), 4, 'none')) }
+        build: key => pad(seq(vCurrent(v, key).moves.map(m => Object.assign(blk(vNotes(m, v.tune), 'D', 4), { chord: m.name, grip: m })), 4, 'none')) }
     ]
   };
 }
@@ -3913,8 +3984,8 @@ function studyCycle(moves, mode = 'arp') {
   moves.forEach((m,b)=>{
     const N = vNotes(m,'std');
     const notes = mode === 'hold' ? [blk(N,'D',4)] : mode === 'space' ? [blk(N,'D',1),{n:[],d:3}] : mode === 'sync' ? null : VPAT.twinkle(N);
-    if (notes) { let t = b*4; notes.forEach(e=>{ev.push({...e,t,chord:m.name});t+=e.d;}); }
-    else ev.push(...strumBar('D>--U>--D>-',cleanN(N),2,b*4,{name:m.name}));
+    if (notes) { let t = b*4; notes.forEach(e=>{ev.push({...e,t,chord:m.name,grip:m});t+=e.d;}); }
+    else ev.push(...strumBar('D>--U>--D>-',cleanN(N),2,b*4,{name:m.name}).map(e=>({...e,grip:m})));
   });
   return {ev,L:moves.length*4};
 }
@@ -3952,10 +4023,10 @@ function motifLine(key, mode) {
   const ev=[],harmony=motifHarmony(key);
   phrases.forEach((phrase,b)=>{
     let t=b*4;
-    if(mode==='displaced'){ev.push({t,d:.5,n:[],chord:harmony[b].name});t+=.5;}
+    if(mode==='displaced'){ev.push({t,d:.5,n:[],chord:harmony[b].name,grip:harmony[b]});t+=.5;}
     const notes=mode==='approach'?phrase:phrase.slice(0,3),dur=mode==='approach'?[.5,.5,1,.5,.5,1]:[.5,.5,1];
-    notes.forEach(([string,fret,finger],i)=>{ev.push({t,d:dur[i],n:[nt(string,fret+key,fret+key===0?0:finger||1)],chord:harmony[b].name,p:i%2?'U':'D'});t+=dur[i];});
-    if(t<(b+1)*4)ev.push({t,d:(b+1)*4-t,n:[],chord:harmony[b].name});
+    notes.forEach(([string,fret,finger],i)=>{ev.push({t,d:dur[i],n:[nt(string,fret+key,fret+key===0?0:finger||1)],chord:harmony[b].name,grip:harmony[b],p:i%2?'U':'D'});t+=dur[i];});
+    if(t<(b+1)*4)ev.push({t,d:(b+1)*4-t,n:[],chord:harmony[b].name,grip:harmony[b]});
   });return {ev,L:16};
 }
 function displacedCell(key, per) {
