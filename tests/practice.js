@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')
-  .replace('/* ---------- boot ---------- */', 'window.__T = { EX, VOICINGS, vCurrent, vNotes, vConstraint, exStat, exDueList, exOpen, autoBlocks, routineTick, routineNext, routineBlock, renderPill, exSeek, exFeedback, exListen, switchTab, S, P, R, LN, dayKey, dayAdd };\n/* ---------- boot ---------- */');
+  .replace('/* ---------- boot ---------- */', 'window.__T = { EX, VOICINGS, vCurrent, vNotes, vConstraint, exStat, exDueList, exOpen, exSetSpot, autoBlocks, routineTick, routineNext, routineBlock, renderPill, exSeek, exFeedback, exListen, switchTab, S, P, R, LN, dayKey, dayAdd };\n/* ---------- boot ---------- */');
 const tmp = path.join(os.tmpdir(), 'fretlab-practice.html');
 fs.writeFileSync(tmp, source);
 (async () => {
@@ -102,7 +102,47 @@ fs.writeFileSync(tmp, source);
     assert.equal(await page.evaluate(()=>window.__T.R.rem),215,'opening from Today does not restart the block timer');
     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'session bar fits '+width);}
     await page.evaluate(()=>window.__T.R.running=false);
+    await page.setViewportSize({width:1440,height:1050});
+    await page.evaluate(()=>{
+      const t=window.__T;t.S.practice.spots=[];t.exStat('adv_inner').key=5;t.exOpen('adv_inner',1);t.exSetSpot('1-2');t.P.bpm=83;t.P.labels='note';t.exSeek(1.375);
+    });
+    await page.click('#pSaveSpot');await page.click('#pSaveSpot');
+    assert.equal(await page.evaluate(()=>window.__T.S.practice.spots.length),1,'saving the same passage updates one spot');
+    await page.evaluate(()=>{window.__T.P.bpm=85;window.__T.exSeek(2.375);});await page.click('#pSaveSpot');
+    const saved=await page.evaluate(()=>window.__T.S.practice.spots[0]);
+    assert.deepEqual([saved.id,saved.step,saved.key,saved.bpm,saved.spot,saved.pos,saved.labels],['adv_inner',1,5,85,[1,2],0,'note'],'a saved passage retains its exercise, key, range, tempo and labels');
+    await page.click('#pSavedWrap summary');
+    await page.locator('#pSavedSpots [data-spot-open]').waitFor();
+    assert.equal(await page.locator('#pSavedSpots [data-spot-open]').count(),1);
+    await page.click('.tab[data-tab="today"]');
+    assert.match(await page.locator('#practiceResume').textContent(),/F major.*85 bpm/);
+    await page.reload();await page.click('#practiceResumeOpen');
+    current=await page.evaluate(()=>{const {P}=window.__T;return{id:P.ex.id,step:P.step,key:P.keyPc,bpm:P.bpm,spot:P.spot,pos:P.viewPos,labels:P.labels,running:P.running};});
+    assert.deepEqual(current,{id:'adv_inner',step:1,key:5,bpm:85,spot:[1,2],pos:2.375,labels:'note',running:false},'Today resumes the exact paused practice context after a reload');
+    await page.uncheck('#pCount');await page.click('#pPlay');await page.waitForTimeout(250);await page.reload();
+    const interrupted=await page.evaluate(()=>window.__T.S.practice.resume);
+    assert.ok(interrupted.pos>2.375 && interrupted.pos<4,'reloading during playback captures the current position');
+    await page.click('.tab[data-tab="today"]');await page.click('#practiceResumeOpen');
+    assert.equal(await page.evaluate(()=>window.__T.P.viewPos),interrupted.pos,'interrupted playback reopens paused at the captured position');
+    await page.evaluate(()=>{const t=window.__T;t.exStat('adv_inner').key=0;t.exOpen('adv_inner',0);});
+    await page.click('.tab[data-tab="library"]');await page.click('#savedPractice summary');
+    await page.click('#savedPracticeList [data-spot-open]');
+    current=await page.evaluate(()=>{const {P}=window.__T;return{step:P.step,key:P.keyPc,bpm:P.bpm,spot:P.spot,pos:P.viewPos,running:P.running};});
+    assert.deepEqual(current,{step:1,key:5,bpm:85,spot:[1,2],pos:0,running:false},'saved spots reopen at the passage beginning without starting audio');
+    for(const colorScheme of ['light','dark']){
+      await page.emulateMedia({colorScheme});await page.screenshot({path:path.join(os.tmpdir(),'fretlab-practice-passages-'+colorScheme+'.png')});
+    }
+    await page.click('#pSkip');
+    assert.equal(await page.locator('#savedPractice').isVisible(),false,'skipped exercises disappear from saved spots');
+    await page.click('.tab[data-tab="today"]');
+    assert.equal(await page.locator('#practiceResume').isVisible(),false,'skipped exercises disappear from Continue practicing');
+    await page.click('.tab[data-tab="library"]');await page.click('#skippedExercises summary');
+    await page.click('#skippedList [data-skipex="adv_inner"]');
+    assert.equal(await page.locator('#savedPractice').isVisible(),true,'restoring an exercise keeps its saved spots');
+    await page.locator('#savedPractice').evaluate(n=>n.open=true);await page.locator('#savedPracticeList [data-spot-remove]').click();
+    assert.equal(await page.evaluate(()=>window.__T.S.practice.spots.length),0,'a saved spot can be removed without deleting exercise progress');
+    for(const width of [1280,1920,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'saved practice fits '+width);}
     assert.deepEqual([...errors, ...failures], []);
-    console.log('Lesson resume, return navigation, tempo, chord formulas in all keys, progress isolation, review preparation, plans and timer transitions: OK');
+    console.log('Lesson resume, navigation, chord formulas, per-key progress, reviews, plans, timer transitions, saved passages, exact reload resume and skip filtering: OK');
   } finally { await browser.close(); fs.unlinkSync(tmp); }
 })().catch(e => { console.error(e); process.exitCode = 1; });
