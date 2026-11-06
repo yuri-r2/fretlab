@@ -13,6 +13,10 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
    const {S,EX,ADVANCED_STUDIES,ESSENTIALS,focusEx,exOpen,skipExercise,exStat,exDueList,innerMoves,quartalMoves,vNotes}=window.__A,failures=[];
    const check=(ok,msg)=>{if(!ok)failures.push(msg);};
    check(ADVANCED_STUDIES.length===5 && ADVANCED_STUDIES.every(e=>e.steps.length===4 && e.steps.at(-1).create),'five complete studies with a transfer task');
+   const answer=EX.find(e=>e.id==='adv_pedals').steps[3],example=answer.build(0);
+   check(example.L===16&&example.ev.length===32&&example.ev.every(e=>e.n.length===1&&e.d===.5),'the pedal-tone writing step has a complete four-bar starter');
+   check(example.ev.find(e=>e.t===7.5).n.some(n=>n.s===1&&n.f===0)&&example.ev.find(e=>e.t===15.5).n.some(n=>n.s===0&&n.f===0),'the written question ends on open B and the answer on open high E');
+   check(answer.d.includes('B string, fret 3')&&answer.d.includes('Bars 1–2')&&answer.d.includes('Bars 3–4'),'the writing task names the phrase structure and an exact variation');
    check(ESSENTIALS.slice(0,4).every(x=>x.id.startsWith('adv_')),'the default path starts beyond the familiar shapes');
    check(focusEx().id==='adv_pedals','fresh focus is an original sound study');
    for(let key=0;key<12;key++){

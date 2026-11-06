@@ -78,9 +78,11 @@ Instrument Sans provides the headings, controls and instructions; IBM Plex Mono 
 
 ## Practice passages
 
-Drag directly over notes in the tab to select a passage. The selection snaps to note boundaries, and the surrounding exercise stays visible. Drag either edge to resize it; dragging near the viewport edge scrolls through longer exercises. Shift-click or Shift-arrow keys extend a selection, double-click selects a bar, and Ctrl/Cmd+A selects the whole step while the tab is focused. Click outside the selection or press Esc to clear it.
+Use the numbered bar buttons to jump to any bar. Drag across them or Shift-click to select whole bars; on touch devices, hold a bar button to select it. Drag directly over notes in the tab to select a smaller passage. The selection snaps to note boundaries and catches nearby bar lines; Alt-drag bypasses bar snapping on desktop. Tapping or dragging the bar-number area under the strings selects whole bars. The surrounding exercise stays visible. Drag either edge to resize it; dragging near the viewport edge scrolls through longer exercises. Shift-click or Shift-arrow keys extend a selection, double-click selects a bar, and Ctrl/Cmd+A selects the whole step while the tab is focused. Click outside the selection or press Esc to clear it.
 
 Play practices the selected passage at your chosen tempo. The existing Loop switch controls whether it repeats. Key and tempo changes appear directly in the tablature, including the actual upcoming-key notes beyond a loop boundary. Today’s Continue practicing restores the position and selection after browsing or reloading, with audio paused. Previously saved spots remain available in Library.
+
+Touch targets are larger, and the tab keeps normal vertical scrolling and browser pinch zoom. Loop boundaries show one readable bar label, without stacked end/start numbers.
 
 This interaction follows [Guitar Pro’s score selection and edge resizing](https://www.guitar-pro.com/docs/gp8/basics/first-steps/click). Sources and design decisions are in [Practice UX research](PRACTICE_UX_RESEARCH.md).
 
@@ -90,7 +92,7 @@ Audio checks render the actual sound graph to check note sustain, quiet endings,
 
 Advanced checks verify the moving inner voices and modal spellings, creative tasks, reversible skip behavior, early key/tempo previews, future-note selection, light/dark label contrast and responsive layouts.
 
-Practice and transport checks cover direct note selection in a 120-bar exercise, edge resizing, autoscroll, keyboard selection, exact looping of straight and swung passages, original bar numbering, inline future-key notes, exact resume after paused or playing reloads, and legacy spot/skip restoration.
+Practice and transport checks cover bar buttons and snapping in a 120-bar exercise, trusted touch selection/resizing/scrolling, mouse and keyboard selection, clean loop-boundary labels, exact straight/swung looping, inline future-key notes, reload resume and legacy spot/skip restoration. Advanced content checks verify the written four-bar starter and its question/answer endings.
 
 Install Playwright and Chromium, then run all ten suites: `node tests/validate.js`, `node tests/smoke.js`, `node tests/practice.js`, `node tests/desktop.js`, `node tests/transport.js`, `node tests/chords.js`, `node tests/rhythm.js`, `node tests/essentials.js`, `node tests/advanced.js`, and `node tests/audio.js`. They cover exercise and quiz content, desktop and narrow-window layouts, reference preferences and previews, navigation, progression and review, pause/seek/count-in behavior, and audio timing across loop changes. Rhythm and featured-study checks verify bar counts, click modes, priority ordering and focus selection. Chord checks verify all 24 discovery voicings, all twelve transpositions of the movable forms, pitches, fingers, barres, exclusive open/movable classification, genre filters and small default sets.
 

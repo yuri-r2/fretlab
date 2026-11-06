@@ -454,13 +454,20 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .steps button.next{border-color:var(--accent);border-style:dashed}
 .steps button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);border-style:solid}
 .hw{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
-.hw canvas{display:block;width:100%;height:250px;cursor:crosshair;touch-action:pan-y}
+.hw canvas{display:block;width:100%;height:250px;cursor:crosshair;touch-action:pan-y pinch-zoom}
 .tab-scroll{padding:4px 14px;border-top:1px solid var(--line)}
 .tab-scroll input{display:block;width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
 .tab-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .hw canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 .tab-selection-info{font-size:12px;color:var(--accent);line-height:1.5}
 .tab-selection-info:empty{display:none}
+.tab-bar-nav{display:flex;align-items:center;gap:8px;min-width:0}
+.bar-strip{display:flex;gap:4px;overflow-x:auto;min-width:0;padding:3px 1px 6px;scrollbar-width:thin;touch-action:pan-x pan-y pinch-zoom}
+.bar-strip button{flex:0 0 34px;min-height:32px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--muted);font:500 12px var(--font-mono);cursor:pointer;user-select:none}
+.bar-strip button.selected{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.bar-strip button[aria-current="true"]{background:var(--warn);border-color:var(--warn);color:var(--warn-ink);font-weight:600}
+.bar-strip button.selecting{outline:2px solid var(--accent);outline-offset:-2px}
+@media(pointer:coarse){.bar-strip button{flex-basis:44px;min-height:44px}}
 .practice-spot{display:flex;align-items:center;gap:6px;min-width:0}
 .practice-spot-open{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:10px;cursor:pointer;font:inherit}
 .practice-spot-open span{font-size:12px;color:var(--muted)}
@@ -548,6 +555,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .practice-aside .feedback .label,.practice-aside #pBest,.practice-aside #pNextStep{grid-column:1/-1;width:100%}
 .practice-aside #pBest{font-size:12px;color:var(--muted)}
 #pCanvas.has-chords{height:308px}
+@media(pointer:coarse){.hw canvas{height:274px}#pCanvas.has-chords{height:332px}}
 .practice-aside .feedback .btn{min-width:0;padding:6px 4px;font-size:13px;background:transparent}
 .practice-help>summary{cursor:pointer;font-size:13px;font-weight:500}
 .practice-help[open]>summary{margin-bottom:12px}
@@ -810,6 +818,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
               <label class="chip" title="Small finger numbers next to each note"><input type="checkbox" id="pFingers" aria-describedby="pFingerHint"> Show fingers</label>
             </div>
           </div>
+          <div class="tab-bar-nav"><span class="small muted">Bars</span><div class="bar-strip" id="pBars" role="group" aria-label="Jump to a bar"></div></div>
           <div class="hw"><canvas id="pCanvas" tabindex="0" aria-describedby="pTabHint pSelection" role="img" aria-label="Exercise tab. Click a note to start there. Drag to select notes. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Tab view position"></div></div>
           <div class="tab-navigation small muted"><span id="pTabHint">Click to position · drag to select · Space play / pause</span><span class="row" style="gap:6px;align-items:center"><span id="pPosition"></span><button class="btn sm" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀</button><button class="btn sm" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">▶</button></span></div>
           <div class="tab-selection-info" id="pSelection" role="status" aria-live="polite"></div>
@@ -2593,7 +2602,7 @@ function keyName(pc, e) { e = e || P.ex; const t = e && e.keyed; return nn(pc) +
 function exLoad(i) {
   exStop();
   const e = P.ex; P.step = clamp(i, 0, e.steps.length - 1);
-  P.range = null; P.tabView = null; P.tabAnchor = null; P.tabDrag = null; P.spotClean = 0;
+  P.range = null; P.tabView = null; P.tabAnchor = null; P.tabDrag = null; P.barAnchor = null; P.spotClean = 0;
   P.reviewCold = false;
   exRebuild();
   P.bpm = exStat(e.id).bpm[P.step] || e.steps[P.step].bpm;
@@ -2730,9 +2739,37 @@ function exListen() {
 }
 function exSelectionInfo() {
   const at=t=>{const bar=Math.floor((t+1e-7)/P.bar)+1,beat=Math.round((t%P.bar+1)*1000)/1000;return `bar ${bar}, beat ${beat}`;};
-  const text=P.range ? `Selected ${at(P.range[0])} → ${at(P.range[1])} · drag an edge to resize · Esc to clear` : '';
+  const touch=exTabTouch(),text=P.range ? `Selected ${at(P.range[0])} → ${at(P.range[1])} · drag an edge to resize · ${touch?'tap outside':'Esc'} to clear` : '';
   const node=$('#pSelection');if(node.textContent!==text)node.textContent=text;
+  $('#pTabHint').textContent=touch?'Tap bars to jump · hold to select · drag in the tab':'Click bars to jump · drag in the tab to select · Space play / pause';
 }
+function exBarButtons(pos) {
+  const count=Math.ceil(P.L/P.bar),strip=$('#pBars'),stamp=P.ex.id+':'+P.step+':'+count;
+  if(strip.dataset.step!==stamp){
+    strip.dataset.step=stamp;strip.innerHTML=Array.from({length:count},(_,i)=>`<button type="button" data-bar="${i}" aria-label="Go to bar ${i+1}" title="Bar ${i+1}; drag or Shift-click to select bars">${i+1}</button>`).join('');strip.scrollLeft=0;
+  }
+  const selected=P.range?.join('-')||'';
+  if(strip.dataset.range!==selected){strip.dataset.range=selected;$$('#pBars button').forEach(b=>b.classList.toggle('selected',!!P.range&&+b.dataset.bar*P.bar<P.range[1]&&(+b.dataset.bar+1)*P.bar>P.range[0]));}
+  const index=Math.min(count-1,Math.floor(pos/P.bar)),current=strip.querySelector('[aria-current="true"]'),next=strip.querySelector(`[data-bar="${index}"]`);
+  if(current===next)return;if(current)current.removeAttribute('aria-current');if(next){
+    next.setAttribute('aria-current','true');
+    if(P.running&&!P.barDrag&&!(P.barBrowseUntil>Date.now())&&!strip.contains(document.activeElement)){
+      const left=next.offsetLeft-strip.offsetLeft;if(left<strip.scrollLeft||left+next.offsetWidth>strip.scrollLeft+strip.clientWidth)strip.scrollLeft=left-strip.clientWidth/2;
+    }
+  }
+}
+function exJumpBar(index,extend=false){
+  if(P.running)exPause();const bar=clamp(index,0,Math.ceil(P.L/P.bar)-1);
+  if(extend&&P.barAnchor!=null)exSetSelection(exTabBars(P.barAnchor,bar));
+  else{P.barAnchor=bar;const pos=bar*P.bar;if(P.range&&(pos<P.range[0]||pos>=P.range[1]))exSetSelection(null);exSeek(pos);}
+}
+function exTabTouch() { return !!P.tabTouch||matchMedia('(pointer:coarse)').matches; }
+function exTabInset(t) { return Math.abs(t/P.bar-Math.round(t/P.bar))<1e-6 ? 0 : 14; }
+function exTabSnap(beat,touch,fine) {
+  const boundary=clamp(Math.round(beat/P.bar)*P.bar,0,P.L);
+  return !fine&&Math.abs(beat-boundary)*P.ppb<=(touch?22:14)?boundary:null;
+}
+function exTabBars(a,b) { return [Math.min(a,b)*P.bar,Math.min(P.L,(Math.max(a,b)+1)*P.bar)]; }
 function exSetSelection(range, keepView = false) {
   if (!P.ex) return;
   if (P.running) exPause();
@@ -2776,7 +2813,7 @@ function exTabAdopt(x, playing = false) {
   }
   return clamp(beat,0,P.L);
 }
-function exTabEdge(t) { const ph=Math.round(Math.min($('#pCanvas').clientWidth*.28,190));return ph+(t-(P.tabView??P.viewPos))*P.ppb-14; }
+function exTabEdge(t) { const ph=Math.round(Math.min($('#pCanvas').clientWidth*.28,190));return ph+(t-(P.tabView??P.viewPos))*P.ppb-exTabInset(t); }
 function exTabReveal(t) {
   const x=exTabEdge(t),width=$('#pCanvas').clientWidth,visible=clamp(x,28,width-8);
   if(x!==visible){P.tabView=(P.tabView??P.viewPos)+(x-visible)/P.ppb;exDraw(P.viewPos);}
@@ -2925,7 +2962,7 @@ function exLabel(n, data = P) { const pc = (data.tun[n.s] + n.f) % 12; if (P.lab
 function exBoard(idx, preview) {
   const map = new Map(); const key = n => n.s + ',' + n.f;
   P.ev.forEach(e => e.n.forEach(n => { if (!map.has(key(n))) map.set(key(n), { s: n.s, f: n.f, k: 'dim', l: '' }); }));
-  if(P.range){const first=P.ev.findIndex(e=>e.t>=P.range[0]),last=P.ev.findLastIndex(e=>e.t<P.range[1]);if(idx<first)preview=true;idx=clamp(idx,first,last);}
+  if(P.range){const first=P.ev.findIndex(e=>e.t>=P.range[0]),last=P.ev.findLastIndex(e=>e.t<P.range[1]);if(first<0||last<first)preview=true;else{if(idx<first)preview=true;idx=clamp(idx,first,last);}}
   const cur = P.ev[idx];let nx=P.ev[(idx+1)%P.ev.length],nextData=P;
   if(P.range && (idx===P.ev.length-1 || nx.t>=P.range[1])){
     nextData=S.ui.exopts.loop&&!P.preview?exForecast()[0]?.data:null;
@@ -3021,26 +3058,36 @@ function exDraw(pos) {
   const offset = 0, location = local >= P.L ? 'End' : `Bar ${Math.floor(local / P.bar) + offset + 1} · beat ${Math.floor(local % P.bar) + 1}`;
   const viewed=clamp(P.tabView??local,0,P.L),viewLocation=viewed>=P.L?'End':`Bar ${Math.floor(viewed/P.bar)+1} · beat ${Math.floor(viewed%P.bar)+1}`;
   scroll.setAttribute('aria-valuetext', viewLocation); $('#pPosition').textContent = location + ` / ${Math.ceil(P.L / P.bar)} bars`;
+  exBarButtons(local);
   const extra=hasGrips ? 58 : 0;
   const top = 70+extra, sh = 27, left = 24, bot = top + 5 * sh, ph = Math.round(Math.min(W * 0.28, 190)), ppb = P.ppb;
-  const selected=P.tabDrag?.range||P.range;
-  if(selected){const a=ph+(selected[0]-pos)*ppb-14,b=ph+(selected[1]-pos)*ppb-14;g.save();g.beginPath();g.rect(left,top-18,W-left,bot-top+38);g.clip();g.fillStyle=C.accent;g.globalAlpha=.12;g.fillRect(a,top-18,b-a,bot-top+38);g.restore();}
+  const selected=P.tabDrag?.range||P.range,barLabels=[],touch=exTabTouch();
+  if(selected){const a=ph+(selected[0]-pos)*ppb-exTabInset(selected[0]),b=ph+(selected[1]-pos)*ppb-exTabInset(selected[1]);g.save();g.beginPath();g.rect(left,top-18,W-left,bot-top+38);g.clip();g.fillStyle=C.accent;g.globalAlpha=.12;g.fillRect(a,top-18,b-a,bot-top+38);g.restore();}
   g.textBaseline = 'middle';
   for(const segment of segments){
     const data=segment.data,[from,to]=segment.limit||[0,data.L];
     const lo=Math.max(Math.ceil(from),Math.floor(pos-ph/ppb-segment.start)-1),hi=Math.min(to,Math.ceil(pos+(W-ph)/ppb-segment.start)+1);
     for(let b=lo;b<=hi;b++){
       const x=ph+(segment.start+b-pos)*ppb;if(x<left||x>W)continue;
-      if(segment.limit&&Math.abs(b-to)<1e-6)continue;
+      if(b>=to-1e-6)continue;
       const bar=b%data.bar===0;g.strokeStyle=bar?C.muted:C.line;g.lineWidth=bar?1.4:1;g.globalAlpha=bar?.6:1;
       g.beginPath();g.moveTo(x,top-10);g.lineTo(x,bot+10);g.stroke();g.globalAlpha=1;
-      if(bar&&!P.hasCnt){g.fillStyle=C.muted;g.font='500 11px '+MONO;g.textAlign='left';g.fillText(b===0?(S.ui.exopts.loop?'↺ ':'')+(offset+1):String(b/data.bar+offset+1),x+4,bot+22);}
+      if(bar&&!data.hasCnt){const loop=segment.entry!=null&&Math.abs(b-from)<1e-6||b===0&&S.ui.exopts.loop;barLabels.push({text:(loop?'↻ ':'')+String(b/data.bar+1),x:x+4,loop});}
     }
   }
   for (let s = 0; s < 6; s++) {
     const y = top + s * sh; g.strokeStyle = C.muted; g.globalAlpha = 0.45; g.lineWidth = 0.8 + s * 0.3;
     g.beginPath(); g.moveTo(left, y); g.lineTo(W, y); g.stroke(); g.globalAlpha = 1;
     g.fillStyle = C.muted; g.font = '500 11px ' + MONO; g.textAlign = 'center'; g.fillText(P.names[s], 10, y);
+  }
+  if(selected){
+    g.save();g.beginPath();g.rect(left,top-24,W-left,bot-top+48);g.clip();g.strokeStyle=C.accent;g.fillStyle=C.accent;g.lineWidth=2;
+    for(const t of selected){
+      const x=ph+(t-pos)*ppb-exTabInset(t),width=touch?12:6;g.beginPath();g.moveTo(x,top-16);g.lineTo(x,bot+14);g.stroke();
+      rrect(g,x-width/2,top-20,width,touch?14:12,2);g.fill();
+      if(!touch){rrect(g,x-3,bot+5,6,12,2);g.fill();}
+    }
+    g.restore();
   }
   const playhead=ph+(local-pos)*ppb;
   if(playhead>=left&&playhead<W){
@@ -3053,8 +3100,8 @@ function exDraw(pos) {
     const data=segment.data;
     if(segment.start>0){
       const edge=ph+((segment.entry??segment.start)-pos)*ppb;
-      if(edge>=left&&edge<W){g.strokeStyle=C.accent;g.lineWidth=2;g.beginPath();g.moveTo(edge,top-16);g.lineTo(edge,bot+10);g.stroke();g.fillStyle=C.accent;g.font='600 11px '+SANS;g.textAlign='left';if(!upcoming)g.fillText('↻',Math.min(edge+5,W-18),H-10);}
-      if(segment.limit&&!data.hasCnt&&edge>=left&&edge<W){g.fillStyle=C.muted;g.font='500 11px '+MONO;g.textAlign='left';g.fillText('↻ '+(Math.floor(segment.limit[0]/data.bar)+1),edge+4,bot+22);}
+      if(edge>=left&&edge<W){g.strokeStyle=C.accent;g.lineWidth=2;g.beginPath();g.moveTo(edge,top-16);g.lineTo(edge,bot+10);g.stroke();}
+      if(segment.limit&&!data.hasCnt&&Math.abs(segment.limit[0]%data.bar)>1e-6&&edge>=left&&edge<W)barLabels.push({text:'↻ '+(Math.floor(segment.limit[0]/data.bar)+1),x:edge+4,loop:true});
     }
     data.ev.forEach((e, idx) => {
       if(segment.limit&&(e.t<segment.limit[0]-1e-6||e.t>=segment.limit[1]-1e-6))return;
@@ -3113,11 +3160,14 @@ function exDraw(pos) {
     g.fillStyle=C.warn;g.font='600 13px '+DISP;g.textAlign='center';if(P.ev[curIdx].chord)g.fillText(P.ev[curIdx].chord,left+24,12);
     drawTabGrip(g,currentGrip,left+24,C.warn);
   }
-  if(selected){
-    g.save();g.beginPath();g.rect(left,top-22,W-left,bot-top+46);g.clip();g.strokeStyle=C.accent;g.fillStyle=C.accent;g.lineWidth=2;
-    for(const t of selected){const x=ph+(t-pos)*ppb-14;g.beginPath();g.moveTo(x,top-16);g.lineTo(x,bot+14);g.stroke();rrect(g,x-3,top-19,6,12,2);g.fill();rrect(g,x-3,bot+5,6,12,2);g.fill();}
-    g.restore();
-  }
+  g.font='500 11px '+MONO;g.textAlign='left';g.textBaseline='middle';
+  const labels=[];
+  barLabels.sort((a,b)=>Number(b.loop)-Number(a.loop)||Math.abs(a.x-ph)-Math.abs(b.x-ph)).forEach(label=>{
+    const end=label.x+g.measureText(label.text).width;
+    if(label.x<left||end>W-4||labels.some(other=>label.x<other.end+8&&end+8>other.x))return;
+    labels.push({...label,end});
+  });
+  labels.forEach(label=>{g.fillStyle=label.loop?C.accent:C.muted;g.fillText(label.text,label.x,bot+22);});
   if(upcoming){
     g.font='600 11px '+SANS;g.textAlign='left';g.textBaseline='middle';
     const text=W<420?upcoming.shortText:upcoming.text,width=g.measureText(text).width+14,edge=ph+(exBounds()[1]-pos)*ppb;
@@ -4180,7 +4230,7 @@ const ADVANCED_STUDIES = [
     {n:'Hear the rub',observe:true,d:'Compare Emaj9 with Em(add9). Listen to the close F-sharp/G pair in the minor shape and the D-sharp in the major shape.',bpm:60,goal:60,build:()=>studyCycle(studyGrips(['open-emaj9','open-emadd9','open-emaj9','open-emadd9']),'hold')},
     {n:'A common-tone phrase',d:'Cmaj9, Amaj9, Fmaj7#11, Bm11. Keep the open high E ringing as its role changes: third, fifth, major seventh, then 11th.',bpm:65,goal:90,listen:'the high E staying present while the bass changes its meaning.',criteria:'Keep the high E connected, make every inner note clear, and land each new bass exactly on beat 1.',build:()=>studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']))},
     {n:'Leave a hole',d:'Use the same harmony in 3–3–2 accents. Let the held notes fill the spaces; avoid an extra strum to cover a shaky change.',bpm:65,goal:90,build:()=>studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']),'sync')},
-    {n:'A two-bar answer',create:true,d:'The guide gives four bass/harmony cues. Keep the open high E, invent a two-bar arpeggio, then answer it with a different final note. Record both versions.',bpm:65,goal:65,criteria:'Keep one recognizable motif, preserve the ringing high E, and make the second phrase answer the first.',build:()=>studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']),'space')}
+    {n:'A two-bar answer',create:true,d:'Copy the four-bar starter. Bars 1–2 (Cmaj9 → Amaj9) are the question, ending on open B. Bars 3–4 (Fmaj7#11 → Bm11) answer on open high E. Then try D (B string, fret 3) as the last note of bar 4. Let the high E ring; record both takes on your phone.',bpm:65,goal:65,criteria:'First copy the written starter. For the second take, change only the final note to D; keep the rhythm and chord changes the same. Listen back and choose the ending you prefer. Good take means a clear two-bar question and two-bar answer with the open high E connected.',build:()=>{const phrase=studyCycle(studyGrips(['open-cmaj9','open-amaj9','open-flydian','open-bm11']));phrase.ev.find(e=>e.t===7.5).n=[{s:1,f:0,fg:0,lab:'9'}];return phrase;}}
   ]},
   {id:'adv_inner',cat:'Sound studies',title:'One inner voice changes the mood',keyed:'maj',key0:0,lvl:'Advanced · voice leading',labels:'chord',about:'Major 9 → 6/9 → minor 6/9 → minor 9. The bass and top ninth stay fixed while one inner voice moves at each of the first three changes.',tip:'Follow the inner melody B–A–A–B-flat in C. Then follow the third E–E–E-flat–E-flat. Use a light touch to keep the two outer voices connected.',steps:[
     {n:'Hear the inner line',observe:true,d:'Four colors of one root. Listen for the one voice that moves at each change; the return to the start resets two voices.',bpm:60,goal:60,build:k=>studyCycle(innerMoves(k),'hold')},
@@ -4660,6 +4710,39 @@ document.addEventListener('click',e=>{
   if(remove){S.practice.spots.splice(+remove.dataset.spotRemove,1);save();renderPracticePlaces();}
   if(e.target.closest('#practiceResumeOpen'))practiceRestore(S.practice.resume);
 });
+function exBarCancel(){clearTimeout(P.barHold);P.barDrag=null;$$('#pBars .selecting').forEach(b=>b.classList.remove('selecting'));}
+$('#pBars').addEventListener('click',e=>{if(P.barSuppressClick)return;const b=e.target.closest('[data-bar]');if(b)exJumpBar(+b.dataset.bar,e.shiftKey);});
+$('#pBars').addEventListener('keydown',e=>{
+  const b=e.target.closest('[data-bar]');if(!b)return;
+  if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){
+    e.preventDefault();e.stopPropagation();const max=Math.ceil(P.L/P.bar)-1,index=e.key==='Home'?0:e.key==='End'?max:clamp(+b.dataset.bar+(e.key==='ArrowRight'?1:-1),0,max);
+    $(`#pBars [data-bar="${index}"]`).focus();
+  }
+});
+$('#pBars').addEventListener('pointerdown',e=>{
+  const b=e.target.closest('[data-bar]');if(!b||e.button||e.isPrimary===false)return;
+  exBarCancel();P.barBrowseUntil=Date.now()+5000;P.barSuppressClick=false;
+  const d=P.barDrag={id:e.pointerId,start:+b.dataset.bar,end:+b.dataset.bar,x:e.clientX,y:e.clientY,touch:e.pointerType==='touch',moved:false};
+  if(d.touch)P.barHold=setTimeout(()=>{
+    if(P.barDrag!==d)return;d.moved=true;P.barSuppressClick=true;P.barAnchor=d.start;exSetSelection(exTabBars(d.start,d.start));
+  },350);
+});
+$('#pBars').addEventListener('pointermove',e=>{
+  const d=P.barDrag;if(!d||d.id!==e.pointerId)return;
+  if(d.touch){if(!d.moved&&(Math.abs(e.clientX-d.x)>8||Math.abs(e.clientY-d.y)>8))exBarCancel();return;}
+  if(Math.abs(e.clientX-d.x)<6)return;
+  const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('#pBars [data-bar]');if(!b)return;
+  if(!d.moved){d.moved=true;P.barSuppressClick=true;$('#pBars').setPointerCapture(e.pointerId);}
+  const index=+b.dataset.bar;if(index===d.end&&P.range)return;d.end=index;P.barAnchor=d.start;exSetSelection(exTabBars(d.start,index));
+});
+function exBarEnd(){const moved=P.barDrag?.moved;exBarCancel();if(moved){P.barSuppressClick=true;setTimeout(()=>{P.barSuppressClick=false;},0);}}
+$('#pBars').addEventListener('pointerup',exBarEnd);
+window.addEventListener('pointerup',exBarEnd);
+$('#pBars').addEventListener('pointercancel',exBarEnd);
+$('#pBars').addEventListener('lostpointercapture',exBarCancel);
+$('#pBars').addEventListener('wheel',()=>{P.barBrowseUntil=Date.now()+5000;},{passive:true});
+$('#pBars').addEventListener('contextmenu',e=>{if(P.barDrag?.moved)e.preventDefault();});
+window.addEventListener('blur',exBarCancel);
 $('#pScroll').addEventListener('input', e => exSeek(+e.target.value));
 $('#pScroll').addEventListener('keydown', e => {
   const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -P.bar, PageDown: P.bar };
@@ -4679,14 +4762,23 @@ function exTabCancel() {
   exDraw(P.running?exPos():P.viewPos);
 }
 function exTabUpdate(d,x) {
-  const beat=clamp(exTabBeat(x),0,P.L),index=exTabIndex(beat);
+  const beat=clamp(exTabBeat(x),0,P.L),index=exTabIndex(beat),snap=exTabSnap(beat,d.type==='touch',d.fine);
   if(d.edge){
-    const boundaries=[...P.ev.map(e=>e.t),P.L];let near=0;
-    for(let i=1;i<boundaries.length;i++)if(Math.abs(boundaries[i]-beat)<Math.abs(boundaries[near]-beat))near=i;
+    const boundaries=[...new Set([...P.ev.map(e=>e.t),0,P.L,...d.originalRange,...Array.from({length:Math.floor(P.L/P.bar)+1},(_,i)=>i*P.bar)])].sort((a,b)=>a-b);
+    const target=snap??clamp(exTabBeat(x+14),0,P.L);let near=0;
+    for(let i=1;i<boundaries.length;i++)if(Math.abs(boundaries[i]-target)<Math.abs(boundaries[near]-target))near=i;
     d.range=d.originalRange.slice();
     if(d.edge==='start')d.range[0]=Math.min(boundaries[near],boundaries[Math.max(0,boundaries.indexOf(d.range[1])-1)]);
-    else d.range[1]=Math.max(boundaries[near],P.ev[exTabIndex(d.range[0])+1]?.t??P.L);
-  }else d.range=exTabRange(d.anchor,index);
+    else d.range[1]=Math.max(boundaries[near],boundaries[boundaries.indexOf(d.range[0])+1]??P.L);
+  }else if(d.bars){
+    d.range=exTabBars(d.anchorBar,clamp(Math.floor(beat/P.bar),0,Math.ceil(P.L/P.bar)-1));
+  }else{
+    d.range=exTabRange(d.anchor,index);
+    const forward=beat>=(d.anchorSnap??P.ev[d.anchor].t);
+    if(d.anchorSnap!=null)d.range[forward?0:1]=d.anchorSnap;
+    if(snap!=null)d.range[forward?1:0]=snap;
+    if(d.range[1]-d.range[0]<1e-6)d.range=exTabRange(d.anchor,index);
+  }
   d.focus=index;exDraw(P.viewPos);
 }
 function exTabAuto(time) {
@@ -4698,23 +4790,23 @@ function exTabAuto(time) {
   P.tabAuto=requestAnimationFrame(exTabAuto);
 }
 $('#pCanvas').addEventListener('pointerdown',e=>{
-  if(e.button || !P.ev.length)return;
+  if(e.button || e.isPrimary===false || !P.ev.length)return;
   const cv=$('#pCanvas'),rect=cv.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
-  const mouse=e.pointerType!=='touch',playing=P.running;
+  const mouse=e.pointerType!=='touch',playing=P.running;P.tabTouch=!mouse;exSelectionInfo();
   if(mouse){e.preventDefault();if(P.running)exPause();cv.focus({preventScroll:true});}
   const originalView=P.tabView,beat=mouse?exTabAdopt(x,playing):clamp(exTabBeat(x),0,P.L),index=exTabIndex(beat);
   const top=cv.classList.contains('has-chords')?128:70;
-  let edge=null;
-  if(P.range&&y>=top-24&&y<=top+5*27+24){
-    if(Math.abs(x-exTabEdge(P.range[0]))<=10)edge='start';
-    else if(Math.abs(x-exTabEdge(P.range[1]))<=10)edge='end';
+  const bars=y>=top+5*27+18,radius=mouse?10:22;let edge=null;
+  if(P.range&&!bars&&y>=top-28&&y<=top+5*27+18){
+    if(Math.abs(x-exTabEdge(P.range[0]))<=radius)edge='start';
+    else if(Math.abs(x-exTabEdge(P.range[1]))<=radius)edge='end';
   }
-  P.tabDrag={id:e.pointerId,type:e.pointerType,playing,anchor:e.shiftKey?(P.tabAnchor??P.cursor):index,focus:index,x,startX:x,startY:y,edge,shift:e.shiftKey,originalView,originalRange:P.range?.slice()||null,range:P.range?.slice()||null,moved:false};
+  P.tabDrag={id:e.pointerId,type:e.pointerType,playing,bars,anchorBar:clamp(Math.floor(beat/P.bar),0,Math.ceil(P.L/P.bar)-1),fine:e.altKey,anchorSnap:exTabSnap(beat,!mouse,e.altKey),anchor:e.shiftKey?(P.tabAnchor??P.cursor):index,focus:index,x,startX:x,startY:y,edge,shift:e.shiftKey,originalView,originalRange:P.range?.slice()||null,range:P.range?.slice()||null,moved:false};
   if(mouse)cv.setPointerCapture(e.pointerId);
 });
 $('#pCanvas').addEventListener('pointermove',e=>{
   const cv=$('#pCanvas'),rect=cv.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,d=P.tabDrag;
-  if(!d){const top=cv.classList.contains('has-chords')?128:70;cv.style.cursor=P.range&&y>=top-24&&y<=top+5*27+24&&P.range.some(t=>Math.abs(x-exTabEdge(t))<=10)?'ew-resize':'crosshair';return;}
+  if(!d){const top=cv.classList.contains('has-chords')?128:70,barBand=y>=top+5*27+18;cv.style.cursor=barBand?'cell':P.range&&y>=top-28&&y<=top+5*27+18&&P.range.some(t=>Math.abs(x-exTabEdge(t))<=10)?'ew-resize':'crosshair';return;}
   if(d.id!==e.pointerId)return;
   const dx=Math.abs(x-d.startX),dy=Math.abs(y-d.startY);
   if(!d.moved){
@@ -4732,8 +4824,9 @@ $('#pCanvas').addEventListener('pointerup',e=>{
   if(d.moved){P.tabAnchor=d.anchor;P.tabFocus=d.focus;exSetSelection(d.range,true);exTabReveal(d.edge==='start'?d.range[0]:d.range[1]);}
   else {
     if(P.running)exPause();
-    const x=e.clientX-$('#pCanvas').getBoundingClientRect().left,index=exTabIndex(exTabAdopt(x,d.type==='touch'&&d.playing));
-    if(d.shift){P.tabFocus=index;exSetSelection(exTabRange(d.anchor,index),true);}
+    const x=e.clientX-$('#pCanvas').getBoundingClientRect().left,beat=exTabAdopt(x,d.type==='touch'&&d.playing),index=exTabIndex(beat);
+    if(d.bars){const bar=clamp(Math.floor(beat/P.bar),0,Math.ceil(P.L/P.bar)-1);exSetSelection(exTabBars(d.anchorBar,bar),true);}
+    else if(d.shift){P.tabFocus=index;exSetSelection(exTabRange(d.anchor,index),true);}
     else {
       P.tabAnchor=index;P.tabFocus=index;
       if(P.range&&(P.ev[index].t<P.range[0]||P.ev[index].t>=P.range[1]))exSetSelection(null,true);
@@ -4770,14 +4863,14 @@ $('#pBpm').onclick = () => { const i = $('#pBpmIn'); i.value = P.bpm; $('#pBpm')
 const bpmDone = ok => { const i = $('#pBpmIn'); if (i.hidden) return; if (ok && i.value) exSetBpm(+i.value); i.hidden = true; $('#pBpm').hidden = false; renderExMeta(); };
 $('#pBpmIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); bpmDone(true); } else if (e.key === 'Escape') { e.preventDefault(); bpmDone(false); } });
 $('#pBpmIn').addEventListener('blur', () => bpmDone(true));
-[['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop') { if (!S.ui.exopts.loop) { S.ui.exopts.keycycle = false; $('#pKeyCycle').checked = false; } if (P.running) { P.endBeat = !P.preview && S.ui.exopts.loop ? Infinity : P.L; exReanchor(P.bpm); } save(); } renderExTransport(); exDraw(exPos()); }; });
+[['#pLoop', 'loop'], ['#pCount', 'count'], ['#pGuide', 'guide'], ['#pClick', 'click'], ['#pLadder', 'ladder']].forEach(([id, k]) => { $(id).onchange = e => { S.ui.exopts[k] = e.target.checked; save(); if (k === 'loop') { if (!S.ui.exopts.loop) { S.ui.exopts.keycycle = false; $('#pKeyCycle').checked = false; } if (P.running) { P.endBeat = !P.preview && S.ui.exopts.loop ? Infinity : exBounds()[1]; exReanchor(P.bpm); } save(); } renderExTransport(); exDraw(exPos()); }; });
 $('#pLabSeg').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; const s = $('#pLab'); s.value = b.dataset.v; s.dispatchEvent(new Event('change')); $$('#pLabSeg button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
 $('#pLab').onchange = e => { P.labels = e.target.value; S.ui.exlabels = e.target.value; save(); exDraw(exPos()); P.lastIdx = -2; exBoard(Math.max(0, P.running ? evIndexAt(Math.max(0, exPos()) % P.L) : P.cursor)); };
 $('#pListen').onclick = exListen;
 $('#pClean').onclick = () => exFeedback('clean'); $('#pAlmost').onclick = () => exFeedback('almost'); $('#pMessy').onclick = () => exFeedback('messy');
 $('#pKey').onchange = e => { exStat(P.ex.id).key = +e.target.value; save(); exLoad(P.step); renderExPlayer(); };
 $('#pRandKey').onclick = () => { const cur = exKey(); let k = rnd(11); if (k >= cur) k++; exStat(P.ex.id).key = k; save(); exLoad(P.step); renderExPlayer(); toast(`Key: ${keyName(k)}`); };
-$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = P.preview ? P.L : Infinity; exReanchor(P.bpm); } } renderExTransport(); exDraw(P.running?exPos():P.viewPos); };
+$('#pKeyCycle').onchange = e => { S.ui.exopts.keycycle = e.target.checked; save(); if (e.target.checked && !S.ui.exopts.loop) { S.ui.exopts.loop = true; $('#pLoop').checked = true; if (P.running) { P.endBeat = P.preview ? exBounds()[1] : Infinity; exReanchor(P.bpm); } } renderExTransport(); exDraw(P.running?exPos():P.viewPos); };
 $('#pNextStep').onclick = () => { $('#pNextStep').hidden = true; exLoad(P.step + 1); renderExPlayer(); };
 if (window.ResizeObserver) new ResizeObserver(() => { if (!P.running) exDraw(P.viewPos); }).observe($('#pCanvas'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { exColors(true); if (P.ex && !$('#exPlayer').hidden) exDraw(exPos()); });
