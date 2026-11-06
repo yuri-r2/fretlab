@@ -458,6 +458,22 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .tab-scroll{padding:4px 14px;border-top:1px solid var(--line)}
 .tab-scroll input{display:block;width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
 .tab-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.passage{display:flex;flex-direction:column;gap:7px;min-width:0}
+.passage-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.passage-actions{display:flex;gap:6px;flex-wrap:wrap}
+.bar-strip{display:flex;gap:3px;overflow-x:auto;padding:3px 1px 6px;scrollbar-width:thin;touch-action:pan-x}
+.bar-strip button{flex:1 0 30px;max-width:60px;min-height:30px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--muted);font:500 11px var(--font-mono);cursor:pointer;user-select:none}
+.bar-strip button.selected{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.bar-strip button[aria-current="true"]{background:var(--warn);border-color:var(--warn);color:var(--warn-ink);font-weight:600}
+.bar-strip button.selecting{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-soft);color:var(--ink)}
+.passage-hint{font-size:11px;line-height:1.4}
+.practice-spot{display:flex;align-items:center;gap:6px;min-width:0}
+.practice-spot-open{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:10px;cursor:pointer;font:inherit}
+.practice-spot-open span{font-size:12px;color:var(--muted)}
+.practice-spot .spot-remove{padding:4px 7px;min-width:28px;font-size:17px}
+.practice-resume{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.practice-resume .stack{gap:4px;min-width:0;flex:1 1 220px}
+#savedPracticeList,#pSavedSpots{gap:8px;margin-top:12px}
 .pstatus{min-height:20px}
 .upcoming{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:var(--accent-soft);color:var(--ink);border:1px solid var(--line)}
 .upcoming.soon{border-color:var(--accent)}
@@ -563,10 +579,10 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .chip.mix{padding-right:8px}
 .chip .mvol{width:60px}
 .pseg button{padding:5px 10px;font-size:13px}
-.pctl-sec{flex-direction:row !important;align-items:center;gap:6px;margin-left:auto}
+.passage-choice{flex-direction:row !important;align-items:center;gap:6px}.passage-choice select{max-width:210px;font-size:13px}
 .btn.sm{padding:3px 9px;font-size:12px;min-height:0}
 .pseg{flex-wrap:nowrap}
-@media (max-width:560px){.pctl-lab{width:100%}.pctl-sec{margin-left:0}.pseg{width:100%}.pseg button{flex:1;padding:5px 2px;font-size:12.5px;white-space:nowrap}.pctl{padding:10px}.pctl-row{gap:5px}.chip{padding:0 9px;gap:6px;font-size:12.5px;min-height:32px}.chip .mvol{width:46px}}
+@media (max-width:560px){.pctl-lab{width:100%}.pseg{width:100%}.pseg button{flex:1;padding:5px 2px;font-size:12.5px;white-space:nowrap}.pctl{padding:10px}.pctl-row{gap:5px}.chip{padding:0 9px;gap:6px;font-size:12.5px;min-height:32px}.chip .mvol{width:46px}}
 .practice-help .legend{margin-block:10px}
 .practice-help .kbdhint{line-height:1.9}
 body:has(#settings:not([hidden])){overflow:hidden}
@@ -653,6 +669,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="card stack" id="essCard"></div>
+  <details class="skipped-folder" id="savedPractice" hidden><summary>Saved practice spots <span id="savedPracticeCount"></span></summary><div class="stack" id="savedPracticeList"></div></details>
   <details class="skipped-folder" id="skippedExercises"><summary>Skipped exercises <span id="skippedCount"></span></summary><div class="stack" id="skippedList"></div></details>
   <div class="excards">
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Open-string clusters, modal colors and compact extensions. Hear a sound, then use it in a study.</span></button>
@@ -681,6 +698,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <div class="stack" style="gap:4px"><span class="label" id="todayDate">Today</span><h2>Your practice</h2></div>
     <p class="muted small">Choose your time and focus. Your session connects reviews, focused practice and a musical application. Each block opens the right material; move on when you are ready.</p>
   </div>
+  <div class="card practice-resume" id="practiceResume" hidden></div>
   <div class="grid">
     <div class="card stack">
       <div class="row" style="justify-content:space-between"><h3>Routine</h3><span class="small muted" id="rtDone"></span></div>
@@ -800,10 +818,14 @@ body:has(#settings:not([hidden])){overflow:hidden}
               <div class="seg pseg" id="pLabSeg"><button type="button" data-v="finger">None</button><button type="button" data-v="degree">Degrees</button><button type="button" data-v="chord">Chord tones</button><button type="button" data-v="note">Notes</button></div>
               <select id="pLab" hidden aria-hidden="true" tabindex="-1"><option value="finger">None</option><option value="degree">Scale degrees</option><option value="chord">Chord tones</option><option value="note">Note names</option></select>
               <label class="chip" title="Small finger numbers next to each note"><input type="checkbox" id="pFingers" aria-describedby="pFingerHint"> Show fingers</label>
-              <label class="f pctl-sec"><span>Section</span><select id="pSpot"><option value="">Whole step</option></select></label>
             </div>
           </div>
           <div class="upcoming" id="pUpcoming" hidden><span class="stack" style="gap:2px"><span class="label">Up next · prepare the opening</span><b id="pUpcomingName" aria-live="polite"></b></span><span class="small" id="pUpcomingWhen"></span><span class="upcoming-notes" id="pUpcomingNotes" aria-label="Opening notes, string and fret"></span></div>
+          <div class="passage" id="pPassage">
+            <div class="passage-toolbar"><div class="row" style="gap:8px"><label class="f passage-choice"><span>Practice</span><select id="pSpot"><option value="">Whole step</option></select></label><span class="small muted" id="pPassageName"></span></div><div class="passage-actions"><button class="btn sm" id="pLoopBar" type="button">Loop this bar</button><button class="btn sm" id="pWhole" type="button" hidden>Whole step</button><button class="btn sm" id="pSaveSpot" type="button">Save spot</button></div></div>
+            <div class="bar-strip" id="pBars" role="group" aria-label="Exercise bars" aria-describedby="pBarsHint"></div>
+            <span class="passage-hint muted" id="pBarsHint">Click a bar to jump · drag across bars or Shift-click to loop a passage</span>
+          </div>
           <div class="hw"><canvas id="pCanvas" role="img" aria-label="Exercise tab. Click a note to start there. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Exercise position"></div></div>
           <div class="tab-navigation small muted"><span>Scroll or click a note · Space play / pause</span><span class="row" style="gap:6px;align-items:center"><span id="pPosition"></span><button class="btn sm" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀</button><button class="btn sm" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">▶</button></span></div>
           <div class="finger-legend small muted" id="pFingerHint" aria-label="Fretting hand finger key" hidden></div>
@@ -825,6 +847,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
           <div class="practice-tip"><p class="small"><b>Tip:</b> <span id="pTip"></span></p></div>
           <details class="practice-help"><summary>About this exercise</summary><p class="small muted" id="pAbout"></p><div id="pLesson"></div></details>
           <details class="phist" id="pHistWrap"><summary><b>Your history</b> <span class="small muted" id="pHistSum"></span></summary><div id="pHist" class="stack" style="gap:6px;margin-top:8px"></div></details>
+          <details class="practice-help" id="pSavedWrap" hidden><summary>Saved spots <span id="pSavedCount"></span></summary><div class="stack" id="pSavedSpots"></div></details>
         </aside>
       </div>
     </div>
@@ -1075,7 +1098,7 @@ const DEF = {
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
   riffs: [], ex: {}, exskip: [], learn: {},
-  routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [],
+  routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [], practice: { resume: null, spots: [] },
   ui: { exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
@@ -2584,7 +2607,7 @@ function keyName(pc, e) { e = e || P.ex; const t = e && e.keyed; return nn(pc) +
 function exLoad(i) {
   exStop();
   const e = P.ex; P.step = clamp(i, 0, e.steps.length - 1);
-  P.spot = null; P.spotClean = 0;
+  P.spot = null; P.spotClean = 0; P.barAnchor = null; P.barDrag = null;
   P.reviewCold = false;
   exRebuild();
   P.bpm = exStat(e.id).bpm[P.step] || e.steps[P.step].bpm;
@@ -2687,6 +2710,7 @@ function exStart(preview = false) {
   P.running = true; P.lastIdx = -2;
   P.timer = setInterval(exSched, 25); exSched(); exDrone(); wakeSync();
   P.frame = requestAnimationFrame(exFrame); renderExTransport();
+  practiceRemember();
 }
 function exPause() {
   const pos = exPos();
@@ -2698,7 +2722,7 @@ function exPause() {
   P.cursor = evIndexAt(Math.min(P.viewPos, P.L - 1e-6));
   setTimeout(wakeSync, 0);
   if (P.ev.length && !$('#exPlayer').hidden) { exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); }
-  renderExTransport();
+  renderExTransport(); practiceRemember();
 }
 function exStop() {
   P.previous = null; exPause(); P.cursor = 0; P.viewPos = 0; P.passStart = 0; P.loops = 0; P.reviewCold = false;
@@ -2710,7 +2734,7 @@ function exSeek(pos) {
   if (P.running) exPause();
   P.previous = null; P.viewPos = clamp(pos, 0, P.L); P.passStart = P.viewPos; P.reviewCold = false;
   P.cursor = evIndexAt(Math.min(P.viewPos, P.L - 1e-6)); P.lastIdx = -2;
-  exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); renderExTransport();
+  exDraw(P.viewPos); exBoard(P.cursor); exStatus(P.viewPos, true); renderExTransport(); practiceRemember();
 }
 function exToggle() { P.running ? exPause() : exStart(); }
 function exListen() {
@@ -2727,15 +2751,107 @@ function exSpotOptions() {
     for (let k = 0; k < nb; k++) if (has(k)) opts.push(`<option value="${k}-${k}">Loop bar ${k + 1} only</option>`);
     if (nb > 2) for (let k = 0; k < nb - 1; k++) if (has(k) && has(k + 1)) opts.push(`<option value="${k}-${k + 1}">Loop bars ${k + 1} and ${k + 2}</option>`);
   }
+  if (P.spot && P.spot[1] - P.spot[0] > 1) opts.push(`<option value="${P.spot.join('-')}">Loop bars ${P.spot[0] + 1}–${P.spot[1] + 1}</option>`);
   $('#pSpot').innerHTML = opts.join(''); $('#pSpot').value = P.spot ? P.spot.join('-') : ''; $('#pSpot').disabled = nb <= 1;
+  renderExPassage(nb);
 }
-function exSetSpot(v) {
+function barRange(spot) { return spot[0] === spot[1] ? `Bar ${spot[0] + 1}` : `Bars ${spot[0] + 1}–${spot[1] + 1}`; }
+function renderExPassage(nb) {
+  P.wholeBars = nb;
+  const stamp = P.ex.id + ':' + P.step + ':' + nb, strip = $('#pBars');
+  if (strip.dataset.step !== stamp) {
+    strip.dataset.step = stamp;
+    strip.innerHTML = Array.from({length:nb}, (_, i) => `<button type="button" data-bar="${i}" aria-label="Go to bar ${i + 1}" title="Bar ${i + 1}; Shift-click to select a loop">${i + 1}</button>`).join('');
+    strip.scrollLeft = 0;
+  }
+  $$('#pBars button').forEach(b => b.classList.toggle('selected', !!P.spot && +b.dataset.bar >= P.spot[0] && +b.dataset.bar <= P.spot[1]));
+  $('#pPassageName').textContent = P.spot ? `${P.spot[1] - P.spot[0] + 1} of ${nb} bars` : `${nb} bar${nb === 1 ? '' : 's'}`;
+  $('#pWhole').hidden = !P.spot;
+  $('#pLoopBar').disabled = nb <= 1;
+  exBarPosition(P.running ? exPos() % P.L : P.viewPos);
+}
+function exBarPosition(pos) {
+  const index = (P.spot?.[0] || 0) + Math.min(Math.max(0, Math.ceil(P.L / P.bar) - 1), Math.floor(pos / P.bar));
+  const strip = $('#pBars'), current = strip.querySelector('[aria-current="true"]'), next = strip.querySelector(`[data-bar="${index}"]`);
+  if (current === next) return;
+  if (current) current.removeAttribute('aria-current');
+  if (next) {
+    next.setAttribute('aria-current','true');
+    if (P.running && !P.barDrag && !(P.barBrowseUntil > Date.now()) && !strip.contains(document.activeElement)) {
+      const left = next.offsetLeft - strip.offsetLeft;
+      if (left < strip.scrollLeft || left + next.offsetWidth > strip.scrollLeft + strip.clientWidth) strip.scrollLeft = left - strip.clientWidth / 2;
+    }
+  }
+}
+function exJumpBar(index, extend = false) {
+  if (!P.ex) return;
+  index = clamp(index, 0, P.wholeBars - 1);
+  if (P.running) exPause();
+  if (extend && P.barAnchor != null) {
+    const range = [Math.min(P.barAnchor,index), Math.max(P.barAnchor,index)];
+    exSetSpot(range.join('-')); exSeek(0);
+  } else {
+    P.barAnchor = index;
+    if (P.spot && (index < P.spot[0] || index > P.spot[1])) exSetSpot('');
+    exSeek((index - (P.spot?.[0] || 0)) * P.bar);
+  }
+}
+function exSetSpot(v, quiet = false) {
   const run = P.running; exStop();
-  if (v) { if (!P.spot) P.wholeBpm = P.bpm; P.spot = v.split('-').map(Number); P.spotClean = 0; P.bpm = Math.max(40, Math.round((P.wholeBpm || P.bpm) * 0.9)); toast('Part practice: loop just this spot, a little slower. After three clean runs, go back to the whole step.'); }
+  if (v) { if (!P.spot) P.wholeBpm = P.bpm; P.spot = v.split('-').map(Number); P.spotClean = 0; P.bpm = Math.max(40, Math.round((P.wholeBpm || P.bpm) * 0.9)); S.ui.exopts.loop = true; $('#pLoop').checked = true; if (!quiet) toast(`Looping ${barRange(P.spot).toLowerCase()} · ${P.bpm} bpm`); }
   else { P.spot = null; P.bpm = exStat(P.ex.id).bpm[P.step] || P.wholeBpm || P.bpm; }
   exRebuild(); P.cursor = 0; P.viewPos = 0; P.lastIdx = -2;
-  renderExMeta(); requestAnimationFrame(() => { exColors(true); exDraw(0); exBoard(0); exStatus(0, true); });
+  renderExMeta(); requestAnimationFrame(() => { const pos=P.running?exPos():P.viewPos; exColors(true); exDraw(pos); exBoard(evIndexAt(pos)); exStatus(pos, true); });
+  exSpotOptions(); practiceRemember();
   if (run) exStart();
+}
+function practiceExercise(x) { return x && EX.find(e => e.id === x.id && !exSkipped(e.id) && Number.isInteger(x.step) && e.steps[x.step]); }
+function practiceContext() {
+  if (!P.ex) return null;
+  const pos=clamp(P.running ? exPos() % P.L : P.viewPos,0,P.L);
+  return { id:P.ex.id, step:P.step, key:P.ex.keyed ? P.keyPc : null, bpm:P.bpm, spot:P.spot?.slice() || null, pos, end:pos>=P.L, labels:P.labels, t:Date.now() };
+}
+function practiceRemember() {
+  if (!P.ex || !playerVisible() || exSkipped(P.ex.id)) return;
+  S.practice.resume = practiceContext(); save();
+}
+function practiceDescription(x, e) {
+  const bar = e.steps[x.step].bar || 4, at = (x.spot?.[0] || 0) + Math.floor((x.pos || 0) / bar) + 1;
+  return [`Step ${x.step + 1}: ${e.steps[x.step].n}`, e.keyed ? keyName(x.key ?? e.key0,e) : '', x.spot ? barRange(x.spot) : x.end ? 'End of step' : `Bar ${at}`, `${x.bpm} bpm`].filter(Boolean).join(' · ');
+}
+function practiceRestore(context) {
+  const x = context && {...context, spot:context.spot?.slice() || null}, e = practiceExercise(x); if (!e) return;
+  if (e.keyed && Number.isInteger(x.key)) exStat(e.id).key = clamp(x.key,0,11);
+  exOpen(e.id,x.step);
+  if (x.spot && x.spot.every(Number.isInteger) && x.spot[0] >= 0 && x.spot[1] >= x.spot[0] && (x.spot[1] + 1) * P.bar <= P.L) exSetSpot(x.spot.join('-'),true);
+  P.bpm = clamp(x.bpm || e.steps[x.step].bpm,30,260);
+  if (['finger','degree','chord','note'].includes(x.labels)) P.labels = x.labels;
+  exSeek(x.pos || 0); renderExPlayer();
+}
+function practiceSaveSpot() {
+  if (!P.ex) return;
+  const x = practiceContext(), bar = (x.spot?.[0] || 0) + Math.min(Math.ceil(P.L / P.bar) - 1,Math.floor(x.pos / P.bar));
+  x.spot = x.spot || [bar,bar]; x.pos = 0; x.end = false;
+  const same = q => q.id === x.id && q.step === x.step && q.key === x.key && q.spot?.join('-') === x.spot.join('-');
+  S.practice.spots = [x,...S.practice.spots.filter(q => !same(q))].slice(0,80);
+  save(); renderPracticePlaces();
+  toast(`Saved ${barRange(x.spot).toLowerCase()}${P.ex.keyed ? ' in ' + keyName(P.keyPc) : ''} at ${P.bpm} bpm.`);
+}
+function practiceSpotRows(items, titles = true) {
+  return items.map(({x,e,index}) => `<div class="practice-spot"><button class="practice-spot-open" type="button" data-spot-open="${index}"><b>${esc(titles ? e.title : barRange(x.spot))}</b><span>${esc(practiceDescription(x,e))}</span></button><button class="btn sm spot-remove" type="button" data-spot-remove="${index}" aria-label="Remove saved ${esc(barRange(x.spot).toLowerCase())} from ${esc(e.title)}" title="Remove saved spot">×</button></div>`).join('');
+}
+function renderPracticePlaces() {
+  const items = S.practice.spots.map((x,index) => ({x,index,e:practiceExercise(x)})).filter(q => q.e && Array.isArray(q.x.spot));
+  $('#savedPractice').hidden = !items.length;
+  $('#savedPracticeCount').textContent = `(${items.length})`;
+  $('#savedPracticeList').innerHTML = $('#savedPractice').open ? practiceSpotRows(items) : '';
+  const own = items.filter(q => q.x.id === P.ex?.id);
+  $('#pSavedWrap').hidden = !own.length;
+  $('#pSavedCount').textContent = `(${own.length})`;
+  $('#pSavedSpots').innerHTML = $('#pSavedWrap').open ? practiceSpotRows(own,false) : '';
+  const x = S.practice.resume, e = practiceExercise(x), box = $('#practiceResume');
+  box.hidden = !e;
+  box.innerHTML = e ? `<div class="stack"><span class="label">Continue practicing</span><b>${esc(e.title)}</b><span class="small muted">${esc(practiceDescription(x,e))}</span></div><button class="btn" id="practiceResumeOpen" type="button">Resume practice →</button>` : '';
 }
 function clickLevel(d, cb) {
   const bi = Math.floor(cb / d.bar), beat = cb % d.bar;
@@ -2814,12 +2930,12 @@ function exLoopEnd(next) {
   if (keyChange || tempoChange) renderExMeta();
 }
 function exStatus(pos, force) {
-  const w = Math.min(P.L - 1e-6, Math.max(0, pos % P.L)), bar = Math.floor(w / P.bar) + 1, beat = Math.floor(w % P.bar) + 1;
+  const w = Math.min(P.L - 1e-6, Math.max(0, pos % P.L)), bar = Math.floor(w / P.bar) + (P.spot?.[0] || 0) + 1, beat = Math.floor(w % P.bar) + 1, total = P.spot ? P.wholeBars : Math.ceil(P.L / P.bar);
   let s;
   if (P.running && exCount() > 0) s = 'Count-in…';
   else if (P.running && P.preview) s = 'Listening: watch the tab and fretboard, hear the sound you are aiming for';
-  else if (!P.running) s = P.viewPos >= P.L ? 'Pass complete · Play again or scroll to a spot' : `${P.viewPos > 0 ? 'Paused' : 'Ready'} · bar ${bar} of ${Math.ceil(P.L / P.bar)} · beat ${beat} · ${P.viewPos > 0 ? 'Resume from here' : 'Play or choose a starting point'}`;
-  else s = `${P.spot ? 'Part practice · ' : ''}${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop && !exCycleOn() ? `Loop ${P.loops + 1} · ` : ''}bar ${bar} of ${Math.ceil(P.L / P.bar)} · ${P.bar === 7 ? '8th' : 'beat'} ${beat}`;
+  else if (!P.running) s = P.viewPos >= P.L ? 'Pass complete · Play again or scroll to a spot' : `${P.viewPos > 0 ? 'Paused' : 'Ready'} · bar ${bar} of ${total} · beat ${beat} · ${P.viewPos > 0 ? 'Resume from here' : 'Play or choose a starting point'}`;
+  else s = `${P.spot ? 'Part practice · ' : ''}${P.ex.keyed ? keyName(P.keyPc) + ' · ' : ''}${S.ui.exopts.loop && !exCycleOn() ? `Loop ${P.loops + 1} · ` : ''}bar ${bar} of ${total} · ${P.bar === 7 ? '8th' : 'beat'} ${beat}`;
   if (s !== P.status || force) { P.status = s; $('#pStatus').textContent = s; }
 }
 function exStepNote(dir) {
@@ -2926,8 +3042,9 @@ function exDraw(pos) {
   if(S.ui.exopts.loop)for(let i=0;i<2;i++){const data=forecast[i]?.data||P;segments.push({data,start:end,current:false});end+=data.L;}
   const local = pos >= P.L && !P.running ? P.L : Math.max(0, pos % P.L);
   const scroll = $('#pScroll'); scroll.max = P.L; scroll.value = local;
-  const location = local >= P.L ? 'End' : `Bar ${Math.floor(local / P.bar) + 1} · beat ${Math.floor(local % P.bar) + 1}`;
-  scroll.setAttribute('aria-valuetext', location); $('#pPosition').textContent = location + ` / ${Math.ceil(P.L / P.bar)} bars`;
+  const offset = P.spot?.[0] || 0, location = local >= P.L ? 'End' : `Bar ${Math.floor(local / P.bar) + offset + 1} · beat ${Math.floor(local % P.bar) + 1}`;
+  scroll.setAttribute('aria-valuetext', location); $('#pPosition').textContent = location + ` / ${P.spot ? P.wholeBars : Math.ceil(P.L / P.bar)} bars`;
+  exBarPosition(local);
   const extra=hasGrips ? 58 : 0;
   const top = 70+extra, sh = 27, left = 24, bot = top + 5 * sh, ph = Math.round(Math.min(W * 0.28, 190)), ppb = P.ppb;
   g.textBaseline = 'middle';
@@ -2938,7 +3055,7 @@ function exDraw(pos) {
     const segment=segments.find(d=>b>=d.start&&b<d.start+d.data.L)||segments.at(-1),rel=b-segment.start,bar=rel%segment.data.bar===0;
     g.strokeStyle = bar ? C.muted : C.line; g.lineWidth = bar ? 1.4 : 1; g.globalAlpha = bar ? 0.6 : 1;
     g.beginPath(); g.moveTo(x, top - 10); g.lineTo(x, bot + 10); g.stroke(); g.globalAlpha = 1;
-    if (bar && !P.hasCnt) { g.fillStyle = C.muted; g.font = '500 11px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ 1' : '1') : String(rel / segment.data.bar + 1), x + 4, bot + 22); }
+    if (bar && !P.hasCnt) { g.fillStyle = C.muted; g.font = '500 11px ' + MONO; g.textAlign = 'left'; g.fillText(rel === 0 ? (S.ui.exopts.loop ? '↺ ' : '') + (offset + 1) : String(rel / segment.data.bar + offset + 1), x + 4, bot + 22); }
   }
   for (let s = 0; s < 6; s++) {
     const y = top + s * sh; g.strokeStyle = C.muted; g.globalAlpha = 0.45; g.lineWidth = 0.8 + s * 0.3;
@@ -3170,6 +3287,7 @@ function renderExPlayer() {
   $('#pLab').value = P.labels; $$('#pLabSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === P.labels)); renderExKey();
   const selfTime = !!P.click; $('#pGuide').disabled = selfTime; $('#pGuideChip').title = selfTime ? 'Notes stay silent in this step so you keep the time. Listen first plays them once.' : '';
   renderExMeta(); renderExTransport();
+  practiceRemember(); renderPracticePlaces();
   requestAnimationFrame(() => { const pos = exPos(), idx = P.running ? evIndexAt(pos) : P.cursor; exColors(true); exDraw(pos); exBoard(idx); exStatus(pos, true); });
 }
 function renderExKey() {
@@ -4330,9 +4448,9 @@ function renderLibrary() {
     <div class="esspills">${ess.map(pill).join('')}</div>
     ${nx ? `<div class="weak"><div><div style="font-weight:500">Next: ${esc(nx.e.title)}</div><div class="small muted">${esc(nx.why)}</div></div><div class="ess-actions"><button class="btn primary" type="button" data-openex="${nx.id}">Practice</button><button class="btn sm" type="button" data-skipex="${nx.id}" aria-label="Too easy? Skip ${esc(nx.e.title)}" title="Move to Skipped exercises">Skip</button></div></div>` : ess.length ? '<p class="small">All available featured studies complete. Revisit them in another key, or build a new phrase from one sound.</p>' : '<p class="small">All featured studies are skipped. <button class="linkbtn" type="button" data-show-skipped>Open Skipped exercises</button> to restore one.</p>'}
     <div><button class="btn" type="button" data-go="exercises">See all studies</button></div>`;
-  renderSkippedExercises();
+  renderSkippedExercises(); renderPracticePlaces();
 }
-function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); }
+function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); renderPracticePlaces(); }
 
 /* ---------- tabs ---------- */
 const PRIMARY_TABS = ['today', 'learn', 'library', 'progress'];
@@ -4343,7 +4461,7 @@ function switchTab(t, fromHash) {
   if (!TABS.includes(t)) t = 'today';
   if (curTab === 'voicings' && t !== 'voicings') voStop();
   if (curTab === 'ear' && t !== 'ear') { clearTimeout(E.nextT); killBus(E.bus); }
-  if (curTab === (P.host || 'exercises') && t !== curTab) { routineRemember(); if(P.running)exPause(); }
+  if (curTab === (P.host || 'exercises') && t !== curTab) { routineRemember(); if(P.running)exPause(); else practiceRemember(); }
   if (curTab === 'tuner' && t !== 'tuner') { if (T.listening) tnStop(); if (T.refTone) { clearInterval(T.refTone); T.refTone = null; } }
   if (curTab === 'explorer' && t !== 'explorer' && X.bus) { killBus(X.bus); X.bus = null; $('#xPlay').textContent = 'Play this position'; }
   curTab = t;
@@ -4538,7 +4656,51 @@ $('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' 
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pFingers').onchange = e => { S.ui.exopts.fingers = e.target.checked; save(); renderExTransport(); exDraw(exPos()); exBoard(P.running ? evIndexAt(Math.min(exPos(), P.L - 1e-6)) : P.cursor); };
 $('#pPlay').onclick = exToggle;
-$('#pRestart').onclick = () => { const run = P.running, preview = P.preview; exStop(); if (run) exStart(preview); };
+$('#pRestart').onclick = () => { const run = P.running, preview = P.preview; exStop(); if (run) exStart(preview); else practiceRemember(); };
+$('#pBars').addEventListener('click',e=>{if(P.barSuppressClick){P.barSuppressClick=false;return;}const b=e.target.closest('[data-bar]');if(b)exJumpBar(+b.dataset.bar,e.shiftKey);});
+$('#pBars').addEventListener('keydown',e=>{
+  const b=e.target.closest('[data-bar]');if(!b)return;
+  const moves={ArrowLeft:-1,ArrowRight:1};
+  if(e.key in moves || e.key==='Home' || e.key==='End'){
+    e.preventDefault();e.stopPropagation();
+    const index=e.key==='Home'?0:e.key==='End'?P.wholeBars-1:clamp(+b.dataset.bar+moves[e.key],0,P.wholeBars-1);
+    $(`#pBars [data-bar="${index}"]`).focus();
+  }
+});
+$('#pBars').addEventListener('pointerdown',e=>{
+  P.barBrowseUntil=Date.now()+5000;
+  const b=e.target.closest('[data-bar]');if(!b || e.button || e.pointerType!=='mouse')return;
+  P.barDrag={start:+b.dataset.bar,end:+b.dataset.bar,x:e.clientX,moved:false};
+});
+$('#pBars').addEventListener('pointermove',e=>{
+  const d=P.barDrag;if(!d)return;if(!(e.buttons&1)){P.barDrag=null;return;}if(Math.abs(e.clientX-d.x)<6)return;
+  const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('#pBars [data-bar]');if(!b)return;
+  if(!d.moved){d.moved=true;if(P.running)exPause();$('#pBars').setPointerCapture(e.pointerId);}
+  d.end=+b.dataset.bar;
+  $$('#pBars button').forEach(b=>b.classList.toggle('selecting',+b.dataset.bar>=Math.min(d.start,d.end)&&+b.dataset.bar<=Math.max(d.start,d.end)));
+});
+function endBarSelection(e){
+  const d=P.barDrag;P.barDrag=null;$$('#pBars .selecting').forEach(b=>b.classList.remove('selecting'));
+  if(!d?.moved || e.type==='pointercancel')return;
+  P.barSuppressClick=true;setTimeout(()=>{P.barSuppressClick=false;},0);P.barAnchor=d.start;
+  exSetSpot([Math.min(d.start,d.end),Math.max(d.start,d.end)].join('-'));exSeek(0);
+}
+$('#pBars').addEventListener('pointerup',endBarSelection);
+$('#pBars').addEventListener('pointercancel',endBarSelection);
+window.addEventListener('pointerup',()=>{P.barDrag=null;});
+$('#pBars').addEventListener('lostpointercapture',()=>{P.barDrag=null;$$('#pBars .selecting').forEach(b=>b.classList.remove('selecting'));});
+$('#pBars').addEventListener('wheel',()=>{P.barBrowseUntil=Date.now()+5000;},{passive:true});
+$('#pLoopBar').onclick=()=>{const bar=(P.spot?.[0]||0)+Math.min(Math.ceil(P.L/P.bar)-1,Math.floor((P.running?exPos()%P.L:P.viewPos)/P.bar));if(P.running)exPause();P.barAnchor=bar;exSetSpot(`${bar}-${bar}`);exSeek(0);};
+$('#pWhole').onclick=()=>{if(P.running)exPause();exSetSpot('');exSeek(0);};
+$('#pSaveSpot').onclick=practiceSaveSpot;
+$('#savedPractice').addEventListener('toggle',renderPracticePlaces);
+$('#pSavedWrap').addEventListener('toggle',renderPracticePlaces);
+document.addEventListener('click',e=>{
+  const open=e.target.closest('[data-spot-open]'),remove=e.target.closest('[data-spot-remove]');
+  if(open)practiceRestore(S.practice.spots[+open.dataset.spotOpen]);
+  if(remove){S.practice.spots.splice(+remove.dataset.spotRemove,1);save();renderPracticePlaces();}
+  if(e.target.closest('#practiceResumeOpen'))practiceRestore(S.practice.resume);
+});
 $('#pScroll').addEventListener('input', e => exSeek(+e.target.value));
 $('#pScroll').addEventListener('keydown', e => {
   const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -P.bar, PageDown: P.bar };
@@ -4650,7 +4812,8 @@ document.addEventListener('keydown', e => {
   if (curTab === 'ear' && e.key === '0') { eAnswer(9); return; }
   if (curTab === 'fretboard' && S.ui.fmode === 'name') { const m = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[e.key.toLowerCase()]; if (m !== undefined) fName(m); }
 });
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { practiceRemember(); flush(); } });
+window.addEventListener('pagehide',()=>{practiceRemember();flush();});
 
 /* ---------- keyboard: tabs and rating ---------- */
 $('.tabs .inner').addEventListener('keydown', e => {

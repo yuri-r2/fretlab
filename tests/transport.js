@@ -157,8 +157,37 @@ fs.writeFileSync(tmp, source);
       return failures;
     });
     assert.deepEqual(failures, []);
+    await page.evaluate(()=>{
+      const t=window.__T;t.EX.push({id:'long_passage_test',cat:'Technique',title:'Long passage',keyed:'maj',key0:0,steps:[{n:'Bars',d:'',bpm:100,goal:140,goal0:140,bar:4,build:()=>({L:480,ev:Array.from({length:480},(_,i)=>({t:i,d:1,n:[{s:0,f:3,fg:1}]}))})}]});t.exOpen('long_passage_test',0);
+    });
+    assert.equal(await page.locator('#pBars button').count(),120,'every bar in a long exercise is reachable');
+    await page.click('#pBars [data-bar="5"]');
+    assert.equal(await page.evaluate(()=>window.__T.P.viewPos),20,'clicking a bar seeks to its exact beginning');
+    await page.click('#pPlay');
+    await page.click('#pBars [data-bar="9"]',{modifiers:['Shift']});
+    assert.deepEqual(await page.evaluate(()=>window.__T.P.spot),[5,9],'Shift-click selects an arbitrary range');
+    assert.equal(await page.locator('#pSpot').inputValue(),'5-9','the section selector represents longer custom ranges');
+    assert.equal(await page.evaluate(()=>window.__T.P.L),20);
+    assert.equal(await page.evaluate(()=>window.__T.P.running),false,'selecting a loop pauses outgoing playback');
+    assert.match(await page.locator('#pPosition').textContent(),/Bar 6.*120 bars/,'part practice retains original bar numbers');
+    await page.click('#pWhole');
+    const from=await page.locator('#pBars [data-bar="7"]').boundingBox(),to=await page.locator('#pBars [data-bar="2"]').boundingBox();
+    await page.mouse.move(from.x+from.width/2,from.y+from.height/2);await page.mouse.down();await page.mouse.move(to.x+to.width/2,to.y+to.height/2,{steps:8});await page.mouse.up();
+    assert.deepEqual(await page.evaluate(()=>window.__T.P.spot),[2,7],'reverse dragging snaps to whole bars');
+    assert.equal(await page.evaluate(()=>window.__T.P.running),false,'selecting a passage leaves playback paused');
+    await page.click('#pWhole');await page.locator('#pBars [data-bar="110"]').scrollIntoViewIfNeeded();await page.click('#pBars [data-bar="110"]');
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(resolve)));
+    assert.match(await page.locator('#pPosition').textContent(),/Bar 111/,'a deferred redraw retains the selected position');
+    await page.click('#pLoopBar');
+    assert.deepEqual(await page.evaluate(()=>window.__T.P.spot),[110,110],'Loop this bar uses the absolute location in a long exercise');
+    await page.click('#pBars [data-bar="110"]');
+    await page.press('#pBars [data-bar="110"]','Home');await page.press('#pBars [data-bar="0"]','Enter');
+    assert.equal(await page.evaluate(()=>window.__T.P.spot),null,'jumping outside the selected loop returns to the whole step');
+    assert.equal(await page.evaluate(()=>window.__T.P.viewPos),0);
+    assert.equal(await page.evaluate(()=>window.__T.P.bpm),100,'clearing part practice restores the whole-step tempo');
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'the long bar strip scrolls within its container at '+width);}
     assert.deepEqual(errors, []);
-    console.log('Pause/resume, scrolling, note selection, beat-aligned count-in resumes, tempo edits during count-in, full-pass history, twelve-key transitions, and +4 bpm loop timing\nOK');
+    console.log('Pause/resume, scrolling, note selection, beat-aligned count-ins, tempo edits, full-pass history, key transitions, +4 bpm timing, long-exercise bar navigation and passage selection\nOK');
   } finally {
     await browser.close(); fs.unlinkSync(tmp);
   }
