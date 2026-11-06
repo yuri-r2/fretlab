@@ -14,7 +14,7 @@ Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in T
 
 Twelve featured studies lead with advanced alternative, Midwest emo and shoegaze ideas. Five original four-step studies cover open-string changing harmony, one moving inner voice, motifs through changes, three-note cells across 4/4 and fourth stacks over a drone. They join FACGCE, drone/maj9/power-add9 studies, odd meters, delay rhythm and guide tones. Each new study ends with a constrained phrase-writing task; criteria describe voice balance, sustain, rests or pulse as well as clean notes.
 
-Choose any study. Today's automatic plan uses a short listening/map stage when the focus has one, then practice and application. Foundations and technique remain available through Learn and the full exercise search. **Too easy — skip** removes an exercise from automatic recommendations and reviews without marking it complete or altering its records. Reopen it and choose **Skipped · undo** to include it again.
+Choose any study. Today's automatic plan uses a short listening/map stage when the focus has one, then practice and application. Foundations and technique remain available through Learn and the full exercise search. **Skip** moves an exercise out of normal lists, search, favorites, history and practice plans without marking it complete or deleting its records. Open **Skipped exercises** in the Library and choose **Restore** to bring it back.
 
 The sources, app critique and remaining validation questions are in [Advanced practice research](ADVANCED_PRACTICE_RESEARCH.md).
 

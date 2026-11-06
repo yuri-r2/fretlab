@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
-const source = fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8').replace('/* ---------- boot ---------- */','window.__A = { S, EX, ADVANCED_STUDIES, ESSENTIALS, focusEx, exOpen, skipExercise, exStat, exDueList, P, AU, exForecast, exDraw, exStart, exStop, exSched, exSync, exPos, innerMoves, quartalMoves, vNotes };\n/* ---------- boot ---------- */');
+const source = fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8').replace('/* ---------- boot ---------- */','window.__A = { S, EX, ADVANCED_STUDIES, ESSENTIALS, focusEx, exOpen, skipExercise, exStat, exDueList, P, AU, exForecast, exDraw, exStart, exStop, exSched, exSync, exPos, innerMoves, quartalMoves, vNotes, rtBlocks, UNITS, R, routineBlock };\n/* ---------- boot ---------- */');
 const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,source);
 (async()=>{
  const browser=await chromium.launch();
@@ -29,9 +29,68 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
    skipExercise(id);check(focusEx().id===id && !exStat(id).done.some(Boolean),'undo restores the recommendation without marking it complete');
    return failures;
   });assert.deepEqual(result,[]);
-  await page.click('#pSkip');assert.equal(await page.locator('#pSkip').textContent(),'Skipped · undo');await page.waitForTimeout(1600);await page.reload();
+  await page.evaluate(()=>window.__A.exOpen('adv_pedals',0));
+  await page.click('#pSkip');
+  assert.equal(await page.locator('#exPlayer').isVisible(),false,'skipping closes the player');
+  assert.equal(await page.locator('#essCard [data-openex="adv_pedals"]').count(),0,'the skipped study disappears from Explore and develop');
+  assert.equal(await page.locator('#skippedExercises').getAttribute('open'),null,'the skipped folder stays closed');
+  assert.equal(await page.locator('#skippedList [data-skipped-ex]').count(),0,'skipped titles are absent until the folder is opened');
+  const skipBox=await page.locator('#essCard [data-skipex]').boundingBox(),practiceBox=await page.locator('#essCard .ess-actions [data-openex]').boundingBox();
+  assert.ok(skipBox.width<70 && Math.abs(skipBox.y+skipBox.height/2-practiceBox.y-practiceBox.height/2)<1,'Skip is compact and beside Practice');
+  await page.waitForTimeout(1600);await page.reload();
   assert.equal(await page.evaluate(()=>window.__A.S.exskip.includes('adv_pedals')),true,'skip survives reload');
-  await page.evaluate(()=>{window.__A.exOpen('adv_pedals',0);window.__A.skipExercise('adv_pedals');});
+  await page.evaluate(()=>{
+   const a=window.__A;
+   for(const id of ['sweeps','majcaged','rh_odd','cagedarp'])a.skipExercise(id);
+   a.S.exfav.push('adv_pedals','sweeps');
+   a.S.exlog.push({id:'adv_pedals',s:0,k:0,r:'clean',t:Date.now(),b:80});
+  });
+  await page.click('.tab[data-tab="library"]');await page.click('#view-library [data-go="exercises"]');
+  for(const id of ['adv_pedals','sweeps','majcaged','rh_odd','cagedarp'])assert.equal(await page.locator('#exList [data-ex="'+id+'"], #exRecent [data-ex="'+id+'"], #exRecent [data-res="'+id+'"]').count(),0,'hidden from normal lists and recents: '+id);
+  await page.fill('#exSearch','Open-string colors with a moving bass');
+  assert.equal(await page.locator('#exList [data-ex="adv_pedals"]').count(),0,'search excludes skipped studies');
+  await page.click('.tab[data-tab="today"]');
+  assert.equal(await page.locator('#rtFocus option[value="adv_pedals"], #upNext [data-openex="adv_pedals"]').count(),0,'Today excludes skipped studies');
+  assert.deepEqual(await page.evaluate(()=>['auto','quick','deep','writer'].flatMap(key=>window.__A.rtBlocks(key)).filter(b=>window.__A.S.exskip.includes(typeof b.ex==='function'?b.ex():b.ex)).map(b=>b.ex)),[],'every practice plan excludes skipped exercises');
+  await page.click('.tab[data-tab="progress"]');
+  assert.equal(await page.locator('#exHist [data-res="adv_pedals"], #exHistFilter option[value="adv_pedals"]').count(),0,'history hides skipped exercise rows without deleting records');
+  assert.equal(await page.evaluate(()=>window.__A.S.exlog.some(x=>x.id==='adv_pedals')),true,'history data is retained');
+  await page.click('.tab[data-tab="library"]');await page.click('#view-library [data-go="rhythm"]');
+  assert.equal(await page.locator('#rEx [data-ex="rh_odd"]').count(),0,'Rhythm hides skipped exercises');
+  await page.click('#libraryNav [data-go="explorer"]');await page.selectOption('#xScale','major');
+  assert.equal(await page.locator('#xEx [data-ex="majcaged"]').count(),0,'Scales hides skipped exercises');
+  await page.click('#libraryNav [data-go="voicings"]');
+  assert.equal(await page.locator('#chordCards [data-study="adv_pedals"]').count(),0,'related-study links hide skipped exercises');
+  await page.click('.tab[data-tab="learn"]');
+  const lesson=await page.evaluate(()=>{const u=window.__A.UNITS.find(u=>u.practice.some(p=>p.ex==='cagedarp'));return {id:u.id,index:u.practice.findIndex(p=>p.ex==='cagedarp')};});
+  await page.click('#lnUnits [data-unit="'+lesson.id+'"]');await page.click('#lnTabs [data-v="practice"]');
+  assert.equal(await page.locator('#lnPractice [data-prac="'+lesson.index+'"]').count(),0,'lesson practice links hide skipped exercises');
+  await page.click('.tab[data-tab="library"]');await page.click('#skippedExercises summary');
+  assert.equal(await page.locator('#skippedExercises').evaluate(n=>n.open),true,'the skipped folder opens');
+  await page.locator('#skippedList [data-skipped-ex]').first().waitFor();
+  assert.equal(await page.locator('#skippedList [data-skipped-ex]').count(),5,'skipped exercises are accessible in their folder');
+  await page.locator('#skippedList [data-skipex="adv_pedals"]').click();
+  assert.equal(await page.locator('#skippedList [data-skipped-ex="adv_pedals"]').count(),0,'Restore removes the exercise from the skipped folder');
+  assert.equal(await page.locator('#essCard [data-openex="adv_pedals"]').count(),2,'Restore returns the study pill and practice action');
+  assert.equal(await page.evaluate(()=>window.__A.S.exfav.includes('adv_pedals') && window.__A.S.exlog.some(x=>x.id==='adv_pedals')),true,'Restore retains favorites and history');
+  for(const id of ['sweeps','majcaged','rh_odd','cagedarp'])await page.locator('#skippedList [data-skipex="'+id+'"]').click();
+  assert.match(await page.locator('#skippedList').textContent(),/No skipped exercises/,'the empty folder is clear');
+  await page.evaluate(()=>window.__A.ESSENTIALS.forEach(x=>window.__A.skipExercise(x.id)));
+  assert.equal(await page.locator('#essCard .esspill').count(),0,'all skipped featured studies disappear');
+  assert.match(await page.locator('#essCard').textContent(),/All featured studies are skipped/,'skipping everything is not reported as completion');
+  await page.evaluate(()=>window.__A.ESSENTIALS.forEach(x=>window.__A.skipExercise(x.id)));
+  await page.evaluate(()=>window.__A.exOpen('adv_pedals',0));await page.click('.tab[data-tab="library"]');
+  await page.click('#essCard [data-skipex="adv_pedals"]');
+  assert.equal(await page.evaluate(()=>location.hash),'#library','skipping a cached exercise keeps the current page');
+  await page.click('#view-library [data-go="exercises"]');
+  assert.equal(await page.locator('#exPlayer').isVisible(),false,'a cached skipped player does not reopen when returning to Exercises');
+  await page.evaluate(()=>window.__A.skipExercise('adv_pedals'));
+  await page.evaluate(()=>{const a=window.__A;Object.assign(a.R,{key:'quick',blocks:[{tool:'exercises',ex:'adv_inner',m:2,t:'Current study'},{tool:'exercises',ex:'adv_inner',m:2,t:'Same study again'},{tool:'exercises',ex:'adv_motif',m:2,t:'Next study'}],idx:0,running:true,paused:false,waiting:false});a.routineBlock();});
+  await page.click('#pPlay');await page.click('#pSkip');
+  assert.equal(await page.evaluate(()=>window.__A.R.activeEx),'adv_motif','skipping the current session exercise advances to an available block');
+  assert.equal(await page.evaluate(()=>window.__A.P.running),false,'skipping stops the outgoing playback');
+  assert.equal(await page.evaluate(()=>window.__A.R.blocks.some(b=>b.ex==='adv_inner')),false,'skipped exercises disappear from the entire active plan');
+  await page.evaluate(()=>window.__A.skipExercise('adv_inner'));await page.click('#rpStop');
   await page.evaluate(()=>window.__A.exOpen('triads',0));await page.check('#pKeyCycle');await page.check('#pLadder');await page.click('#pBpm');await page.fill('#pBpmIn','80');await page.press('#pBpmIn','Enter');
   assert.match(await page.locator('#pUpcomingName').textContent(),/84 bpm/,'editing a paused tempo refreshes the upcoming tempo immediately');
   const transition=await page.evaluate(()=>{
@@ -62,6 +121,6 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
    colors.pairs.forEach(([name,bg,fg])=>assert.ok(ratio(bg,fg)>=7,name+' marker contrast '+colorScheme));colors.surfaces.forEach(([bg,fg])=>assert.ok(ratio(bg,fg)>=7,'muted text '+colorScheme));
    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'player fits '+width);}
   }
-  assert.deepEqual(errors,[]);console.log('Advanced voice leading and modal harmony, transfer tasks, reversible skipping, early key/tempo preparation, future notation, contrast and layouts\nOK');
+  assert.deepEqual(errors,[]);console.log('Advanced voice leading and modal harmony, transfer tasks, hidden skipped exercises and folder restoration, early key/tempo preparation, future notation, contrast and layouts\nOK');
  }finally{await browser.close();fs.unlinkSync(tmp);}
 })().catch(e=>{console.error(e);process.exitCode=1});
