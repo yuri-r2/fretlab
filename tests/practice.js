@@ -106,7 +106,7 @@ fs.writeFileSync(tmp, source);
     await page.evaluate(()=>{
       const t=window.__T;t.S.practice.spots=[{id:'adv_inner',step:1,key:5,bpm:85,spot:[1,2],pos:0,labels:'note'}];t.exStat('adv_inner').key=5;t.exOpen('adv_inner',1);t.exSetSelection([4.5,10.5]);t.P.bpm=85;t.P.labels='note';t.exSeek(6.375);
     });
-    assert.equal(await page.locator('#pSaveSpot,#pLoopBar,#pWhole,#pBars,#pSpot').count(),0,'passage buttons and the bar strip are removed');
+    assert.equal(await page.locator('#pSaveSpot,#pLoopBar,#pWhole,#pSpot').count(),0,'extra passage buttons are removed');
     await page.click('.tab[data-tab="today"]');
     assert.match(await page.locator('#practiceResume').textContent(),/F major.*85 bpm/);
     await page.reload();await page.click('#practiceResumeOpen');

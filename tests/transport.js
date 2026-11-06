@@ -7,7 +7,7 @@ const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8')
   .replace('/* ---------- boot ---------- */', `const timing = { notes: [], clicks: [], count: [] }, playEvent = exPlayEv;
 exPlayEv = (e, time, ...args) => { timing.notes.push({ beat: e.t, time }); return playEvent(e, time, ...args); };
 ['wood', 'beep'].forEach(name => { const sound = SND[name]; SND[name] = (time, ...args) => { timing[name === 'beep' ? 'count' : 'clicks'].push(time); return sound(time, ...args); }; });
-window.__T = { EX, P, S, AU, timing, exOpen, exStart, exStop, exPause, exPos, exSeek, exSched, exSync, exFrame, exReanchor, exListen, exSetSpot, exSetSelection, exCount, exLabel };
+window.__T = { EX, P, S, AU, timing, exOpen, exStart, exStop, exPause, exPos, exSeek, exSched, exSync, exFrame, exReanchor, exListen, exSetSpot, exSetSelection, exCount, exLabel, exDraw };
 /* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(), 'fretlab-transport.html');
 fs.writeFileSync(tmp, source);
@@ -160,7 +160,11 @@ fs.writeFileSync(tmp, source);
     await page.evaluate(()=>{
       const t=window.__T;t.EX.push({id:'long_passage_test',cat:'Technique',title:'Long passage',keyed:'maj',key0:0,steps:[{n:'Bars',d:'',bpm:100,goal:140,goal0:140,bar:4,build:()=>({L:480,ev:Array.from({length:960},(_,i)=>({t:i/2,d:.5,n:[{s:0,f:3,fg:1}]}))})}]});t.exOpen('long_passage_test',0);t.exSeek(20);
     });
-    assert.equal(await page.locator('#pPassage,#pBars,#pSpot,#pSaveSpot,#pLoopBar,#pWhole,#pUpcoming').count(),0,'extra passage buttons, bar strip and upcoming panel are absent');
+    assert.equal(await page.locator('#pPassage,#pSpot,#pSaveSpot,#pLoopBar,#pWhole,#pUpcoming').count(),0,'extra passage controls and the upcoming panel are absent');
+    assert.equal(await page.locator('#pBars [data-bar]').count(),120,'each bar has a jump button');
+    await page.click('#pBars [data-bar="5"]');assert.equal(await page.evaluate(()=>window.__T.P.viewPos),20);
+    await page.click('#pBars [data-bar="7"]',{modifiers:['Shift']});assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,32],'Shift-click selects bars from the jump row');
+    await page.press('#pCanvas','Escape');await page.evaluate(()=>window.__T.exSeek(20));
     await page.locator('#pCanvas').scrollIntoViewIfNeeded();
     const point=async beat=>page.locator('#pCanvas').evaluate((cv,beat)=>{const {P}=window.__T,r=cv.getBoundingClientRect();return{x:r.left+Math.round(Math.min(cv.clientWidth*.28,190))+(beat-(P.tabView??P.viewPos))*P.ppb,y:r.top+(cv.classList.contains('has-chords')?128:70)+54};},beat);
     async function drag(a,b){const from=await point(a),to=await point(b);await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move(to.x,to.y,{steps:8});await page.mouse.up();}
@@ -176,10 +180,23 @@ fs.writeFileSync(tmp, source);
     await page.mouse.move(edge.x-14,edge.y);await page.mouse.down();await page.mouse.move(resize.x-14,resize.y,{steps:8});await page.mouse.up();
     assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,23.5],'the right edge resizes to a note boundary');
     const left=await point(20),leftTo=await point(19.5);
-    await page.mouse.move(left.x-14,left.y);await page.mouse.down();await page.mouse.move(leftTo.x-14,leftTo.y,{steps:8});await page.mouse.up();
+    await page.mouse.move(left.x,left.y);await page.mouse.down();await page.mouse.move(leftTo.x-14,leftTo.y,{steps:8});await page.mouse.up();
     assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[19.5,23.5],'the left edge resizes independently');
     await page.press('#pCanvas','Escape');
     assert.equal(await page.evaluate(()=>window.__T.P.range),null,'Escape clears selection without changing tempo');
+    await page.evaluate(()=>window.__T.exSeek(20));
+    const nearStart=await point(20),nearEnd=await point(24);
+    await page.mouse.move(nearStart.x+8,nearStart.y);await page.mouse.down();await page.mouse.move(nearEnd.x-8,nearEnd.y,{steps:10});await page.mouse.up();
+    assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,24],'dragging near bar lines snaps to the exact whole bar');
+    await page.press('#pCanvas','Escape');await page.evaluate(()=>window.__T.exSeek(20));
+    const barPoint=await point(20.5);barPoint.y+=5*27-54+26;
+    await page.mouse.click(barPoint.x,barPoint.y);
+    assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,24],'clicking the bar-number area selects a whole bar');
+    await page.press('#pCanvas','Escape');await page.evaluate(()=>window.__T.exSeek(20));
+    const barEnd=await point(24.5);barEnd.y=barPoint.y;
+    await page.mouse.move(barPoint.x,barPoint.y);await page.mouse.down();await page.mouse.move(barEnd.x,barEnd.y,{steps:10});await page.mouse.up();
+    assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,28],'dragging the bar-number area selects complete bars');
+    await page.press('#pCanvas','Escape');
     await page.evaluate(()=>window.__T.exSeek(20));await page.press('#pCanvas','Shift+ArrowRight');
     assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,21],'keyboard selection uses the current note');
     await page.press('#pCanvas','Escape');await page.press('#pCanvas','ControlOrMeta+a');
@@ -196,8 +213,22 @@ fs.writeFileSync(tmp, source);
     assert.ok(panned>20,'dragging at an edge scrolls through a long exercise');
     await page.mouse.up();assert.ok(await page.evaluate(()=>window.__T.P.range[1]>24),'autoscroll extends the passage into offscreen notes');
     const stable=await page.evaluate(()=>window.__T.P.range.slice());
-    const handle=await point(stable[1]);await page.mouse.move(handle.x-14,handle.y);await page.mouse.down();await page.mouse.move(handle.x-60,handle.y,{steps:4});await page.press('#pCanvas','Escape');await page.mouse.up();
+    const handle=await point(stable[1]),inset=await page.evaluate(t=>Math.abs(t/window.__T.P.bar-Math.round(t/window.__T.P.bar))<1e-6?0:14,stable[1]);await page.mouse.move(handle.x-inset,handle.y);await page.mouse.down();await page.mouse.move(handle.x-60,handle.y,{steps:4});await page.press('#pCanvas','Escape');await page.mouse.up();
     assert.deepEqual(await page.evaluate(()=>window.__T.P.range),stable,'Escape cancels a resize without losing the original selection');
+    const boundaryLabels=await page.evaluate(()=>{
+      const t=window.__T,{P,S}=t,fail=[];t.EX.push({id:'bar_label_test',cat:'Technique',title:'Loop boundary',steps:[{n:'One bar',d:'',bpm:100,goal:140,goal0:140,build:()=>({L:4,ev:Array.from({length:8},(_,i)=>({t:i/2,d:.5,n:[{s:5,f:3,fg:2}]}))})}]});t.exOpen('bar_label_test',0);Object.assign(S.ui.exopts,{loop:true,keycycle:false,ladder:false});
+      P.forecast=null;P.previous={ev:P.ev,L:4,bar:4,keyPc:P.keyPc,tun:P.tun,names:P.names,hasCnt:false};
+      const cv=document.getElementById('pCanvas'),g=cv.getContext('2d'),fill=g.fillText;
+      for(const pos of [.1,3.2,3.99]){
+        const labels=[];g.fillText=function(text,x,y){if(y===227||y===cv.clientHeight-10)labels.push({text:String(text),x,y,width:g.measureText(String(text)).width});return fill.apply(this,arguments);};
+        P.tabView=null;t.exDraw(pos);
+        for(let i=0;i<labels.length;i++)for(let j=i+1;j<labels.length;j++)if(labels[i].y===labels[j].y&&labels[i].x<labels[j].x+labels[j].width&&labels[j].x<labels[i].x+labels[i].width)fail.push('overlapping transition labels at '+pos);
+        if(!labels.some(l=>l.y===227&&l.text.startsWith('↻ ')))fail.push('the loop entry label is missing at '+pos);
+        if(labels.some(l=>l.text==='↻'))fail.push('a redundant repeat marker remains below the bar labels');
+      }
+      g.fillText=fill;t.exOpen('long_passage_test',0);return fail;
+    });
+    assert.deepEqual(boundaryLabels,[],'previous/current/next loop boundaries have one readable label');
     const selectionTiming=await page.evaluate(()=>{
       const t=window.__T,{P,S,AU,timing}=t,fail=[];t.exSetSelection([20.5,22.5]);Object.assign(S.ui.exopts,{loop:true,count:false,keycycle:true,ladder:true});P.bpm=100;timing.notes.length=0;t.exStart();clearInterval(P.timer);cancelAnimationFrame(P.frame);
       let now=AU.ctx.currentTime;Object.defineProperty(AU.ctx,'currentTime',{configurable:true,get:()=>now});
@@ -208,7 +239,7 @@ fs.writeFileSync(tmp, source);
       if(!timing.notes.every(n=>n.beat>=20.5&&n.beat<22.5))fail.push('only selected note attacks are scheduled');
       if(!timing.notes.some(n=>n.beat===20.5&&Math.abs(n.time-boundary)<1e-6))fail.push('the opening note is scheduled on the next loop boundary');
       now=boundary+.001;t.exSync();if(P.bpm!==104||P.keyPc!==5||P.bus!==bus)fail.push('selection key/tempo transitions retain the same audio bus');
-      t.exStop();Object.assign(S.ui.exopts,{loop:false,keycycle:false,ladder:false,count:false});t.exSetSelection([20.5,22]);t.exStart();clearInterval(P.timer);cancelAnimationFrame(P.frame);
+      t.exStop();Object.assign(S.ui.exopts,{loop:true,keycycle:false,ladder:false,count:false});t.exSetSelection([20.5,22]);t.exStart();document.getElementById('pLoop').checked=false;document.getElementById('pLoop').dispatchEvent(new Event('change'));clearInterval(P.timer);cancelAnimationFrame(P.frame);
       now=P.startT+22*60/P.bpm+.01;t.exFrame();
       if(P.running||P.viewPos!==22)fail.push('one-pass playback stops at the selection end');
       t.exOpen('rh_swing',1);t.exSetSelection([.5,2]);S.ui.exopts.loop=true;P.bpm=100;timing.notes.length=0;t.exStart();clearInterval(P.timer);cancelAnimationFrame(P.frame);
@@ -220,8 +251,42 @@ fs.writeFileSync(tmp, source);
     assert.deepEqual(selectionTiming,[]);
     for(const colorScheme of ['light','dark']){await page.emulateMedia({colorScheme});await page.screenshot({path:path.join(os.tmpdir(),'fretlab-inline-selection-'+colorScheme+'.png')});}
     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'the selectable tab fits '+width);}
+    const touchContext=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+    const touchPage=await touchContext.newPage();touchPage.on('pageerror',e=>errors.push(e.message));await touchPage.goto('file://'+tmp);
+    await touchPage.evaluate(()=>window.__T.exOpen('adv_inner',1));
+    const button=touchPage.locator('#pBars [data-bar="1"]');await button.tap();
+    assert.equal(await touchPage.evaluate(()=>window.__T.P.viewPos),4,'touch bar buttons jump to the requested bar');
+    assert.ok((await button.boundingBox()).height>=44,'bar buttons have a touch-sized target');
+    const cdp=await touchContext.newCDPSession(touchPage),box=await button.boundingBox(),hold={x:box.x+box.width/2,y:box.y+box.height/2};
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[hold]});await touchPage.waitForFunction(()=>window.__T.P.range?.[0]===4&&window.__T.P.range?.[1]===8);await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    assert.deepEqual(await touchPage.evaluate(()=>window.__T.P.range),[4,8],'holding a bar button selects it without needing a keyboard');
+    await touchPage.locator('#pCanvas').scrollIntoViewIfNeeded();
+    const touchPoint=async(beat,y=178)=>touchPage.locator('#pCanvas').evaluate((cv,{beat,y})=>{const r=cv.getBoundingClientRect(),{P}=window.__T;return{x:r.left+Math.round(Math.min(cv.clientWidth*.28,190))+(beat-(P.tabView??P.viewPos))*P.ppb,y:r.top+y};},{beat,y});
+    async function touchDrag(a,b){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[a]});for(let i=1;i<=6;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:a.x+(b.x-a.x)*i/6,y:a.y+(b.y-a.y)*i/6}]});await touchPage.waitForTimeout(20);}await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}
+    const startEdge=await touchPoint(4),partial=await touchPoint(4.5);
+    await touchDrag({x:startEdge.x+18,y:startEdge.y},{x:partial.x-14,y:partial.y});
+    assert.deepEqual(await touchPage.evaluate(()=>window.__T.P.range),[4.5,8],'a finger can grab the selection edge 18 pixels from its visible line');
+    const partialEdge=await touchPoint(4.5),barEdge=await touchPoint(4);
+    await touchDrag({x:partialEdge.x-14,y:partialEdge.y},{x:barEdge.x+8,y:barEdge.y});
+    assert.deepEqual(await touchPage.evaluate(()=>window.__T.P.range),[4,8],'touch resizing snaps back to a nearby bar line');
+    const barArea=await touchPoint(4.5,293),touchCanvas=await touchPage.locator('#pCanvas').boundingBox();
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[barArea]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:touchCanvas.x+touchCanvas.width-2,y:barArea.y}]});
+    await touchPage.waitForFunction(()=>window.__T.P.tabDrag?.range?.[1]>8,null,{timeout:3000});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    const touchRange=await touchPage.evaluate(()=>window.__T.P.range.slice());
+    assert.ok(touchRange[0]===4&&touchRange[1]>8&&touchRange.every(n=>n%4===0),'dragging the bar-number area selects and autoscrolls by whole bars');
+    const before=await touchPage.evaluate(()=>scrollY),vertical=await touchPoint(10);
+    vertical.x=touchCanvas.x+70;await touchDrag(vertical,{x:vertical.x,y:vertical.y-80});
+    await touchPage.waitForFunction(y=>scrollY>y,before,{timeout:2000});
+    assert.deepEqual(await touchPage.evaluate(()=>window.__T.P.range),touchRange,'vertical scrolling preserves the selected passage');
+    await touchPage.evaluate(()=>window.__T.exSeek(0));await touchPage.locator('#pCanvas').scrollIntoViewIfNeeded();
+    const outsideTouch=await touchPoint(0);await touchPage.touchscreen.tap(outsideTouch.x,outsideTouch.y);
+    assert.equal(await touchPage.evaluate(()=>window.__T.P.range),null,'a touch outside the selection clears it');
+    assert.ok(await touchPage.locator('#pCanvas').evaluate(n=>getComputedStyle(n).touchAction.includes('pinch-zoom')),'the tab allows browser pinch zoom');
+    assert.equal(await touchPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'touch controls fit the phone viewport');
+    await touchPage.screenshot({path:path.join(os.tmpdir(),'fretlab-touch-bar-selection.png')});await touchContext.close();
     assert.deepEqual(errors, []);
-    console.log('Pause/resume, scrolling, note selection, beat-aligned count-ins, tempo edits, full-pass history, key transitions, +4 bpm timing, direct note selection, resizing, autoscroll, keyboard selection and exact selected-loop timing\nOK');
+    console.log('Pause/resume, scrolling, note selection, beat-aligned count-ins, tempo edits, full-pass history, key transitions, +4 bpm timing, bar buttons, magnetic snapping, clean loop labels, mouse/touch selection, resizing, autoscroll, keyboard selection and exact selected-loop timing\nOK');
   } finally {
     await browser.close(); fs.unlinkSync(tmp);
   }
