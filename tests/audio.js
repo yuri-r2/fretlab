@@ -6,7 +6,7 @@ const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace('/* ---------- boot ---------- */', `
 const scheduled = [], playEvent = exPlayEv;
 exPlayEv = (...args) => { scheduled.push({ beat: args[0].t, destination: args[3], preview: P.preview }); return playEvent(...args); };
-window.__A = { S, P, R, M, AU, EX, scheduled, ac, bus, pluck, tone, ksBuffer, SND, exOpen, exStart, exStop, exSeek, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
+window.__A = { S, P, R, M, AU, EX, scheduled, ac, bus, pluck, strum, tone, ksBuffer, SND, exOpen, exStart, exStop, exSeek, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
 /* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(), 'fretlab-audio.html');
 fs.writeFileSync(tmp, source);
@@ -75,6 +75,8 @@ fs.writeFileSync(tmp, source);
         a.AU.ctx = null; a.AU.ks.clear(); Object.assign(a.S.settings, { vol: 0.8, nvol: notes, cvol: 1, muted }); a.ac();
         if (kind === 'direct') a.pluck(40, 0.3, null, 0.6, 2.6);
         else if (kind === 'bus') a.pluck(52, 0.3, a.bus(), 0.6, 1.6);
+        else if (kind === 'chord') a.strum([40, 47, 52, 56, 59, 64], 0.3, null, 0.018, 0.65, 2.6);
+        else if (kind === 'fast') for (let i = 0; i < 24; i++) a.pluck([52, 55, 59, 64][i % 4], 0.3 + i * 0.1, null, 0.72, 0.26);
         else if (kind === 'click') a.SND.wood(0.3, 3, a.AU.click);
         else a.tone(40, null, kind);
         const bufferSeconds = kind === 'direct' ? a.ksBuffer(40, 2.6).duration : null;
@@ -84,6 +86,7 @@ fs.writeFileSync(tmp, source);
       }
       try {
         results.long = await render('direct');
+        results.chord = await render('chord'); results.fast = await render('fast');
         for (const kind of ['direct', 'bus', 'pure', 'fifth', 'warm']) results[kind] = await render(kind, 0);
         results.click = await render('click', 0);
         results.masterMute = await render('click', 1, true);
@@ -92,9 +95,45 @@ fs.writeFileSync(tmp, source);
     });
     assert.ok(rendered.long.bufferSeconds > 2.6 && rendered.long.sustain > 0.000001, 'a long low note continues beyond the old 2.2 second buffer');
     assert.ok(rendered.long.tail < 0.000001 && rendered.long.peak < 1 && rendered.long.rms > 0.001, 'the rendered note ends quietly without clipping');
+    for (const kind of ['chord', 'fast']) assert.ok(rendered[kind].peak < 0.98 && rendered[kind].rms > 0.01 && rendered[kind].tail < 0.000001, kind + ' stays audible without clipping or lingering after its release');
     for (const kind of ['direct', 'bus', 'pure', 'fifth', 'warm']) assert.ok(rendered[kind].rms < 0.000001, kind + ' respects a zero Notes and tones level');
     assert.ok(rendered.click.rms > 0.001 && rendered.masterMute.rms < 0.000001, 'click remains independent of Notes and tones and respects master mute');
+    const strings = await page.evaluate(() => {
+      const a = window.__A, results = [];
+      a.AU.ks.clear();
+      for (const sr of [44100, 48000]) {
+        a.AU.ctx = new OfflineAudioContext(1, sr * 4, sr);
+        for (const a4 of [432, 440, 442]) {
+          a.S.settings.a4 = a4;
+          for (const m of [36, 40, 52, 64, 76, 88]) {
+            let previous;
+            for (let variant = 0; variant < 3; variant++) {
+              const buffer = a.ksBuffer(m, 2.6, variant), d = buffer.getChannelData(0);
+              if (a.ksBuffer(m, 2.6, variant) !== buffer) throw Error('String buffer cache miss');
+              const f = a4 * 2 ** ((m - 69) / 12), period = sr / f, lo = Math.floor(period * 0.96), hi = Math.ceil(period * 1.04), n = Math.round(sr * 0.12), offset = n, corr = [];
+              for (let lag = lo - 1; lag <= hi + 1; lag++) {
+                let xy = 0, xx = 0, yy = 0;
+                for (let i = offset; i < offset + n; i++) { const x = d[i], y = d[i + lag]; xy += x * y; xx += x * x; yy += y * y; }
+                corr.push(xy / Math.sqrt(xx * yy));
+              }
+              let idx = 1; for (let i = 2; i < corr.length - 1; i++) if (corr[i] > corr[idx]) idx = i;
+              const x = corr[idx - 1], y = corr[idx], z = corr[idx + 1], lag = lo - 1 + idx + 0.5 * (x - z) / (x - 2 * y + z);
+              const rms = (from, to) => { let sum = 0; for (let i = Math.floor(from * sr); i < to * sr; i++) sum += d[i] * d[i]; return Math.sqrt(sum / ((to - from) * sr)); };
+              let difference = 0; if (previous) for (let i = 0; i < n; i++) difference += Math.abs(d[i] - previous[i]);
+              results.push({ sr, a4, m, variant, cents: 1200 * Math.log2(sr / lag / f), early: rms(0.03, 0.09), late: rms(0.7, 0.8), sustain: rms(2.4, 2.5), difference, finite: d.every(Number.isFinite), peak: d.reduce((max, x) => Math.max(max, Math.abs(x)), 0) });
+              previous = d;
+            }
+          }
+        }
+      }
+      return { results, cacheSize: a.AU.ks.size };
+    });
+    assert.ok(strings.results.every(n => n.finite && n.peak <= 0.801 && Math.abs(n.cents) < 1), 'strings stay in tune and finite across pitches, pick variants, reference tunings and sample rates');
+    assert.ok(Math.max(...strings.results.map(n => n.early)) / Math.min(...strings.results.map(n => n.early)) < 1.4, 'string loudness stays consistent across the fretboard');
+    assert.ok(strings.results.every(n => n.late < n.early && (n.m > 76 || n.sustain > 0.0001)), 'strings decay naturally while retaining low and upper-register sustain');
+    assert.ok(strings.results.filter(n => n.variant).every(n => n.difference > 0.1), 'repeated picks vary in tone without changing pitch');
+    assert.ok(strings.cacheSize <= 96, 'string cache stays bounded across tunings and sample rates');
     assert.deepEqual(errors, []);
-    console.log('Listen first opening notes, session audio pause/resume/end, finger label independence, live tempo preview, sticky toolbar, and rendered audio sustain/mixer routing\nOK');
+    console.log('Listen first opening notes, session audio pause/resume/end, finger labels, live tempo preview, sticky toolbar, rendered sustain/mixer routing, tuned string variants, balanced dynamics and polyphonic headroom\nOK');
   } finally { await browser.close(); fs.unlinkSync(tmp); }
 })().catch(e => { console.error(e); process.exitCode = 1; });

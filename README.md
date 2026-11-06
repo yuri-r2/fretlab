@@ -78,7 +78,7 @@ Instrument Sans provides the headings, controls and instructions; IBM Plex Mono 
 
 ## Checks
 
-Audio checks render the actual sound graph to check note sustain, quiet endings, master mute and separate note/click levels. They also cover opening notes with Notes off or click-only steps, session Pause/Resume/End, independent finger annotations, immediate tempo previews and the desktop chord toolbar.
+Audio checks render the actual sound graph to check note sustain, quiet endings, polyphonic headroom, master mute and separate note/click levels. String checks measure pitch, dynamics, decay and pick variation at 44.1/48 kHz and A4 = 432/440/442 Hz. They also cover opening notes with Notes off or click-only steps, session Pause/Resume/End, independent finger annotations, immediate tempo previews and the desktop chord toolbar.
 
 Advanced checks verify the moving inner voices and modal spellings, creative tasks, reversible skip behavior, early key/tempo previews, future-note selection, light/dark label contrast and responsive layouts.
 
@@ -102,6 +102,8 @@ In an exercise: **Space** plays or stops, **1** / **2** / **3** rate the run Cle
 ## Volume
 
 The speaker button in the header opens a mixer: **Master** with **Mute**, plus separate **Guitar notes** (the guide sound in exercises and play-alongs) and **Click & drums** (metronome, count-ins and drum backing) levels, each up to 150%. The same two sliders sit next to the *Hear the notes* and *Click* switches inside every exercise. Press **M** anywhere to mute or unmute. On iPhone, sound plays even with the silent switch on.
+
+Guitar notes use a self-contained plucked-string model with fractional tuning, a shaped pick attack, body coloration and progressively softer overtones. Three pick variants keep repeated notes from sounding identical while retaining exact pitch and timing; fuller strums have balanced levels. The synthesis draws on the tuning, excitation and damping methods described in Julius O. Smith's [Physical Audio Signal Processing](https://dsprelated.com/freebooks/pasp/Electric_Guitars.html) and Ben Lynn's [Karplus–Strong explanation](https://theory.stanford.edu/~blynn/sound/karplusstrong.html). No sound downloads are needed, including offline.
 
 ## Appearance
 
