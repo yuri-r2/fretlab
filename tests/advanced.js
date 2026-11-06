@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
-const source = fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8').replace('/* ---------- boot ---------- */','window.__A = { S, EX, ADVANCED_STUDIES, ESSENTIALS, focusEx, exOpen, skipExercise, exStat, exDueList, P, AU, exForecast, exDraw, exStart, exStop, exSched, exSync, exPos, innerMoves, quartalMoves, vNotes, rtBlocks, UNITS, R, routineBlock };\n/* ---------- boot ---------- */');
+const source = fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8').replace('/* ---------- boot ---------- */','window.__A = { S, EX, ADVANCED_STUDIES, ESSENTIALS, focusEx, exOpen, exSetSelection, skipExercise, exStat, exDueList, P, AU, exForecast, exUpcoming, exDraw, exStart, exStop, exSched, exSync, exPos, innerMoves, quartalMoves, vNotes, rtBlocks, UNITS, R, routineBlock };\n/* ---------- boot ---------- */');
 const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,source);
 (async()=>{
  const browser=await chromium.launch();
@@ -92,7 +92,7 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
   assert.equal(await page.evaluate(()=>window.__A.R.blocks.some(b=>b.ex==='adv_inner')),false,'skipped exercises disappear from the entire active plan');
   await page.evaluate(()=>window.__A.skipExercise('adv_inner'));await page.click('#rpStop');
   await page.evaluate(()=>window.__A.exOpen('triads',0));await page.check('#pKeyCycle');await page.check('#pLadder');await page.click('#pBpm');await page.fill('#pBpmIn','80');await page.press('#pBpmIn','Enter');
-  assert.match(await page.locator('#pUpcomingName').textContent(),/84 bpm/,'editing a paused tempo refreshes the upcoming tempo immediately');
+  assert.match(await page.evaluate(()=>window.__A.exUpcoming(window.__A.P.viewPos,window.__A.exForecast()).text),/84 bpm/,'editing a paused tempo refreshes the inline tempo cue immediately');
   const transition=await page.evaluate(()=>{
    const {S,P,AU,exOpen,exStart,exStop,exForecast,exDraw,exPos,exSched,exSync}=window.__A,failures=[],check=(ok,msg)=>{if(!ok)failures.push(msg);};
    exOpen('triads',0);Object.assign(S.ui.exopts,{loop:true,count:false,keycycle:true,ladder:true});P.bpm=80;exStart();clearInterval(P.timer);cancelAnimationFrame(P.frame);
@@ -102,7 +102,7 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
    now=boundary-P.bar*60/P.bpm;const pos=exPos(),cv=document.getElementById('pCanvas'),g=cv.getContext('2d'),draws=[],fill=g.fillText;
    g.fillText=function(t,x,y){draws.push({t:String(t),x,y});return fill.apply(this,arguments);};exDraw(pos);g.fillText=fill;
    check(P.loopQueue.length===0,'visual preparation begins before audio lookahead');
-   check(!document.getElementById('pUpcoming').hidden && document.getElementById('pUpcomingWhen').textContent==='in 4 beats','the final bar has an explicit countdown');
+   check(!document.getElementById('pUpcoming') && draws.some(d=>d.t.includes('84 bpm')&&d.t.includes('in 4 beats')&&d.y===cv.clientHeight-10),'the final bar has an inline key/tempo countdown in the tablature');
    const edge=Math.round(Math.min(cv.clientWidth*.28,190))+(P.L-pos)*P.ppb,first=next.data.ev[0];
    check(first.n.every(n=>draws.some(d=>d.t===String(n.f)&&Math.abs(d.x-edge)<1 && Math.abs(d.y-(128+n.s*27+.5))<1)),'the approaching loop contains the actual new-key fret numbers');
    now=boundary-.12;exSched();now=boundary+.001;exSync();
@@ -110,6 +110,18 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
    check(P.previous.keyPc===old && P.bus===bus,'previous-key notation and sounding audio survive the boundary');
    exStop();return failures;
   });assert.deepEqual(transition,[]);
+  const selectedPreview=await page.evaluate(()=>{
+   const a=window.__A,{P,S,AU}=a;a.exOpen('triads',0);Object.assign(S.ui.exopts,{loop:true,count:false,keycycle:true,ladder:true});P.bpm=80;a.exSetSelection([.5,2]);a.exStart();clearInterval(P.timer);cancelAnimationFrame(P.frame);
+   const boundary=P.startT+2*60/80,now=boundary-.25*60/80;Object.defineProperty(AU.ctx,'currentTime',{configurable:true,get:()=>now});
+   const next=a.exForecast()[0],g=document.getElementById('pCanvas').getContext('2d'),draws=[],fill=g.fillText;g.fillText=function(t,x,y){draws.push({t:String(t),x,y});return fill.apply(this,arguments);};a.exDraw(a.exPos());g.fillText=fill;
+   const first=next.data.ev.find(e=>e.t>=.5),x=Math.round(Math.min(g.canvas.clientWidth*.28,190))+(.25+first.t-.5)*P.ppb;
+   return {key:next.data.keyPc,x,frets:first.n.every(n=>draws.some(d=>d.t===String(n.f)&&Math.abs(d.x-x)<1&&Math.abs(d.y-(128+n.s*27+.5))<1)),cue:draws.some(d=>d.t.includes('84 bpm')&&d.y===g.canvas.clientHeight-10)};
+  });
+  assert.ok(selectedPreview.frets&&selectedPreview.cue,'a selected passage shows its next-key frets and tempo inside the tablature: '+JSON.stringify(selectedPreview));
+  const selectedBox=await page.locator('#pCanvas').boundingBox();await page.mouse.click(selectedBox.x+selectedPreview.x,selectedBox.y+180);
+  assert.equal(await page.evaluate(()=>window.__A.P.keyPc),selectedPreview.key,'clicking the next selected loop adopts the key actually shown');
+  assert.deepEqual(await page.evaluate(()=>window.__A.P.range),[.5,2]);
+  await page.evaluate(()=>{const a=window.__A;delete a.AU.ctx.currentTime;a.exSetSelection(null);a.exStop();});
   const jump=await page.evaluate(()=>{const a=window.__A;a.P.viewPos=a.P.L-2;a.exDraw(a.P.viewPos);return {key:a.exForecast()[0].data.keyPc,x:Math.round(Math.min(document.getElementById('pCanvas').clientWidth*.28,190))+2*a.P.ppb};});
   const bounds=await page.locator('#pCanvas').boundingBox();await page.mouse.click(bounds.x+jump.x,bounds.y+80);
   assert.equal(await page.evaluate(()=>window.__A.P.keyPc),jump.key,'clicking upcoming notation prepares that key');assert.equal(await page.evaluate(()=>window.__A.P.viewPos),0,'the first future note becomes the start position');

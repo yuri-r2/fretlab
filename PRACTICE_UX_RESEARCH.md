@@ -1,26 +1,16 @@
-# Practice UX: patterns worth borrowing
+# Practice UX: direct selection in the tablature
 
-Reviewed November 6, 2026. This comparison uses public product documentation. It establishes what the products offer, rather than ranking their teaching effectiveness.
+Reviewed November 6, 2026. These public product documents establish interaction patterns rather than comparative teaching effectiveness.
 
-## Findings
-
-| Product and source | Useful pattern | Decision for Fretlab |
+| Source | Useful pattern | Fretlab behavior |
 | --- | --- | --- |
-| [Soundslice: looping](https://www.soundslice.com/help/en/player/basic/4/looping/) | Select a passage directly in the music, with boundaries that snap to musical positions. | Use a compact whole-step bar strip. Click to seek, drag or Shift-click to choose a range, and keep a native section selector as another route. Whole bars provide predictable entrances for the existing count-in and part-practice system. |
-| [Soundslice: practice lists and saved loops](https://www.soundslice.com/blog/214/introducing-practice-lists/) | Keep specific passages so the next practice session can return directly to the problem. | Save a bar range with its exercise, step, key, tempo and labels. Keep spots beside the exercise and in a Library folder; provide exact last-position resume on Today. |
-| [TrueFire: interactive tab player](https://blog.truefire.com/announcements/our-interactive-video-synced-tab-just-got-a-major-upgrade/) | Connect looping, speed training, saved clips and notation navigation in the player. | Put passage controls beside the tab, alongside the existing loop, count-in, tempo ladder and future-key cues. Preserve timing and avoid adding another player or separate editing destination. |
-| [Pickup Music: homepage and learning pathways](https://help.pickupmusic.com/en/articles/10513850-navigating-the-homepage) | Make the personal learning plan easy to reach, and connect a concept with guided practice and a musical application. | Keep Fretlab's existing hear → practice → variation → write sequence and time-budgeted routines. Add a direct Continue practicing card so an experienced player can resume a specific problem instead of choosing material again. |
+| [Guitar Pro: managing selections](https://www.guitar-pro.com/docs/gp8/basics/first-steps/click) | Drag across beats or bars in the score; resize the highlighted region by its edges; use the existing loop control for playback. | Select directly over tab notes. Snap to event boundaries, show the surrounding score, and resize from either edge. Keep the chosen tempo and the existing Loop switch. |
+| [Guitar Pro: keyboard shortcuts](https://support.guitar-pro.com/hc/en-us/articles/360001646978-GP8-List-of-keyboard-shortcuts) | Keyboard commands extend a selection through beats or bars. | Shift-arrows extend through notes; Shift-Home/End extend to the step boundary. Ctrl/Cmd+A selects the whole step when the tab has focus. |
+| [Soundslice: looping](https://www.soundslice.com/help/en/player/basic/4/looping/) | Create and resize a passage in the music, snapping to musical positions. | Show a quiet selection tint and draggable edges within the tab. Edge dragging autoscrolls for longer passages. Click outside or use Esc to clear. |
+| [TrueFire: interactive tab player](https://blog.truefire.com/announcements/our-interactive-video-synced-tab-just-got-a-major-upgrade/) | Connect looping, speed practice and notation navigation in one player. | Keep the existing player and transport. Show the next key, tempo and actual incoming notes in the tablature instead of a separate preparation panel. |
 
-## Scope and interaction decisions
+The passage toolbar, numbered bar strip and Save spot action are removed. Direct selection provides the practice interaction without another row of controls. Old saved spots remain readable in Library, and Today can resume a selection and exact position after a reload.
 
-The useful opportunity was navigation within the material already present. Fretlab already has learning units, featured studies, practice plans, ratings, spaced reviews and creative transfer. Another course catalog or another progress score would duplicate those systems.
+A selection uses absolute musical beats and retains the whole step's data. Playback schedules only attacks within the selected interval. Its audio time origin is distinct from its audible entry time, allowing nonzero starts, seamless repeats and key or tempo changes. Invertible swing timing keeps the score cursor and audio aligned for offbeat selections. Count-in leads into the interrupted beat while keeping notes outside the selection silent.
 
-The bar strip represents the entire step, including when only a passage is playing. Selected bars are tinted; the current bar has the same amber cue as the tab playhead. Original bar numbers stay consistent across the strip, tablature and status text. A native selector, keyboard navigation and the one-click Loop this bar action supplement mouse selection.
-
-Selecting a passage pauses playback so its entrance is deliberate. It uses the existing part-practice tempo reduction and restores the whole-step tempo when cleared. Restoring a saved spot uses its saved tempo directly and leaves audio paused. Saving the same exercise, step, key and range updates that spot. Skipping an exercise hides its spots and resume suggestion while preserving them for restoration.
-
-The existing Inked colors, typography and small sheet-music chord boxes remain the visual foundation. No third-party course material, audio, branding or artwork is included.
-
-## Verification
-
-Practice and transport tests exercise a 120-bar passage, forward and reverse selection, keyboard seeking, clearing a loop, saved context, reload during playback and skip/restore behavior. Desktop layout and audio timing checks remain part of the ten-suite release checks. Screenshots are reviewed in light and dark mode.
+Tests cover direct and reverse selection, edge resizing, cancellation, keyboard extension, autoscroll, a 120-bar exercise, straight and swung loops, incoming-key notation, reload resume and legacy saved spots. Desktop light/dark screenshots and the ten-suite release checks remain part of verification.

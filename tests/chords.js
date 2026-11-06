@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8')
-  .replace('/* ---------- boot ---------- */',`const tabGrips=[],renderGrip=drawTabGrip;drawTabGrip=(g,move,x,color)=>{const fingers=[],fill=g.fillText;g.fillText=function(text,...args){if(this.font.startsWith('600 7px'))fingers.push(String(text));return fill.call(this,text,...args);};tabGrips.push({move,x,fingers,alpha:g.globalAlpha});try{return renderGrip(g,move,x,color);}finally{g.fillText=fill;}};window.__C = { CHORD_GRIPS, CHORD_QUALITIES, CHORD_GENRES, chordCatalog, vNotes, vBox, TUNE, S, P, EX, AU, exOpen, exSeek, exStart, exStop, exSched, exSync, exWithGrips, exDraw, innerMoves, drawTabGrip, tabGrips };\n/* ---------- boot ---------- */`);
+  .replace('/* ---------- boot ---------- */',`const tabGrips=[],renderGrip=drawTabGrip;drawTabGrip=(g,move,x,color)=>{const fingers=[],fill=g.fillText;g.fillText=function(text,...args){if(this.font.startsWith('600 7px'))fingers.push(String(text));return fill.call(this,text,...args);};tabGrips.push({move,x,fingers,alpha:g.globalAlpha});try{return renderGrip(g,move,x,color);}finally{g.fillText=fill;}};window.__C = { CHORD_GRIPS, CHORD_QUALITIES, CHORD_GENRES, chordCatalog, vNotes, vBox, TUNE, S, P, EX, AU, exOpen, exSetSelection, exSeek, exStart, exStop, exSched, exSync, exWithGrips, exDraw, innerMoves, drawTabGrip, tabGrips };\n/* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(),'fretlab-chords.html');fs.writeFileSync(tmp,source);
 (async()=>{
  const browser=await chromium.launch();
@@ -103,7 +103,7 @@ const tmp = path.join(os.tmpdir(),'fretlab-chords.html');fs.writeFileSync(tmp,so
   await page.check('#pFingers');assert.ok((await page.evaluate(()=>window.__C.snapshot())).some(d=>d.fingers.length>0));
   await page.selectOption('#pKey','5');await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('Fmaj9.'));
   assert.deepEqual((await page.evaluate(()=>window.__C.snapshot())).find(d=>d.name==='Fmaj9').frets,['×','8','7','9','8','×'],'manual keys transpose chord boxes');
-  await page.selectOption('#pSpot','1-1');await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('F6/9.'));
+  await page.evaluate(()=>window.__C.exSetSelection([4,8]));await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('F6/9.'));
   assert.deepEqual((await page.evaluate(()=>window.__C.snapshot()))[0].frets,['×','8','7','7','8','×'],'section practice retains the authored grip');
   const geometry=await page.evaluate(()=>{
    const a=window.__C,canvas=document.createElement('canvas'),g=canvas.getContext('2d'),circles=[],arc=g.arc.bind(g),move=a.innerMoves(0)[0];
