@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8')
-  .replace('/* ---------- boot ---------- */','window.__C = { CHORD_GRIPS, CHORD_QUALITIES, CHORD_GENRES, chordCatalog, vNotes, vBox, TUNE, S };\n/* ---------- boot ---------- */');
+  .replace('/* ---------- boot ---------- */',`const tabGrips=[],renderGrip=drawTabGrip;drawTabGrip=(g,move,x,color)=>{const fingers=[],fill=g.fillText;g.fillText=function(text,...args){if(this.font.startsWith('600 7px'))fingers.push(String(text));return fill.call(this,text,...args);};tabGrips.push({move,x,fingers,alpha:g.globalAlpha});try{return renderGrip(g,move,x,color);}finally{g.fillText=fill;}};window.__C = { CHORD_GRIPS, CHORD_QUALITIES, CHORD_GENRES, chordCatalog, vNotes, vBox, TUNE, S, P, EX, AU, exOpen, exSeek, exStart, exStop, exSched, exSync, exWithGrips, exDraw, innerMoves, drawTabGrip, tabGrips };\n/* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(),'fretlab-chords.html');fs.writeFileSync(tmp,source);
 (async()=>{
  const browser=await chromium.launch();
@@ -67,7 +67,70 @@ const tmp = path.join(os.tmpdir(),'fretlab-chords.html');fs.writeFileSync(tmp,so
    return {checked,failures};
   });
   assert.deepEqual(result.failures,[]);
+  const gripCoverage=await page.evaluate(()=>{
+   const a=window.__C,failures=[];let count=0;
+   for(const e of a.EX)for(const step of e.steps)for(let key=0;key<(e.keyed?12:1);key++){
+    for(const event of a.exWithGrips(step.build(key).ev))if(event.grip){
+     const g=event.grip;count++;
+     if(g.f.length!==6 || g.f.some(f=>f!=null && (!Number.isInteger(f)||f<0)))failures.push(e.id+' invalid chord frets');
+     if(g.fingers && (g.fingers.length!==6 || g.fingers.some(f=>!Number.isInteger(f)||f<0||f>4)))failures.push(e.id+' invalid chord fingers');
+    }
+   }
+   return {count,failures:[...new Set(failures)]};
+  });assert.ok(gripCoverage.count>1000);assert.deepEqual(gripCoverage.failures,[],'every generated grip has valid frets and fingers');
+  const inference=await page.evaluate(()=>{
+   const a=window.__C,ev=(t,n,chord)=>({t,d:1,n,chord}),n=(s,f)=>({s,f,fg:1}),failures=[],check=(ok,msg)=>{if(!ok)failures.push(msg);};
+   const triads=a.exWithGrips([ev(0,[n(2,0),n(1,1),n(0,0)],'C'),ev(1,[n(2,0)],'C'),ev(2,[n(2,5),n(1,5),n(0,3)],'C'),ev(3,[n(0,3)],'C')]);
+   check(triads[0].grip.f.join()==triads[1].grip.f.join() && triads[2].grip.f.join()==triads[3].grip.f.join() && triads[0].grip.f.join()!=triads[2].grip.f.join(),'same-name triad inversions remain distinct');
+   check(a.exWithGrips([ev(0,[n(0,3)],'C'),ev(1,[n(0,5)],'C'),ev(2,[n(1,3)],'C')]).every(e=>!e.grip),'conflicting melodic frets do not invent a grip');
+   check(!a.exWithGrips([ev(0,[n(0,1),n(1,10)],'C')])[0].grip,'unreasonable inferred stretches are omitted');
+   const unknown=a.exWithGrips([ev(0,[n(0,3),n(1,3)])])[0].grip;
+   check(unknown.name==='Fretting shape' && !('root' in unknown),'unnamed dyads do not invent a chord identity');
+   a.snapshot=()=>{a.tabGrips.length=0;a.exDraw(a.P.viewPos);return a.tabGrips.map(d=>({name:d.move.name,frets:d.move.f.map(f=>f==null?'×':String(f)),x:d.x,fingers:d.fingers,alpha:d.alpha}));};
+   return failures;
+  });assert.deepEqual(inference,[]);
+  await page.evaluate(()=>window.__C.exOpen('adv_inner',1));await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('Cmaj9.'));
+  assert.equal(await page.locator('#pCanvas').evaluate(n=>n.classList.contains('has-chords')),true);
+  let drawn=await page.evaluate(()=>window.__C.snapshot());
+  assert.deepEqual(drawn.find(d=>d.name==='Cmaj9').frets,['×','3','2','4','3','×']);assert.equal(drawn.filter(d=>d.name==='Cmaj9').length,1,'one tiny grip per chord instead of one per arpeggio note');
+  await page.locator('#pScroll').evaluate(el=>{el.value='0.5';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  drawn=await page.evaluate(()=>window.__C.snapshot());assert.equal(drawn.find(d=>d.name==='Cmaj9').alpha,1,'the current chord diagram stays clear throughout its arpeggio');assert.deepEqual(drawn.find(d=>d.name==='Cmaj9').frets,['×','3','2','4','3','×'],'arpeggio notes keep their full underlying grip');
+  await page.locator('#pScroll').evaluate(el=>{el.value='3.5';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  assert.ok((await page.evaluate(()=>window.__C.snapshot())).some(d=>d.name==='Cmaj9' && d.x>=24 && d.alpha===1),'the current chord stays available after its original marker scrolls away');
+  await page.locator('#pScroll').evaluate(el=>{el.value='4';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  assert.deepEqual((await page.evaluate(()=>window.__C.snapshot())).find(d=>d.name==='C6/9').frets,['×','3','2','2','3','×']);
+  await page.uncheck('#pFingers');assert.ok((await page.evaluate(()=>window.__C.snapshot())).every(d=>!d.fingers.length),'finger toggle hides tiny finger annotations');
+  await page.check('#pFingers');assert.ok((await page.evaluate(()=>window.__C.snapshot())).some(d=>d.fingers.length>0));
+  await page.selectOption('#pKey','5');await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('Fmaj9.'));
+  assert.deepEqual((await page.evaluate(()=>window.__C.snapshot())).find(d=>d.name==='Fmaj9').frets,['×','8','7','9','8','×'],'manual keys transpose chord boxes');
+  await page.selectOption('#pSpot','1-1');await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('F6/9.'));
+  assert.deepEqual((await page.evaluate(()=>window.__C.snapshot()))[0].frets,['×','8','7','7','8','×'],'section practice retains the authored grip');
+  const geometry=await page.evaluate(()=>{
+   const a=window.__C,canvas=document.createElement('canvas'),g=canvas.getContext('2d'),circles=[],arc=g.arc.bind(g),move=a.innerMoves(0)[0];
+   g.arc=(x,y,r,...rest)=>{circles.push({x,y,r});arc(x,y,r,...rest);};
+   a.S.settings.lefty=false;a.drawTabGrip(g,move,70,'#000');const normal=circles.splice(0);
+   a.S.settings.lefty=true;a.drawTabGrip(g,move,70,'#000');const left=circles.splice(0);a.S.settings.lefty=false;
+   return {normal,left};
+  });
+  assert.ok(geometry.normal[0].x<geometry.normal.at(-1).x && geometry.left[0].x>geometry.left.at(-1).x,'tiny diagrams mirror for left-handed display');
+  assert.ok(Math.max(...geometry.normal.map(c=>c.x))-Math.min(...geometry.normal.map(c=>c.x))<=30 && geometry.normal.every(c=>c.y+c.r<80),'sheet-music-size boxes occupy only the header row');
+  await page.evaluate(()=>window.__C.exOpen('v_shape_a',1));
+  const authored=await page.evaluate(()=>{const a=window.__C,g=a.P.ev[0].grip;return {expected:g.f.map(f=>f==null?'×':String(f)),drawn:a.snapshot()[0].frets,barres:(g.barres||(g.barre?[g.barre]:[])).length};});
+  assert.deepEqual(authored.drawn,authored.expected,'authored voicings are preserved');
+  const drawnBarres=await page.evaluate(()=>{const a=window.__C,g=document.createElement('canvas').getContext('2d'),stroke=g.stroke.bind(g);let n=0;g.stroke=function(){if(this.lineWidth===4&&this.lineCap==='round')n++;return stroke();};a.drawTabGrip(g,a.P.ev[0].grip,70,'#000');return n;});
+  assert.equal(drawnBarres,authored.barres,'tiny diagrams retain authored barres');
+  await page.evaluate(()=>window.__C.exOpen('v_emo_facgce',1));await page.waitForFunction(()=>document.getElementById('pCanvas').getAttribute('aria-label').includes('FACGCE tuning'));
+  const loop=await page.evaluate(()=>{
+   const a=window.__C;a.exOpen('adv_inner',1);Object.assign(a.S.ui.exopts,{count:false,loop:true,keycycle:true});a.P.bpm=120;a.exStart();clearInterval(a.P.timer);cancelAnimationFrame(a.P.frame);
+   const old=a.P.keyPc,boundary=a.P.startT+a.P.L*60/a.P.bpm;let now=boundary-.12;Object.defineProperty(a.AU.ctx,'currentTime',{configurable:true,get:()=>now});a.exSched();now=boundary+.001;a.exSync();a.exSeek(0);
+   const result={old,key:a.P.keyPc,expected:a.P.ev[0].grip.f.map(f=>f==null?'×':String(f)),drawn:a.snapshot()[0].frets};a.exStop();delete a.AU.ctx.currentTime;return result;
+  });
+  assert.equal(loop.key,(loop.old+5)%12);assert.deepEqual(loop.drawn,loop.expected,'automatic key loops update chord boxes');
+  await page.evaluate(()=>window.__C.exOpen('pentall',0));await page.waitForFunction(()=>!document.getElementById('pCanvas').classList.contains('has-chords'));
+  assert.equal(await page.locator('#pCanvas').evaluate(n=>n.clientHeight),250,'single-note scales omit the chord row');
+  await page.evaluate(()=>window.__C.exOpen('adv_inner',1));await page.waitForFunction(()=>document.getElementById('pCanvas').classList.contains('has-chords'));
+  assert.equal(await page.locator('#pCanvas').evaluate(n=>n.clientHeight),308,'the diagram row reserves space above the tab');
   for(const width of [1280,1920,390]){await page.setViewportSize({width,height:960});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'fits '+width);}
-  assert.deepEqual(errors,[]);console.log(`24 discovery voicings, ${result.checked} open/transposed instances: pitches, fingers, barres, exclusive groups, genres, small default sets and layouts\nOK`);
+  assert.deepEqual(errors,[]);console.log(`24 discovery voicings, ${result.checked} open/transposed instances: pitches, fingers, barres, exclusive groups, genres, small default sets, tiny player chord boxes, key/section/tuning updates, finger visibility and layouts\nOK`);
  }finally{await browser.close();fs.unlinkSync(tmp);}
 })().catch(e=>{console.error(e);process.exitCode=1});
