@@ -6,7 +6,7 @@ const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace('/* ---------- boot ---------- */', `
 const scheduled = [], playEvent = exPlayEv;
 exPlayEv = (...args) => { scheduled.push({ beat: args[0].t, destination: args[3], preview: P.preview }); return playEvent(...args); };
-window.__A = { S, P, R, M, AU, EX, scheduled, ac, bus, pluck, strum, tone, ksBuffer, SND, exOpen, exStart, exStop, exSeek, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
+window.__A = { S, P, R, M, AU, EX, scheduled, ac, bus, pluck, strum, tone, ksBuffer, exUpcoming, exForecast, SND, exOpen, exStart, exStop, exSeek, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
 /* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(), 'fretlab-audio.html');
 fs.writeFileSync(tmp, source);
@@ -52,7 +52,7 @@ fs.writeFileSync(tmp, source);
       a.mStart(); document.querySelector('#rpStop').click(); check(!a.M.running && !R.running, 'End stops the metronome');
       S.ui.exopts.keycycle = false; S.ui.exopts.ladder = false; a.exOpen('triads', 0);
       document.querySelector('#pLadder').click();
-      check(!document.querySelector('#pUpcoming').hidden && document.querySelector('#pUpcomingName').textContent.includes((P.bpm + 4) + ' bpm'), 'the paused ladder preview updates immediately');
+      check(!document.querySelector('#pUpcoming') && a.exUpcoming(P.viewPos,a.exForecast()).text.includes((P.bpm + 4) + ' bpm'), 'the paused inline ladder cue updates immediately');
       Object.assign(R, { running: true, paused: true }); a.renderPill(); a.switchTab('voicings');
       return failures;
     });
