@@ -2855,6 +2855,8 @@ function exDraw(pos) {
     g.beginPath(); g.moveTo(left, y); g.lineTo(W, y); g.stroke(); g.globalAlpha = 1;
     g.fillStyle = C.muted; g.font = '500 11px ' + MONO; g.textAlign = 'center'; g.fillText(P.names[s], 10, y);
   }
+  g.strokeStyle = C.warn; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, top - 16); g.lineTo(ph, bot + 12); g.stroke();
+  g.fillStyle = C.warn; g.beginPath(); g.moveTo(ph - 6, top - 22); g.lineTo(ph + 6, top - 22); g.lineTo(ph, top - 14); g.closePath(); g.fill();
   let curK = -1, curIdx = -1;
   if (pos >= 0) { curK = Math.floor(pos / P.L); curIdx = evIndexAt(pos - curK * P.L); }
   for (const segment of segments) {
@@ -2888,7 +2890,7 @@ function exDraw(pos) {
           g.lineWidth = 1.5; g.strokeStyle = cur ? C.warn : C.ink; g.stroke();
           g.fillStyle = cur ? C.onSem : C.ink; g.font = '600 12px ' + MONO; g.textAlign = 'center'; g.fillText(txt, x, y + 0.5);
           const sub = P.labels === 'finger' ? '' : exLabel(n,data);
-          if (sub) { g.fillStyle = cur ? C.warn : C.muted; g.font = '500 11px ' + SANS; g.textAlign = 'left'; g.fillText(sub, x + w / 2 + 3, y + 8); }
+          if (sub) { g.font = '500 11px ' + SANS; g.textAlign = 'left'; g.lineWidth = 3; g.strokeStyle = C.bg; g.strokeText(sub, x + w / 2 + 3, y + 8); g.fillStyle = cur ? C.warn : C.muted; g.fillText(sub, x + w / 2 + 3, y + 8); }
           if (S.ui.exopts.fingers && n.f > 0 && n.fg >= 1 && n.fg <= 4) {
             g.font = '600 11px ' + SANS; g.textAlign = 'right';
             g.lineWidth = 3; g.strokeStyle = C.bg; g.strokeText(String(n.fg), x - w / 2 - 5, y - 5);
@@ -2902,8 +2904,6 @@ function exDraw(pos) {
       g.globalAlpha = 1;
     });
   }
-  g.strokeStyle = C.warn; g.lineWidth = 2; g.beginPath(); g.moveTo(ph, top - 16); g.lineTo(ph, bot + 12); g.stroke();
-  g.fillStyle = C.warn; g.beginPath(); g.moveTo(ph - 6, top - 22); g.lineTo(ph + 6, top - 22); g.lineTo(ph, top - 14); g.closePath(); g.fill();
   if (exCount() > 0) { g.fillStyle = C.warn; g.font = '700 60px ' + DISP; g.textAlign = 'center'; g.fillText(String(Math.max(1, Math.ceil(exCount() - 1e-6))), ph + (W - ph) / 2, top + 2.5 * sh); }
 }
 /* ---------- exercise history ---------- */
