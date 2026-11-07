@@ -620,6 +620,8 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <div class="vrow"><span>Master</span><input type="range" class="vctl" data-ch="master" min="0" max="100" step="1" aria-label="Master volume"><b class="vval" data-ch="master"></b></div>
     <div class="vrow"><span>Notes &amp; tones</span><input type="range" class="vctl" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"><b class="vval" data-ch="notes"></b></div>
     <div class="vrow"><span>Click &amp; drums</span><input type="range" class="vctl" data-ch="click" min="0" max="150" step="1" aria-label="Click and drums volume"><b class="vval" data-ch="click"></b></div>
+    <button class="btn" id="vTest" type="button">Test sound</button>
+    <p class="small muted" id="vSoundStatus" role="status"></p>
     <p class="small muted">Notes and tones covers exercises, chord previews, ear training and drones. Click and drums covers the metronome, count-ins and drum backing. Press M anywhere to mute.</p>
   </div>
   <div class="inner">
@@ -1199,7 +1201,7 @@ function renderHeaderStats() {
 /* ---------- audio ---------- */
 const AU = { ctx: null, master: null, noise: null, ks: new Map(), pick: 0 };
 function ac() {
-  if (!AU.ctx) {
+  if (!AU.ctx || AU.ctx.state === 'closed') {
     const C = window.AudioContext || window.webkitAudioContext;
     AU.ctx = new C();
     AU.master = AU.ctx.createGain(); AU.notes = AU.ctx.createGain(); AU.click = AU.ctx.createGain();
@@ -1207,13 +1209,36 @@ function ac() {
     const comp = AU.ctx.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 4;
     AU.master.connect(comp); comp.connect(AU.ctx.destination);
     try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
-    const len = AU.ctx.sampleRate; const nb = AU.ctx.createBuffer(1, len, AU.ctx.sampleRate); const nd = nb.getChannelData(0);
+    const len = AU.ctx.sampleRate; const nb = AU.ctx.createBuffer(1, len, AU.ctx.sampleRate); const nd = new Float32Array(len);
     for (let i = 0; i < len; i++) nd[i] = Math.random() * 2 - 1;
+    nb.copyToChannel(nd, 0);
     AU.noise = nb;
+    AU.ctx.addEventListener('statechange', () => {
+      if (AU.ctx.state === 'running') { clearTimeout(AU.check); AU.check = null; AU.blocked = false; volRender(); }
+    });
   }
-  if (AU.ctx.state === 'suspended') AU.ctx.resume();
+  audioResume();
   return AU.ctx;
 }
+function audioBlocked() {
+  if (!AU.ctx || AU.ctx.state === 'running') return;
+  if (P.running) exPause();
+  if (M.running) mStop();
+  if (AU.blocked) return;
+  AU.blocked = true;
+  requestAnimationFrame(() => {
+    if(!AU.blocked)return;
+    $('#volPop').hidden = false; $('#volBtn').setAttribute('aria-expanded', 'true'); volRender();
+  });
+}
+function audioResume() {
+  const c = AU.ctx;
+  if (!c || c.state === 'closed') return;
+  if (c.state === 'running') { clearTimeout(AU.check); AU.check = null; if(AU.blocked){AU.blocked=false;volRender();} return; }
+  try { c.resume().catch(() => { if (c === AU.ctx) audioBlocked(); }); } catch (e) { audioBlocked(); }
+  if (!AU.check) AU.check = setTimeout(() => { AU.check = null; if (c === AU.ctx) audioBlocked(); }, 1200);
+}
+for (const event of ['touchend', 'click', 'keydown']) document.addEventListener(event, e => { if (e.isTrusted) audioResume(); }, { capture: true, passive: true });
 function bus(parent) { const g = AU.ctx.createGain(); g.connect(parent || AU.notes); return g; }
 const volGain = (v, max) => Math.pow(Math.max(0, v), 2) * max;
 function volApply() {
@@ -1234,7 +1259,7 @@ function ksBuffer(m, dur = 1.8, variant = 0) {
   // Compensate the damping filter's phase as well as the fractional string length.
   const eta = Math.tan(w * fraction / 2) / Math.tan(w / 2), ap = (1 - eta) / (1 + eta);
   const decay = Math.pow(0.001, 1 / (f * clamp(5.8 - (m - 40) * 0.055, 2.8, 6.2)));
-  const len = Math.ceil(sr * seconds), b = c.createBuffer(1, len, sr), d = b.getChannelData(0);
+  const len = Math.ceil(sr * seconds), b = c.createBuffer(1, len, sr), d = new Float32Array(len);
   const line = new Float32Array(N), noise = new Float32Array(N), position = 0.2 + variant * 0.013, pick = Math.max(1, Math.round(N * position));
   let seed = (m * 2654435761 + variant * 1013904223) >>> 0, smooth = 0, mean = 0;
   for (let i = 0; i < N; i++) {
@@ -1257,6 +1282,7 @@ function ksBuffer(m, dur = 1.8, variant = 0) {
   for (let i = 0; i < len; i++) { peak = Math.max(peak, Math.abs(d[i])); if (i < window) energy += d[i] * d[i]; }
   const level = Math.min(0.8 / peak, 0.24 / Math.sqrt(energy / window));
   for (let i = 0; i < len; i++) d[i] *= level;
+  b.copyToChannel(d, 0);
   if (AU.ks.size >= 96) AU.ks.delete(AU.ks.keys().next().value);
   AU.ks.set(key, b);
   return b;
@@ -2739,9 +2765,9 @@ function exListen() {
 }
 function exSelectionInfo() {
   const at=t=>{const bar=Math.floor((t+1e-7)/P.bar)+1,beat=Math.round((t%P.bar+1)*1000)/1000;return `bar ${bar}, beat ${beat}`;};
-  const touch=exTabTouch(),text=P.range ? `Selected ${at(P.range[0])} → ${at(P.range[1])} · drag an edge to resize · ${touch?'tap outside':'Esc'} to clear` : '';
+  const touch=exTabTouch(),text=P.range ? `Selected ${at(P.range[0])} → ${at(P.range[1])} · ${touch?'tap another bar to clear':'drag an edge to resize · Esc to clear'}` : '';
   const node=$('#pSelection');if(node.textContent!==text)node.textContent=text;
-  $('#pTabHint').textContent=touch?'Tap bars to jump · hold to select · drag in the tab':'Click bars to jump · drag in the tab to select · Space play / pause';
+  $('#pTabHint').textContent=touch?'Tap bars to jump · hold a bar to select it':'Click bars to jump · drag in the tab to select · Space play / pause';
 }
 function exBarButtons(pos) {
   const count=Math.ceil(P.L/P.bar),strip=$('#pBars'),stamp=P.ex.id+':'+P.step+':'+count;
@@ -2975,7 +3001,7 @@ function exBoard(idx, preview) {
   }
   pBoard.draw({ from: P.bf, to: P.bt, markers: [...map.values()], win: null, names: P.names });
   const grip=cur.grip, description=grip ? `${grip.name}. ${TUNE[P.tuneKey].name} tuning. Low to high: ${grip.f.map((f,i)=>f==null ? 'skip' : f===0 ? 'open' : 'fret '+f+(S.ui.exopts.fingers && grip.fingers?.[i] ? ', finger '+grip.fingers[i] : '')).join('; ')}. ` : '';
-  const label='Exercise tab. '+description+(P.inlineCue?'Next loop: '+P.inlineCue+'. ':'')+'Click a note to start there. Drag to select a passage; drag either edge to resize. Escape clears the selection. Scroll horizontally to move through the exercise.', canvas=$('#pCanvas');
+  const label='Exercise tab. '+description+(P.inlineCue?'Next loop: '+P.inlineCue+'. ':'')+(exTabTouch()?'Tap a note or a bar button to start there. Hold a bar button to select it.':'Click a note to start there. Drag to select a passage; drag either edge to resize. Escape clears the selection.')+' Use the position slider to move through the exercise.', canvas=$('#pCanvas');
   if(canvas.getAttribute('aria-label')!==label)canvas.setAttribute('aria-label',label);
 }
 let exC = null, exCF = 0;
@@ -3083,9 +3109,8 @@ function exDraw(pos) {
   if(selected){
     g.save();g.beginPath();g.rect(left,top-24,W-left,bot-top+48);g.clip();g.strokeStyle=C.accent;g.fillStyle=C.accent;g.lineWidth=2;
     for(const t of selected){
-      const x=ph+(t-pos)*ppb-exTabInset(t),width=touch?12:6;g.beginPath();g.moveTo(x,top-16);g.lineTo(x,bot+14);g.stroke();
-      rrect(g,x-width/2,top-20,width,touch?14:12,2);g.fill();
-      if(!touch){rrect(g,x-3,bot+5,6,12,2);g.fill();}
+      const x=ph+(t-pos)*ppb-exTabInset(t);g.beginPath();g.moveTo(x,top-16);g.lineTo(x,bot+14);g.stroke();
+      if(!touch){rrect(g,x-3,top-20,6,12,2);g.fill();rrect(g,x-3,bot+5,6,12,2);g.fill();}
     }
     g.restore();
   }
@@ -4757,6 +4782,7 @@ $('#pCanvas').addEventListener('wheel', e => {
   exSeek((P.running ? exPos() % P.L : P.viewPos) + delta * scale / P.ppb);
 }, { passive: false });
 function exTabCancel() {
+  P.tabTap=null;
   const d=P.tabDrag;if(!d)return;
   cancelAnimationFrame(P.tabAuto);P.tabDrag=null;P.tabView=d.originalView;
   exDraw(P.running?exPos():P.viewPos);
@@ -4793,6 +4819,7 @@ $('#pCanvas').addEventListener('pointerdown',e=>{
   if(e.button || e.isPrimary===false || !P.ev.length)return;
   const cv=$('#pCanvas'),rect=cv.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
   const mouse=e.pointerType!=='touch',playing=P.running;P.tabTouch=!mouse;exSelectionInfo();
+  if(!mouse){P.tabTap={id:e.pointerId,x:e.clientX,y:e.clientY,playing,moved:false};return;}
   if(mouse){e.preventDefault();if(P.running)exPause();cv.focus({preventScroll:true});}
   const originalView=P.tabView,beat=mouse?exTabAdopt(x,playing):clamp(exTabBeat(x),0,P.L),index=exTabIndex(beat);
   const top=cv.classList.contains('has-chords')?128:70;
@@ -4805,12 +4832,13 @@ $('#pCanvas').addEventListener('pointerdown',e=>{
   if(mouse)cv.setPointerCapture(e.pointerId);
 });
 $('#pCanvas').addEventListener('pointermove',e=>{
+  const tap=P.tabTap;
+  if(tap&&tap.id===e.pointerId){if(Math.hypot(e.clientX-tap.x,e.clientY-tap.y)>8)tap.moved=true;return;}
   const cv=$('#pCanvas'),rect=cv.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,d=P.tabDrag;
   if(!d){const top=cv.classList.contains('has-chords')?128:70,barBand=y>=top+5*27+18;cv.style.cursor=barBand?'cell':P.range&&y>=top-28&&y<=top+5*27+18&&P.range.some(t=>Math.abs(x-exTabEdge(t))<=10)?'ew-resize':'crosshair';return;}
   if(d.id!==e.pointerId)return;
-  const dx=Math.abs(x-d.startX),dy=Math.abs(y-d.startY);
+  const dx=Math.abs(x-d.startX);
   if(!d.moved){
-    if(d.type==='touch'&&dy>8&&dy>dx){exTabCancel();return;}
     if(dx<5)return;
     if(P.running)exPause();d.moved=true;P.tabView=P.tabView??P.viewPos;cv.setPointerCapture(e.pointerId);cv.focus({preventScroll:true});
     P.tabAuto=requestAnimationFrame(exTabAuto);
@@ -4818,6 +4846,14 @@ $('#pCanvas').addEventListener('pointermove',e=>{
   e.preventDefault();d.x=x;exTabUpdate(d,clamp(x,24,cv.clientWidth-4));
 });
 $('#pCanvas').addEventListener('pointerup',e=>{
+  const tap=P.tabTap;
+  if(tap&&tap.id===e.pointerId){
+    P.tabTap=null;if(tap.moved)return;
+    if(P.running)exPause();
+    const x=e.clientX-$('#pCanvas').getBoundingClientRect().left,beat=exTabAdopt(x,tap.playing),index=exTabIndex(beat);
+    if(P.range&&(P.ev[index].t<P.range[0]||P.ev[index].t>=P.range[1]))exSetSelection(null,true);
+    P.tabAnchor=index;P.tabFocus=index;exSeek(P.ev[index].t);return;
+  }
   const d=P.tabDrag;if(!d||d.id!==e.pointerId)return;
   cancelAnimationFrame(P.tabAuto);P.tabDrag=null;
   if(d.edge&&!d.moved){exDraw(P.viewPos);return;}
@@ -4838,6 +4874,7 @@ $('#pCanvas').addEventListener('pointercancel',exTabCancel);
 $('#pCanvas').addEventListener('lostpointercapture',()=>{if(P.tabDrag)exTabCancel();});
 window.addEventListener('blur',exTabCancel);
 $('#pCanvas').addEventListener('dblclick',e=>{
+  if(exTabTouch())return;
   const beat=clamp(exTabBeat(e.clientX-$('#pCanvas').getBoundingClientRect().left),0,P.L-1e-6),start=Math.floor(beat/P.bar)*P.bar;
   exSetSelection([start,Math.min(P.L,start+P.bar)],true);
 });
@@ -4953,6 +4990,8 @@ function volRender() {
   const b = $('#volBtn'); b.classList.toggle('muted', !!st.muted || st.vol === 0); b.classList.toggle('low', !st.muted && st.vol > 0 && st.vol < 0.4);
   b.setAttribute('aria-label', st.muted ? 'Volume (muted)' : `Volume ${v.master}%`);
   $('#vMute').setAttribute('aria-pressed', !!st.muted); $('#vMute').textContent = st.muted ? 'Unmute' : 'Mute';
+  $('#vTest').textContent = AU.blocked ? 'Enable sound' : st.muted || st.vol === 0 ? 'Unmute and test sound' : 'Test sound';
+  $('#vSoundStatus').textContent = AU.blocked ? 'Sound could not start. Tap Enable sound. If it stays silent, allow Sound for this site in your browser settings and check your phone’s media volume.' : 'If the test is silent, check your device’s media volume and this site’s Sound permission.';
   if ($('#sVol')) $('#sVol').value = st.vol;
 }
 let volTestT = 0;
@@ -4972,6 +5011,10 @@ document.addEventListener('input', e => { const r = e.target.closest && e.target
 document.addEventListener('change', e => { const r = e.target.closest && e.target.closest('.vctl'); if (r && !(P.running || M.running)) volTest(r.dataset.ch); });
 $('#volBtn').onclick = e => { e.stopPropagation(); const open = $('#volPop').hidden; $('#volPop').hidden = !open; $('#volBtn').setAttribute('aria-expanded', open); if (open) { volRender(); const f = $('#volPop .vctl'); f && f.focus(); } };
 $('#vMute').onclick = () => volMute();
+$('#vTest').onclick = async () => {
+  if(S.settings.muted || S.settings.vol===0){S.settings.muted=false;if(S.settings.vol===0)S.settings.vol=0.8;volApply();volRender();save();}
+  try { const c=ac();if(c.state!=='running')await c.resume();if(c===AU.ctx&&c.state==='running')volTest('master'); } catch(e) { audioBlocked(); }
+};
 document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop') && !e.target.closest('#volBtn')) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); } });
 document.addEventListener('keydown', e => {
   if (!$('#settings').hidden) return;
