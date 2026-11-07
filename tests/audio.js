@@ -6,12 +6,12 @@ const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace('/* ---------- boot ---------- */', `
 const scheduled = [], playEvent = exPlayEv;
 exPlayEv = (...args) => { scheduled.push({ beat: args[0].t, destination: args[3], preview: P.preview }); return playEvent(...args); };
-window.__A = { S, P, R, M, AU, EX, scheduled, ac, bus, pluck, strum, tone, ksBuffer, exUpcoming, exForecast, SND, exOpen, exStart, exStop, exSeek, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
+window.__A = { S, P, R, M, AU, EX, scheduled, ac, audioResume, bus, pluck, strum, tone, ksBuffer, exUpcoming, exForecast, SND, exOpen, exStart, exStop, exSeek, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
 /* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(), 'fretlab-audio.html');
 fs.writeFileSync(tmp, source);
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.FRETLAB_BROWSER ? { executablePath: process.env.FRETLAB_BROWSER } : {});
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     const errors = [];
@@ -63,6 +63,44 @@ fs.writeFileSync(tmp, source);
       await page.emulateMedia({ colorScheme });
       await page.screenshot({ path: path.join(os.tmpdir(), 'fretlab-polish-chords-' + colorScheme + '.png') });
     }
+    const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const phone = await mobile.newPage(); phone.on('pageerror', e => errors.push(e.message));
+    await phone.goto('file://' + tmp);
+    await phone.evaluate(() => { const a=window.__A;a.exOpen('triads',0);Object.assign(a.S.ui.exopts,{count:false,guide:true}); });
+    await phone.locator('#pPlay').tap();
+    await phone.waitForFunction(() => window.__A.AU.ctx.state === 'running' && window.__A.AU.ctx.currentTime > 0.2);
+    await phone.evaluate(() => { const a=window.__A; a.exStop(); return a.AU.ctx.suspend(); });
+    await phone.locator('#pPlay').tap();
+    await phone.waitForFunction(() => window.__A.AU.ctx.state === 'running' && window.__A.P.running);
+    await phone.evaluate(async () => { const a=window.__A;a.exStop();await a.AU.ctx.suspend();window.nativeResume=a.AU.ctx.resume.bind(a.AU.ctx);Object.defineProperty(a.AU.ctx,'state',{configurable:true,get:()=>'suspended'});a.AU.ctx.resume=()=>Promise.reject(new DOMException('Sound is blocked','NotAllowedError')); });
+    await phone.locator('#pPlay').tap();
+    await phone.waitForFunction(() => !window.__A.P.running && window.__A.AU.blocked);
+    await phone.waitForFunction(()=>!document.getElementById('volPop').hidden);
+    assert.equal(await phone.locator('#volPop').isVisible(), true, 'a rejected audio start exposes the retry control');
+    assert.equal(await phone.locator('#vTest').textContent(), 'Enable sound');
+    await phone.evaluate(() => { delete window.__A.AU.ctx.state;window.__A.AU.ctx.resume=window.nativeResume; });
+    await phone.locator('#vTest').tap();
+    await phone.waitForFunction(() => window.__A.AU.ctx.state === 'running' && !window.__A.AU.blocked);
+    await phone.evaluate(async () => { const a=window.__A;await a.AU.ctx.suspend();Object.defineProperty(a.AU.ctx,'state',{configurable:true,get:()=>'suspended'});a.AU.ctx.resume=()=>new Promise(()=>{}); });
+    await phone.locator('#volBtn').tap();
+    await phone.locator('#pPlay').tap();
+    await phone.waitForFunction(() => !window.__A.P.running && window.__A.AU.blocked);
+    assert.match(await phone.locator('#vSoundStatus').textContent(), /allow Sound for this site/, 'an unresolved audio start gives sound permission guidance');
+    await phone.evaluate(() => { delete window.__A.AU.ctx.state;window.__A.AU.ctx.resume=window.nativeResume; });
+    await phone.locator('#vTest').tap();
+    await phone.waitForFunction(() => window.__A.AU.ctx.state === 'running' && !window.__A.AU.blocked);
+    const interrupted = await phone.evaluate(() => {
+      const a=window.__A,c=a.AU.ctx;let attempts=0;
+      Object.defineProperty(c,'state',{configurable:true,get:()=>attempts?'running':'interrupted'});
+      c.resume=()=>{attempts++;return Promise.resolve();};a.audioResume();
+      delete c.state;c.resume=window.nativeResume;return attempts;
+    });
+    assert.equal(interrupted,1,'interrupted audio contexts are resumed as well as suspended contexts');
+    await phone.evaluate(async () => { window.oldAudioContext=window.__A.AU.ctx;await window.oldAudioContext.close(); });
+    await phone.locator('#vTest').tap();
+    await phone.waitForFunction(() => window.__A.AU.ctx !== window.oldAudioContext && window.__A.AU.ctx.state === 'running');
+    await phone.screenshot({path:path.join(os.tmpdir(),'fretlab-mobile-sound-controls.png')});
+    await mobile.close();
     const rendered = await page.evaluate(async () => {
       const a = window.__A, Native = window.AudioContext, results = {};
       const rms = (data, start, end, sr = 44100) => {
@@ -85,6 +123,14 @@ fs.writeFileSync(tmp, source);
         return { rms: rms(data, 0.3, kind === 'click' ? 0.4 : 0.9), sustain: rms(data, 2.6, 2.65), tail: rms(data, 3.2, 3.8), peak: data.reduce((m, x) => Math.max(m, Math.abs(x)), 0), bufferSeconds };
       }
       try {
+        const read = AudioBuffer.prototype.getChannelData;
+        AudioBuffer.prototype.getChannelData = function () { throw Error('Audio readback is unavailable'); };
+        try {
+          const ctx = new OfflineAudioContext(1, 44100 * 2, 44100);ctx.resume=()=>Promise.resolve();window.AudioContext=function(){return ctx;};
+          a.AU.ctx=null;a.AU.ks.clear();a.ac();a.pluck(52,0.1,null,0.6,0.8);a.SND.hat(1,0.6,a.AU.click,true);
+          const output=await ctx.startRendering(),data=read.call(output,0);
+          results.writeOnly={note:rms(data,0.1,0.5),noise:rms(data,1,1.1)};
+        } finally { AudioBuffer.prototype.getChannelData=read; }
         results.long = await render('direct');
         results.chord = await render('chord'); results.fast = await render('fast');
         for (const kind of ['direct', 'bus', 'pure', 'fifth', 'warm']) results[kind] = await render(kind, 0);
@@ -93,6 +139,7 @@ fs.writeFileSync(tmp, source);
       } finally { window.AudioContext = Native; }
       return results;
     });
+    assert.ok(rendered.writeOnly.note>0.001&&rendered.writeOnly.noise>0.001,'guitar and percussion synthesis remain audible without audio buffer readback');
     assert.ok(rendered.long.bufferSeconds > 2.6 && rendered.long.sustain > 0.000001, 'a long low note continues beyond the old 2.2 second buffer');
     assert.ok(rendered.long.tail < 0.000001 && rendered.long.peak < 1 && rendered.long.rms > 0.001, 'the rendered note ends quietly without clipping');
     for (const kind of ['chord', 'fast']) assert.ok(rendered[kind].peak < 0.98 && rendered[kind].rms > 0.01 && rendered[kind].tail < 0.000001, kind + ' stays audible without clipping or lingering after its release');
@@ -134,6 +181,6 @@ fs.writeFileSync(tmp, source);
     assert.ok(strings.results.filter(n => n.variant).every(n => n.difference > 0.1), 'repeated picks vary in tone without changing pitch');
     assert.ok(strings.cacheSize <= 96, 'string cache stays bounded across tunings and sample rates');
     assert.deepEqual(errors, []);
-    console.log('Listen first opening notes, session audio pause/resume/end, finger labels, live tempo preview, sticky toolbar, rendered sustain/mixer routing, tuned string variants, balanced dynamics and polyphonic headroom\nOK');
+    console.log('Listen first opening notes, session audio pause/resume/end, finger labels, live tempo preview, sticky toolbar, rendered sustain/mixer routing, mobile audio unlock/retry/recovery, write-only synthesis, tuned string variants, balanced dynamics and polyphonic headroom\nOK');
   } finally { await browser.close(); fs.unlinkSync(tmp); }
 })().catch(e => { console.error(e); process.exitCode = 1; });
