@@ -162,6 +162,9 @@ fs.writeFileSync(tmp, source);
     });
     assert.equal(await page.locator('#pPassage,#pSpot,#pSaveSpot,#pLoopBar,#pWhole,#pUpcoming').count(),0,'extra passage controls and the upcoming panel are absent');
     assert.equal(await page.locator('#pBars [data-bar]').count(),120,'each bar has a jump button');
+    await page.evaluate(()=>window.__T.exSeek(396));
+    assert.ok(await page.locator('#pBars [aria-current="true"]').evaluate(b=>{const r=b.getBoundingClientRect(),p=b.parentElement.getBoundingClientRect();return r.left>=p.left&&r.right<=p.right;}),'a paused seek reveals the current bar in a long row');
+    await page.evaluate(()=>window.__T.exSeek(20));
     await page.click('#pBars [data-bar="5"]');assert.equal(await page.evaluate(()=>window.__T.P.viewPos),20);
     await page.click('#pBars [data-bar="7"]',{modifiers:['Shift']});assert.deepEqual(await page.evaluate(()=>window.__T.P.range),[20,32],'Shift-click selects bars from the jump row');
     await page.press('#pCanvas','Escape');await page.evaluate(()=>window.__T.exSeek(20));
@@ -260,6 +263,13 @@ fs.writeFileSync(tmp, source);
     const cdp=await touchContext.newCDPSession(touchPage),box=await button.boundingBox(),hold={x:box.x+box.width/2,y:box.y+box.height/2};
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[hold]});await touchPage.waitForFunction(()=>window.__T.P.range?.[0]===4&&window.__T.P.range?.[1]===8);await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
     assert.deepEqual(await touchPage.evaluate(()=>window.__T.P.range),[4,8],'holding a bar button selects it without needing a keyboard');
+    assert.match(await touchPage.locator('#pRestart').getAttribute('title'),/selection/,'Restart describes its selected range');
+    await touchPage.locator('#pClearSelection').tap();
+    assert.equal(await touchPage.evaluate(()=>window.__T.P.range),null,'touch has a direct way to clear its selection');
+    assert.equal(await touchPage.evaluate(()=>window.__T.P.viewPos),4,'clearing selection retains the current position');
+    assert.equal(await touchPage.locator('#pClearSelection').isVisible(),false);
+    await touchPage.evaluate(()=>window.__T.exSetSelection([4,8]));
+
     await touchPage.locator('#pCanvas').scrollIntoViewIfNeeded();
     const touchPoint=async(beat,y=178)=>touchPage.locator('#pCanvas').evaluate((cv,{beat,y})=>{const r=cv.getBoundingClientRect(),{P}=window.__T;return{x:r.left+Math.round(Math.min(cv.clientWidth*.28,190))+(beat-(P.tabView??P.viewPos))*P.ppb,y:r.top+y};},{beat,y});
     async function touchDrag(a,b){await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[a]});for(let i=1;i<=6;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:a.x+(b.x-a.x)*i/6,y:a.y+(b.y-a.y)*i/6}]});await touchPage.waitForTimeout(20);}await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}

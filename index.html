@@ -123,6 +123,8 @@ p{margin:0}
 .vhd{display:flex;justify-content:space-between;align-items:center}
 .vrow{display:grid;grid-template-columns:104px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:14px}
 .vrow b{font:600 13px var(--font-mono);text-align:right}
+.vactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vactions .btn{flex:1}
 .vctl{accent-color:var(--accent);width:100%;height:28px;margin:0}
 .vmute[aria-pressed="true"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
 .volbtn .vx{display:none} .volbtn.muted .vx{display:block} .volbtn.muted .vw1,.volbtn.muted .vw2{display:none} .volbtn.low .vw2{display:none}
@@ -461,6 +463,9 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .hw canvas:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 .tab-selection-info{font-size:12px;color:var(--accent);line-height:1.5}
 .tab-selection-info:empty{display:none}
+.tab-selection{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.tab-selection:has(.tab-selection-info:empty){display:none}
+#pClearSelection{min-height:32px;white-space:nowrap}
 .tab-bar-nav{display:flex;align-items:center;gap:8px;min-width:0}
 .bar-strip{display:flex;gap:4px;overflow-x:auto;min-width:0;padding:3px 1px 6px;scrollbar-width:thin;touch-action:pan-x pan-y pinch-zoom}
 .bar-strip button{flex:0 0 34px;min-height:32px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--muted);font:500 12px var(--font-mono);cursor:pointer;user-select:none}
@@ -576,6 +581,9 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .chip:has(input[type=checkbox]:disabled){opacity:.5;cursor:default}
 .chip.mix{padding-right:8px}
 .chip .mvol{width:60px}
+.mix-level{min-width:38px;min-height:28px;padding:2px 0;border:0;border-bottom:1px dotted currentColor;background:none;color:var(--muted);font:500 11px var(--font-mono);cursor:pointer}
+.mix-level.quiet{font-weight:600;color:var(--warn-text)}
+@media(pointer:coarse){.chip .mvol{display:none}.mix-level{min-width:44px;min-height:44px}.chip.mix{padding-right:5px}#pClearSelection{min-height:44px}}
 .pseg button{padding:5px 10px;font-size:13px}
 
 .btn.sm{padding:3px 9px;font-size:12px;min-height:0}
@@ -620,7 +628,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <div class="vrow"><span>Master</span><input type="range" class="vctl" data-ch="master" min="0" max="100" step="1" aria-label="Master volume"><b class="vval" data-ch="master"></b></div>
     <div class="vrow"><span>Notes &amp; tones</span><input type="range" class="vctl" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"><b class="vval" data-ch="notes"></b></div>
     <div class="vrow"><span>Click &amp; drums</span><input type="range" class="vctl" data-ch="click" min="0" max="150" step="1" aria-label="Click and drums volume"><b class="vval" data-ch="click"></b></div>
-    <button class="btn" id="vTest" type="button">Test sound</button>
+    <div class="vactions"><button class="btn" id="vTest" type="button">Test sound</button><button class="btn" id="vReset" type="button" title="Set Master to 80%, Notes to 100% and Click to 100%">Reset levels</button></div>
     <p class="small muted" id="vSoundStatus" role="status"></p>
     <p class="small muted">Notes and tones covers exercises, chord previews, ear training and drones. Click and drums covers the metronome, count-ins and drum backing. Press M anywhere to mute.</p>
   </div>
@@ -809,8 +817,8 @@ body:has(#settings:not([hidden])){overflow:hidden}
             <div class="pctl-row" role="group" aria-label="Playback"><span class="pctl-lab">Play</span>
               <label class="chip"><input type="checkbox" id="pLoop"> Loop</label>
               <label class="chip" title="Count four beats, then start from the beginning of the selected beat"><input type="checkbox" id="pCount"> Count-in</label>
-              <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
-              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"></span>
+              <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"><button class="mix-level" type="button" data-mixer="click" aria-label="Click volume">100%</button></span>
+              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"><button class="mix-level" type="button" data-mixer="notes" aria-label="Notes volume">100%</button></span>
               <label class="chip" title="Speed up 4 bpm every loop"><input type="checkbox" id="pLadder"> +4 bpm / loop</label>
               <label class="chip" id="pKeyCycleChip" title="Move up a 4th every loop to play through all 12 keys"><input type="checkbox" id="pKeyCycle"> New key / loop</label>
             </div>
@@ -823,7 +831,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
           <div class="tab-bar-nav"><span class="small muted">Bars</span><div class="bar-strip" id="pBars" role="group" aria-label="Jump to a bar"></div></div>
           <div class="hw"><canvas id="pCanvas" tabindex="0" aria-describedby="pTabHint pSelection" role="img" aria-label="Exercise tab. Click a note to start there. Drag to select notes. Scroll horizontally to move through the exercise."></canvas><div class="tab-scroll"><input type="range" id="pScroll" min="0" max="4" step="0.01" value="0" aria-label="Tab view position"></div></div>
           <div class="tab-navigation small muted"><span id="pTabHint">Click to position · drag to select · Space play / pause</span><span class="row" style="gap:6px;align-items:center"><span id="pPosition"></span><button class="btn sm" id="pPrev" type="button" aria-label="Previous note" title="Previous note (left arrow)">◀</button><button class="btn sm" id="pNext" type="button" aria-label="Next note" title="Next note (right arrow)">▶</button></span></div>
-          <div class="tab-selection-info" id="pSelection" role="status" aria-live="polite"></div>
+          <div class="tab-selection"><div class="tab-selection-info" id="pSelection" role="status" aria-live="polite"></div><button class="linkbtn" type="button" id="pClearSelection" hidden>Clear selection</button></div>
           <div class="finger-legend small muted" id="pFingerHint" aria-label="Fretting hand finger key" hidden></div>
           <div class="pstatus small muted" id="pStatus"></div>
           <p class="small pfocus" id="pFocus"></p>
@@ -2765,21 +2773,22 @@ function exListen() {
 }
 function exSelectionInfo() {
   const at=t=>{const bar=Math.floor((t+1e-7)/P.bar)+1,beat=Math.round((t%P.bar+1)*1000)/1000;return `bar ${bar}, beat ${beat}`;};
-  const touch=exTabTouch(),text=P.range ? `Selected ${at(P.range[0])} → ${at(P.range[1])} · ${touch?'tap another bar to clear':'drag an edge to resize · Esc to clear'}` : '';
+  const touch=exTabTouch(),text=P.range ? `Selected ${at(P.range[0])} → ${at(P.range[1])}${touch?'':' · drag an edge to resize · Esc to clear'}` : '';
   const node=$('#pSelection');if(node.textContent!==text)node.textContent=text;
+  $('#pClearSelection').hidden=!P.range;
   $('#pTabHint').textContent=touch?'Tap bars to jump · hold a bar to select it':'Click bars to jump · drag in the tab to select · Space play / pause';
 }
 function exBarButtons(pos) {
   const count=Math.ceil(P.L/P.bar),strip=$('#pBars'),stamp=P.ex.id+':'+P.step+':'+count;
   if(strip.dataset.step!==stamp){
-    strip.dataset.step=stamp;strip.innerHTML=Array.from({length:count},(_,i)=>`<button type="button" data-bar="${i}" aria-label="Go to bar ${i+1}" title="Bar ${i+1}; drag or Shift-click to select bars">${i+1}</button>`).join('');strip.scrollLeft=0;
+    strip.dataset.step=stamp;delete strip.dataset.range;strip.innerHTML=Array.from({length:count},(_,i)=>`<button type="button" data-bar="${i}" aria-label="Go to bar ${i+1}" title="Bar ${i+1}; drag or Shift-click to select bars">${i+1}</button>`).join('');strip.scrollLeft=0;
   }
   const selected=P.range?.join('-')||'';
   if(strip.dataset.range!==selected){strip.dataset.range=selected;$$('#pBars button').forEach(b=>b.classList.toggle('selected',!!P.range&&+b.dataset.bar*P.bar<P.range[1]&&(+b.dataset.bar+1)*P.bar>P.range[0]));}
   const index=Math.min(count-1,Math.floor(pos/P.bar)),current=strip.querySelector('[aria-current="true"]'),next=strip.querySelector(`[data-bar="${index}"]`);
   if(current===next)return;if(current)current.removeAttribute('aria-current');if(next){
     next.setAttribute('aria-current','true');
-    if(P.running&&!P.barDrag&&!(P.barBrowseUntil>Date.now())&&!strip.contains(document.activeElement)){
+    if(!P.barDrag&&(!P.running||!(P.barBrowseUntil>Date.now())&&!strip.contains(document.activeElement))){
       const left=next.offsetLeft-strip.offsetLeft;if(left<strip.scrollLeft||left+next.offsetWidth>strip.scrollLeft+strip.clientWidth)strip.scrollLeft=left-strip.clientWidth/2;
     }
   }
@@ -3308,6 +3317,7 @@ function renderExTransport() {
   const b = $('#pPlay'); if (!b) return;
   b.textContent = P.running ? 'Pause' : P.viewPos >= exBounds()[1] ? 'Play again' : P.viewPos > exBounds()[0] ? 'Resume' : 'Play';
   $('#pListen').textContent = P.running && P.preview ? 'Pause' : 'Listen first';
+  $('#pRestart').title=P.range?'Return to the beginning of the selection':'Return to the beginning of this step';
   $('#pFingers').checked = !!S.ui.exopts.fingers;
   $('#pFingerHint').hidden = !S.ui.exopts.fingers;
   $('#pFingerHint').innerHTML = P.ev.some(e => e.n.some(n => n.fg)) ? fingerLegend() + '<span class="finger-reading">Small numbers = fingers · large tab numbers = frets</span>' : 'No finger suggestions for this step. Tab numbers show frets.';
@@ -4727,6 +4737,7 @@ $('#pFocusPick').onclick = () => { S.ui.focusEx = S.ui.focusEx === P.ex.id ? '' 
 $('#pSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; exLoad(+b.dataset.step); $('#pNextStep').hidden = true; renderExPlayer(); });
 $('#pFingers').onchange = e => { S.ui.exopts.fingers = e.target.checked; save(); renderExTransport(); exDraw(exPos()); exBoard(P.running ? evIndexAt(Math.min(exPos(), P.L - 1e-6)) : P.cursor); };
 $('#pPlay').onclick = exToggle;
+$('#pClearSelection').onclick = () => { exSetSelection(null,true);$('#pCanvas').focus({preventScroll:true}); };
 $('#pRestart').onclick = () => { const run = P.running, preview = P.preview; exStop(); if (run) exStart(preview); else practiceRemember(); };
 $('#savedPractice').addEventListener('toggle',renderPracticePlaces);
 document.addEventListener('click',e=>{
@@ -4951,6 +4962,7 @@ $('#sReset').onclick = () => {
 };
 document.addEventListener('keydown', e => {
   if (!$('#settings').hidden) return;
+  if (!$('#volPop').hidden) return;
   if (e.target.closest('input, select, textarea')) return;
   if(e.key==='Escape'&&playerVisible()&&(P.tabDrag||P.range)){e.preventDefault();if(P.tabDrag)exTabCancel();else exSetSelection(null,true);return;}
   if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -4976,22 +4988,24 @@ $('.tabs .inner').addEventListener('keydown', e => {
   if (j == null) return; e.preventDefault(); e.stopPropagation(); switchTab(tabs[j].dataset.tab); tabs[j].focus();
 });
 document.addEventListener('keydown', e => {
-  if (!$('#settings').hidden || e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, select, textarea') || !P.ex || $('#exPlayer').hidden || curTab !== (P.host || 'exercises')) return;
+  if (!$('#settings').hidden || !$('#volPop').hidden || e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, select, textarea') || !P.ex || $('#exPlayer').hidden || curTab !== (P.host || 'exercises')) return;
   const k = { '1': 'clean', '2': 'almost', '3': 'messy' }[e.key];
   if (k) { e.preventDefault(); exFeedback(k); const b = $(k === 'clean' ? '#pClean' : k === 'almost' ? '#pAlmost' : '#pMessy'); b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 250); }
   else if (e.key === 'l' || e.key === 'L') { e.preventDefault(); exListen(); }
 });
 
 /* ---------- volume mixer ---------- */
-function volRender() {
+function volRender(force=false) {
   const st = S.settings, v = { master: Math.round(st.vol * 100), notes: Math.round((st.nvol ?? 1) * 100), click: Math.round((st.cvol ?? 1) * 100) };
-  $$('.vctl').forEach(r => { if (document.activeElement !== r) r.value = v[r.dataset.ch]; r.title = `${r.getAttribute('aria-label')}: ${v[r.dataset.ch]}%`; });
+  $$('.vctl').forEach(r => { if (force || document.activeElement !== r) r.value = v[r.dataset.ch]; r.title = `${r.getAttribute('aria-label')}: ${v[r.dataset.ch]}%`; });
   $$('.vval').forEach(b => { b.textContent = v[b.dataset.ch] + '%'; });
+  $$('[data-mixer]').forEach(b=>{const ch=b.dataset.mixer,name=ch==='notes'?'Notes':'Click',quiet=v[ch]<=10;b.textContent=v[ch]+'%';b.classList.toggle('quiet',quiet);b.setAttribute('aria-label',`${name} volume ${v[ch]}%. Open volume controls.`);b.title=`${name}: ${v[ch]}%${quiet?v[ch]===0?' · silent':' · very quiet':''}. Open volume controls`;});
   const b = $('#volBtn'); b.classList.toggle('muted', !!st.muted || st.vol === 0); b.classList.toggle('low', !st.muted && st.vol > 0 && st.vol < 0.4);
   b.setAttribute('aria-label', st.muted ? 'Volume (muted)' : `Volume ${v.master}%`);
   $('#vMute').setAttribute('aria-pressed', !!st.muted); $('#vMute').textContent = st.muted ? 'Unmute' : 'Mute';
   $('#vTest').textContent = AU.blocked ? 'Enable sound' : st.muted || st.vol === 0 ? 'Unmute and test sound' : 'Test sound';
-  $('#vSoundStatus').textContent = AU.blocked ? 'Sound could not start. Tap Enable sound. If it stays silent, allow Sound for this site in your browser settings and check your phone’s media volume.' : 'If the test is silent, check your device’s media volume and this site’s Sound permission.';
+  const quiet=[['notes','Notes'],['click','Click']].filter(([ch])=>v[ch]<=10).map(([ch,name])=>`${name} at ${v[ch]}%`).join(' · ');
+  $('#vSoundStatus').textContent = AU.blocked ? 'Sound could not start. Tap Enable sound. If it stays silent, allow Sound for this site in your browser settings and check your phone’s media volume.' : st.muted || v.master===0 ? 'Master is silent. Unmute or raise Master to hear playback.' : quiet ? quiet+'. These levels are very quiet. Raise the sliders or use Reset levels. Test sound checks Master only.' : 'Test sound checks Master. Notes and Click have separate levels.';
   if ($('#sVol')) $('#sVol').value = st.vol;
 }
 let volTestT = 0;
@@ -5007,18 +5021,29 @@ function volSet(ch, pct) {
   volApply(); volRender(); save();
 }
 function volMute(m) { S.settings.muted = m == null ? !S.settings.muted : m; volApply(); volRender(); save(); toast(S.settings.muted ? 'Muted. Press M to unmute.' : 'Sound on.'); }
+let volReturn=null;
+function volOpen(ch,origin=$('#volBtn')) {
+  volReturn=origin;$('#volPop').hidden=false;$('#volBtn').setAttribute('aria-expanded','true');volRender();
+  $(`#volPop .vctl[data-ch="${ch||'master'}"]`).focus({preventScroll:true});
+}
+function volClose(restore=false) {
+  $('#volPop').hidden=true;$('#volBtn').setAttribute('aria-expanded','false');
+  if(restore)(volReturn?.isConnected?volReturn:$('#volBtn')).focus({preventScroll:true});
+}
 document.addEventListener('input', e => { const r = e.target.closest && e.target.closest('.vctl'); if (r) volSet(r.dataset.ch, +r.value); });
 document.addEventListener('change', e => { const r = e.target.closest && e.target.closest('.vctl'); if (r && !(P.running || M.running)) volTest(r.dataset.ch); });
-$('#volBtn').onclick = e => { e.stopPropagation(); const open = $('#volPop').hidden; $('#volPop').hidden = !open; $('#volBtn').setAttribute('aria-expanded', open); if (open) { volRender(); const f = $('#volPop .vctl'); f && f.focus(); } };
+$('#volBtn').onclick = e => { e.stopPropagation();$('#volPop').hidden?volOpen():volClose(); };
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mixer]');if(b){e.stopPropagation();volOpen(b.dataset.mixer,b);}});
 $('#vMute').onclick = () => volMute();
+$('#vReset').onclick = () => { Object.assign(S.settings,{vol:DEF.settings.vol,nvol:DEF.settings.nvol,cvol:DEF.settings.cvol,muted:false});volApply();volRender(true);save();toast('Levels reset: Master 80% · Notes 100% · Click 100%.'); };
 $('#vTest').onclick = async () => {
   if(S.settings.muted || S.settings.vol===0){S.settings.muted=false;if(S.settings.vol===0)S.settings.vol=0.8;volApply();volRender();save();}
   try { const c=ac();if(c.state!=='running')await c.resume();if(c===AU.ctx&&c.state==='running')volTest('master'); } catch(e) { audioBlocked(); }
 };
-document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop') && !e.target.closest('#volBtn')) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); } });
+document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop,#volBtn,[data-mixer]')) volClose(); });
 document.addEventListener('keydown', e => {
   if (!$('#settings').hidden) return;
-  if (e.key === 'Escape' && !$('#volPop').hidden) { $('#volPop').hidden = true; $('#volBtn').setAttribute('aria-expanded', false); $('#volBtn').focus(); return; }
+  if (e.key === 'Escape' && !$('#volPop').hidden) { e.preventDefault();volClose(true);return; }
   if ((e.key === 'm' || e.key === 'M') && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest('input, select, textarea')) volMute();
 });
 volRender();
