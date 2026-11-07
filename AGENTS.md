@@ -7,7 +7,8 @@ A practice app for an experienced guitarist who writes riffs (rock, alternative,
 
 ## Files
 - `index.html`: the whole app (HTML, CSS, one JS IIFE). **Source of truth.**
-- `sw.js`, `manifest.webmanifest`, icons: install/offline for GitHub Pages. Bump the cache name in `sw.js` when shipping.
+- `audio-check.html`: isolated phone support check: native WAV, fresh direct Web Audio, and Web Audio through a media element. User-reported audibility and limited audio settings stay local; Copy results shares only on request. It does not change settings or select an output for the app.
+- `sw.js`, `manifest.webmanifest`, icons: install/offline for GitHub Pages. Bump the cache name in `sw.js` when shipping. Navigations use network-first with canonical query-free cache keys and offline fallback; other assets use stale-while-revalidate.
 - `tests/*.js` (Playwright: `npm i -D playwright && npx playwright install chromium`). Run all ten before pushing; each prints `OK`:
   `validate` (every exercise in all keys, quizzes) · `smoke` (navigation, main flows, phone/desktop) · `practice` (resume, chord formulas, per-key progress, plans) · `desktop` (wide layouts, search, previews, legacy routes) · `transport` (pause/seek, count-ins, loop timing) · `rhythm` (bar math, click modes, every rhythm step) · `essentials` (curated list surfaced first, focus order) · `chords` (reference pitches, fingering, open/movable classification and filters) · `advanced` (voice leading, modal harmony, skipping, future-key notation and contrast) · `audio` (opening notes in previews, session audio controls, mixer routing, rendered sustain/tails, finger labels and sticky toolbars).
 

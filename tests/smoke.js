@@ -2,6 +2,7 @@
 // Run: node tests/smoke.js   (needs playwright, see validate.js)
 const { chromium } = require('playwright'); const path = require('path');
 const URL = 'file://' + path.join(__dirname, '..', 'index.html');
+const http = require('node:http'), fs = require('node:fs'), assert = require('node:assert/strict');
 const TABS = ['today', 'learn', 'library', 'progress'];
 (async () => {
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] }); const errs = [];
@@ -29,6 +30,24 @@ const TABS = ['today', 'learn', 'library', 'progress'];
     await step('volume', async () => { await p.click('#volBtn'); await p.keyboard.press('Escape'); await p.keyboard.press('m'); await p.keyboard.press('m'); });
     await ctx.close();
   }
+  let version=1;
+  const sw=fs.readFileSync(path.join(__dirname,'..','sw.js'),'utf8');
+  const server=http.createServer((req,res)=>{res.setHeader('Cache-Control','no-store');if(req.url.split('?')[0]==='/sw.js'){res.setHeader('Content-Type','application/javascript');res.end(sw);}else{res.setHeader('Content-Type','text/html');res.end('<!doctype html><p id="version">'+version+'</p>');}});
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  const address='http://127.0.0.1:'+server.address().port,offlineContext=await b.newContext(),offlinePage=await offlineContext.newPage();
+  try{
+    await offlinePage.goto(address+'/');
+    await offlinePage.evaluate(async()=>{await navigator.serviceWorker.register('/sw.js');await navigator.serviceWorker.ready;});
+    await offlinePage.waitForFunction(()=>!!navigator.serviceWorker.controller);
+    version=2;await offlinePage.reload();
+    assert.equal(await offlinePage.locator('#version').textContent(),'2','reload receives the current app rather than the previous cached page');
+    version=3;await offlinePage.goto(address+'/?release=3');
+    assert.equal(await offlinePage.locator('#version').textContent(),'3','release links receive the current app immediately');
+    await offlineContext.setOffline(true);await offlinePage.reload();
+    assert.equal(await offlinePage.locator('#version').textContent(),'3','offline reload receives the last successful navigation');
+    await offlinePage.goto(address+'/index.html');
+    assert.equal(await offlinePage.locator('#version').textContent(),'3','root and index share the latest offline app');
+  }catch(e){errs.push('offline navigation: '+e.message);}finally{await offlineContext.close();await new Promise(resolve=>server.close(resolve));}
   await b.close(); errs.forEach(e => console.log('  ' + e)); console.log(errs.length ? `FAILED (${errs.length})` : 'OK'); process.exit(errs.length ? 1 : 0);
 })();
 
