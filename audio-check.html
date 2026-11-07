@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Fretlab · Sound check</title>
+<style>
+:root{font:16px/1.55 system-ui,sans-serif;color-scheme:light dark;--bg:#fafafa;--surface:#fff;--ink:#16181d;--muted:#3e424b;--line:#6c7078;--accent:#006369}
+@media(prefers-color-scheme:dark){:root{--bg:#08090b;--surface:#202328;--ink:#fff;--muted:#e0e4eb;--line:#949aa5;--accent:#22d9dc}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}main{max-width:620px;margin:auto;padding:28px 20px 60px}a{color:var(--accent)}h1{font-size:28px;line-height:1.2}h2{font-size:18px;margin:0 0 8px}p{margin:8px 0 16px}.muted{color:var(--muted)}section{margin:18px 0;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}button,select{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:7px;color:var(--ink);background:var(--surface);padding:8px 12px}button{cursor:pointer}button:disabled{opacity:.6;cursor:wait}button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}audio{display:block;width:100%;margin:12px 0}.answer{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}select{flex:1;min-width:160px}output{display:block;color:var(--muted);margin-top:12px;overflow-wrap:anywhere}textarea{width:100%;min-height:210px;font:12px/1.5 ui-monospace,monospace;color:var(--ink);background:var(--surface);padding:12px;border:1px solid var(--line);border-radius:7px}summary{cursor:pointer;padding:12px 0}#copyStatus{display:inline;margin-left:8px}
+</style>
+<main>
+<a href="./">← Back to Fretlab</a>
+<h1>Sound check</h1>
+<p>Try each sound on this phone, one at a time. Each plays a short A note. Choose whether you heard it, then copy the results.</p>
+<p class="muted">Keep this page open during each test. Use your usual media volume. These checks do not change your practice settings.</p>
+<section>
+  <h2>1. Browser sound</h2>
+  <p class="muted">A small audio clip, played through the browser’s normal player.</p>
+  <audio id="clip" controls preload="auto"></audio>
+  <label class="answer">Did you hear it? <select data-answer="clip" aria-label="Did you hear browser sound?"><option value="not checked">Not checked</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+  <output id="clipStatus" role="status">Press the player’s Play button.</output>
+</section>
+<section>
+  <h2>2. Direct synth sound</h2>
+  <p class="muted">A fresh sound session using the same output method as Fretlab.</p>
+  <button id="direct" type="button">Play direct sound</button>
+  <label class="answer">Did you hear it? <select data-answer="direct" aria-label="Did you hear direct synth sound?"><option value="not checked">Not checked</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+  <output id="directStatus" role="status">Ready.</output>
+</section>
+<section>
+  <h2>3. Alternate synth output</h2>
+  <p class="muted">The same synth sound sent through a browser audio player.</p>
+  <button id="media" type="button">Play alternate output</button>
+  <label class="answer">Did you hear it? <select data-answer="media" aria-label="Did you hear alternate synth output?"><option value="not checked">Not checked</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+  <output id="mediaStatus" role="status">Ready.</output>
+</section>
+<button id="copy" type="button">Copy results</button><output id="copyStatus" role="status"></output>
+<p class="muted">Paste the results into the chat. Nothing is sent automatically.</p>
+<details><summary>View results</summary><textarea id="report" readonly aria-label="Sound check results"></textarea></details>
+<audio id="stream" hidden></audio>
+</main>
+<script>
+(() => {
+'use strict';
+const $=s=>document.querySelector(s),results={version:'audio-check-1',browser:navigator.userAgent,secure:window.isSecureContext,appSettings:null,tests:{clip:{},direct:{},media:{}}};
+try{const s=JSON.parse(localStorage.getItem('fretlab.v1'));if(s)results.appSettings={vol:s.settings?.vol,muted:s.settings?.muted,nvol:s.settings?.nvol,cvol:s.settings?.cvol,guide:s.ui?.exopts?.guide,click:s.ui?.exopts?.click};}catch(e){}
+let context=null,timer=null,serial=0;
+function update(){for(const n of document.querySelectorAll('[data-answer]'))results.tests[n.dataset.answer].heard=n.value;$('#report').value=JSON.stringify(results,null,2);}
+function status(id,text){$('#'+id+'Status').textContent=text;update();}
+function wav(){
+  const rate=22050,count=Math.round(rate*1.2),bytes=new Uint8Array(44+count*2),v=new DataView(bytes.buffer);
+  const word=(offset,s)=>{for(let i=0;i<s.length;i++)bytes[offset+i]=s.charCodeAt(i);};
+  word(0,'RIFF');v.setUint32(4,36+count*2,true);word(8,'WAVE');word(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);word(36,'data');v.setUint32(40,count*2,true);
+  for(let i=0;i<count;i++){const t=i/rate,envelope=Math.min(1,t/.015,(1.2-t)/.08);v.setInt16(44+i*2,Math.round(Math.sin(2*Math.PI*440*t)*.2*envelope*32767),true);}
+  let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return 'data:audio/wav;base64,'+btoa(binary);
+}
+$('#clip').src=wav();
+for(const event of ['playing','ended','error'])$('#clip').addEventListener(event,()=>{
+  const a=$('#clip'),r=results.tests.clip;Object.assign(r,{event,time:a.currentTime,error:a.error?{code:a.error.code,message:a.error.message}:null});
+  status('clip',event==='error'?'The browser could not play the clip.':event==='ended'?'Clip finished. Did you hear it?':'Clip is playing.');
+});
+function stop(){
+  serial++;clearTimeout(timer);$('#clip').pause();$('#stream').pause();$('#stream').srcObject=null;
+  if(context){context.close().catch(()=>{});context=null;}
+  $('#direct').disabled=false;$('#media').disabled=false;
+}
+async function play(id){
+  stop();const token=serial,r=results.tests[id];delete r.error;status(id,'Starting…');$('#'+id).disabled=true;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext,c=context=new C(),start=c.currentTime,resume=c.resume();
+    let played=Promise.resolve(),output=c.destination;
+    if(id==='media'){output=c.createMediaStreamDestination();r.route='media element';$('#stream').srcObject=output.stream;played=$('#stream').play();}
+    else r.route='direct';
+    timer=setTimeout(()=>{if(token!==serial)return;r.state=c.state;r.clockAdvance=c.currentTime-start;r.error={name:'TimeoutError',message:'Audio start did not complete'};stop();status(id,'Sound has not started. Copy the results so we can investigate.');},2500);
+    await Promise.all([resume,played]);if(token!==serial)return;
+    clearTimeout(timer);const now=c.currentTime,o=c.createOscillator(),g=c.createGain();o.frequency.value=440;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(.2,now+.015);g.gain.setValueAtTime(.2,now+1.1);g.gain.linearRampToValueAtTime(0,now+1.2);o.connect(g);g.connect(output);o.start(now);o.stop(now+1.22);
+    Object.assign(r,{state:c.state,sampleRate:c.sampleRate,baseLatency:c.baseLatency});status(id,'Sound is playing.');
+    timer=setTimeout(()=>{if(token!==serial)return;Object.assign(r,{state:c.state,clockAdvance:Math.round((c.currentTime-start)*1000)/1000});status(id,'Test finished. Did you hear it?');stop();},1450);
+  }catch(e){if(token!==serial)return;r.error={name:e.name,message:e.message};stop();status(id,'The browser could not start this sound. Copy the results so we can investigate.');}
+}
+$('#clip').addEventListener('play',()=>{serial++;clearTimeout(timer);$('#stream').pause();$('#stream').srcObject=null;if(context){context.close().catch(()=>{});context=null;}$('#direct').disabled=false;$('#media').disabled=false;});
+$('#direct').onclick=()=>play('direct');$('#media').onclick=()=>play('media');
+document.querySelectorAll('[data-answer]').forEach(n=>n.onchange=update);
+$('#copy').onclick=async()=>{update();try{await navigator.clipboard.writeText($('#report').value);$('#copyStatus').textContent='Copied.';}catch(e){$('details').open=true;$('#report').focus();$('#report').select();$('#copyStatus').textContent='Select and copy the results below.';}};
+window.addEventListener('pagehide',stop);update();
+})();
+</script>
+</html>

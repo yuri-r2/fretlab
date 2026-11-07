@@ -147,3 +147,5 @@ How the research shaped the app:
 
 
 Audio startup retries suspended or interrupted browser audio on a tap or click and recreates closed sessions. If sound cannot start, playback pauses and Volume offers **Enable sound** with site-permission guidance. **Test sound** plays through Master, independently of the Notes and Click sliders; it explicitly unmutes Master when needed. Generated guitar and noise buffers use write-only sample transfer. Browser checks cover denied/pending starts, retry and closed-context recovery. Android hardware output still requires testing on the device.
+
+For device-specific silence, [Sound check](https://yuri-r2.github.io/fretlab/audio-check.html) compares a native audio clip, a fresh direct synth and synth playback through a media element. Select which sounds you heard and copy the report. This records no playing and sends nothing automatically. Online navigation fetches the current page immediately; the cached copy remains available offline.

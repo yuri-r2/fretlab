@@ -100,6 +100,26 @@ fs.writeFileSync(tmp, source);
     await phone.locator('#vTest').tap();
     await phone.waitForFunction(() => window.__A.AU.ctx !== window.oldAudioContext && window.__A.AU.ctx.state === 'running');
     await phone.screenshot({path:path.join(os.tmpdir(),'fretlab-mobile-sound-controls.png')});
+    await phone.goto('file://' + path.join(__dirname, '..', 'audio-check.html'));
+    const savedSettings=await phone.evaluate(()=>localStorage.getItem('fretlab.v1'));
+    await phone.locator('#clip').click({position:{x:20,y:27}});
+    await phone.waitForFunction(()=>JSON.parse(document.getElementById('report').value).tests.clip.event==='ended');
+    for(const id of ['direct','media']){
+      await phone.locator('#'+id).tap();
+      await phone.waitForFunction(id=>document.getElementById(id+'Status').textContent.startsWith('Test finished'),id);
+      const result=await phone.locator('#report').inputValue().then(JSON.parse);
+      assert.equal(result.tests[id].state,'running');
+      assert.ok(result.tests[id].clockAdvance>.5,id+' sound check advances the audio clock');
+      await phone.selectOption('[data-answer="'+id+'"]',id==='direct'?'no':'yes');
+    }
+    const report=JSON.parse(await phone.locator('#report').inputValue());
+    assert.equal(report.tests.direct.heard,'no');assert.equal(report.tests.media.heard,'yes');
+    assert.equal(await phone.evaluate(()=>localStorage.getItem('fretlab.v1')),savedSettings,'the support check never changes practice settings');
+    await phone.evaluate(()=>{window.AudioContext=new Proxy(window.AudioContext,{construct(T,args){const c=new T(...args);c.resume=()=>Promise.reject(new DOMException('Blocked','NotAllowedError'));return c;}});});
+    await phone.locator('#direct').tap();await phone.waitForFunction(()=>JSON.parse(document.getElementById('report').value).tests.direct.error?.name==='NotAllowedError');
+    assert.ok(await phone.locator('#direct').isEnabled(),'a failed sound check can be retried');
+    assert.equal(await phone.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'sound check fits on a phone');
+    await phone.screenshot({path:path.join(os.tmpdir(),'fretlab-phone-sound-check.png'),fullPage:true});
     await mobile.close();
     const rendered = await page.evaluate(async () => {
       const a = window.__A, Native = window.AudioContext, results = {};
