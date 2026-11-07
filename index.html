@@ -581,9 +581,7 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .chip:has(input[type=checkbox]:disabled){opacity:.5;cursor:default}
 .chip.mix{padding-right:8px}
 .chip .mvol{width:60px}
-.mix-level{min-width:38px;min-height:28px;padding:2px 0;border:0;border-bottom:1px dotted currentColor;background:none;color:var(--muted);font:500 11px var(--font-mono);cursor:pointer}
-.mix-level.quiet{font-weight:600;color:var(--warn-text)}
-@media(pointer:coarse){.chip .mvol{display:none}.mix-level{min-width:44px;min-height:44px}.chip.mix{padding-right:5px}#pClearSelection{min-height:44px}}
+@media(pointer:coarse){#pClearSelection{min-height:44px}}
 .pseg button{padding:5px 10px;font-size:13px}
 
 .btn.sm{padding:3px 9px;font-size:12px;min-height:0}
@@ -817,8 +815,8 @@ body:has(#settings:not([hidden])){overflow:hidden}
             <div class="pctl-row" role="group" aria-label="Playback"><span class="pctl-lab">Play</span>
               <label class="chip"><input type="checkbox" id="pLoop"> Loop</label>
               <label class="chip" title="Count four beats, then start from the beginning of the selected beat"><input type="checkbox" id="pCount"> Count-in</label>
-              <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"><button class="mix-level" type="button" data-mixer="click" aria-label="Click volume">100%</button></span>
-              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"><button class="mix-level" type="button" data-mixer="notes" aria-label="Notes volume">100%</button></span>
+              <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
+              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"></span>
               <label class="chip" title="Speed up 4 bpm every loop"><input type="checkbox" id="pLadder"> +4 bpm / loop</label>
               <label class="chip" id="pKeyCycleChip" title="Move up a 4th every loop to play through all 12 keys"><input type="checkbox" id="pKeyCycle"> New key / loop</label>
             </div>
@@ -4999,7 +4997,6 @@ function volRender(force=false) {
   const st = S.settings, v = { master: Math.round(st.vol * 100), notes: Math.round((st.nvol ?? 1) * 100), click: Math.round((st.cvol ?? 1) * 100) };
   $$('.vctl').forEach(r => { if (force || document.activeElement !== r) r.value = v[r.dataset.ch]; r.title = `${r.getAttribute('aria-label')}: ${v[r.dataset.ch]}%`; });
   $$('.vval').forEach(b => { b.textContent = v[b.dataset.ch] + '%'; });
-  $$('[data-mixer]').forEach(b=>{const ch=b.dataset.mixer,name=ch==='notes'?'Notes':'Click',quiet=v[ch]<=10;b.textContent=v[ch]+'%';b.classList.toggle('quiet',quiet);b.setAttribute('aria-label',`${name} volume ${v[ch]}%. Open volume controls.`);b.title=`${name}: ${v[ch]}%${quiet?v[ch]===0?' · silent':' · very quiet':''}. Open volume controls`;});
   const b = $('#volBtn'); b.classList.toggle('muted', !!st.muted || st.vol === 0); b.classList.toggle('low', !st.muted && st.vol > 0 && st.vol < 0.4);
   b.setAttribute('aria-label', st.muted ? 'Volume (muted)' : `Volume ${v.master}%`);
   $('#vMute').setAttribute('aria-pressed', !!st.muted); $('#vMute').textContent = st.muted ? 'Unmute' : 'Mute';
@@ -5021,26 +5018,24 @@ function volSet(ch, pct) {
   volApply(); volRender(); save();
 }
 function volMute(m) { S.settings.muted = m == null ? !S.settings.muted : m; volApply(); volRender(); save(); toast(S.settings.muted ? 'Muted. Press M to unmute.' : 'Sound on.'); }
-let volReturn=null;
-function volOpen(ch,origin=$('#volBtn')) {
-  volReturn=origin;$('#volPop').hidden=false;$('#volBtn').setAttribute('aria-expanded','true');volRender();
-  $(`#volPop .vctl[data-ch="${ch||'master'}"]`).focus({preventScroll:true});
+function volOpen() {
+  $('#volPop').hidden=false;$('#volBtn').setAttribute('aria-expanded','true');volRender();
+  $('#volPop .vctl[data-ch="master"]').focus({preventScroll:true});
 }
 function volClose(restore=false) {
   $('#volPop').hidden=true;$('#volBtn').setAttribute('aria-expanded','false');
-  if(restore)(volReturn?.isConnected?volReturn:$('#volBtn')).focus({preventScroll:true});
+  if(restore)$('#volBtn').focus({preventScroll:true});
 }
 document.addEventListener('input', e => { const r = e.target.closest && e.target.closest('.vctl'); if (r) volSet(r.dataset.ch, +r.value); });
 document.addEventListener('change', e => { const r = e.target.closest && e.target.closest('.vctl'); if (r && !(P.running || M.running)) volTest(r.dataset.ch); });
 $('#volBtn').onclick = e => { e.stopPropagation();$('#volPop').hidden?volOpen():volClose(); };
-document.addEventListener('click',e=>{const b=e.target.closest('[data-mixer]');if(b){e.stopPropagation();volOpen(b.dataset.mixer,b);}});
 $('#vMute').onclick = () => volMute();
 $('#vReset').onclick = () => { Object.assign(S.settings,{vol:DEF.settings.vol,nvol:DEF.settings.nvol,cvol:DEF.settings.cvol,muted:false});volApply();volRender(true);save();toast('Levels reset: Master 80% · Notes 100% · Click 100%.'); };
 $('#vTest').onclick = async () => {
   if(S.settings.muted || S.settings.vol===0){S.settings.muted=false;if(S.settings.vol===0)S.settings.vol=0.8;volApply();volRender();save();}
   try { const c=ac();if(c.state!=='running')await c.resume();if(c===AU.ctx&&c.state==='running')volTest('master'); } catch(e) { audioBlocked(); }
 };
-document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop,#volBtn,[data-mixer]')) volClose(); });
+document.addEventListener('click', e => { if (!$('#volPop').hidden && !e.target.closest('#volPop,#volBtn')) volClose(); });
 document.addEventListener('keydown', e => {
   if (!$('#settings').hidden) return;
   if (e.key === 'Escape' && !$('#volPop').hidden) { e.preventDefault();volClose(true);return; }
