@@ -19,11 +19,11 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
     await page.goto('file://' + tmp);
     const fonts = await page.evaluate(async () => {
       await document.fonts.ready;
-      const families = ['400 16px "Instrument Sans"', '600 28px "Instrument Sans"', '400 13px "IBM Plex Mono"', '500 13px "IBM Plex Mono"', '600 12px "IBM Plex Mono"'];
+      const families = ['400 16px "Rubik"', '600 28px "Rubik"', '400 13px "IBM Plex Mono"', '500 13px "IBM Plex Mono"', '600 12px "IBM Plex Mono"'];
       return Promise.all(families.map(async value => { const faces = await document.fonts.load(value); return faces.length > 0 && faces.every(face => face.status === 'loaded') && document.fonts.check(value); }));
     });
     assert.ok(fonts.every(Boolean), 'bundled fonts load offline at every used weight');
-    assert.match(await page.locator('body').evaluate(n => getComputedStyle(n).fontFamily), /Instrument Sans/);
+    assert.match(await page.locator('body').evaluate(n => getComputedStyle(n).fontFamily), /Rubik/);
     assert.equal(await page.locator('.tab').first().evaluate(n => getComputedStyle(n).textTransform), 'none');
     assert.equal(await page.locator('.tab').count(), 4);
     assert.equal(await page.locator('#view-riffs, #dRoll').count(), 0);
@@ -104,7 +104,7 @@ fs.writeFileSync(artifact, '<!doctype html><html><body>' + source.match(/<body>(
     await page.click('#exList [data-ex="triads"]');
     assert.equal(await page.locator('#pNextStep').isVisible(), false, 'body-only deployment preserves hidden controls');
     assert.equal(await page.locator('#pStepDesc').evaluate(n => getComputedStyle(n).fontSize), '16px');
-    assert.equal(await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 12px "IBM Plex Mono"') && document.fonts.check('600 28px "Instrument Sans"'); }), true, 'body-only copies retain both bundled fonts');
+    assert.equal(await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 12px "IBM Plex Mono"') && document.fonts.check('600 28px "Rubik"'); }), true, 'body-only copies retain both bundled fonts');
     for (const scale of [1.25, 1.5]) {
       await page.locator('body').evaluate((n, value) => n.style.zoom = value, scale);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, 'practice layout fits with zoom ' + scale);

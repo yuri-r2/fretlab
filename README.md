@@ -74,7 +74,7 @@ With New key / loop or the tempo ladder enabled, **Up next** shows the destinati
 
 Completion, best tempos, and review schedules for keyed exercises are stored separately for each key. Existing progress is retained in its saved key (or the exercise's default key when none was saved). Listening or stepping through a due exercise before rating it postpones that review to tomorrow rather than advancing its cold-review interval. Ratings remain self-reported; Fretlab does not assess the guitar performance automatically.
 
-Instrument Sans provides the headings, controls and instructions; IBM Plex Mono keeps tab, frets and changing numbers aligned. Fonts are bundled into the page for offline use. Practice instructions and lessons use larger reading text, while labels use sentence case. Font sources and rationale are in [Typography research](TYPOGRAPHY_RESEARCH.md); license texts are in [licenses](licenses/).
+Rubik provides the headings, controls and instructions; IBM Plex Mono keeps tab, frets and changing numbers aligned. Fonts are bundled into the page for offline use. Practice instructions and lessons use larger reading text, while labels use sentence case. Font sources and rationale are in [Typography research](TYPOGRAPHY_RESEARCH.md); license texts are in [licenses](licenses/).
 
 ## Practice passages
 
@@ -119,7 +119,7 @@ Guitar notes use a self-contained plucked-string model with fractional tuning, a
 
 ## Appearance
 
-Inked uses near-white (`#fafafa`) light mode and near-black (`#08090b`) dark mode, following your system appearance. Neutral panels, clear borders and teal accents keep the workspace legible. Actions use deep teal (`#004f52`) in light mode and bright teal (`#2de0de`) in dark mode. Playback highlights use slate blue, and root markers use graphite/slate. Third, fifth and seventh markers retain blue, green and violet, with individually contrasting labels. Normal text and marker-label pairs are checked against a 7:1 target. The direction draws on the neutral schemes in [Figma's color-scheme collection](https://www.figma.com/resource-library/website-color-schemes/) and [WCAG contrast guidance](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html).
+Inked uses near-white (`#fafafa`) light mode and near-black (`#08090b`) dark mode, following your system appearance. Neutral panels, spacing and teal accents keep the workspace legible. Actions use deep teal (`#004f52`) in light mode and bright teal (`#2de0de`) in dark mode. Playback highlights use slate blue, and root markers use graphite/slate. Third, fifth and seventh markers retain blue, green and violet, with individually contrasting labels. Normal text and marker-label pairs are checked against a 7:1 target. The direction draws on the neutral schemes in [Figma's color-scheme collection](https://www.figma.com/resource-library/website-color-schemes/) and [WCAG contrast guidance](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html).
 
 For the palette comparison, measured ratios and sources, see [Color and contrast research](COLOR_THEME_RESEARCH.md).
 
@@ -150,3 +150,5 @@ Audio startup retries suspended or interrupted browser audio on a tap or click a
 
 For device-specific silence, [Sound check](https://yuri-r2.github.io/fretlab/audio-check.html) compares a native audio clip, a fresh direct synth and synth playback through a media element. Select which sounds you heard and copy the report. This records no playing and sends nothing automatically. Online navigation fetches the current page immediately; the cached copy remains available offline.
 
+
+The visual hierarchy groups controls through spacing and shared neutral surfaces. Cards and the player use fewer outlines, exercise steps use text tabs, and guidance stays separate from the score. Functional notation lines and keyboard focus indicators remain explicit. Design rationale: [Interface hierarchy](VISUAL_DESIGN_RESEARCH.md).

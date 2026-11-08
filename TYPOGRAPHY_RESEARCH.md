@@ -1,3 +1,9 @@
+# Current interface: Rubik
+
+Rubik is the interface typeface for headings, controls and prose, selected by the owner. The normal Latin variable WOFF2 (weights 300–700) is embedded in `index.html`; the OFL is in `licenses/rubik-OFL.txt`. IBM Plex Mono continues to distinguish frets, tablature and changing numbers. Rubik replaces the previous Instrument Sans face without changing notation metrics.
+
+Source: [Google Fonts Rubik](https://github.com/google/fonts/tree/main/ofl/rubik). Layout rationale is in [Interface hierarchy](VISUAL_DESIGN_RESEARCH.md). The comparison below records the earlier type exploration.
+
 # Typography directions for Fretlab
 
 ## Selected direction
@@ -30,6 +36,6 @@ The Plex Sans/Mono pairing is also a sensible conservative choice if continuity 
 
 Keep the chosen family consistent across CSS, SVG and the canvas player: the canvas reads MONO/SANS/DISP from the CSS family tokens. Redraw after initial font readiness and subsequent font loading, preserving the current playback position. Otherwise the canvas can retain fallback text while the rest of the app uses the selected face.
 
-Prefer locally served WOFF2 assets with the selected fonts' license files for reliable offline behavior. Limit weights/subsets to what is used and retain a system fallback. The shipped page instead embeds the four Latin WOFF2 faces directly: one Instrument Sans variable face (400–700) and IBM Plex Mono at 400, 500 and 600. This keeps the app self-contained for offline and body-only copies, without font requests to an external host. OFL license texts accompany the page in `licenses/`. Other characters retain the system fallback.
+Prefer locally served WOFF2 assets with the selected fonts' license files for reliable offline behavior. Limit weights/subsets to what is used and retain a system fallback. The page embeds four Latin WOFF2 faces directly: one Rubik variable face (300–700) and IBM Plex Mono at 400, 500 and 600. This keeps the app self-contained for offline and body-only copies, without font requests to an external host. OFL license texts accompany the page in `licenses/`. Other characters retain the system fallback.
 
 Check 1280, 1440 and 1920 desktop widths, a narrow fallback, light/dark appearance and browser zoom. Compare long titles, the session header, small diagram labels, note-marker fit, chord names and canvas alignment. Font designers' feature descriptions do not substitute for testing these actual screens.

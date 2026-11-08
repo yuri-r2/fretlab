@@ -8,7 +8,7 @@ Legibility depends on foreground/background pairs, line weight, text size and st
 
 [WCAG minimum contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) specifies 4.5:1 for ordinary text. [Enhanced contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html) raises ordinary text to 7:1. [Non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html) uses 3:1 for meaningful control/state indicators and graphics against adjacent colors. Not every decorative border is subject to that criterion. Thin anti-aliased lines can also appear fainter than their nominal color pair suggests.
 
-For this app, normal text, secondary text on the main surfaces, marker labels and primary-button labels target at least 7:1. Control and diagram boundaries are deliberately stronger than the soft theme. This is a set of checked color pairs, not a claim that the whole application has completed a WCAG audit. Historic/inactive notes may deliberately be faded to distinguish them from upcoming notes.
+For this app, normal text, secondary text on the main surfaces, marker labels and primary-button labels target at least 7:1. Functional diagram lines, slider tracks and focus indicators retain strong contrast; decorative containers use quiet surfaces and spacing rather than repeated outlines. This is a set of checked color pairs, not a claim that the whole application has completed a WCAG audit. Historic/inactive notes may deliberately be faded to distinguish them from upcoming notes.
 
 ## Neutral foundation
 
@@ -19,9 +19,9 @@ For this app, normal text, secondary text on the main surfaces, marker labels an
 | Secondary surface | `#eceef1` | `#30343b` |
 | Main text | `#16181d` | `#ffffff` |
 | Secondary text | `#3e424b` | `#e0e4eb` |
-| Structural boundary | `#6c7078` | `#949aa5` |
+| Functional line | `#6c7078` | `#949aa5` |
 
-Across those three surfaces, secondary text has a minimum contrast of approximately 8.66:1 in light mode and 9.80:1 in dark mode. Boundaries have a minimum of approximately 4.27:1 and 4.42:1 respectively. Ratios use WCAG relative luminance calculations on the declared opaque colors. They do not measure glare, the user's display or personal comfort.
+Across those three surfaces, secondary text has a minimum contrast of approximately 8.66:1 in light mode and 9.80:1 in dark mode. These functional line colors have a minimum of approximately 4.27:1 and 4.42:1 respectively. Ratios use WCAG relative luminance calculations on the declared opaque colors. They do not measure glare, the user's display or personal comfort.
 
 ## Accent options
 
