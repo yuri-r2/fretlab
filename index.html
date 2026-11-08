@@ -54,9 +54,9 @@
 :root{
   --bg:#fafafa; --surface:#ffffff; --surface-2:#eceef1; --ink:#16181d; --muted:#3e424b; --line:#6c7078;
   --accent:#004f52; --accent-ink:#ffffff; --accent-soft:#d2efef;
-  --root:#943900; --root-ink:#ffffff; --root-soft:#fae5d8; --root-text:#943900;
-  --good:#095f1c; --good-ink:#ffffff; --good-text:#095f1c; --warn:#7a4700; --warn-ink:#ffffff; --warn-text:#7a4700; --bad:#b00030; --bad-ink:#ffffff;
-  --good-soft:#e2f3e5; --bad-soft:#fae3e9; --warn-soft:#faebd4;
+  --root:#364454; --root-ink:#ffffff; --root-soft:#e7ebf0; --root-text:#364454;
+  --good:#095f1c; --good-ink:#ffffff; --good-text:#095f1c; --warn:#304d6a; --warn-ink:#ffffff; --warn-text:#304d6a; --bad:#b00030; --bad-ink:#ffffff;
+  --good-soft:#e2f3e5; --bad-soft:#fae3e9; --warn-soft:#e7edf4;
   --wood:#f6f7f8; --wood-2:#e3e6eb; --fret:#626873; --string:#555c67; --inlay:#737a85;
   --d3:#0050aa; --d3-ink:#ffffff; --d5:#00604e; --d5-ink:#ffffff; --d7:#6e2b91; --d7-ink:#ffffff;
   --font-display:var(--font-body);
@@ -66,18 +66,18 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#08090b; --surface:#202328; --surface-2:#30343b; --ink:#ffffff; --muted:#e0e4eb; --line:#949aa5;
   --accent:#2de0de; --accent-ink:#08090b; --accent-soft:#113236;
-  --root:#ffb164; --root-ink:#08090b; --root-soft:#3e2614; --root-text:#ffb164;
-  --good:#77e08c; --good-ink:#08090b; --good-text:#77e08c; --warn:#ffe092; --warn-ink:#08090b; --warn-text:#ffe092; --bad:#ff91ad; --bad-ink:#08090b;
-  --good-soft:#163b23; --bad-soft:#421c2a; --warn-soft:#3d2c0d;
+  --root:#c4ceda; --root-ink:#08090b; --root-soft:#282f39; --root-text:#c4ceda;
+  --good:#77e08c; --good-ink:#08090b; --good-text:#77e08c; --warn:#bacbdd; --warn-ink:#08090b; --warn-text:#bacbdd; --bad:#ff91ad; --bad-ink:#08090b;
+  --good-soft:#163b23; --bad-soft:#421c2a; --warn-soft:#253344;
   --wood:#181b20; --wood-2:#30343b; --fret:#989fab; --string:#c6ccd6; --inlay:#7d8592;
   --d3:#7fb9ff; --d3-ink:#08090b; --d5:#5de5bf; --d5-ink:#08090b; --d7:#d7b0ff; --d7-ink:#08090b; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --bg:#08090b; --surface:#202328; --surface-2:#30343b; --ink:#ffffff; --muted:#e0e4eb; --line:#949aa5;
   --accent:#2de0de; --accent-ink:#08090b; --accent-soft:#113236;
-  --root:#ffb164; --root-ink:#08090b; --root-soft:#3e2614; --root-text:#ffb164;
-  --good:#77e08c; --good-ink:#08090b; --good-text:#77e08c; --warn:#ffe092; --warn-ink:#08090b; --warn-text:#ffe092; --bad:#ff91ad; --bad-ink:#08090b;
-  --good-soft:#163b23; --bad-soft:#421c2a; --warn-soft:#3d2c0d;
+  --root:#c4ceda; --root-ink:#08090b; --root-soft:#282f39; --root-text:#c4ceda;
+  --good:#77e08c; --good-ink:#08090b; --good-text:#77e08c; --warn:#bacbdd; --warn-ink:#08090b; --warn-text:#bacbdd; --bad:#ff91ad; --bad-ink:#08090b;
+  --good-soft:#163b23; --bad-soft:#421c2a; --warn-soft:#253344;
   --wood:#181b20; --wood-2:#30343b; --fret:#989fab; --string:#c6ccd6; --inlay:#7d8592;
   --d3:#7fb9ff; --d3-ink:#08090b; --d5:#5de5bf; --d5-ink:#08090b; --d7:#d7b0ff; --d7-ink:#08090b; color-scheme:dark;
 }
@@ -118,19 +118,32 @@ p{margin:0}
 .pulse{width:9px;height:9px;border-radius:50%;background:var(--line);transition:background .05s}
 .pulse.on{background:var(--accent)}
 .pulse.acc{background:var(--root)}
-.volpop{position:absolute;right:max(16px,calc((100% - 1100px)/2 + 16px));top:calc(100% + 6px);z-index:40;width:min(340px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 12px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:10px}
+.volpop{position:absolute;right:16px;top:calc(100% + 8px);z-index:40;width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - var(--hdr-h,60px) - 24px);overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:0 12px 32px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:14px}
 .volpop[hidden]{display:none}
 .vhd{display:flex;justify-content:space-between;align-items:center}
-.vrow{display:grid;grid-template-columns:104px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:14px}
+.vhd h2{font-size:18px}
+.vhd .row{gap:8px}
+.vrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;font-size:14px}
+.vrow>span{grid-area:1/1;font-weight:500}
+.vrow .vval{grid-area:1/2}
+.vrow .vctl{grid-area:2/1/3/-1}
 .vrow b{font:600 13px var(--font-mono);text-align:right}
 .vactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .vactions .btn{flex:1}
-.vctl{accent-color:var(--accent);width:100%;height:28px;margin:0}
+.vctl{appearance:none;-webkit-appearance:none;background:transparent;width:100%;height:40px;margin:0;cursor:pointer}
+.vctl::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(to right,var(--accent) var(--level,0%),var(--line) var(--level,0%))}
+.vctl::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-7px;border:2px solid var(--surface);border-radius:50%;background:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.vctl::-moz-range-track{height:6px;border-radius:999px;background:var(--line)}
+.vctl::-moz-range-progress{height:6px;border-radius:999px;background:var(--accent)}
+.vctl::-moz-range-thumb{width:16px;height:16px;border:2px solid var(--surface);border-radius:50%;background:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.iconbtn.volbtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:36px;padding:0;font-size:14px;font-weight:500}
+.volbtn[aria-expanded="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.volbtn .vlabel{display:none}
+@media(min-width:900px){.iconbtn.volbtn{width:auto;padding:0 11px}.volbtn .vlabel{display:inline}}
+@media(pointer:coarse){.vctl{height:44px}.vhd .iconbtn{width:44px;height:44px}}
 .vmute[aria-pressed="true"]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
 .volbtn .vx{display:none} .volbtn.muted .vx{display:block} .volbtn.muted .vw1,.volbtn.muted .vw2{display:none} .volbtn.low .vw2{display:none}
 .volbtn.muted{color:var(--bad);border-color:var(--bad)}
-.mixctl{display:inline-flex;align-items:center;gap:6px}
-.mixctl .mvol{width:92px}
 .iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:36px;height:36px;display:grid;place-items:center}
 .pill{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:4px 6px 4px 12px;font-size:13px}
 .pill button{border:0;background:var(--surface);border-radius:7px;padding:6px 10px;font-size:13px;white-space:nowrap}
@@ -579,14 +592,12 @@ details.more>summary{cursor:pointer;font-weight:500;padding:10px 0}
 .chip:has(input[type=checkbox]:checked){border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
 .chip:has(input[type=checkbox]:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 .chip:has(input[type=checkbox]:disabled){opacity:.5;cursor:default}
-.chip.mix{padding-right:8px}
-.chip .mvol{width:60px}
 @media(pointer:coarse){#pClearSelection{min-height:44px}}
 .pseg button{padding:5px 10px;font-size:13px}
 
 .btn.sm{padding:3px 9px;font-size:12px;min-height:0}
 .pseg{flex-wrap:nowrap}
-@media (max-width:560px){.pctl-lab{width:100%}.pseg{width:100%}.pseg button{flex:1;padding:5px 2px;font-size:12.5px;white-space:nowrap}.pctl{padding:10px}.pctl-row{gap:5px}.chip{padding:0 9px;gap:6px;font-size:12.5px;min-height:32px}.chip .mvol{width:46px}}
+@media (max-width:560px){.pctl-lab{width:100%}.pseg{width:100%}.pseg button{flex:1;padding:5px 2px;font-size:12.5px;white-space:nowrap}.pctl{padding:10px}.pctl-row{gap:5px}.chip{padding:0 9px;gap:6px;font-size:12.5px;min-height:32px}}
 .practice-help .legend{margin-block:10px}
 .practice-help .kbdhint{line-height:1.9}
 body:has(#settings:not([hidden])){overflow:hidden}
@@ -621,8 +632,8 @@ body:has(#settings:not([hidden])){overflow:hidden}
 </style>
 
 <header class="top pad" id="top">
-  <div class="volpop" id="volPop" role="dialog" aria-label="Volume" hidden>
-    <div class="vhd"><b>Volume</b><button class="btn vmute" id="vMute" type="button" aria-pressed="false">Mute</button></div>
+  <div class="volpop" id="volPop" role="dialog" aria-labelledby="volTitle" hidden>
+    <div class="vhd"><h2 id="volTitle">Volume</h2><div class="row"><button class="btn vmute" id="vMute" type="button" aria-pressed="false">Mute</button><button class="iconbtn" id="vClose" type="button" aria-label="Close volume">✕</button></div></div>
     <div class="vrow"><span>Master</span><input type="range" class="vctl" data-ch="master" min="0" max="100" step="1" aria-label="Master volume"><b class="vval" data-ch="master"></b></div>
     <div class="vrow"><span>Notes &amp; tones</span><input type="range" class="vctl" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"><b class="vval" data-ch="notes"></b></div>
     <div class="vrow"><span>Click &amp; drums</span><input type="range" class="vctl" data-ch="click" min="0" max="150" step="1" aria-label="Click and drums volume"><b class="vval" data-ch="click"></b></div>
@@ -653,7 +664,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
       <button type="button" id="miniPlus" aria-label="Faster">+</button>
       <button type="button" class="play" id="miniPlay" aria-label="Start metronome"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path id="miniIcon" d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg></button>
     </div>
-    <button class="iconbtn volbtn" id="volBtn" type="button" aria-label="Volume" aria-expanded="false" aria-controls="volPop" title="Volume (M to mute)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="vw1" d="M16 9.5a3.5 3.5 0 0 1 0 5"/><path class="vw2" d="M18.5 7a7 7 0 0 1 0 10"/><path class="vx" d="M16 9l5 6M21 9l-5 6"/></svg></button>
+    <button class="iconbtn volbtn" id="volBtn" type="button" aria-label="Volume" aria-expanded="false" aria-controls="volPop" title="Volume (M to mute)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="vw1" d="M16 9.5a3.5 3.5 0 0 1 0 5"/><path class="vw2" d="M18.5 7a7 7 0 0 1 0 10"/><path class="vx" d="M16 9l5 6M21 9l-5 6"/></svg><span class="vlabel">Volume</span></button>
     <button class="iconbtn toolbtn" type="button" data-go="tuner" aria-label="Tuner" title="Tuner and drone"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 2v6.5a3.5 3.5 0 0 0 7 0V2"/><path d="M12 12v10"/><path d="M9.5 22h5"/></svg><span class="tlabel">Tuner</span></button>
     <button class="iconbtn toolbtn" type="button" data-go="metronome" aria-label="Metronome" title="Metronome"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3h4l4 18H6z"/><path d="M12 16l5-9"/><path d="M8.5 13h7"/></svg><span class="tlabel">Metronome</span></button>
     <button class="iconbtn" id="openSettings" type="button" aria-label="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -815,8 +826,8 @@ body:has(#settings:not([hidden])){overflow:hidden}
             <div class="pctl-row" role="group" aria-label="Playback"><span class="pctl-lab">Play</span>
               <label class="chip"><input type="checkbox" id="pLoop"> Loop</label>
               <label class="chip" title="Count four beats, then start from the beginning of the selected beat"><input type="checkbox" id="pCount"> Count-in</label>
-              <span class="chip mix"><label><input type="checkbox" id="pClick"> Click</label><input type="range" class="vctl mvol" data-ch="click" min="0" max="150" step="1" aria-label="Click volume"></span>
-              <span class="chip mix" id="pGuideChip"><label><input type="checkbox" id="pGuide"> Notes</label><input type="range" class="vctl mvol" data-ch="notes" min="0" max="150" step="1" aria-label="Notes and tones volume"></span>
+              <label class="chip"><input type="checkbox" id="pClick"> Click</label>
+              <label class="chip" id="pGuideChip"><input type="checkbox" id="pGuide"> Notes</label>
               <label class="chip" title="Speed up 4 bpm every loop"><input type="checkbox" id="pLadder"> +4 bpm / loop</label>
               <label class="chip" id="pKeyCycleChip" title="Move up a 4th every loop to play through all 12 keys"><input type="checkbox" id="pKeyCycle"> New key / loop</label>
             </div>
@@ -1047,7 +1058,7 @@ body:has(#settings:not([hidden])){overflow:hidden}
     <label class="f"><span>Daily goal (minutes)</span><input type="number" id="sGoal" min="5" max="180"></label>
     <label class="f"><span>Note names</span><select id="sAcc"><option value="mixed">Common guitar spelling (C#, Eb, F#, Ab, Bb)</option><option value="sharps">Sharps</option><option value="flats">Flats</option></select></label>
     <label class="toggle"><input type="checkbox" id="sLefty"> Left-handed fretboard</label>
-    <label class="f"><span>Volume</span><input type="range" id="sVol" min="0" max="1" step="0.05"></label>
+    <div class="stack" style="gap:6px"><span class="label">Sound</span><button class="btn" id="sSound" type="button">Open volume controls</button></div>
     <label class="f"><span>Reference pitch</span><select id="sA4"><option value="438">A = 438 Hz</option><option value="439">A = 439 Hz</option><option value="440">A = 440 Hz</option><option value="441">A = 441 Hz</option><option value="442">A = 442 Hz</option></select></label>
     <div class="sync" id="syncStatus"><i></i><span>Progress is saved in this browser.</span></div>
     <div class="hr"></div>
@@ -4561,7 +4572,7 @@ function updateHdrH() { const h = $('#top').offsetHeight; document.documentEleme
 /* ---------- settings ---------- */
 function applySettingsUI() {
   $('#sGoal').value = S.settings.goal; $('#sAcc').value = S.settings.acc; $('#sLefty').checked = S.settings.lefty;
-  $('#sVol').value = S.settings.vol; $('#sA4').value = S.settings.a4;
+  $('#sA4').value = S.settings.a4;
 }
 function closeSettings() { $('#settings').hidden = true; $('#openSettings').focus(); }
 document.addEventListener('keydown', e => {
@@ -4951,7 +4962,7 @@ $('#settings').addEventListener('click', e => { if (e.target.id === 'settings') 
 $('#sGoal').onchange = e => { S.settings.goal = clamp(Math.round(+e.target.value || 20), 5, 180); e.target.value = S.settings.goal; save(); renderHeaderStats(); if (curTab === 'today') renderToday(); };
 $('#sAcc').onchange = e => { S.settings.acc = e.target.value; save(); switchTab(curTab, true); };
 $('#sLefty').onchange = e => { S.settings.lefty = e.target.checked; save(); switchTab(curTab, true); };
-$('#sVol').oninput = e => { S.settings.vol = +e.target.value; S.settings.muted = false; volApply(); volRender(); save(); };
+$('#sSound').onclick = e => { e.stopPropagation();closeSettings();volOpen(); };
 $('#sA4').onchange = e => { S.settings.a4 = +e.target.value; save(); if (curTab === 'tuner') renderTuner(); };
 let resetArm = false;
 $('#sReset').onclick = () => {
@@ -4995,7 +5006,7 @@ document.addEventListener('keydown', e => {
 /* ---------- volume mixer ---------- */
 function volRender(force=false) {
   const st = S.settings, v = { master: Math.round(st.vol * 100), notes: Math.round((st.nvol ?? 1) * 100), click: Math.round((st.cvol ?? 1) * 100) };
-  $$('.vctl').forEach(r => { if (force || document.activeElement !== r) r.value = v[r.dataset.ch]; r.title = `${r.getAttribute('aria-label')}: ${v[r.dataset.ch]}%`; });
+  $$('.vctl').forEach(r => { if (force || document.activeElement !== r) r.value = v[r.dataset.ch]; r.title = `${r.getAttribute('aria-label')}: ${v[r.dataset.ch]}%`; r.setAttribute('aria-valuetext',v[r.dataset.ch]+' percent');r.style.setProperty('--level',clamp(v[r.dataset.ch]/+r.max*100,0,100)+'%'); });
   $$('.vval').forEach(b => { b.textContent = v[b.dataset.ch] + '%'; });
   const b = $('#volBtn'); b.classList.toggle('muted', !!st.muted || st.vol === 0); b.classList.toggle('low', !st.muted && st.vol > 0 && st.vol < 0.4);
   b.setAttribute('aria-label', st.muted ? 'Volume (muted)' : `Volume ${v.master}%`);
@@ -5003,7 +5014,6 @@ function volRender(force=false) {
   $('#vTest').textContent = AU.blocked ? 'Enable sound' : st.muted || st.vol === 0 ? 'Unmute and test sound' : 'Test sound';
   const quiet=[['notes','Notes'],['click','Click']].filter(([ch])=>v[ch]<=10).map(([ch,name])=>`${name} at ${v[ch]}%`).join(' · ');
   $('#vSoundStatus').textContent = AU.blocked ? 'Sound could not start. Tap Enable sound. If it stays silent, allow Sound for this site in your browser settings and check your phone’s media volume.' : st.muted || v.master===0 ? 'Master is silent. Unmute or raise Master to hear playback.' : quiet ? quiet+'. These levels are very quiet. Raise the sliders or use Reset levels. Test sound checks Master only.' : 'Test sound checks Master. Notes and Click have separate levels.';
-  if ($('#sVol')) $('#sVol').value = st.vol;
 }
 let volTestT = 0;
 function volTest(ch) {
@@ -5030,6 +5040,7 @@ document.addEventListener('input', e => { const r = e.target.closest && e.target
 document.addEventListener('change', e => { const r = e.target.closest && e.target.closest('.vctl'); if (r && !(P.running || M.running)) volTest(r.dataset.ch); });
 $('#volBtn').onclick = e => { e.stopPropagation();$('#volPop').hidden?volOpen():volClose(); };
 $('#vMute').onclick = () => volMute();
+$('#vClose').onclick = () => volClose(true);
 $('#vReset').onclick = () => { Object.assign(S.settings,{vol:DEF.settings.vol,nvol:DEF.settings.nvol,cvol:DEF.settings.cvol,muted:false});volApply();volRender(true);save();toast('Levels reset: Master 80% · Notes 100% · Click 100%.'); };
 $('#vTest').onclick = async () => {
   if(S.settings.muted || S.settings.vol===0){S.settings.muted=false;if(S.settings.vol===0)S.settings.vol=0.8;volApply();volRender();save();}
