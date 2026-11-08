@@ -29,15 +29,15 @@ These are original app adaptations informed by [Figma's website color-scheme col
 
 | Direction | Figma reference | Light action | Dark action | Design judgment for Fretlab |
 |---|---|---|---|---|
-| Inked | Scheme 51 | `#004f52` | `#2de0de` | Selected: a crisp teal action color separates controls from the amber playhead. |
+| Inked | Scheme 51 | `#004f52` | `#2de0de` | Selected: a crisp teal action color separates controls from the slate-blue playhead. |
 | Clockwork | Scheme 46 | `#7a2900` | `#ffb164` | A warmer, equipment-like feel. Actions and the playhead need clear shapes/labels as well as hue. |
 | Lapis velvet evening | Scheme 24 | `#5b1d7d` | `#d7b0ff` | A violet direction for the atmospheric material, supported by neutral high-contrast surfaces. |
 
-All three treatments share the neutral foundation. Inked is the shipped theme; Clockwork and Lapis velvet evening remain design alternatives. The amber playhead and harmonic marker hues stay consistent across the options.
+All three treatments share the neutral foundation. Inked is the shipped theme; Clockwork and Lapis velvet evening remain design alternatives. The shipped Inked palette uses a slate-blue playhead and graphite/slate root markers. The other rows record earlier alternatives.
 
 ## Musical information
 
-Keep root/third/fifth/seventh identities stable across themes. Use darker saturated marker fills with white labels in light mode; brighter fills with near-black labels in dark mode. Check the label against its own marker, not only against the page. Open-string rings, active notes, the playhead, key-change preparation and focus indicators also need visible structure. Labels and note roles carry meaning alongside color.
+In Inked, root markers use graphite (`#364454`) in light mode and pale slate (`#c4ceda`) in dark mode. Playback uses steel blue (`#304d6a`) and light slate blue (`#bacbdd`), with soft surfaces `#e7edf4` / `#253344`. The third/fifth/seventh remain blue/green/violet. Playback marker labels have approximately 8.77:1 / 12.02:1 contrast; root labels have 9.94:1 / 12.51:1. Use darker saturated marker fills with white labels in light mode; brighter fills with near-black labels in dark mode. Check the label against its own marker, not only against the page. Open-string rings, active notes, the playhead, key-change preparation and focus indicators also need visible structure. Labels and note roles carry meaning alongside color.
 
 ## Practical verification
 
