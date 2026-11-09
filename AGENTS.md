@@ -44,5 +44,5 @@ A practice app for an experienced guitarist who writes riffs (rock, alternative,
 ## Product rules (owner)
 - Most useful material only; no bloat. Improve what exists before adding.
 - Don't build mic grading of playing or tab/Guitar Pro import (owner declined).
-- Every exercise shows exactly what to play, in time, with labels.
+- Every exercise shows exactly what to play, in time, with labels. Practice and creative tasks must not require recording or external tools.
 - Ship to both deployments: push `main` and republish the artifact.
