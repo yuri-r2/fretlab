@@ -745,6 +745,32 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
   .tab{font-size:14px}
   .volpop{padding:18px 20px}
 }
+.riff-filters{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;background:var(--bg);padding:12px 0}
+.riff-filters .f{flex:1;min-width:220px}
+.riff-filters input,.riff-filters select{width:100%;font-size:16px}
+.riff-filters input[type=search]{appearance:none;background:var(--surface-2);border:1px solid transparent;border-radius:8px;padding:9px 12px;min-height:44px;min-width:0}
+.riff-filters select,.riff-filters>.btn{min-height:44px}
+.riff-filters .riff-search{flex:2}
+.riff-genres{display:flex;flex-wrap:wrap;gap:8px}
+.riff-genres button{background:transparent}
+.riff-genres [aria-pressed="true"],#riffSaved[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.riff-summary{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;min-height:36px}
+.riff-list{display:grid;gap:12px}
+.riff-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.3fr) auto;align-items:center;gap:24px;padding:22px 24px;background:var(--surface);border-radius:12px;min-width:0}
+.riff-row h3{font-size:20px;font-weight:500;line-height:1.35}
+.riff-title{display:flex;flex-direction:column;gap:5px;min-width:0}
+.riff-cue{margin-top:5px;font-size:14px;line-height:1.55;color:var(--muted)}
+.riff-tuning{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.riff-tuning code{font:13px var(--font-mono);color:var(--muted);white-space:normal}
+.riff-actions{display:flex;gap:8px;align-items:center}
+.riff-actions a{text-decoration:none;white-space:nowrap}
+.riff-save{min-width:44px;min-height:44px;font-size:21px;background:transparent}
+.riff-save[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft)}
+.riff-empty{padding:40px 24px;background:var(--surface);border-radius:12px;gap:16px;align-items:flex-start}
+.riff-source-note{max-width:80ch;line-height:1.65}
+@media(min-width:1100px){.riff-filters{position:sticky;top:var(--hdr-h,65px);z-index:3}}
+@media(max-width:850px){#libraryNav{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scroll-padding-inline:8px;padding:4px 2px 10px}#libraryNav .btn{flex:none}.riff-row{grid-template-columns:minmax(0,1fr) auto;gap:16px}.riff-tuning{grid-column:1}.riff-actions{grid-column:2;grid-row:1/3}.riff-row h3{font-size:18px}}
+@media(max-width:620px){.riff-filters{gap:16px}.riff-filters .f{min-width:180px}.riff-filters .riff-search{min-width:100%}.riff-row{display:flex;flex-direction:column;align-items:stretch;padding:20px;gap:16px}.riff-tuning{flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap}.riff-actions a{flex:1;text-align:center}.riff-genres .btn{padding:8px 10px}}
 </style>
 
 <header class="top pad" id="top">
@@ -798,13 +824,14 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
 <main class="pad">
 <div class="inner">
 
-<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
+<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="songs">Riffs</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="card stack" id="essCard"></div>
   <details class="skipped-folder" id="savedPractice" hidden><summary>Saved practice spots <span id="savedPracticeCount"></span></summary><div class="stack" id="savedPracticeList"></div></details>
   <details class="skipped-folder" id="skippedExercises"><summary>Skipped exercises <span id="skippedCount"></span></summary><div class="stack" id="skippedList"></div></details>
   <div class="excards">
+    <button class="excard" type="button" data-go="songs"><h3>Riffs</h3><span>Learn real songs from alternative, Midwest emo, indie and shoegaze. Find a riff for your tuning, starting with E standard.</span></button>
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Open-string clusters, modal colors and compact extensions. Hear a sound, then use it in a study.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
     <button class="excard" type="button" data-go="rhythm"><h3>Rhythm</h3><span>Subdivisions, strumming, chugs, syncopation, odd meters and dotted-8th delay rhythms.</span></button>
@@ -812,6 +839,19 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
     <button class="excard" type="button" data-go="fretboard"><h3>Fretboard</h3><span>Find notes and intervals, with extra practice for your weak spots.</span></button>
     <button class="excard" type="button" data-go="ear"><h3>Ear training</h3><span>Recognize scale degrees, intervals and chord qualities by sound.</span></button>
   </div>
+</section>
+<section class="view" id="view-songs" hidden>
+  <div class="vhead"><div class="stack" style="gap:8px"><span class="label">Song repertoire</span><h2>Riffs</h2></div><p class="small muted">Guitar parts worth learning, from Midwest emo to shoegaze. Start in E standard, save a few for practice, and open the tabs on Songsterr.</p></div>
+  <div class="riff-filters">
+    <label class="f riff-search"><span>Find a riff</span><input id="riffSearch" type="search" placeholder="Song, artist or technique" autocomplete="off"></label>
+    <label class="f"><span>Tuning</span><select id="riffTuning"></select></label>
+    <button class="btn" type="button" id="riffSaved" aria-pressed="false">☆ Saved <span id="riffSavedCount">0</span></button>
+  </div>
+  <div class="riff-genres" id="riffGenres" role="group" aria-label="Riff genre"></div>
+  <div class="riff-summary"><p class="small muted" id="riffCount" role="status" aria-live="polite"></p><button class="linkbtn" type="button" id="riffReset" hidden>Reset filters</button></div>
+  <div class="riff-list" id="riffList"></div>
+  <div class="riff-empty stack" id="riffEmpty" hidden><h3 id="riffEmptyTitle"></h3><p class="small muted" id="riffEmptyText"></p><button class="btn" type="button" id="riffShowAll">Show all tunings</button></div>
+  <p class="small muted riff-source-note">Tuning is for the linked guitar part; other parts or versions may differ. Tabs open in a new tab on Songsterr and need an internet connection. Your saved list stays here.</p>
 </section>
 <section class="view" id="view-progress" hidden>
   <div class="vhead"><h2>Your progress</h2><p class="small muted">Return to a previous attempt, review what is due, and see how your playing develops.</p></div>
@@ -1225,9 +1265,9 @@ const DEF = {
   ear: { deg: { lv: 1, ans: {}, recent: [] }, iv: { lv: 1, ans: {}, recent: [] }, chord: { lv: 1, ans: {}, recent: [] } },
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
-  riffs: [], ex: {}, exskip: [], learn: {},
+  riffs: [], repertoire: { saved: [] }, ex: {}, exskip: [], learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [], practice: { resume: null, spots: [] },
-  ui: { exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
+  ui: { riffLibrary: { query: '', genre: 'all', tuning: 'standard', saved: false }, exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
 };
 function merge(def, src) {
   if (Array.isArray(def)) return Array.isArray(src) ? src : JSON.parse(JSON.stringify(def));
@@ -4671,9 +4711,139 @@ function renderLibrary() {
 }
 function renderToday() { renderTodayStats(); renderRoutine(); renderWeak(); renderUpNext(); renderContinue(); renderPracticePlaces(); }
 
+/* ---------- song riff library ---------- */
+const RIFF_GENRES = {all:'All genres',emo:'Emo / math rock',shoegaze:'Shoegaze',indie:'Indie / post-punk',alternative:'Alternative / grunge'};
+const RIFF_TUNINGS = {"standard":{"name":"E standard","notes":"E A D G B E","m":[64,59,55,50,45,40]},"eb-standard":{"name":"E♭ standard","notes":"E♭ A♭ D♭ G♭ B♭ E♭","m":[63,58,54,49,44,39]},"d-standard":{"name":"D standard","notes":"D G C F A D","m":[62,57,53,48,43,38]},"drop-d":{"name":"Drop D","notes":"D A D G B E","m":[64,59,55,50,45,38]},"drop-cs":{"name":"Drop C♯","notes":"C♯ G♯ C♯ F♯ A♯ D♯","m":[63,58,54,49,44,37]},"open-d":{"name":"Open D","notes":"D A D F♯ A D","m":[62,57,54,50,45,38]},"open-e":{"name":"Open E","notes":"E B E G♯ B E","m":[64,59,56,52,47,40]},"facgce":{"name":"FACGCE","notes":"F A C G C E","m":[64,60,55,48,45,41]},"t63-59-55-50-43-40":{"name":"E G D G B E♭","notes":"E G D G B E♭","m":[63,59,55,50,43,40]},"fs-standard":{"name":"F♯ standard","notes":"F♯ B E A C♯ F♯","m":[66,61,57,52,47,42]},"dadacse":{"name":"D A D A C♯ E","notes":"D A D A C♯ E","m":[64,61,57,50,45,38]},"t63-59-54-47-44-40":{"name":"E G♯ B F♯ B D♯","notes":"E G♯ B F♯ B D♯","m":[63,59,54,47,44,40]},"t66-61-54-54-42-42":{"name":"F♯ F♯ F♯ F♯ C♯ F♯","notes":"F♯ F♯ F♯ F♯ C♯ F♯","m":[66,61,54,54,42,42]},"t62-59-55-50-43-36":{"name":"C G D G B D","notes":"C G D G B D","m":[62,59,55,50,43,36]},"t62-58-54-46-46-39":{"name":"E♭ B♭ B♭ G♭ B♭ D","notes":"E♭ B♭ B♭ G♭ B♭ D","m":[62,58,54,46,46,39]}};
+const SONG_RIFFS = [
+  {"id":"song-547733","title":"Honestly?","artist":"American Football","genre":"emo","tuning":"dadacse","part":"Mike Kinsella · Lead Guitar","focus":"Open-tuning melodic movement","url":"https://www.songsterr.com/a/wsa/american-football-honestly-tab-s547733t2/r8843472"},
+  {"id":"song-25202","title":"Never Meant","artist":"American Football","genre":"emo","tuning":"facgce","part":"Steve Holmes · Lead Guitar","focus":"Open strings and interlocking lines","url":"https://www.songsterr.com/a/wsa/american-football-never-meant-tab-s25202t1/r9605025"},
+  {"id":"song-3412267","title":"A Dozen Roses.","artist":"Braid","genre":"emo","tuning":"standard","part":"Chris Broach (Distortion Lead)","focus":"Interlocking, angular guitar lines","url":"https://www.songsterr.com/a/wsa/braid-a-dozen-roses-tab-s3412267t1/r4488475"},
+  {"id":"song-437023","title":"Killing a Camera","artist":"Braid","genre":"emo","tuning":"standard","part":"Guitar 1","focus":"Accented, driving guitar figures","url":"https://www.songsterr.com/a/wsa/braid-killing-a-camera-tab-s437023t0/r7450182"},
+  {"id":"song-10230","title":"Bleed American","artist":"Jimmy Eat World","genre":"emo","tuning":"drop-d","part":"Jim Adkins · Lead Guitar 1","focus":"Tight muted rhythm","url":"https://www.songsterr.com/a/wsa/jimmy-eat-world-bleed-american-tab-s10230t0/r8916892"},
+  {"id":"song-10654","title":"Sweetness","artist":"Jimmy Eat World","genre":"emo","tuning":"drop-d","part":"Jim Adkins · Lead Guitar","focus":"Drop-D rhythm and control","url":"https://www.songsterr.com/a/wsa/jimmy-eat-world-sweetness-tab-s10654t2/r9214110"},
+  {"id":"song-220705","title":"Five. Eight and Ten","artist":"Mineral","genre":"emo","tuning":"standard","part":"Selected guitar part","focus":"Ringing chords and clear transitions","url":"https://www.songsterr.com/a/wsa/mineral-five-eight-and-ten-tab-s220705t0/r8136508"},
+  {"id":"song-454810","title":"Gloria","artist":"Mineral","genre":"emo","tuning":"standard","part":"Scott McCarver · Distortion Guitar","focus":"Open chords and changing dynamics","url":"https://www.songsterr.com/a/wsa/mineral-gloria-tab-s454810t2/r8135290"},
+  {"id":"song-637071","title":"Parking Lot","artist":"Mineral","genre":"emo","tuning":"drop-d","part":"Scott McCarver · Lead Guitar","focus":"Drop-D chord movement","url":"https://www.songsterr.com/a/wsa/mineral-parking-lot-tab-s637071t1/r8461024"},
+  {"id":"song-389307","title":"Your Graduation","artist":"Modern Baseball","genre":"emo","tuning":"standard","part":"Lead Guitar · Jake Ewald","focus":"Chord changes with a moving melody","url":"https://www.songsterr.com/a/wsa/modern-baseball-your-graduation-tab-s389307t3/r9272270"},
+  {"id":"song-80058","title":"In Circles","artist":"Sunny Day Real Estate","genre":"emo","tuning":"d-standard","part":"Dan Hoerner · Lead Guitar","focus":"Ringing, shifting chord shapes","url":"https://www.songsterr.com/a/wsa/sunny-day-real-estate-in-circles-tab-s80058t3/r9270162"},
+  {"id":"song-55160","title":"Seven","artist":"Sunny Day Real Estate","genre":"emo","tuning":"d-standard","part":"Dan Hoerner · Lead Guitar","focus":"Angular rhythm and dynamics","url":"https://www.songsterr.com/a/wsa/sunny-day-real-estate-seven-tab-s55160t1/r10183474"},
+  {"id":"song-541854","title":"Song About An Angel","artist":"Sunny Day Real Estate","genre":"emo","tuning":"d-standard","part":"Selected guitar part","focus":"Quiet-to-loud guitar textures","url":"https://www.songsterr.com/a/wsa/sunny-day-real-estate-song-about-an-angel-tab-s541854t1/r9976496"},
+  {"id":"song-268996","title":"26 Is Dancier Than 4","artist":"This Town Needs Guns","genre":"emo","tuning":"t62-59-55-50-43-36","part":"Tim Guitar","focus":"Intricate open-tuning picking","url":"https://www.songsterr.com/a/wsa/this-town-needs-guns-26-is-dancier-than-4-tab-s268996t2/r7537194"},
+  {"id":"song-627156","title":"Chlorine","artist":"Title Fight","genre":"emo","tuning":"standard","part":"Lead · Jamie Rhoden","focus":"Atmospheric, repeating guitar figures","url":"https://www.songsterr.com/a/wsa/title-fight-chlorine-tab-s627156t1/r8628302"},
+  {"id":"song-379336","title":"Head In The Ceiling Fan","artist":"Title Fight","genre":"emo","tuning":"standard","part":"Jamie Rhoden · Lead Guitar","focus":"Slow, sustained chord texture","url":"https://www.songsterr.com/a/wsa/title-fight-head-in-the-ceiling-fan-tab-s379336t1/r9683215"},
+  {"id":"song-545361","title":"Goodbye","artist":"Toe","genre":"emo","tuning":"standard","part":"Clean Guitar","focus":"Clean fingerstyle and voice separation","url":"https://www.songsterr.com/a/wsa/toe-goodbye-tab-s545361t0/r7945966"},
+  {"id":"song-82969","title":"Two Moons","artist":"Toe","genre":"emo","tuning":"t63-59-54-47-44-40","part":"Mino Takaaki","focus":"A repeating alternate-tuning figure","url":"https://www.songsterr.com/a/wsa/toe-two-moons-tab-s82969t0/r7890895"},
+  {"id":"song-736918","title":"Cutting My Fingers Off","artist":"Turnover","genre":"emo","tuning":"standard","part":"Selected guitar part","focus":"Ringing, melodic chord fragments","url":"https://www.songsterr.com/a/wsa/turnover-cutting-my-fingers-off-tab-s736918t0/r1471110"},
+  {"id":"song-719477","title":"Dizzy On The Comedown","artist":"Turnover","genre":"emo","tuning":"standard","part":"Selected guitar part","focus":"A clean, repeating melodic hook","url":"https://www.songsterr.com/a/wsa/turnover-dizzy-on-the-comedown-tab-s719477t0/r1328591"},
+  {"id":"song-13996","title":"Be Quiet And Drive (Far Away)","artist":"Deftones","genre":"shoegaze","tuning":"drop-cs","part":"Stephen Carpenter · Lead Guitar","focus":"Wide voicings and controlled sustain","url":"https://www.songsterr.com/a/wsa/deftones-be-quiet-and-drive-far-away-tab-s13996t1/r9833907"},
+  {"id":"song-496078","title":"My Own Summer","artist":"Deftones","genre":"shoegaze","tuning":"drop-cs","part":"Stephen Carpenter · Guitar L","focus":"Muted lower-string groove","url":"https://www.songsterr.com/a/wsa/deftones-my-own-summer-tab-s496078t1/r2829121"},
+  {"id":"song-3345163","title":"Dopamine","artist":"DIIV","genre":"shoegaze","tuning":"standard","part":"Selected guitar part","focus":"Layered, repeating guitar lines","url":"https://www.songsterr.com/a/wsa/diiv-dopamine-tab-s3345163t0/r4389815"},
+  {"id":"song-754076","title":"Doused","artist":"DIIV","genre":"shoegaze","tuning":"standard","part":"Overdriven Guitar","focus":"Fast, repeating melodic picking","url":"https://www.songsterr.com/a/wsa/diiv-doused-tab-s754076t1/r7922501"},
+  {"id":"song-453389","title":"Stars","artist":"Hum","genre":"shoegaze","tuning":"drop-d","part":"Matt Talbott · Guitar","focus":"Clean-to-heavy drop-D dynamics","url":"https://www.songsterr.com/a/wsa/hum-stars-tab-s453389t2/r10130958"},
+  {"id":"song-1149074","title":"Sweetness and Light","artist":"Lush","genre":"shoegaze","tuning":"standard","part":"Selected guitar part","focus":"Bright, sustained chord texture","url":"https://www.songsterr.com/a/wsa/lush-sweetness-and-light-tab-s1149074t0/r5465743"},
+  {"id":"song-12757","title":"Only Shallow","artist":"My Bloody Valentine","genre":"shoegaze","tuning":"open-e","part":"Kevin Shields · Lead Guitar","focus":"Open-tuned glide texture","url":"https://www.songsterr.com/a/wsa/my-bloody-valentine-only-shallow-tab-s12757t1/r7603007"},
+  {"id":"song-48057","title":"Soon","artist":"My Bloody Valentine","genre":"shoegaze","tuning":"t66-61-54-54-42-42","part":"Guitar 1","focus":"An open-tuned, repeating groove","url":"https://www.songsterr.com/a/wsa/my-bloody-valentine-soon-tab-s48057t2/r9207527"},
+  {"id":"song-13618","title":"When You Sleep","artist":"My Bloody Valentine","genre":"shoegaze","tuning":"eb-standard","part":"Kevin Shields · Rhythm Guitar","focus":"Ringing rhythm-guitar chords","url":"https://www.songsterr.com/a/wsa/my-bloody-valentine-when-you-sleep-tab-s13618t2/r8000051"},
+  {"id":"song-4780696","title":"\"Dig\"","artist":"Nothing","genre":"shoegaze","tuning":"drop-d","part":"Lead Guitar","focus":"Drop-D chord texture","url":"https://www.songsterr.com/a/wsa/nothing-dig-tab-s4780696t0/r6319766"},
+  {"id":"song-52063","title":"Vapour Trail","artist":"Ride","genre":"shoegaze","tuning":"standard","part":"Guitar 1 · Andy Bell","focus":"Moving chords with a common top voice","url":"https://www.songsterr.com/a/wsa/ride-vapour-trail-tab-s52063t0/r1144716"},
+  {"id":"song-627717","title":"40 Days","artist":"Slowdive","genre":"shoegaze","tuning":"standard","part":"Neil Halstead · Rhythm Guitar","focus":"Sustained rhythm-guitar texture","url":"https://www.songsterr.com/a/wsa/slowdive-40-days-tab-s627717t2/r8605468"},
+  {"id":"song-674731","title":"Alison","artist":"Slowdive","genre":"shoegaze","tuning":"standard","part":"Neil Halstead · Lead Guitar","focus":"Layered clean-guitar texture","url":"https://www.songsterr.com/a/wsa/slowdive-alison-tab-s674731t1/r9820763"},
+  {"id":"song-545069","title":"Souvlaki Space Station","artist":"Slowdive","genre":"shoegaze","tuning":"standard","part":"Main Guitar","focus":"A steady part beneath delay","url":"https://www.songsterr.com/a/wsa/slowdive-souvlaki-space-station-tab-s545069t0/r568256"},
+  {"id":"song-597806","title":"Sugar for the Pill","artist":"Slowdive","genre":"shoegaze","tuning":"standard","part":"Selected guitar part","focus":"Space between melodic phrases","url":"https://www.songsterr.com/a/wsa/slowdive-sugar-for-the-pill-tab-s597806t0/r6328745"},
+  {"id":"song-435990","title":"When The Sun Hits","artist":"Slowdive","genre":"shoegaze","tuning":"standard","part":"Neil Halstead · Lead Guitar","focus":"A clear melody through distortion","url":"https://www.songsterr.com/a/wsa/slowdive-when-the-sun-hits-tab-s435990t1/r9704527"},
+  {"id":"song-528452","title":"Ease","artist":"Whirr","genre":"shoegaze","tuning":"standard","part":"Nick Bassett","focus":"Sustain and restrained chord changes","url":"https://www.songsterr.com/a/wsa/whirr-ease-tab-s528452t0/r9637894"},
+  {"id":"song-3532","title":"Banquet","artist":"Bloc Party","genre":"indie","tuning":"standard","part":"Russell Lissack · Lead Guitar","focus":"Syncopated upper-string picking","url":"https://www.songsterr.com/a/wsa/bloc-party-banquet-tab-s3532t2/r10004714"},
+  {"id":"song-3257","title":"Helicopter","artist":"Bloc Party","genre":"indie","tuning":"standard","part":"Left Guitar (Kele Okereke)","focus":"Fast, tightly muted attacks","url":"https://www.songsterr.com/a/wsa/bloc-party-helicopter-tab-s3257t2/r9180949"},
+  {"id":"song-9606","title":"Evil","artist":"Interpol","genre":"indie","tuning":"standard","part":"Daniel Kessler · Lead Guitar","focus":"Short, rhythmic chord stabs","url":"https://www.songsterr.com/a/wsa/interpol-evil-tab-s9606t2/r9006564"},
+  {"id":"song-92807","title":"Obstacle 1","artist":"Interpol","genre":"indie","tuning":"standard","part":"Daniel Kessler · Lead Guitar","focus":"Sparse, repeating guitar figures","url":"https://www.songsterr.com/a/wsa/interpol-obstacle-1-tab-s92807t2/r9305630"},
+  {"id":"song-9742","title":"PDA","artist":"Interpol","genre":"indie","tuning":"standard","part":"Paul Banks · Lead Guitar","focus":"A layered, repeating guitar part","url":"https://www.songsterr.com/a/wsa/interpol-pda-tab-s9742t2/r8824213"},
+  {"id":"song-13348","title":"Dramamine","artist":"Modest Mouse","genre":"indie","tuning":"standard","part":"Isaac Brock · Lead Guitar","focus":"A repeating string-crossing motif","url":"https://www.songsterr.com/a/wsa/modest-mouse-dramamine-tab-s13348t0/r6244982"},
+  {"id":"song-394","title":"Float On","artist":"Modest Mouse","genre":"indie","tuning":"standard","part":"Isaac Brock · Lead Guitar","focus":"Clipped chords and a short hook","url":"https://www.songsterr.com/a/wsa/modest-mouse-float-on-tab-s394t3/r8454690"},
+  {"id":"song-84813","title":"A Forest","artist":"The Cure","genre":"indie","tuning":"standard","part":"Robert Smith · Lead Guitar","focus":"A repeating melodic figure","url":"https://www.songsterr.com/a/wsa/cure-a-forest-tab-s84813t0/r7934120"},
+  {"id":"song-92","title":"Boys Don't Cry","artist":"The Cure","genre":"indie","tuning":"standard","part":"Robert Smith · Lead Guitar","focus":"Compact chords and a melodic hook","url":"https://www.songsterr.com/a/wsa/cure-boys-dont-cry-tab-s92t1/r10169787"},
+  {"id":"song-6738","title":"Just Like Heaven","artist":"The Cure","genre":"indie","tuning":"standard","part":"Porl Thompson · Lead Guitar","focus":"A singing upper-register hook","url":"https://www.songsterr.com/a/wsa/cure-just-like-heaven-tab-s6738t3/r9899988"},
+  {"id":"song-18218","title":"How Soon Is Now?","artist":"The Smiths","genre":"indie","tuning":"standard","part":"Johnny Marr · Guitar (Heavy Tremolo)","focus":"Tremolo pulse and sustained texture","url":"https://www.songsterr.com/a/wsa/smiths-how-soon-is-now-tab-s18218t4/r10224341"},
+  {"id":"song-17973","title":"This Charming Man","artist":"The Smiths","genre":"indie","tuning":"fs-standard","part":"Johnny Marr · Lead Guitar","focus":"Jangling chord fragments","url":"https://www.songsterr.com/a/wsa/smiths-this-charming-man-tab-s17973t2/r6441694"},
+  {"id":"song-19390","title":"Last Nite","artist":"The Strokes","genre":"indie","tuning":"standard","part":"Albert Hammond Jr. · Lead Guitar","focus":"Clipped rhythm and chord changes","url":"https://www.songsterr.com/a/wsa/strokes-last-nite-tab-s19390t1/r8733718"},
+  {"id":"song-648336","title":"Reptilia","artist":"The Strokes","genre":"indie","tuning":"standard","part":"Nick Valensi · Lead Guitar","focus":"Tight alternate picking","url":"https://www.songsterr.com/a/wsa/strokes-reptilia-tab-s648336t1/r9303939"},
+  {"id":"song-24322","title":"Someday","artist":"The Strokes","genre":"indie","tuning":"standard","part":"Albert Hammond Jr. · Lead Guitar","focus":"Interlocking guitar rhythm","url":"https://www.songsterr.com/a/wsa/strokes-someday-tab-s24322t1/r10158070"},
+  {"id":"song-464897","title":"The Adults Are Talking","artist":"The Strokes","genre":"indie","tuning":"standard","part":"Nick Valensi · Lead Guitar","focus":"Interlocking melodic parts","url":"https://www.songsterr.com/a/wsa/strokes-the-adults-are-talking-tab-s464897t1/r10159064"},
+  {"id":"song-30028","title":"Feel The Pain","artist":"Dinosaur Jr.","genre":"alternative","tuning":"standard","part":"Lead · J Mascis","focus":"Clean articulation and dynamics","url":"https://www.songsterr.com/a/wsa/dinosaur-jr-feel-the-pain-tab-s30028t1/r7638769"},
+  {"id":"song-69946","title":"Freak Scene","artist":"Dinosaur Jr.","genre":"alternative","tuning":"standard","part":"J Mascis · Fender Jazzmaster","focus":"Ringing chords with a moving melody","url":"https://www.songsterr.com/a/wsa/dinosaur-jr-freak-scene-tab-s69946t1/r8858590"},
+  {"id":"song-1368","title":"Plug In Baby","artist":"Muse","genre":"alternative","tuning":"standard","part":"Matt Bellamy · Guitar","focus":"Fast single-note picking","url":"https://www.songsterr.com/a/wsa/muse-plug-in-baby-tab-s1368t4/r10124669"},
+  {"id":"song-295","title":"In Bloom","artist":"Nirvana","genre":"alternative","tuning":"standard","part":"Kurt Cobain · Guitar","focus":"Wide chord jumps","url":"https://www.songsterr.com/a/wsa/nirvana-in-bloom-tab-s295t3/r9493416"},
+  {"id":"song-269","title":"Smells Like Teen Spirit","artist":"Nirvana","genre":"alternative","tuning":"standard","part":"Kurt Cobain · Main Guitar","focus":"Muted chord attacks","url":"https://www.songsterr.com/a/wsa/nirvana-smells-like-teen-spirit-tab-s269t3/r9984500"},
+  {"id":"song-489","title":"Alive","artist":"Pearl Jam","genre":"alternative","tuning":"standard","part":"Stone Gossard · Rhythm Guitar","focus":"A melodic lower-string riff","url":"https://www.songsterr.com/a/wsa/pearl-jam-alive-tab-s489t0/r9108861"},
+  {"id":"song-384","title":"Even Flow","artist":"Pearl Jam","genre":"alternative","tuning":"open-d","part":"Stone Gossard · Rhythm Guitar","focus":"Open-tuning groove","url":"https://www.songsterr.com/a/wsa/pearl-jam-even-flow-tab-s384t3/r8485675"},
+  {"id":"song-489706","title":"Debaser","artist":"Pixies","genre":"alternative","tuning":"standard","part":"Joey Santiago · Lead Guitar","focus":"A lead hook over driving chords","url":"https://www.songsterr.com/a/wsa/pixies-debaser-tab-s489706t2/r9729433"},
+  {"id":"song-6736","title":"Here Comes Your Man","artist":"Pixies","genre":"alternative","tuning":"standard","part":"Joey Santiago · Lead Guitar","focus":"Bright, articulate string crossing","url":"https://www.songsterr.com/a/wsa/pixies-here-comes-your-man-tab-s6736t2/r10171552"},
+  {"id":"song-14912","title":"Where Is My Mind?","artist":"Pixies","genre":"alternative","tuning":"standard","part":"Joey Santiago · Lead Guitar (Left)","focus":"A clear upper-string hook","url":"https://www.songsterr.com/a/wsa/pixies-where-is-my-mind-tab-s14912t3/r9196509"},
+  {"id":"song-51299","title":"Airbag","artist":"Radiohead","genre":"alternative","tuning":"standard","part":"Jonny Greenwood · Lead Guitar","focus":"Octave melody and sustain","url":"https://www.songsterr.com/a/wsa/radiohead-airbag-tab-s51299t1/r9646786"},
+  {"id":"song-97","title":"Creep","artist":"Radiohead","genre":"alternative","tuning":"standard","part":"Jonny Greenwood · Lead Guitar","focus":"Clean-to-distorted dynamics","url":"https://www.songsterr.com/a/wsa/radiohead-creep-tab-s97t1/r10083019"},
+  {"id":"song-51255","title":"Just","artist":"Radiohead","genre":"alternative","tuning":"standard","part":"Jonny Greenwood · Lead Guitar","focus":"Chromatic chord movement","url":"https://www.songsterr.com/a/wsa/radiohead-just-tab-s51255t4/r9394648"},
+  {"id":"song-1367","title":"My Iron Lung","artist":"Radiohead","genre":"alternative","tuning":"t63-59-55-50-43-40","part":"Jonny Greenwood · Lead Guitar","focus":"Clean, angular picking","url":"https://www.songsterr.com/a/wsa/radiohead-my-iron-lung-tab-s1367t1/r10236872"},
+  {"id":"song-16501","title":"Paranoid Android","artist":"Radiohead","genre":"alternative","tuning":"standard","part":"Thom Yorke · Rhythm Guitar","focus":"Arpeggios and string crossing","url":"https://www.songsterr.com/a/wsa/radiohead-paranoid-android-tab-s16501t5/r10261973"},
+  {"id":"song-18072","title":"Cherub Rock","artist":"Smashing Pumpkins","genre":"alternative","tuning":"standard","part":"Billy Corgan · Lead Guitar","focus":"Octaves over an open-string drone","url":"https://www.songsterr.com/a/wsa/smashing-pumpkins-cherub-rock-tab-s18072t2/r10150731"},
+  {"id":"song-17399","title":"Mayonaise","artist":"Smashing Pumpkins","genre":"alternative","tuning":"t62-58-54-46-46-39","part":"James Iha · Acoustic Guitar","focus":"Open-string chord color","url":"https://www.songsterr.com/a/wsa/smashing-pumpkins-mayonaise-tab-s17399t1/r10063747"},
+  {"id":"song-47403","title":"Today","artist":"Smashing Pumpkins","genre":"alternative","tuning":"standard","part":"James Iha · Lead Guitar","focus":"A high-register opening hook","url":"https://www.songsterr.com/a/wsa/smashing-pumpkins-today-tab-s47403t1/r10036587"},
+  {"id":"song-457","title":"My Name Is Jonas","artist":"Weezer","genre":"alternative","tuning":"eb-standard","part":"Rivers Cuomo · Lead Guitar","focus":"Rolling acoustic picking","url":"https://www.songsterr.com/a/wsa/weezer-my-name-is-jonas-tab-s457t5/r7586290"},
+  {"id":"song-10122","title":"Say It Ain't So","artist":"Weezer","genre":"alternative","tuning":"eb-standard","part":"Rivers Cuomo · Lead Guitar","focus":"Clean voicings and muted accents","url":"https://www.songsterr.com/a/wsa/weezer-say-it-aint-so-tab-s10122t3/r10184978"}
+];
+function riffResults() {
+  const o=S.ui.riffLibrary,query=o.query.trim().toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/\s+/).filter(Boolean);
+  return SONG_RIFFS.filter(r=>{
+    const hay=[r.title,r.artist,r.focus,r.part,RIFF_GENRES[r.genre]].join(' ').toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return (o.tuning==='all'||r.tuning===o.tuning)&&(o.genre==='all'||r.genre===o.genre)&&(!o.saved||S.repertoire.saved.includes(r.id))&&query.every(q=>hay.includes(q));
+  });
+}
+function renderRiffs() {
+  const o=S.ui.riffLibrary;
+  if(!RIFF_TUNINGS[o.tuning]&&o.tuning!=='all')o.tuning='standard';
+  if(!RIFF_GENRES[o.genre])o.genre='all';
+  $('#riffSearch').value=o.query;
+  $('#riffTuning').innerHTML='<option value="all">All tunings</option>'+Object.entries(RIFF_TUNINGS).map(([id,t])=>`<option value="${id}">${esc(t.name)} · ${SONG_RIFFS.filter(r=>r.tuning===id).length}</option>`).join('');
+  $('#riffTuning').value=o.tuning;
+  $('#riffSaved').setAttribute('aria-pressed',String(o.saved));
+  $('#riffSavedCount').textContent=SONG_RIFFS.filter(r=>S.repertoire.saved.includes(r.id)).length;
+  $('#riffGenres').innerHTML=Object.entries(RIFF_GENRES).map(([id,name])=>`<button class="btn" type="button" data-riff-genre="${id}" aria-pressed="${o.genre===id}">${esc(name)}</button>`).join('');
+  const results=riffResults();
+  $('#riffCount').textContent=`${results.length}${o.saved?' saved':results.length===SONG_RIFFS.length?'':' of '+SONG_RIFFS.length} riff${results.length===1?'':'s'}${o.tuning==='all'?' · all tunings':' · '+RIFF_TUNINGS[o.tuning].name}`;
+  $('#riffReset').hidden=!o.query&&o.genre==='all'&&o.tuning==='standard'&&!o.saved;
+  $('#riffList').innerHTML=results.map(r=>{
+    const saved=S.repertoire.saved.includes(r.id),t=RIFF_TUNINGS[r.tuning];
+    return `<article class="riff-row" data-riff="${r.id}"><div class="riff-title"><span class="small muted">${esc(r.artist)} · ${RIFF_GENRES[r.genre]}</span><h3>${esc(r.title)}</h3><p class="riff-cue">${esc(r.focus)}</p><span class="small muted">${esc(r.part)}</span></div><div class="riff-tuning"><b>${esc(t.name)}</b><code aria-label="Strings, low to high: ${esc(t.notes)}">${esc(t.notes)}</code></div><div class="riff-actions"><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${esc(r.title)} by ${esc(r.artist)} on Songsterr, new tab">Open tab ↗</a><button class="btn riff-save" type="button" data-save-riff="${r.id}" aria-pressed="${saved}" aria-label="${saved?'Remove':'Save'} ${esc(r.title)} ${saved?'from':'to'} your saved riffs" title="${saved?'Remove from saved':'Save for practice'}">${saved?'★':'☆'}</button></div></article>`;
+  }).join('');
+  $('#riffList').hidden=!results.length;
+  $('#riffEmpty').hidden=!!results.length;
+  const savedCount=SONG_RIFFS.filter(r=>S.repertoire.saved.includes(r.id)).length;
+  $('#riffEmptyTitle').textContent=o.saved&&!savedCount?'Your next riffs start here':'No riffs match these filters';
+  $('#riffEmptyText').textContent=o.saved&&!savedCount?'Use the star beside a song to keep it here for practice.':'Try a different tuning or genre, or clear your search.';
+  $('#riffShowAll').textContent=o.saved&&!savedCount?'Browse E standard':'Clear filters · all tunings';
+}
+$('#riffSearch').oninput=e=>{S.ui.riffLibrary.query=e.target.value;save();renderRiffs();};
+$('#riffTuning').onchange=e=>{S.ui.riffLibrary.tuning=e.target.value;save();renderRiffs();};
+$('#riffSaved').onclick=()=>{S.ui.riffLibrary.saved=!S.ui.riffLibrary.saved;save();renderRiffs();};
+$('#riffGenres').onclick=e=>{
+  const b=e.target.closest('[data-riff-genre]');if(!b)return;
+  S.ui.riffLibrary.genre=b.dataset.riffGenre;save();renderRiffs();$(`#riffGenres [data-riff-genre="${S.ui.riffLibrary.genre}"]`).focus({preventScroll:true});
+};
+$('#riffReset').onclick=()=>{Object.assign(S.ui.riffLibrary,{query:'',genre:'all',tuning:'standard',saved:false});save();renderRiffs();$('#riffSearch').focus({preventScroll:true});};
+$('#riffShowAll').onclick=()=>{
+  const o=S.ui.riffLibrary,emptySaved=o.saved&&!SONG_RIFFS.some(r=>S.repertoire.saved.includes(r.id));
+  Object.assign(o,{query:'',genre:'all',tuning:emptySaved?'standard':'all',saved:emptySaved?false:o.saved});save();renderRiffs();$('#riffSearch').focus({preventScroll:true});
+};
+$('#riffList').onclick=e=>{
+  const b=e.target.closest('[data-save-riff]');if(!b)return;
+  const id=b.dataset.saveRiff,visible=$$('#riffList [data-save-riff]'),index=visible.indexOf(b),saved=S.repertoire.saved;
+  if(saved.includes(id))S.repertoire.saved=saved.filter(x=>x!==id);else saved.push(id);
+  save();renderRiffs();
+  const next=$(`#riffList [data-save-riff="${id}"]`)||$$('#riffList [data-save-riff]')[index]||$$('#riffList [data-save-riff]').at(-1)||$('#riffSaved');
+  next.focus({preventScroll:true});
+};
+
 /* ---------- tabs ---------- */
 const PRIMARY_TABS = ['today', 'learn', 'library', 'progress'];
-const LIBRARY_TABS = ['library', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer', 'rhythm'];
+const LIBRARY_TABS = ['library', 'songs', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer', 'rhythm'];
 const TABS = [...PRIMARY_TABS, ...LIBRARY_TABS.filter(t => t !== 'library'), 'metronome', 'tuner'];
 function tabFromHash() { const t = location.hash.slice(1); return t === 'riffs' ? 'voicings' : TABS.includes(t) ? t : 'today'; }
 function switchTab(t, fromHash) {
@@ -4688,9 +4858,10 @@ function switchTab(t, fromHash) {
   $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === (LIBRARY_TABS.includes(t) ? 'library' : t)); b.tabIndex = b.getAttribute('aria-selected') === 'true' || (!PRIMARY_TABS.includes(t) && !LIBRARY_TABS.includes(t) && b.dataset.tab === 'today') ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
+  ({ songs: renderRiffs, library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
   $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible();
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
+  if(!$('#libraryNav').hidden)$(`#libraryNav [data-go="${t}"]`).scrollIntoView({block:'nearest',inline:'nearest'});
   renderMini();
   const tb = $(`.tab[data-tab="${LIBRARY_TABS.includes(t) ? 'library' : t}"]`); if (tb && tb.scrollIntoView) tb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
