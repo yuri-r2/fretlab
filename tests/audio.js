@@ -6,7 +6,9 @@ const os = require('node:os');
 const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace('/* ---------- boot ---------- */', `
 const scheduled = [], playEvent = exPlayEv;
 exPlayEv = (...args) => { scheduled.push({ beat: args[0].t, destination: args[3], preview: P.preview }); return playEvent(...args); };
-window.__A = { S, P, R, M, AU, EX, scheduled, ac, audioResume, bus, pluck, strum, tone, ksBuffer, exUpcoming, exForecast, volSet, SND, exOpen, exStart, exStop, exSeek, exSetSelection, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
+const attacks = [], playPluck = pluck;
+pluck = (...args) => { attacks.push({ midi: args[0], time: args[1], duration: args[4] }); return playPluck(...args); };
+window.__A = { S, P, R, M, AU, EX, scheduled, attacks, exPlayEv, ac, audioResume, bus, pluck, strum, tone, ksBuffer, exUpcoming, exForecast, volSet, SND, exOpen, exStart, exStop, exSeek, exSetSelection, exListen, exStepNote, exLabel, renderPill, switchTab, mStart };
 /* ---------- boot ---------- */`);
 const tmp = path.join(os.tmpdir(), 'fretlab-audio.html');
 fs.writeFileSync(tmp, source);
@@ -57,6 +59,15 @@ fs.writeFileSync(tmp, source);
       return failures;
     });
     assert.deepEqual(playback, []);
+    const pinch = await page.evaluate(() => {
+      const a=window.__A;a.exOpen('adv_pedals',3);a.attacks.length=0;
+      a.exPlayEv(a.P.ev[0],a.AU.ctx.currentTime+.05,60/55,a.AU.notes);
+      return a.attacks;
+    });
+    assert.equal(pinch.length,2,'the first pinch sounds exactly the bass and high E');
+    assert.equal(pinch[0].time,pinch[1].time,'the pinch attacks are simultaneous');
+    assert.ok(pinch.find(n=>n.midi===64).duration>=1.5*60/55,'the guide high E lasts until its next attack');
+    assert.ok(pinch.find(n=>n.midi===48).duration<60/55,'ordinary note lengths remain independent of the held high E');
     await page.evaluate(()=>{const a=window.__A;a.exOpen('triads',0);a.volSet('notes',6);a.volSet('click',1);});
     assert.equal(await page.locator('[data-mixer],.mix-level').count(),0,'inline volume percentages are absent');
     await page.evaluate(()=>window.__A.exSetSelection([0,4]));

@@ -10,13 +10,25 @@ const tmp = path.join(os.tmpdir(),'fretlab-advanced.html');fs.writeFileSync(tmp,
  try{
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('file://'+tmp+'#library');
   const result=await page.evaluate(()=>{
-   const {S,EX,ADVANCED_STUDIES,ESSENTIALS,focusEx,exOpen,skipExercise,exStat,exDueList,innerMoves,quartalMoves,vNotes}=window.__A,failures=[];
+   const {S,EX,ADVANCED_STUDIES,ESSENTIALS,focusEx,exOpen,skipExercise,exStat,exDueList,innerMoves,quartalMoves,vNotes,rtBlocks}=window.__A,failures=[];
    const check=(ok,msg)=>{if(!ok)failures.push(msg);};
-   check(ADVANCED_STUDIES.length===5 && ADVANCED_STUDIES.every(e=>e.steps.length===4 && e.steps.at(-1).create),'five complete studies with a transfer task');
-   const answer=EX.find(e=>e.id==='adv_pedals').steps[3],example=answer.build(0);
-   check(example.L===16&&example.ev.length===32&&example.ev.every(e=>e.n.length===1&&e.d===.5),'the pedal-tone writing step has a complete four-bar starter');
-   check(example.ev.find(e=>e.t===7.5).n.some(n=>n.s===1&&n.f===0)&&example.ev.find(e=>e.t===15.5).n.some(n=>n.s===0&&n.f===0),'the written question ends on open B and the answer on open high E');
-   check(answer.d.includes('B string, fret 3')&&answer.d.includes('Bars 1–2')&&answer.d.includes('Bars 3–4'),'the writing task names the phrase structure and an exact variation');
+   check(ADVANCED_STUDIES.length===5 && ADVANCED_STUDIES.every(e=>e.steps.length===4),'five complete four-step studies');
+   const pedals=EX.find(e=>e.id==='adv_pedals'),final=pedals.steps[3],example=final.build(0),tuning=[64,59,55,50,45,40];
+   check(!final.create&&!final.observe&&final.goal>pedals.steps[1].goal,'the final pedal study uses technical feedback and a higher tempo goal');
+   check(example.L===16&&example.ev.some(e=>e.d===.25)&&example.ev.some(e=>e.n.length>1),'the final study combines sixteenths and simultaneous voices');
+   check(example.ev.every((e,i)=>e.t+e.d===(example.ev[i+1]?.t??example.L)),'the written rhythm fills four bars without gaps or overlaps');
+   for(let bar=0;bar<4;bar++){
+    const events=example.ev.filter(e=>e.t>=bar*4&&e.t<(bar+1)*4),pcs=[[0,2,4,7,11],[9,1,4,8,11],[5,9,11,4],[11,2,9,4]][bar];
+    check(events.filter(e=>e.acc).map(e=>e.t-bar*4).join()==='0,1.5,3','3–3–2 accents in bar '+bar);
+    for(const offset of [0,1.5]){const pinch=events.find(e=>e.t===bar*4+offset);check(pinch.n.length===2&&pinch.n.some(n=>n.s===0&&n.f===0)&&pinch.n.some(n=>n.s>=3),'bass and high E pinch in bar '+bar);}
+    check(events.at(-1).n.map(n=>n.s).sort().join()==='0,1,2','upper chord resolves the bar on beat 4');
+    const high=events.flatMap(e=>e.n.filter(n=>n.s===0).map(n=>({t:e.t,hold:n.hold})));
+    check(high.every((n,i)=>n.t+n.hold===(high[i+1]?.t??(bar+1)*4)),'the guide sustains high E until its next attack in bar '+bar);
+    check(events.every(e=>e.n.every(n=>pcs.includes((tuning[n.s]+n.f)%12)&&e.grip.f[5-n.s]===n.f)),'notes match the harmony and displayed grip in bar '+bar);
+    check(events.some((e,i)=>i&&e.n.length===1&&events[i-1].n.length===1&&Math.abs(e.n[0].s-events[i-1].n[0].s)>1),'each bar includes a written string skip');
+   }
+   check(!/record|invent|your phone/i.test(final.d+' '+final.criteria),'the technical study has no off-screen writing or recording requirement');
+   check(rtBlocks('writer').filter(b=>b.t==='Your inner melody'||b.t==='Develop a motif').every(b=>EX.find(e=>e.id===b.ex()).steps[b.step].create),'writing blocks still open creative tasks');
    check(ESSENTIALS.slice(0,4).every(x=>x.id.startsWith('adv_')),'the default path starts beyond the familiar shapes');
    check(focusEx().id==='adv_pedals','fresh focus is an original sound study');
    for(let key=0;key<12;key++){
