@@ -3478,7 +3478,7 @@ function renderExPlayer() {
   $('#pClean').textContent = sd.observe ? 'Heard it' : sd.create ? 'Good take' : 'Clean';
   $('#pCriteriaTitle').textContent = sd.observe ? 'What to listen for' : sd.create ? 'What makes a good take?' : 'What counts as clean?';
   $('#pNextStep').hidden = !(st.done[P.step] && P.step < e.steps.length - 1);
-  $('#pCrit').textContent = sd.criteria || (sd.observe ? 'Listen to each note and the whole chord. Mark Heard it when you can recognize the sound.' : sd.create ? 'Keep the pulse, use the shapes deliberately, and mark a version you would want to play again. Save or record it for next time.' : 'Clean: keep going with clear notes and a steady pulse. Almost: a few notes or changes need work. Messy: stopped or lost the beat. Two clean runs suggest a higher tempo.');
+  $('#pCrit').textContent = sd.criteria || (sd.observe ? 'Listen to each note and the whole chord. Mark Heard it when you can recognize the sound.' : sd.create ? 'Keep the pulse, use the shapes deliberately, and play your phrase twice without stopping. Mark Good take when both passes are clear and steady.' : 'Clean: keep going with clear notes and a steady pulse. Almost: a few notes or changes need work. Messy: stopped or lost the beat. Two clean runs suggest a higher tempo.');
   $('#pLadder').disabled = !!(sd.observe || sd.create);
   $('#pTip').textContent = e.tip;
   const fresh = !st.done[P.step] && !st.bpm[P.step] && !sd.create, rv = exRevOf(e, P.step), due = rv && rv.due <= dayKey() && (st.rated || {})[P.step] !== dayKey();
@@ -3515,7 +3515,7 @@ function exFeedback(kind) {
   }
   logRun(kind, was);
   if (sd.observe || sd.create) {
-    if (kind === 'clean') { st.done[i] = true; st.last = t; save(); if (i < P.ex.steps.length - 1) $('#pNextStep').hidden = false; toast(sd.create ? 'A riff worth keeping. Save or record your idea, then try it again another day.' : 'Sound explored. Next, compare the shapes at a comfortable tempo.'); }
+    if (kind === 'clean') { st.done[i] = true; st.last = t; save(); if (i < P.ex.steps.length - 1) $('#pNextStep').hidden = false; toast(sd.create ? 'A riff worth keeping. Try it again another day.' : 'Sound explored. Next, compare the shapes at a comfortable tempo.'); }
     else toast('Take your time. Listen again or simplify the idea.');
     renderExPlayer(); return;
   }
@@ -4177,7 +4177,7 @@ function vToEx(v) {
       step('Riff: move the shape', `Compare the four shapes with a ${PATNAME[main]}. One bar each. For movable studies, all shapes follow your chosen root.`, main, b0, g0),
       step('Variation', `The same moves as ${PATNAME[alt]}.${alt === 'odd7' ? ' The tempo counts 8th notes, grouped 2 + 2 + 3.' : ''}${alt === 'glide' ? ' The ~ mark means a gentle tremolo-arm dip while the chord rings (or a slow vibrato if your guitar has no arm).' : ''}`, alt, alt === 'odd7' ? b0 * 2 : b0, alt === 'odd7' ? g0 * 2 : g0),
       { n: 'Your riff', create: true, bpm: b0, goal: b0, tuning: v.tune, bar: 4,
-        get d() { return `Make up your own riff with these shapes. Today's constraint: ${vConstraint(v)}. Each chord sounds once on beat 1 as a cue; fill the rest of the bar yourself. Mark Good take when you play a version you'd keep, then record it on your phone.` + tuneTxt; },
+        get d() { return `Make up your own riff with these shapes. Today's constraint: ${vConstraint(v)}. Each chord sounds once on beat 1 as a cue; fill the rest of the bar yourself. Play your phrase twice without stopping. Mark Good take when both passes are clear and steady.` + tuneTxt; },
         build: key => pad(seq(vCurrent(v, key).moves.map(m => Object.assign(blk(vNotes(m, v.tune), 'D', 4), { chord: m.name, grip: m })), 4, 'none')) }
     ]
   };
@@ -4415,7 +4415,7 @@ const ADVANCED_STUDIES = [
     {n:'Question and space',d:'Play a three-note cell in each bar, then leave two beats of space. Hear the target note as part of the named chord.',bpm:70,goal:100,criteria:'Keep the three-note question recognizable and leave the whole written rest. Make every target note sound deliberate.',build:k=>motifLine(k,'simple')},
     {n:'Start on the and',d:'Move the same question half a beat later. Feel beat 1 without filling it with a note.',bpm:70,goal:100,build:k=>motifLine(k,'displaced')},
     {n:'Approach and release',d:'Add a chromatic approach into the first two answers. In the third bar, let the sharp 11 ring briefly before releasing it.',bpm:65,goal:95,build:k=>motifLine(k,'approach')},
-    {n:'A phrase with an ending',create:true,d:'The guide sounds each chord on beat 1. Invent a three-note question, repeat its rhythm through the changes, then give bar 4 a clear ending. Record it before changing keys.',bpm:70,goal:70,criteria:'A recognizable motif, intentional rests, and a final phrase that sounds like an answer rather than a scale run.',build:k=>studyCycle(motifHarmony(k),'space')}
+    {n:'A phrase with an ending',create:true,d:'The guide sounds each chord on beat 1. Invent a three-note question, repeat its rhythm through the changes, then give bar 4 a clear ending. Play it twice with the same ending before changing keys.',bpm:70,goal:70,criteria:'A recognizable motif, intentional rests, and a final phrase that sounds like an answer rather than a scale run.',build:k=>studyCycle(motifHarmony(k),'space')}
   ]},
   {id:'adv_displace',cat:'Rhythm',title:'Three-note cells across 4/4',keyed:'maj',key0:0,lvl:'Advanced · math rock',labels:'degree',about:'Repeat a three-note sus2 cell while your foot keeps four beats. The accent moves across bar lines and meets beat 1 again after three bars.',tip:'The meter stays 4/4. Accent every third note, not every new beat. Let the line cross the bar instead of restarting it there.',steps:[
     {n:'Three across eighths',d:'Three bars of eighth notes. Accents repeat every three notes; count four beats underneath them.',bpm:70,goal:110,criteria:'Keep four steady beats under the moving three-note accents and arrive back on beat 1 after three bars.',build:k=>displacedCell(k,2)},
