@@ -82,6 +82,22 @@ fs.writeFileSync(tmp, source);
     await page.click('#volBtn');
     await page.click('#vReset');
     assert.deepEqual(await page.evaluate(()=>{const s=window.__A.S.settings;return[s.vol,s.nvol,s.cvol,s.muted];}),[.8,1,1,false],'Reset levels restores audible defaults');
+    await page.evaluate(() => {
+      const a = window.__A, wood = a.SND.wood;
+      a.S.metro.sound = 'wood';
+      a.attacks.length = 0;
+      a.SND.wood = (t, accent, dest) => {
+        a.testClick = { t, onClickBus: dest === a.AU.click };
+        a.SND.wood = wood;
+        wood(t, accent, dest);
+      };
+    });
+    await page.getByRole('button', { name: 'Test mix' }).click();
+    await page.waitForFunction(() => window.__A.testClick);
+    assert.ok(await page.evaluate(() => {
+      const a = window.__A;
+      return a.testClick.onClickBus && a.attacks.some(note => note.midi === 57 && note.time < a.testClick.t);
+    }), 'mix preview plays a guide note then the chosen click through its own channel');
     await page.click('#vClose');
     assert.equal(await page.locator('#volPop').isVisible(),false,'the mixer has a direct close action');
     await page.click('#openSettings');await page.click('#sSound');
@@ -168,20 +184,29 @@ fs.writeFileSync(tmp, source);
         const values = data.subarray(Math.floor(start * sr), Math.floor(end * sr));
         return Math.sqrt(values.reduce((sum, x) => sum + x * x, 0) / values.length);
       };
-      async function render(kind, notes = 1, muted = false) {
-        const ctx = new OfflineAudioContext(1, 44100 * 4, 44100);
+      async function render(kind, notes = 1, muted = false, { rate = 44100, click = 1, master = 0.8, accent = 1 } = {}) {
+        const ctx = new OfflineAudioContext(1, rate * 4, rate);
         ctx.resume = () => Promise.resolve(); window.AudioContext = function () { return ctx; };
-        a.AU.ctx = null; a.AU.ks.clear(); Object.assign(a.S.settings, { vol: 0.8, nvol: notes, cvol: 1, muted }); a.ac();
+        a.AU.ctx = null; a.AU.ks.clear(); a.AU.pick = 0;
+        Object.assign(a.S.settings, { vol: master, nvol: notes, cvol: click, muted }); a.ac();
         if (kind === 'direct') a.pluck(40, 0.3, null, 0.6, 2.6);
         else if (kind === 'bus') a.pluck(52, 0.3, a.bus(), 0.6, 1.6);
         else if (kind === 'chord') a.strum([40, 47, 52, 56, 59, 64], 0.3, null, 0.018, 0.65, 2.6);
         else if (kind === 'fast') for (let i = 0; i < 24; i++) a.pluck([52, 55, 59, 64][i % 4], 0.3 + i * 0.1, null, 0.72, 0.26);
-        else if (kind === 'click') a.SND.wood(0.3, 3, a.AU.click);
+        else if (kind === 'guide') a.pluck(57, 0.3, a.AU.notes, 0.72, 0.5);
+        else if (['click', 'wood', 'beep'].includes(kind)) a.SND[kind](0.3, accent, a.AU.click);
+        else if (kind === 'mix') {
+          a.strum([40, 47, 52, 55, 59, 64], 0.3, a.AU.notes, 0.016, 0.65, 1.5);
+          a.SND.click(0.3, 3, a.AU.click);
+          a.SND.kick(0.3, 0.95, a.AU.click);
+          a.SND.hat(0.3, 0.32, a.AU.click, true);
+          a.SND.snare(0.5, 0.7, a.AU.click);
+        }
         else a.tone(40, null, kind);
         const bufferSeconds = kind === 'direct' ? a.ksBuffer(40, 2.6).duration : null;
         const data = (await ctx.startRendering()).getChannelData(0);
         if (!data.every(Number.isFinite)) throw Error('Nonfinite audio sample');
-        return { rms: rms(data, 0.3, kind === 'click' ? 0.4 : 0.9), sustain: rms(data, 2.6, 2.65), tail: rms(data, 3.2, 3.8), peak: data.reduce((m, x) => Math.max(m, Math.abs(x)), 0), bufferSeconds };
+        return { rms: rms(data, 0.3, 0.9, rate), attack: rms(data, 0.3, 0.37, rate), sustain: rms(data, 2.6, 2.65, rate), tail: rms(data, 3.2, 3.8, rate), peak: data.reduce((m, x) => Math.max(m, Math.abs(x)), 0), bufferSeconds };
       }
       try {
         const read = AudioBuffer.prototype.getChannelData;
@@ -197,6 +222,21 @@ fs.writeFileSync(tmp, source);
         for (const kind of ['direct', 'bus', 'pure', 'fifth', 'warm']) results[kind] = await render(kind, 0);
         results.click = await render('click', 0);
         results.masterMute = await render('click', 1, true);
+        results.balance = [];
+        for (const rate of [44100, 48000]) {
+          const voices = [];
+          for (const kind of ['click', 'wood', 'beep']) {
+            const sub = await render(kind, 0, false, { rate, accent: 0.5 });
+            const beat = await render(kind, 0, false, { rate });
+            const downbeat = await render(kind, 0, false, { rate, accent: 3 });
+            voices.push({ sub: sub.attack, beat: beat.attack, downbeat: downbeat.attack });
+          }
+          const guide = await render('guide', 1, false, { rate });
+          const half = await render('click', 0, false, { rate, click: 0.5 });
+          const mutedClick = await render('click', 1, false, { rate, click: 0 });
+          const mix = await render('mix', 1.5, false, { rate, click: 1.5, master: 1 });
+          results.balance.push({ rate, voices, guide: guide.attack, half: half.attack, mutedClick: mutedClick.attack, mix });
+        }
       } finally { window.AudioContext = Native; }
       return results;
     });
@@ -206,6 +246,16 @@ fs.writeFileSync(tmp, source);
     for (const kind of ['chord', 'fast']) assert.ok(rendered[kind].peak < 0.98 && rendered[kind].rms > 0.01 && rendered[kind].tail < 0.000001, kind + ' stays audible without clipping or lingering after its release');
     for (const kind of ['direct', 'bus', 'pure', 'fifth', 'warm']) assert.ok(rendered[kind].rms < 0.000001, kind + ' respects a zero Notes and tones level');
     assert.ok(rendered.click.rms > 0.001 && rendered.masterMute.rms < 0.000001, 'click remains independent of Notes and tones and respects master mute');
+    for (const { rate, voices, guide, half, mutedClick, mix } of rendered.balance) {
+      const beats = voices.map(v => v.beat);
+      assert.ok(Math.max(...beats) / Math.min(...beats) < 1.2, 'regular click timbres have similar audible attacks at ' + rate);
+      for (const { sub, beat, downbeat } of voices) {
+        assert.ok(beat / guide > 0.60 && beat / guide < 1.4, 'a regular click sits near the guide note at ' + rate);
+        assert.ok(sub < beat * 0.8 && downbeat > beat * 1.15, 'subdivisions and downbeats are distinct at ' + rate);
+      }
+      assert.ok(half / beats[0] > 0.32 && half / beats[0] < 0.5 && mutedClick < 0.000001, 'the click slider retains attenuation and true silence at ' + rate);
+      assert.ok(mix.peak < 0.98 && mix.tail < 0.000001, 'boosted guitar and percussion stay below the audio ceiling and release quietly at ' + rate + ': ' + JSON.stringify(mix));
+    }
     const strings = await page.evaluate(() => {
       const a = window.__A, results = [];
       a.AU.ks.clear();
