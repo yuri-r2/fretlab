@@ -1,7 +1,7 @@
 {
- "name": "Fretlab",
- "short_name": "Fretlab",
- "description": "Guitar practice: guided lessons, rhythm workouts, chord shapes in every key, scales, tuner and metronome.",
+ "name": "Pocket Rehearsal",
+ "short_name": "Pocket Rehearsal",
+ "description": "Practice guitar, four-string bass and drums with dedicated lessons and shared ensemble grooves.",
  "start_url": "./#today",
  "scope": "./",
  "display": "standalone",

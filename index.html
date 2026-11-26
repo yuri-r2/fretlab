@@ -14,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
-<title>Fretlab</title>
+<title>Pocket Rehearsal</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 @font-face {
@@ -798,7 +798,7 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
   <div class="inner">
     <div class="brand">
       <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3" fill="var(--wood)"/><line x1="8" y1="5" x2="8" y2="19" stroke="var(--fret)" stroke-width="1.5"/><line x1="14" y1="5" x2="14" y2="19" stroke="var(--fret)" stroke-width="1.5"/><line x1="2" y1="9" x2="22" y2="9" stroke="var(--string)" stroke-width=".8"/><line x1="2" y1="12" x2="22" y2="12" stroke="var(--string)" stroke-width="1"/><line x1="2" y1="15" x2="22" y2="15" stroke="var(--string)" stroke-width="1.2"/><circle cx="11" cy="12" r="2.6" fill="var(--root)"/></svg>
-      <span class="bname">Fretlab</span>
+      <span class="bname">Pocket Rehearsal</span>
     </div>
     <div class="hstat" title="Practice today">
       <svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="var(--surface-2)" stroke-width="5"/><circle id="hdrRing" cx="18" cy="18" r="15" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
@@ -934,7 +934,8 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
 <!-- LEARN -->
 <section class="view" id="view-learn" hidden>
   <div id="lnPath" class="stack" style="gap:16px">
-    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Fretboard mastery path</span><h2>Learn</h2></div><p class="muted small">Nine units that build on each other, from naming every note to voicings for writing your own riffs. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer, and a couple of questions from earlier units), and the drills and exercises that make it automatic. Passed units come back as short mixed reviews, spaced further apart each time you get them right.</p></div>
+    <div class="vhead"><div class="stack" style="gap:4px"><span class="label">Guitar learning path</span><h2>Fretboard mastery</h2></div><p class="muted small">Nine units that build on each other, from naming every note to voicings for writing your own riffs. Each unit has short lessons with diagrams, a 10-question check (8 to pass, with an explanation after every answer, and a couple of questions from earlier units), and the drills and exercises that make it automatic. Passed units come back as short mixed reviews, spaced further apart each time you get them right.</p></div>
+    <div class="row"><button class="btn" data-go="bass">Bass guitar path</button><button class="btn" data-go="drums">Drum kit path</button></div>
     <div id="lnReview"></div>
     <ol class="path" id="lnUnits"></ol>
   </div>
@@ -1283,7 +1284,7 @@ const DEF = {
   ear: { deg: { lv: 1, ans: {}, recent: [] }, iv: { lv: 1, ans: {}, recent: [] }, chord: { lv: 1, ans: {}, recent: [] } },
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
-  band: { bass: {study:'release',tempo:{},best:{},mix:'both',click:false}, drums: {study:'release',tempo:{},best:{},mix:'both',click:false} },
+  band: { bass: {study:'bass-release',guide:true,tempo:{},best:{},mix:'both',click:false}, drums: {study:'drum-hands',guide:true,tempo:{},best:{},mix:'both',click:false} },
   riffs: [], repertoire: { saved: [] }, ex: {}, exskip: [], learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [], practice: { resume: null, spots: [] },
   ui: { riffLibrary: { query: '', genre: 'all', tuning: 'standard', saved: false }, exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
@@ -1421,6 +1422,7 @@ function ac() {
     nb.copyToChannel(nd, 0);
     AU.noise = nb;
     AU.ctx.addEventListener('statechange', () => {
+      if (bandRun && AU.ctx.state !== 'running') audioBlocked();
       if (AU.ctx.state === 'running') { clearTimeout(AU.check); AU.check = null; AU.blocked = false; volRender(); }
     });
   }
@@ -1629,6 +1631,7 @@ function defaultAccents(num, den) {
   return Array.from({ length: num }, (_, i) => i === 0 ? 3 : 1);
 }
 function mStart() {
+  bandStop();
   ac(); if (M.running) return;
   if (P.running) exPause();
   const cfg = S.metro;
@@ -2320,7 +2323,7 @@ async function tnStart() {
 }
 function tnMicHelp() {
   $('#tnMic').hidden = false;
-  $('#tnMic').innerHTML = `<b>The microphone isn't available here.</b> Open Fretlab on its own page to tune by listening: <a href="${PAGES_URL}" target="_blank" rel="noopener">${PAGES_URL.replace('https://', '')}</a>. Allow microphone access when the browser asks. Until then, tap a peg to hear its reference note and tune by ear.`;
+  $('#tnMic').innerHTML = `<b>The microphone isn't available here.</b> Open Pocket Rehearsal on its own page to tune by listening: <a href="${PAGES_URL}" target="_blank" rel="noopener">${PAGES_URL.replace('https://', '')}</a>. Allow microphone access when the browser asks. Until then, tap a peg to hear its reference note and tune by ear.`;
 }
 function tnStop() {
   T.listening = false; clearTimeout(T.timer);
@@ -4977,7 +4980,7 @@ function switchTab(t, fromHash) {
 }
 function renderProgress() {
   const records=[];
-  for(const part of Object.keys(bandNames))for(const study of BAND){
+  for(const part of Object.keys(bandNames))for(const study of bandCatalog(part)){
     const bpm=S.band[part].best[study.id];
     if(bpm)records.push('<li>'+bandNames[part]+' · '+study.title+' · '+Number(bpm)+' BPM</li>');
   }
@@ -5501,13 +5504,13 @@ $('.tabs .inner').addEventListener('scroll', tabFade, { passive: true }); window
 
 /* ---------- backup and restore ---------- */
 $('#sExport').onclick = async () => {
-  const filename = `fretlab-backup-${dayKey()}.json`, data = JSON.stringify({ app: 'fretlab', version: 1, exported: new Date().toISOString(), state: S }, null, 1);
+  const filename = `pocket-rehearsal-backup-${dayKey()}.json`, data = JSON.stringify({ app: 'fretlab', version: 1, exported: new Date().toISOString(), state: S }, null, 1);
   if (window.claude && typeof window.claude.use === 'function') {
     $('#sBackupMsg').textContent = 'Preparing…';
     const dl = await window.claude.use('downloads').catch(() => null);
     if (dl) {
       try { await dl.save({ filename, data }); $('#sBackupMsg').textContent = 'Backup saved.'; }
-      catch (e) { $('#sBackupMsg').textContent = e && e.code === 'declined' ? 'Backup not saved.' : e && e.code === 'rate_limited' ? 'A save prompt is already open.' : 'Saving files is not available here. Open Fretlab on its GitHub page to back up.'; }
+      catch (e) { $('#sBackupMsg').textContent = e && e.code === 'declined' ? 'Backup not saved.' : e && e.code === 'rate_limited' ? 'A save prompt is already open.' : 'Saving files is not available here. Open Pocket Rehearsal on its GitHub page to back up.'; }
       return;
     }
   }
@@ -5515,7 +5518,7 @@ $('#sExport').onclick = async () => {
     const blob = new Blob([data], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
     $('#sBackupMsg').textContent = 'Backup downloaded.';
-  } catch (e) { $('#sBackupMsg').textContent = 'Downloads are blocked here. Open Fretlab on its GitHub page to back up.'; }
+  } catch (e) { $('#sBackupMsg').textContent = 'Downloads are blocked here. Open Pocket Rehearsal on its GitHub page to back up.'; }
 };
 $('#sImport').onchange = async e => {
   const f = e.target.files && e.target.files[0]; if (!f) return;
@@ -5524,7 +5527,7 @@ $('#sImport').onchange = async e => {
     if (!st || typeof st !== 'object' || !st.settings || !st.ex) throw new Error('not a backup');
     S = merge(DEF, st); S.updatedAt = Date.now(); flush(); refreshAll();
     $('#sBackupMsg').textContent = `Restored the backup from ${d.exported ? new Date(d.exported).toLocaleDateString() : 'file'}.`; toast('Progress restored.');
-  } catch (x) { $('#sBackupMsg').textContent = "That file isn't a Fretlab backup."; }
+  } catch (x) { $('#sBackupMsg').textContent = "That file isn't a Pocket Rehearsal backup."; }
   e.target.value = '';
 };
 
@@ -5586,18 +5589,64 @@ const BAND = [
     notes:[[0,3,0,6],[6,2,2,6],[12,1,0,4],[16,3,0,6],[22,2,2,6],[28,1,0,1]],
     hat:Array.from({length:14},(_,i)=>i*2), kick:[0,6,12,16,22,28], snare:[4,12,20,28,29,30,31]}
 ];
+// Dedicated lessons have one performed voice. Ensemble studies also carry the partner score.
+const PLAY_PATH = {
+  bass: [
+    {id:'bass-release',title:'Stop an open string on cue',bpm:60,div:2,
+      bass:'Play open E with your index finger. Touch the string on the first empty count to end the sound. In bar two, repeat on A and use your thumb to keep the E string quiet. Listen for complete silence between attacks.',
+      notes:[[0,3,0,2],[4,3,0,1],[6,3,0,1],[8,2,0,2],[12,2,0,1],[14,2,0,1]]},
+    {id:'bass-alternate',title:'Keep two plucking fingers even',bpm:66,div:2,
+      bass:'Alternate index and middle for every attack, including after a rest. Play the first bar on A and the second on D. Match the volume of the two fingers and end each string cleanly before crossing.',
+      notes:[0,1,2,4,5,6,8,9,10,12,13,14].map(t=>[t,t<8?2:1,0,1])},
+    {id:'bass-map',title:'Find C in two registers',bpm:68,div:2,
+      bass:'Start at fret three on the A string. Say C, D, E, G as you play bar one. In bar two, climb to the higher C on the G string. Hear the octave and release it before returning to the low C.',
+      notes:[[0,2,3,2],[2,1,0,2],[4,1,2,2],[6,0,0,2],[8,2,3,2],[10,1,2,2],[12,0,0,2],[14,0,5,1]]},
+    {id:'bass-thirds',title:'Make a chord change with one fret',bpm:74,div:2,
+      bass:'Play A, C♯, E, A in the first bar. Lower C♯ to C in the second. Sing the third on each pass. Listen for the move from major to minor while the root and fifth stay fixed.',
+      notes:[[0,2,0,2],[2,2,4,2],[4,1,2,2],[6,0,2,2],[8,2,0,2],[10,2,3,2],[12,1,2,2],[14,0,2,2]]},
+    {id:'bass-pedal',title:'Answer a low pedal note',bpm:78,div:2,
+      bass:'Return to open E between upper notes. Answer first with G and A, then B and D. Cut D short so the final low E speaks clearly. Keep the low pedal equally clear after every crossing.',
+      notes:[[0,3,0,2],[2,3,3,1],[3,3,0,1],[4,2,0,2],[6,3,0,2],[8,3,0,2],[10,2,2,1],[11,3,0,1],[12,1,0,1],[14,3,0,1]]}
+  ],
+  drums: [
+    {id:'drum-hands',title:'Match the two hands',bpm:60,div:2,
+      drums:'On the snare, play the written right and left strokes. In each bar, play four eighths, rest a beat, then play two more. Start the second bar with your left hand. Listen for equal spacing and tone.',
+      snare:[0,1,2,3,6,7,8,9,10,11,14,15],hands:'RLRL  RLLRLR  LR'},
+    {id:'drum-doubles',title:'Control the second stroke',bpm:64,div:2,
+      drums:'Use singles in the first half of each bar and doubles in the second. R and L name your hands. Let the stick rebound, then guide the second stroke so both notes in each pair have the same volume.',
+      snare:Array.from({length:16},(_,i)=>i),hands:'RLRLRRLLLRLRLLRR'},
+    {id:'drum-accents',title:'Move the accent between hands',bpm:62,div:2,
+      drums:'Alternate hands on the snare. Play the marked accents with a fuller stroke and keep the other notes low. Bar two shifts the accents onto your left hand while the eighth-note pulse stays even.',
+      snare:Array.from({length:16},(_,i)=>i),hands:'RLRLRLRLRLRLRLRL',accents:[0,4,9,13]},
+    {id:'drum-foot',title:'Move the foot under steady hands',bpm:70,div:2,
+      drums:'Play quarter notes on closed hat and snare on two and four. The kick begins on beat one. In bar two it moves between the hand strokes. First say the kick counts aloud, then play the whole grid.',
+      hat:[0,2,4,6,8,10,12,14],snare:[2,6,10,14],kick:[0,4,8,11,13]},
+    {id:'drum-paradiddle',title:'Orchestrate a paradiddle',bpm:66,div:2,
+      drums:'Play R L R R, then L R L L on snare. In bar two keep that sticking but move the right hand to closed hi-hat. Place kick on one and three. The hand pattern should sound continuous across the change.',
+      snare:[0,1,2,3,4,5,6,7,9,12,14,15],hat:[8,10,11,13],kick:[8,12],hands:'RLRRLRLLRLRRLRLL'}
+  ]
+};
+const PATH_RESOURCES = {
+  bass:[['StudyBass · open-string muting','https://www.studybass.com/lessons/bass-technique/open-string-muting/'],['Hal Leonard · Bass Method, Book 1','https://reader.halleonard.com/viewbook_v2/Hal-Leonard-Bass-Method-Book-1?isml=1'],['BassBuzz · course outline','https://www.bassbuzz.com/beginner-to-badass/lessons-overview'],['Yousician · bass learning path','https://support.yousician.com/hc/en-us/articles/115005190525-How-the-bass-learning-path-works']],
+  drums:[['Zildjian · drum set lessons','https://ae.zildjian.com/education/beginner-drum-set-lessons/groove-library-01/'],['George Lawrence Stone · Stick Control','https://www.alfred.com/products/stick-control-00-32749'],['Drumeo · dynamics and ghost notes','https://www.drumeo.com/beat/best-beginner-drum-book-5-lessons/'],['Melodics · practice mode','https://support.melodics.com/en/articles/6777027-practice-mode']]
+};
+function bandCatalog(part){return [...PLAY_PATH[part],...BAND];}
+
 let bandRun = null;
 const bandNames = {bass:'Bass guitar', drums:'Drums'};
-function bandStudy(part) { return BAND.find(s=>s.id===S.band[part].study) || BAND[0]; }
+function bandStudy(part) { return bandCatalog(part).find(s=>s.id===S.band[part].study) || PLAY_PATH[part][0]; }
 function bandTempo(part,study) { return clamp(Number(S.band[part].tempo[study.id]) || study.bpm, 35, 200); }
 function bandScore(study, part) {
   const {div,notes} = study, bass = part==='bass';
   const lanes = bass ? ['G','D','A','E'] : ['Hi-hat','Snare','Kick'];
+  if(!bass && study.hands)lanes.push('Hand');
   const counts = div===2 ? ['', '&'] : ['', 'e', '&', 'a'];
   function mark(row,t) {
     if (!bass) {
+      if(row===3)return study.hands[t].trim();
+      if(row===1 && study.accents?.includes(t))return '>';
       if (row===1 && study.ghost?.includes(t)) return '(●)';
-      return study[['hat','snare','kick'][row]].includes(t) ? (row===0?'×':'●') : '';
+      return study[['hat','snare','kick'][row]]?.includes(t) ? (row===0?'×':'●') : '';
     }
     const n=notes.find(([at,string,,length])=>row===string && at<=t && t<at+length);
     return n ? (t===n[0]?String(n[2]):'–') : '';
@@ -5623,22 +5672,27 @@ function bandRecord(part, study) {
 }
 function renderBand(part) {
   const root=$('#view-'+part), study=bandStudy(part), bass=part==='bass', other=bass?'drums':'bass';
-  const opts=BAND.map((s,i)=>'<option value="'+s.id+'" '+(s===study?'selected':'')+'>'+(i+1)+'. '+s.title+'</option>').join('');
+  const solo=PLAY_PATH[part].includes(study);
+  const group=(label,list)=>'<optgroup label="'+label+'">'+list.map((s,i)=>'<option value="'+s.id+'" '+(s===study?'selected':'')+'>'+(i+1)+'. '+s.title+'</option>').join('')+'</optgroup>';
+  const opts=group(bandNames[part]+' lessons',PLAY_PATH[part])+group('Ensemble grooves',BAND);
+  const sources=PATH_RESOURCES[part].map(([label,url])=>'<li><a href="'+url+'" target="_blank" rel="noopener">'+label+'</a></li>').join('');
   root.innerHTML='<div class="vhead"><h2>'+bandNames[part]+'</h2><p class="small muted">'+(bass?'Four-string bass · E A D G':'Drum kit · kick, snare and closed hi-hat')+'</p></div>'+
-    '<div class="stack band-room"><label class="f"><span>Groove study</span><select data-band="study">'+opts+'</select></label>'+
+    '<div class="stack band-room"><label class="f"><span>Lesson or ensemble groove</span><select data-band="study">'+opts+'</select></label>'+
     '<p>'+study[part]+'</p><div class="row"><label class="f"><span>Tempo (BPM)</span><input type="number" min="35" max="200" data-band="tempo" value="'+bandTempo(part,study)+'"></label>'+
-    '<label class="f"><span>Backing</span><select data-band="mix"><option value="both">Full band</option><option value="partner">'+(bass?'Drums only':'Bass only')+'</option><option value="self">'+bandNames[part]+' only</option></select></label>'+
+    (solo?'<label><input type="checkbox" data-band="guide" '+(S.band[part].guide?'checked':'')+'> Play guide (off for click only)</label>':
+    '<label class="f"><span>Backing</span><select data-band="mix"><option value="both">Full band</option><option value="partner">'+(bass?'Drums only':'Bass only')+'</option><option value="self">'+bandNames[part]+' only</option></select></label>')+
     '<label><input type="checkbox" data-band="click" '+(S.band[part].click?'checked':'')+'> Click</label></div>'+
     '<div class="row"><button class="btn primary big" data-band="play">Play loop</button><span data-band="position" class="small muted">4/4 · one-bar count-in</span></div>'+
-    '<div class="band-bars">'+bandScore(study,part)+'</div><p class="small muted">'+(bass?'Numbers are frets. 0 is an open string. A dash sustains the previous note. An empty column is a rest.':'Read each column together. × is a closed hat, ● a drum hit, and (●) a quiet snare ghost note. Empty cells are silent.')+'</p>'+
+    '<div class="band-bars">'+bandScore(study,part)+'</div><p class="small muted">'+(bass?'Numbers are frets. 0 is an open string. A dash sustains the previous note. An empty column is a rest.':'Read each column together. × is a closed hat, ● a drum hit, and (●) a quiet snare ghost note. R and L show sticking when specified. &gt; marks an accented snare. Empty cells are silent.')+'</p>'+
     '<div class="row"><button class="btn" data-band="log">Log clean take</button><span role="status" class="small muted" data-band="best">'+bandRecord(part,study)+'</span></div>'+
-    '<div><button class="btn" data-band="swap">Play the '+(bass?'drum':'bass')+' part</button></div></div>';
-  root.querySelector('[data-band="mix"]').value=S.band[part].mix;
+    (solo?'': '<div><button class="btn" data-band="swap">Play the '+(bass?'drum':'bass')+' part</button></div>')+'<details><summary>'+bandNames[part]+' books and lessons</summary><ul>'+sources+'</ul></details></div>';
+  if(!solo)root.querySelector('[data-band="mix"]').value=S.band[part].mix;
   root.onchange=e=>{
     const control=e.target.dataset.band, settings=S.band[part];
     if(control==='study'){bandStop();settings.study=e.target.value;renderBand(part);root.querySelector('select').focus();}
     if(control==='tempo'){bandStop();settings.tempo[study.id]=clamp(Math.round(Number(e.target.value)||study.bpm),35,200);e.target.value=settings.tempo[study.id];}
     if(control==='click')settings.click=e.target.checked;
+    if(control==='guide')settings.guide=e.target.checked;
     if(control==='mix')settings.mix=e.target.value;
     save();
   };
@@ -5666,27 +5720,28 @@ function bandStart(part) {
   if(P.running)exPause();
   if(R.running && !R.paused && !R.waiting)routinePause();
   const ctx=ac(), study=bandStudy(part), div=study.div, sec=60/bandTempo(part,study)/div;
+  const solo=PLAY_PATH[part].includes(study);
   const length=8*div, root=$('#view-'+part);
   const r=bandRun={root,notes:bus(AU.notes),drums:bus(AU.click),timer:null};
   const first=ctx.currentTime+0.08, start=-4*div;
   let next=start, last=null;
   root.querySelector('[data-band="play"]').textContent='Stop';
   function tick(){
-    if(ctx.state!=='running'){audioResume();return;}
+    if(ctx.state!=='running')return;
     const now=ctx.currentTime, elapsed=(now-first)/sec+start;
     next=Math.max(next,Math.ceil(elapsed-0.02));
     while(first+(next-start)*sec<now+0.12){
       const t=first+(next-start)*sec, i=next%length, {mix,click}=S.band[part];
-      if(next%div===0 && (next<0 || click))SND.click(t,next%(4*div)===0?3:1,r.drums);
+      if(next%div===0 && (next<0 || click || (solo && !S.band[part].guide)))SND.click(t,next%(4*div)===0?3:1,r.drums);
       if(next>=0){
-        const audible=voice=>mix==='both' || (mix==='self' ? part===voice : part!==voice);
+        const audible=voice=>solo ? voice===part && S.band[part].guide : mix==='both' || (mix==='self' ? part===voice : part!==voice);
         if(audible('bass')){
-          const n=study.notes.find(n=>n[0]===i);
+          const n=study.notes?.find(n=>n[0]===i);
           if(n)pluck(BASS_OPEN[n[1]]+n[2],t,r.notes,0.85,n[3]*sec);
         }
         if(audible('drums')){
           for(const [key,level] of [['kick',0.94],['snare',0.83],['hat',0.52],['ghost',0.22]]){
-            if(study[key]?.includes(i))SND[key==='ghost'?'snare':key](t,level,r.drums);
+            if(study[key]?.includes(i))SND[key==='ghost'?'snare':key](t,key==='snare' && study.accents ? (study.accents.includes(i)?1:0.36) : level,r.drums);
           }
         }
       }

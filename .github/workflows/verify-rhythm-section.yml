@@ -1,4 +1,4 @@
-name: Verify rhythm section
+name: Verify instrument paths
 on:
   push:
     branches: [codex/verify-rhythm-section]
@@ -7,13 +7,15 @@ permissions:
 jobs:
   practice:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.56.1-noble
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - run: npm install --no-save playwright@1.56.1
-      - run: npx playwright install --with-deps chromium
       - run: |
+          status=0
           for suite in tests/*.js; do
             echo "$suite"
-            node "$suite" || exit 1
+            node "$suite" || status=1
           done
+          exit "$status"

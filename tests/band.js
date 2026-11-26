@@ -16,7 +16,12 @@ const {pathToFileURL} = require('node:url');
     for(const part of ['bass','drums']){
       const select=field(part,'study');
       const ids=await select.locator('option').evaluateAll(o=>o.map(x=>x.value));
-      assert.equal(ids.length,6);
+      assert.equal(ids.length,11);
+      assert.equal(ids.filter(id=>id.startsWith(part==='bass'?'bass-':'drum-')).length,5);
+      assert.equal(await room(part).locator('details li a').count(),4);
+      await select.selectOption(ids[0]);
+      assert.equal(await field(part,'swap').count(),0);
+      await field(part,'guide').uncheck();
       for(const id of ids){
         await select.selectOption(id);
         const counts=room(part).locator('thead [data-pulse]');

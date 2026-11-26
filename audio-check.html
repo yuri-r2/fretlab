@@ -3,14 +3,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Fretlab · Sound check</title>
+<title>Pocket Rehearsal · Sound check</title>
 <style>
 :root{font:16px/1.55 system-ui,sans-serif;color-scheme:light dark;--bg:#fafafa;--surface:#fff;--ink:#16181d;--muted:#3e424b;--line:#6c7078;--accent:#006369}
 @media(prefers-color-scheme:dark){:root{--bg:#08090b;--surface:#202328;--ink:#fff;--muted:#e0e4eb;--line:#949aa5;--accent:#22d9dc}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}main{max-width:620px;margin:auto;padding:28px 20px 60px}a{color:var(--accent)}h1{font-size:28px;line-height:1.2}h2{font-size:18px;margin:0 0 8px}p{margin:8px 0 16px}.muted{color:var(--muted)}section{margin:18px 0;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}button,select{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:7px;color:var(--ink);background:var(--surface);padding:8px 12px}button{cursor:pointer}button:disabled{opacity:.6;cursor:wait}button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}audio{display:block;width:100%;margin:12px 0}.answer{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}select{flex:1;min-width:160px}output{display:block;color:var(--muted);margin-top:12px;overflow-wrap:anywhere}textarea{width:100%;min-height:210px;font:12px/1.5 ui-monospace,monospace;color:var(--ink);background:var(--surface);padding:12px;border:1px solid var(--line);border-radius:7px}summary{cursor:pointer;padding:12px 0}#copyStatus{display:inline;margin-left:8px}
 </style>
 <main>
-<a href="./">← Back to Fretlab</a>
+<a href="./">← Back to Pocket Rehearsal</a>
 <h1>Sound check</h1>
 <p>Try each sound on this phone, one at a time. Each plays a short A note. Choose whether you heard it, then copy the results.</p>
 <p class="muted">Keep this page open during each test. Use your usual media volume. These checks do not change your practice settings.</p>
@@ -23,7 +23,7 @@
 </section>
 <section>
   <h2>2. Direct synth sound</h2>
-  <p class="muted">A fresh sound session using the same output method as Fretlab.</p>
+  <p class="muted">A fresh sound session using the same output method as Pocket Rehearsal.</p>
   <button id="direct" type="button">Play direct sound</button>
   <label class="answer">Did you hear it? <select data-answer="direct" aria-label="Did you hear direct synth sound?"><option value="not checked">Not checked</option><option value="yes">Yes</option><option value="no">No</option></select></label>
   <output id="directStatus" role="status">Ready.</output>
