@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Guitar practice for fretboard fluency, chord shapes, scales and musical ideas. Guided lessons and exercises, with a tuner, metronome and ear training.">
+<meta name="description" content="Guitar, bass and drum practice. Study riffs, play four-string bass lines and drum grooves with backing tracks, and track your progress.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
@@ -771,6 +771,18 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
 @media(min-width:1100px){.riff-filters{position:sticky;top:var(--hdr-h,65px);z-index:3}}
 @media(max-width:850px){#libraryNav{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scroll-padding-inline:8px;padding:4px 2px 10px}#libraryNav .btn{flex:none}.riff-row{grid-template-columns:minmax(0,1fr) auto;gap:16px}.riff-tuning{grid-column:1}.riff-actions{grid-column:2;grid-row:1/3}.riff-row h3{font-size:18px}}
 @media(max-width:620px){.riff-filters{gap:16px}.riff-filters .f{min-width:180px}.riff-filters .riff-search{min-width:100%}.riff-row{display:flex;flex-direction:column;align-items:stretch;padding:20px;gap:16px}.riff-tuning{flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap}.riff-actions a{flex:1;text-align:center}.riff-genres .btn{padding:8px 10px}}
+
+.band-room{max-width:960px;margin:20px 0 32px;gap:18px}
+.band-room p{margin:0;max-width:70ch;line-height:1.55}
+.band-room input[type="number"]{width:6em}
+.band-bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px}
+.band-score{border-collapse:collapse;width:100%;table-layout:fixed;font-variant-numeric:tabular-nums}
+.band-score caption{text-align:left;font-weight:700;padding-bottom:8px}
+.band-score th,.band-score td{text-align:center;height:30px;font-size:14px;padding:0}
+.band-score tr>*:first-child{width:52px;text-align:left}
+.band-score td{background:var(--surface-2);border-bottom:1px solid var(--line)}
+.band-score .down{border-left:1px solid var(--line)}
+.band-score .playing{background:var(--accent);color:var(--accent-ink)}
 </style>
 
 <header class="top pad" id="top">
@@ -824,13 +836,15 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
 <main class="pad">
 <div class="inner">
 
-<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="songs">Riffs</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button></nav>
+<nav id="libraryNav" class="row" aria-label="Library sections" hidden><button class="btn" type="button" data-go="library">All</button><button class="btn" type="button" data-go="songs">Riffs</button><button class="btn" type="button" data-go="voicings">Chord Shapes</button><button class="btn" type="button" data-go="explorer">Scales</button><button class="btn" type="button" data-go="rhythm">Rhythm</button><button class="btn" type="button" data-go="exercises">Exercises</button><button class="btn" type="button" data-go="fretboard">Fretboard</button><button class="btn" type="button" data-go="ear">Ear training</button><button class="btn" type="button" data-go="bass">Bass guitar</button><button class="btn" type="button" data-go="drums">Drums</button></nav>
 <section class="view" id="view-library" hidden>
   <div class="vhead"><h2>What do you want to work on?</h2><p class="small muted">Explore a sound, practice a skill, or add something to your daily focus.</p></div>
   <div class="card stack" id="essCard"></div>
   <details class="skipped-folder" id="savedPractice" hidden><summary>Saved practice spots <span id="savedPracticeCount"></span></summary><div class="stack" id="savedPracticeList"></div></details>
   <details class="skipped-folder" id="skippedExercises"><summary>Skipped exercises <span id="skippedCount"></span></summary><div class="stack" id="skippedList"></div></details>
   <div class="excards">
+    <button class="excard" type="button" data-go="bass"><h3>Bass guitar</h3><span>Shape a bass line, control its length and lock in with the kick.</span></button>
+    <button class="excard" type="button" data-go="drums"><h3>Drums</h3><span>Build a backbeat, place ghost notes and bring a fill back to the riff.</span></button>
     <button class="excard" type="button" data-go="songs"><h3>Riffs</h3><span>Learn real songs from alternative, Midwest emo, indie and shoegaze. Find a riff for your tuning, starting with E standard.</span></button>
     <button class="excard" type="button" data-go="voicings"><h3>Chord Shapes</h3><span>Open-string clusters, modal colors and compact extensions. Hear a sound, then use it in a study.</span></button>
     <button class="excard" type="button" data-go="explorer"><h3>Scales</h3><span>Understand a scale across the neck and hear its sound over a drone.</span></button>
@@ -840,6 +854,8 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
     <button class="excard" type="button" data-go="ear"><h3>Ear training</h3><span>Recognize scale degrees, intervals and chord qualities by sound.</span></button>
   </div>
 </section>
+<section class="view" id="view-bass" hidden></section>
+<section class="view" id="view-drums" hidden></section>
 <section class="view" id="view-songs" hidden>
   <div class="vhead"><div class="stack" style="gap:8px"><span class="label">Song repertoire</span><h2>Riffs</h2></div><p class="small muted">Guitar parts worth learning, from Midwest emo to shoegaze. Start in E standard, save a few for practice, and open the tabs on Songsterr.</p></div>
   <div class="riff-filters">
@@ -862,6 +878,7 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
     <div class="stat"><div><div class="v" id="stTotal">0</div><div class="k">hours all time</div></div></div>
   </div>
   <div class="card stack"><h3>Last 7 days</h3><svg id="weekChart" class="weekchart" viewBox="0 0 320 150" width="100%" role="img" aria-label="Minutes practiced over the last seven days"></svg></div>
+  <div id="bandProgress" class="card stack" hidden></div>
   <div class="card stack"><h3>Practice history</h3><div id="progressHistory" class="stack"></div></div>
 </section>
 
@@ -871,6 +888,7 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
     <div class="stack" style="gap:4px"><span class="label" id="todayDate">Today</span><h2>Your practice</h2></div>
     <p class="muted small">Choose your time and focus. Your session connects reviews, focused practice and a musical application. Each block opens the right material; move on when you are ready.</p>
   </div>
+  <div class="row" aria-label="Instrument practice"><button class="btn" type="button" data-go="exercises">Guitar exercises</button><button class="btn" type="button" data-go="bass">Bass guitar</button><button class="btn" type="button" data-go="drums">Drums</button></div>
   <div class="card practice-resume" id="practiceResume" hidden></div>
   <div class="grid">
     <div class="card stack">
@@ -1265,6 +1283,7 @@ const DEF = {
   ear: { deg: { lv: 1, ans: {}, recent: [] }, iv: { lv: 1, ans: {}, recent: [] }, chord: { lv: 1, ans: {}, recent: [] } },
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
+  band: { bass: {study:'release',tempo:{},best:{},mix:'both',click:false}, drums: {study:'release',tempo:{},best:{},mix:'both',click:false} },
   riffs: [], repertoire: { saved: [] }, ex: {}, exskip: [], learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [], practice: { resume: null, spots: [] },
   ui: { riffLibrary: { query: '', genre: 'all', tuning: 'standard', saved: false }, exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
@@ -1346,7 +1365,7 @@ document.addEventListener('keydown', markActive, true);
 function todayRec() { const k = dayKey(); return S.days[k] || (S.days[k] = { s: 0, m: {} }); }
 setInterval(() => {
   const vis = document.visibilityState === 'visible';
-  const active = M.running || P.running || (R.running && !R.paused) || (vis && Date.now() - lastAct < 45000);
+  const active = bandRun || M.running || P.running || (R.running && !R.paused) || (vis && Date.now() - lastAct < 45000);
   if (active) {
     const d = todayRec(); d.s++; d.m[curTab] = (d.m[curTab] || 0) + 1;
     tickN++;
@@ -1412,6 +1431,7 @@ function audioBlocked() {
   if (!AU.ctx || AU.ctx.state === 'running') return;
   if (P.running) exPause();
   if (M.running) mStop();
+  bandStop();
   if (AU.blocked) return;
   AU.blocked = true;
   requestAnimationFrame(() => {
@@ -4932,11 +4952,12 @@ $('#riffList').onclick=e=>{
 
 /* ---------- tabs ---------- */
 const PRIMARY_TABS = ['today', 'learn', 'library', 'progress'];
-const LIBRARY_TABS = ['library', 'songs', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer', 'rhythm'];
+const LIBRARY_TABS = ['library', 'bass', 'drums', 'songs', 'exercises', 'voicings', 'fretboard', 'ear', 'explorer', 'rhythm'];
 const TABS = [...PRIMARY_TABS, ...LIBRARY_TABS.filter(t => t !== 'library'), 'metronome', 'tuner'];
 function tabFromHash() { const t = location.hash.slice(1); return t === 'riffs' ? 'voicings' : TABS.includes(t) ? t : 'today'; }
 function switchTab(t, fromHash) {
   if (!TABS.includes(t)) t = 'today';
+  if (bandRun) bandStop();
   if (curTab === 'voicings' && t !== 'voicings') voStop();
   if (curTab === 'ear' && t !== 'ear') { clearTimeout(E.nextT); killBus(E.bus); }
   if (curTab === (P.host || 'exercises') && t !== curTab) { routineRemember(); if(P.running)exPause(); else practiceRemember(); }
@@ -4947,14 +4968,22 @@ function switchTab(t, fromHash) {
   $$('.tab').forEach(b => { b.setAttribute('aria-selected', b.dataset.tab === (LIBRARY_TABS.includes(t) ? 'library' : t)); b.tabIndex = b.getAttribute('aria-selected') === 'true' || (!PRIMARY_TABS.includes(t) && !LIBRARY_TABS.includes(t) && b.dataset.tab === 'today') ? 0 : -1; });
   TABS.forEach(n => { $('#view-' + n).hidden = n !== t; });
   if (!fromHash && location.hash !== '#' + t) { try { history.pushState(null, '', '#' + t); } catch (e) { location.hash = t; } }
-  ({ songs: renderRiffs, library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
+  ({ bass:()=>renderBand('bass'), drums:()=>renderBand('drums'), songs: renderRiffs, library: renderLibrary, progress: renderProgress, today: renderToday, learn: renderLearn, exercises: renderExercises, metronome: renderMetro, fretboard: renderFret, ear: renderEar, voicings: renderVoicings, explorer: renderExplorer, rhythm: renderRhythm, tuner: renderTuner })[t]();
   $('#libraryNav').hidden = !LIBRARY_TABS.includes(t) || playerVisible();
   $$('#libraryNav [data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === t ? 'page' : 'false'));
   if(!$('#libraryNav').hidden)$(`#libraryNav [data-go="${t}"]`).scrollIntoView({block:'nearest',inline:'nearest'});
   renderMini();
   const tb = $(`.tab[data-tab="${LIBRARY_TABS.includes(t) ? 'library' : t}"]`); if (tb && tb.scrollIntoView) tb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 }
-function renderProgress() { renderTodayStats(); $('#progressHistory').appendChild($('#exHist')); $('#exHist').hidden = false; renderExHist(); }
+function renderProgress() {
+  const records=[];
+  for(const part of Object.keys(bandNames))for(const study of BAND){
+    const bpm=S.band[part].best[study.id];
+    if(bpm)records.push('<li>'+bandNames[part]+' · '+study.title+' · '+Number(bpm)+' BPM</li>');
+  }
+  $('#bandProgress').hidden=!records.length;
+  $('#bandProgress').innerHTML='<h3>Best clean takes</h3><ul>'+records.join('')+'</ul>';
+  renderTodayStats(); $('#progressHistory').appendChild($('#exHist')); $('#exHist').hidden = false; renderExHist(); }
 function refreshAll() { renderHeaderStats(); renderBpm(); switchTab(curTab, true); applySettingsUI(); }
 function updateHdrH() { const h = $('#top').offsetHeight; document.documentElement.style.setProperty('--hdr-h', h + 'px'); }
 
@@ -5367,6 +5396,7 @@ document.addEventListener('keydown', e => {
   if (e.code === 'Space' && !e.target.closest('button, summary, [role="tab"]')) {
     e.preventDefault();
     if (curTab === (P.host || 'exercises') && P.ex && !$('#exPlayer').hidden) { exToggle(); return; }
+    if(curTab==='bass' || curTab==='drums'){bandRun?bandStop():bandStart(curTab);return;}
     mToggle(); return;
   }
   if (playerVisible() && e.key === 'Home') { e.preventDefault(); $('#pRestart').click(); return; }
@@ -5376,7 +5406,7 @@ document.addEventListener('keydown', e => {
   if (curTab === 'ear' && e.key === '0') { eAnswer(9); return; }
   if (curTab === 'fretboard' && S.ui.fmode === 'name') { const m = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[e.key.toLowerCase()]; if (m !== undefined) fName(m); }
 });
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { practiceRemember(); flush(); } });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { bandStop(); practiceRemember(); flush(); } });
 window.addEventListener('pagehide',()=>{practiceRemember();flush();});
 
 /* ---------- keyboard: tabs and rating ---------- */
@@ -5458,7 +5488,7 @@ volRender();
 /* ---------- keep the screen awake while playing ---------- */
 const WK = { lock: null, busy: false };
 async function wakeSync() {
-  const want = (P.running || M.running) && document.visibilityState === 'visible';
+  const want = (bandRun || P.running || M.running) && document.visibilityState === 'visible';
   if (want && !WK.lock && !WK.busy && navigator.wakeLock) { WK.busy = true; try { WK.lock = await navigator.wakeLock.request('screen'); WK.lock.addEventListener('release', () => { WK.lock = null; }); } catch (e) {} WK.busy = false; }
   else if (!want && WK.lock) { try { await WK.lock.release(); } catch (e) {} WK.lock = null; }
 }
@@ -5520,6 +5550,157 @@ $('#pGoalSave').onclick = () => { const v = Math.round(+$('#pGoalIn').value); if
 $('#pGoalReset').onclick = () => goalSet(null);
 $('#pGoalCancel').onclick = () => { $('#pGoalEd').hidden = true; };
 $('#pGoalIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#pGoalSave').click(); } else if (e.key === 'Escape') { e.preventDefault(); $('#pGoalEd').hidden = true; } });
+
+/* ---------- bass and drums ---------- */
+// Times and lengths use the study's displayed subdivisions. String indices are high to low.
+const BASS_OPEN = [43, 38, 33, 28];
+const BAND = [
+  {id:'release', title:'Leave room for the snare', bpm:68, div:2,
+    bass:'Play open E with the kick. In bar one, touch the E string to silence it as the snare lands. In bar two, shorten each note to one eighth. Listen for the extra space.',
+    drums:'Close the hi-hat with your foot. Play quarters with your lead hand, kick on one and three, and snare on two and four. Strike vertically aligned hits together.',
+    notes:[[0,3,0,2],[4,3,0,2],[8,3,0,1],[12,3,0,1]],
+    hat:[0,2,4,6,8,10,12,14], kick:[0,4,8,12], snare:[2,6,10,14]},
+  {id:'fifths', title:'Roots under a changing riff', bpm:76, div:2,
+    bass:'Outline G in bar one and C in bar two. Alternate root and fifth. Release the lower string as you cross so that only one pitch rings.',
+    drums:'Keep eight even hi-hat strokes in each bar. Make the snare on two and four louder than the hats. Listen for the bass changing root while your beat stays steady.',
+    notes:[[0,3,3,2],[2,2,5,2],[4,3,3,2],[6,2,5,2],[8,2,3,2],[10,1,5,2],[12,2,3,2],[14,1,5,2]],
+    hat:Array.from({length:16},(_,i)=>i), kick:[0,4,8,12], snare:[2,6,10,14]},
+  {id:'offbeat', title:'Catch the offbeat kick', bpm:72, div:2,
+    bass:'Alternate index and middle fingers on A. Catch the kick on the “and” of two, then stop together. Leave the last eighth of each bar empty.',
+    drums:'Keep the hats even and the backbeat steady. Move the second kick to the “and” of two. Bar two adds a kick on three without moving the snare.',
+    notes:[[0,2,0,2],[3,2,0,1],[5,2,3,2],[8,2,0,2],[11,2,0,1],[12,2,0,1],[13,2,3,2]],
+    hat:Array.from({length:16},(_,i)=>i), kick:[0,3,8,11,12], snare:[2,6,10,14]},
+  {id:'octaves', title:'Octaves over a half-time beat', bpm:86, div:2,
+    bass:'Move from low G to its octave on the D string. Let the fretting hand brush the unused A string. Keep the octave short, then sustain C into the half-time snare in bar two.',
+    drums:'Place one broad snare on beat three of each bar. Keep counting four quarters as the hi-hat plays eighths. In bar two, let the high bass note pass without adding a snare.',
+    notes:[[0,3,3,3],[3,1,5,1],[4,3,3,2],[7,1,5,1],[8,2,3,5],[13,0,5,1],[14,2,3,2]],
+    hat:Array.from({length:16},(_,i)=>i), kick:[0,3,7,8,14], snare:[4,12]},
+  {id:'ghost', title:'A quiet answer to the backbeat', bpm:64, div:4,
+    bass:'Start each bar on low D. In bar two, use C on the “and” of three and C♯ on the “and” of four to lead back to D. Keep the approach notes short.',
+    drums:'Drop the stick from close to the snare for each parenthesized tap. Keep the backbeats strong. Listen for the soft tap just before beat three in both bars.',
+    notes:[[0,2,5,6],[8,2,5,4],[14,2,3,2],[16,2,5,8],[24,2,5,2],[26,2,3,2],[30,2,4,2]],
+    hat:Array.from({length:16},(_,i)=>i*2), kick:[0,8,14,16,24,30], snare:[4,12,20,28], ghost:[7,19,23]},
+  {id:'turnaround', title:'A fill that brings the riff back', bpm:74, div:4,
+    bass:'Count eight eighth notes as groups of three, three and two. Attack E, B and D at the start of each group. In bar two, cut the final D short and let the drum fill lead you back to E.',
+    drums:'Anchor the three bass attacks with your kick. Keep two and four on snare in bar one. In bar two, leave the hat on beat four and play four even snare singles R L R L, then land the next one with the bass.',
+    notes:[[0,3,0,6],[6,2,2,6],[12,1,0,4],[16,3,0,6],[22,2,2,6],[28,1,0,1]],
+    hat:Array.from({length:14},(_,i)=>i*2), kick:[0,6,12,16,22,28], snare:[4,12,20,28,29,30,31]}
+];
+let bandRun = null;
+const bandNames = {bass:'Bass guitar', drums:'Drums'};
+function bandStudy(part) { return BAND.find(s=>s.id===S.band[part].study) || BAND[0]; }
+function bandTempo(part,study) { return clamp(Number(S.band[part].tempo[study.id]) || study.bpm, 35, 200); }
+function bandScore(study, part) {
+  const {div,notes} = study, bass = part==='bass';
+  const lanes = bass ? ['G','D','A','E'] : ['Hi-hat','Snare','Kick'];
+  const counts = div===2 ? ['', '&'] : ['', 'e', '&', 'a'];
+  function mark(row,t) {
+    if (!bass) {
+      if (row===1 && study.ghost?.includes(t)) return '(●)';
+      return study[['hat','snare','kick'][row]].includes(t) ? (row===0?'×':'●') : '';
+    }
+    const n=notes.find(([at,string,,length])=>row===string && at<=t && t<at+length);
+    return n ? (t===n[0]?String(n[2]):'–') : '';
+  }
+  const width=8;
+  return Array.from({length:div},(_,block)=>{
+    const offset=block*width,bar=Math.floor(offset/(4*div));
+    let html='<table class="band-score"><caption>Bar '+(bar+1)+(div===4?' · beats '+(block%2?'3–4':'1–2'):'')+'</caption><thead><tr><th scope="col">Count</th>';
+    const cell=(t,v)=>'<td data-pulse="'+t+'" class="'+(t%div===0?'down':'')+'">'+v+'</td>';
+    for(let i=0;i<width;i++) html+='<th scope="col" data-pulse="'+(offset+i)+'">'+(counts[i%div] || (1+Math.floor((offset+i)/div)%4))+'</th>';
+    html+='</tr></thead><tbody>';
+    lanes.forEach((label,row)=>{
+      html+='<tr><th scope="row">'+label+'</th>';
+      for(let i=0;i<width;i++){const t=offset+i;html+=cell(t,mark(row,t));}
+      html+='</tr>';
+    });
+    return html+'</tbody></table>';
+  }).join('');
+}
+function bandRecord(part, study) {
+  const best=S.band[part].best[study.id];
+  return best ? 'Clean at '+best+' BPM' : 'No clean take logged yet';
+}
+function renderBand(part) {
+  const root=$('#view-'+part), study=bandStudy(part), bass=part==='bass', other=bass?'drums':'bass';
+  const opts=BAND.map((s,i)=>'<option value="'+s.id+'" '+(s===study?'selected':'')+'>'+(i+1)+'. '+s.title+'</option>').join('');
+  root.innerHTML='<div class="vhead"><h2>'+bandNames[part]+'</h2><p class="small muted">'+(bass?'Four-string bass · E A D G':'Drum kit · kick, snare and closed hi-hat')+'</p></div>'+
+    '<div class="stack band-room"><label class="f"><span>Groove study</span><select data-band="study">'+opts+'</select></label>'+
+    '<p>'+study[part]+'</p><div class="row"><label class="f"><span>Tempo (BPM)</span><input type="number" min="35" max="200" data-band="tempo" value="'+bandTempo(part,study)+'"></label>'+
+    '<label class="f"><span>Backing</span><select data-band="mix"><option value="both">Full band</option><option value="partner">'+(bass?'Drums only':'Bass only')+'</option><option value="self">'+bandNames[part]+' only</option></select></label>'+
+    '<label><input type="checkbox" data-band="click" '+(S.band[part].click?'checked':'')+'> Click</label></div>'+
+    '<div class="row"><button class="btn primary big" data-band="play">Play loop</button><span data-band="position" class="small muted">4/4 · one-bar count-in</span></div>'+
+    '<div class="band-bars">'+bandScore(study,part)+'</div><p class="small muted">'+(bass?'Numbers are frets. 0 is an open string. A dash sustains the previous note. An empty column is a rest.':'Read each column together. × is a closed hat, ● a drum hit, and (●) a quiet snare ghost note. Empty cells are silent.')+'</p>'+
+    '<div class="row"><button class="btn" data-band="log">Log clean take</button><span role="status" class="small muted" data-band="best">'+bandRecord(part,study)+'</span></div>'+
+    '<div><button class="btn" data-band="swap">Play the '+(bass?'drum':'bass')+' part</button></div></div>';
+  root.querySelector('[data-band="mix"]').value=S.band[part].mix;
+  root.onchange=e=>{
+    const control=e.target.dataset.band, settings=S.band[part];
+    if(control==='study'){bandStop();settings.study=e.target.value;renderBand(part);root.querySelector('select').focus();}
+    if(control==='tempo'){bandStop();settings.tempo[study.id]=clamp(Math.round(Number(e.target.value)||study.bpm),35,200);e.target.value=settings.tempo[study.id];}
+    if(control==='click')settings.click=e.target.checked;
+    if(control==='mix')settings.mix=e.target.value;
+    save();
+  };
+  root.onclick=e=>{
+    const action=e.target.closest('button')?.dataset.band;
+    if(action==='play')bandRun?bandStop():bandStart(part);
+    if(action==='swap'){S.band[other].study=study.id;save();switchTab(other);}
+    if(action==='log'){
+      const best=S.band[part].best,bpm=bandTempo(part,study);
+      best[study.id]=Math.max(best[study.id]||0,bpm);save();
+      root.querySelector('[data-band="best"]').textContent='Logged '+bpm+' BPM · best '+best[study.id]+' BPM';
+    }
+  };
+}
+function bandStop() {
+  if(!bandRun)return;
+  const r=bandRun;bandRun=null;
+  clearInterval(r.timer);killBus(r.notes);killBus(r.drums);
+  r.root.querySelectorAll('.playing').forEach(c=>c.classList.remove('playing'));
+  r.root.querySelector('[data-band="play"]').textContent='Play loop';
+  r.root.querySelector('[data-band="position"]').textContent='4/4 · one-bar count-in';
+}
+function bandStart(part) {
+  if(M.running)mStop();
+  if(P.running)exPause();
+  if(R.running && !R.paused && !R.waiting)routinePause();
+  const ctx=ac(), study=bandStudy(part), div=study.div, sec=60/bandTempo(part,study)/div;
+  const length=8*div, root=$('#view-'+part);
+  const r=bandRun={root,notes:bus(AU.notes),drums:bus(AU.click),timer:null};
+  const first=ctx.currentTime+0.08, start=-4*div;
+  let next=start, last=null;
+  root.querySelector('[data-band="play"]').textContent='Stop';
+  function tick(){
+    if(ctx.state!=='running'){audioResume();return;}
+    const now=ctx.currentTime, elapsed=(now-first)/sec+start;
+    next=Math.max(next,Math.ceil(elapsed-0.02));
+    while(first+(next-start)*sec<now+0.12){
+      const t=first+(next-start)*sec, i=next%length, {mix,click}=S.band[part];
+      if(next%div===0 && (next<0 || click))SND.click(t,next%(4*div)===0?3:1,r.drums);
+      if(next>=0){
+        const audible=voice=>mix==='both' || (mix==='self' ? part===voice : part!==voice);
+        if(audible('bass')){
+          const n=study.notes.find(n=>n[0]===i);
+          if(n)pluck(BASS_OPEN[n[1]]+n[2],t,r.notes,0.85,n[3]*sec);
+        }
+        if(audible('drums')){
+          for(const [key,level] of [['kick',0.94],['snare',0.83],['hat',0.52],['ghost',0.22]]){
+            if(study[key]?.includes(i))SND[key==='ghost'?'snare':key](t,level,r.drums);
+          }
+        }
+      }
+      next++;
+    }
+    const pos=Math.floor(elapsed);
+    if(pos===last || pos<start)return;
+    last=pos;
+    root.querySelectorAll('.playing').forEach(c=>c.classList.remove('playing'));
+    if(pos>=0)root.querySelectorAll('[data-pulse="'+(pos%length)+'"]').forEach(c=>c.classList.add('playing'));
+    root.querySelector('[data-band="position"]').textContent=pos<0?'Count in · '+(5+Math.floor(pos/div)):'Bar '+(1+Math.floor(pos/div/4)%2)+' · beat '+(1+Math.floor(pos/div)%4);
+  }
+  tick();r.timer=setInterval(tick,25);
+}
 
 /* ---------- boot ---------- */
 applySettingsUI(); renderHeaderStats(); renderBpm(); renderPill();
