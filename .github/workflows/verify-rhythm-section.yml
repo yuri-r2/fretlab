@@ -1,0 +1,19 @@
+name: Verify rhythm section
+on:
+  push:
+    branches: [codex/verify-rhythm-section]
+permissions:
+  contents: read
+jobs:
+  practice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install --no-save playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: |
+          for suite in tests/*.js; do
+            echo "$suite"
+            node "$suite" || exit 1
+          done
