@@ -1,6 +1,6 @@
-# Fretlab
+# Pocket Rehearsal
 
-A fretboard practice app for intermediate and advanced guitarists, in a single HTML file. Open `index.html` in any modern browser, or use the hosted version on GitHub Pages. Developer notes for working on the code are in [AGENTS.md](AGENTS.md).
+A practice app for guitar, bass guitar and drums, in a single HTML file. Open `index.html` in any modern browser, or use the hosted version on GitHub Pages. Developer notes for working on the code are in [AGENTS.md](AGENTS.md).
 
 ## Find your way
 
@@ -9,6 +9,10 @@ The desktop web app uses a persistent navigation rail and a wider practice works
 Four main destinations keep the learning flow close at hand: **Today**, **Learn**, **Library**, and **Progress**. The Library groups Riffs, Chord Shapes, Scales, Rhythm, Exercises, Fretboard, and Ear training. **Tuner** and **Metronome** buttons sit in the header on every screen (icons on phones), and the drone lives on the Tuner page. The header transport follows the exercise while its player is open, so its tempo and play controls act on that exercise. Riff writing stays inside the chord practice steps. Older Riff Dice ideas remain in backup data; old links open Chord Shapes. Progress holds practice statistics, the seven-day chart, and the filterable history. Lessons resume at the last visited card, and a workout's Back button returns to its starting context.
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase. The persistent session bar has an **Open block** button: return to the current exercise from any page with its step, key, tempo and practice position. Opening it keeps the block timer and paused state. Session Pause stops the exercise or metronome along with the timer; Resume continues the same exercise at its paused position. End keeps that position, and Next block stops the outgoing playback.
+
+## Bass guitar and drums
+
+Open either instrument from Today, Learn or Library. Each has five dedicated lessons, its own reading resources and six ensemble grooves. Hear the guide, turn it off to play to the click, or choose the partner part in an ensemble groove. Log a clean tempo to save a personal best. [Curriculum research](RHYTHM_SECTION_RESEARCH.md).
 
 ## Riffs
 
