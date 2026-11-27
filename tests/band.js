@@ -129,7 +129,7 @@ const {pathToFileURL} = require('node:url');
         assert.equal(await instrument.inputValue(),app);
         if(app==='guitar')continue;
         await tab('progress');
-        assert.equal((await studio.innerText()).includes('91 BPM'),app==='bass');
+        assert.equal(/clean at 91\b/i.test(await studio.innerText()),app==='bass');
         await tab('learn');
         assert.equal(await studio.locator('[data-piece]').count(),app==='bass'?13:10);
         if(app==='bass'){
