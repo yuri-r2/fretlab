@@ -26,9 +26,11 @@ const {pathToFileURL} = require('node:url');
     const room=part=>page.locator('#view-'+part);
     const field=(part,name)=>room(part).locator('[data-band="'+name+'"]');
     for(const part of ['bass','drums']){
+      await tab('learn');
+      await studio.locator('[data-piece]').first().click();
       const select=field(part,'study');
       const ids=await select.locator('option').evaluateAll(o=>o.map(x=>x.value));
-      assert.equal(ids.length,15);
+      assert.equal(ids.length,9);
       assert.equal(ids.filter(id=>id.startsWith(part==='bass'?'bass-':'drum-')).length,9);
 
       await select.selectOption(ids[0]);
@@ -39,6 +41,14 @@ const {pathToFileURL} = require('node:url');
         const counts=room(part).locator('thead [data-pulse]');
         assert.equal(await counts.count(),['ghost','turnaround','drum-burst','drum-displace','drum-return'].includes(id)?32:16);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+      }
+      await tab('library');
+      await studio.locator('[data-piece="release"]').click();
+      const grooves=await select.locator('option').evaluateAll(o=>o.map(x=>x.value));
+      assert.equal(grooves.length,6);
+      for(const id of grooves){
+        await select.selectOption(id);
+        assert.equal(await room(part).locator('thead [data-pulse]').count(),['ghost','turnaround'].includes(id)?32:16);
       }
       await select.selectOption('release');
       if(part==='bass'){
