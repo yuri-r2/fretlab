@@ -784,6 +784,22 @@ select,input[type=number],input[type=text]{border-color:transparent;background:v
 .band-score .down{border-left:1px solid var(--line)}
 .band-score .playing{background:var(--accent);color:var(--accent-ink)}
 
+.bass-tab{font-family:var(--font-mono);color:var(--ink)}
+.bass-tab caption{font-family:var(--font-body)}
+.bass-tab tr>*:first-child{width:44px}
+.bass-tab tbody th{color:var(--muted)}
+.bass-tab tbody td{position:relative;height:27px;border-bottom:0;background:transparent}
+.bass-tab tbody td::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line)}
+.bass-tab tbody tr:last-child td::before{border-width:2px}
+.bass-tab tbody td:last-child{border-right:1px solid var(--line)}
+.bass-tab .playing{background:transparent;color:var(--ink)}
+.bass-tab td.playing::after{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:2px solid var(--warn)}
+.bass-tab th.playing{color:var(--warn);text-decoration:underline}
+.bass-tab .tab-fret,.bass-tab .tab-hold{position:relative;z-index:1;background:var(--surface);font-weight:600}
+.tab-fret{display:inline-block;min-width:1.35em;border:1px solid var(--line);border-radius:5px;line-height:1.3}
+.bass-tab .playing .tab-fret,.bass-tab .playing .tab-hold{background:var(--warn);color:var(--warn-ink)}
+.band-score[data-selected="true"] caption{text-decoration:underline;text-underline-offset:4px}
+
 .studio-bar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:0 0 14px;margin:0 0 20px;border-bottom:1px solid var(--line)}
 .studio-bar label{font-weight:600}.studio-bar select{font-weight:650;min-height:42px}
 .studio-setup{margin:16px 0 22px}.studio-setup summary,.studio-unit summary{cursor:pointer;font-weight:600}
@@ -1291,7 +1307,7 @@ const DEF = {
   ear: { deg: { lv: 1, ans: {}, recent: [] }, iv: { lv: 1, ans: {}, recent: [] }, chord: { lv: 1, ans: {}, recent: [] } },
   changes: { a: 'A', b: 'D', hist: {} },
   tempo: [ { id: 't1', name: 'Chromatic 1-2-3-4, all strings', log: [] }, { id: 't2', name: 'A minor pentatonic, box 1, 8th notes', log: [] }, { id: 't3', name: 'Alternate picking on one string, 16ths', log: [] } ],
-  band: { bass: {setup:'fingers',checks:{},study:'bass-release',guide:true,tempo:{},best:{},mix:'both',click:false}, drums: {setup:'kit',checks:{},study:'drum-hands',guide:true,tempo:{},best:{},mix:'both',click:false} },
+  band: { bass: {setup:'fingers',checks:{},passages:{},study:'bass-release',guide:true,tempo:{},best:{},mix:'both',click:false}, drums: {setup:'kit',checks:{},passages:{},study:'drum-hands',guide:true,tempo:{},best:{},mix:'both',click:false} },
   riffs: [], repertoire: { saved: [] }, ex: {}, exskip: [], learn: {},
   routines: {}, rtPick: 'auto', journal: {}, exlog: [], exfav: [], practice: { resume: null, spots: [] },
   ui: { instrument:'guitar', riffLibrary: { query: '', genre: 'all', tuning: 'standard', saved: false }, exQuery: '', exMore: false, chordRef: { group: 'open', openRoot: 'all', genre: 'all', labels: 'finger', extras: false }, voBrowser: { family: 'all', style: 'all', query: '', saved: false, labels: 'degree' }, planMinutes: 0, focusEx: '', voKey: 0, fmode: 'find', emode: 'deg', xkey: 9, xscale: 'minPent', xlab: 'notes', xchord: true, xpos: 0, tuning: 0, tmode: 'pluck', tnmode: 'auto', exid: '', exlabels: 'finger', exopts: { fingers: true, loop: true, count: true, guide: true, click: true, ladder: false, keycycle: false } }
@@ -5671,6 +5687,10 @@ let bandRun = null;
 const bandNames = {bass:'Bass guitar', drums:'Drums'};
 function bandStudy(part) { return bandCatalog(part).find(s=>s.id===S.band[part].study && playable(part,s)) || PLAY_PATH[part][0]; }
 function bandTempo(part,study) { return clamp(Number(S.band[part].tempo[study.id]) || study.bpm, 35, 200); }
+function bandPassage(part,study){
+  const value=S.band[part].passages[study.id];
+  return value==='1' || value==='2' ? value : 'both';
+}
 function bandScore(study, part) {
   const {div,notes} = study, bass = part==='bass';
   const pad=!bass && S.band.drums.setup==='pad';
@@ -5691,8 +5711,11 @@ function bandScore(study, part) {
   const width=8;
   return Array.from({length:div},(_,block)=>{
     const offset=block*width,bar=Math.floor(offset/(4*div));
-    let html='<table class="band-score"><caption>Bar '+(bar+1)+(div===4?' · beats '+(block%2?'3–4':'1–2'):'')+'</caption><thead><tr><th scope="col">Count</th>';
-    const cell=(t,v)=>'<td data-pulse="'+t+'" class="'+(t%div===0?'down':'')+'">'+v+'</td>';
+    let html='<table class="band-score'+(bass?' bass-tab':'')+'" data-bar="'+(bar+1)+'"><caption>Bar '+(bar+1)+(div===4?' · beats '+(block%2?'3–4':'1–2'):'')+'</caption><thead><tr><th scope="col">Count</th>';
+    const cell=(t,v)=>{
+      const mark=bass && v ? '<span class="'+(v==='–'?'tab-hold':'tab-fret')+'">'+v+'</span>' : v;
+      return '<td data-pulse="'+t+'" class="'+(t%div===0?'down':'')+'">'+mark+'</td>';
+    };
     for(let i=0;i<width;i++) html+='<th scope="col" data-pulse="'+(offset+i)+'">'+(counts[i%div] || (1+Math.floor((offset+i)/div)%4))+'</th>';
     html+='</tr></thead><tbody>';
     lanes.forEach((label,row)=>{
@@ -5718,14 +5741,24 @@ function renderBand(part) {
     (solo?'<label><input type="checkbox" data-band="guide" '+(S.band[part].guide?'checked':'')+'> Play guide (off for click only)</label>':
     '<label class="f"><span>Backing</span><select data-band="mix"><option value="both">Full band</option><option value="partner">'+(bass?'Drums only':'Bass only')+'</option><option value="self">'+bandNames[part]+' only</option></select></label>')+
     '<label><input type="checkbox" data-band="click" '+(S.band[part].click?'checked':'')+'> Click</label></div>'+
-    '<div class="row"><button class="btn primary big" data-band="play">Play loop</button><span data-band="position" class="small muted">4/4 · one-bar count-in</span></div>'+
-    '<div class="band-bars">'+bandScore(study,part)+'</div><p class="small muted">'+(bass?'Numbers are frets. 0 is an open string. A dash sustains the previous note. An empty column is a rest.':'Read each column together. × is a closed hat, ● a drum hit, and (●) a quiet snare ghost note. R and L show sticking when specified. &gt; marks an accented snare. Empty cells are silent.')+'</p>'+
+    '<div class="row"><label class="f"><span>Practice passage</span><select data-band="passage"><option value="both">Both bars</option><option value="1">Bar 1</option><option value="2">Bar 2</option></select></label></div>'+
+    '<div class="row"><button class="btn primary big" data-band="play">Play loop</button><button class="btn" data-band="listen">Hear once</button><span data-band="position" class="small muted">4/4 · one-bar count-in</span></div>'+
+    '<div class="band-bars">'+bandScore(study,part)+'</div><p class="small muted">'+(bass?'Read left to right with G on top and low E on the bottom. Play the numbered fret (0 = open). Hold through each dash, then mute when the column is empty.':'Read each column together. × is a closed hat, ● a drum hit, and (●) a quiet snare ghost note. R and L show sticking when specified. &gt; marks an accented snare. Empty cells are silent.')+'</p>'+
     (solo?'<p><strong>Listen for this.</strong> '+LESSON_COACH[study.id][1]+'</p>':'')+'<div class="row"><button class="btn" data-band="log">Log clean take</button><span role="status" class="small muted" data-band="best">'+bandRecord(part,study)+'</span></div>'+
     (solo || !playable(other,study)?'': '<div><button class="btn" data-band="swap">Play the '+(bass?'drum':'bass')+' part</button></div>')+'</div>';
+  function showPassage(){
+    const passage=bandPassage(part,study), log=root.querySelector('[data-band="log"]');
+    root.querySelector('[data-band="passage"]').value=passage;
+    root.querySelectorAll('[data-bar]').forEach(table=>table.dataset.selected=String(table.dataset.bar===passage));
+    log.disabled=passage!=='both';
+    log.textContent=log.disabled?'Log take after both bars':'Log clean take';
+  }
+  showPassage();
   if(!solo)root.querySelector('[data-band="mix"]').value=S.band[part].mix;
   root.onchange=e=>{
     const control=e.target.dataset.band, settings=S.band[part];
     if(control==='study'){bandStop();settings.study=e.target.value;switchTab(part,true);root.querySelector('[data-band="study"]').focus();}
+    if(control==='passage'){bandStop();settings.passages[study.id]=e.target.value;showPassage();}
     if(control==='tempo'){bandStop();settings.tempo[study.id]=clamp(Math.round(Number(e.target.value)||study.bpm),35,200);e.target.value=settings.tempo[study.id];renderMini();}
     if(control==='click')settings.click=e.target.checked;
     if(control==='guide')settings.guide=e.target.checked;
@@ -5735,6 +5768,7 @@ function renderBand(part) {
   root.onclick=e=>{
     const action=e.target.closest('button')?.dataset.band;
     if(action==='play')bandRun?bandStop():bandStart(part);
+    if(action==='listen'){bandStop();bandStart(part,true);}
     if(action==='swap')choosePiece(other,study.id);
     if(action==='log'){
       const best=S.band[part].best,bpm=bandTempo(part,study);
@@ -5751,29 +5785,31 @@ function bandStop() {
   r.root.querySelector('[data-band="play"]').textContent='Play loop';
   r.root.querySelector('[data-band="position"]').textContent='4/4 · one-bar count-in';renderMini();
 }
-function bandStart(part) {
+function bandStart(part,preview=false) {
   if(M.running)mStop();
   if(P.running)exPause();
   if(R.running && !R.paused && !R.waiting)routinePause();
   const ctx=ac(), study=bandStudy(part), div=study.div, sec=60/bandTempo(part,study)/div;
   const solo=PLAY_PATH[part].includes(study);
-  const length=8*div, root=$('#view-'+part);
+  const passage=bandPassage(part,study), offset=passage==='2'?4*div:0;
+  const length=(passage==='both'?8:4)*div, root=$('#view-'+part);
   const r=bandRun={root,notes:bus(AU.notes),drums:bus(AU.click),timer:null};
-  const first=ctx.currentTime+0.08, start=-4*div;
+  const first=ctx.currentTime+0.08, start=preview?0:-4*div;
   let next=start, last=null;
   root.querySelector('[data-band="play"]').textContent='Stop';
   function tick(){
     if(ctx.state!=='running')return;
     const now=ctx.currentTime, elapsed=(now-first)/sec+start;
+    if(preview && elapsed>=length){bandStop();return;}
     next=Math.max(next,Math.ceil(elapsed-0.02));
-    while(first+(next-start)*sec<now+0.12){
-      const t=first+(next-start)*sec, i=next%length, {mix,click}=S.band[part];
-      if(next%div===0 && (next<0 || click || (solo && !S.band[part].guide)))SND.click(t,next%(4*div)===0?3:1,r.drums);
+    while((!preview || next<length) && first+(next-start)*sec<now+0.12){
+      const t=first+(next-start)*sec, i=offset+next%length, {mix,click}=S.band[part];
+      if(next%div===0 && (next<0 || click || (solo && !preview && !S.band[part].guide)))SND.click(t,next%(4*div)===0?3:1,r.drums);
       if(next>=0){
-        const audible=voice=>solo ? voice===part && S.band[part].guide : mix==='both' || (mix==='self' ? part===voice : part!==voice);
+        const audible=voice=>preview ? (!solo || voice===part) : solo ? voice===part && S.band[part].guide : mix==='both' || (mix==='self' ? part===voice : part!==voice);
         if(audible('bass')){
           const n=study.notes?.find(n=>n[0]===i);
-          if(n)pluck(BASS_OPEN[n[1]]+n[2],t,r.notes,0.85,n[3]*sec);
+          if(n)pluck(BASS_OPEN[n[1]]+n[2],t,r.notes,0.85,Math.min(n[3],length-next%length)*sec);
         }
         if(audible('drums')){
           for(const [key,level] of [['kick',0.94],['snare',0.83],['hat',0.52],['ghost',0.22]]){
@@ -5787,8 +5823,9 @@ function bandStart(part) {
     if(pos===last || pos<start)return;
     last=pos;
     root.querySelectorAll('.playing').forEach(c=>c.classList.remove('playing'));
-    if(pos>=0)root.querySelectorAll('[data-pulse="'+(pos%length)+'"]').forEach(c=>c.classList.add('playing'));
-    root.querySelector('[data-band="position"]').textContent=pos<0?'Count in · '+(5+Math.floor(pos/div)):'Bar '+(1+Math.floor(pos/div/4)%2)+' · beat '+(1+Math.floor(pos/div)%4);
+    const scorePos=offset+pos%length;
+    if(pos>=0)root.querySelectorAll('[data-pulse="'+scorePos+'"]').forEach(c=>c.classList.add('playing'));
+    root.querySelector('[data-band="position"]').textContent=pos<0?'Count in · '+(5+Math.floor(pos/div)):'Bar '+(1+Math.floor(scorePos/div/4))+' · beat '+(1+Math.floor(pos/div)%4);
   }
   tick();r.timer=setInterval(tick,25);renderMini();
 }

@@ -18,6 +18,8 @@ Guitar keeps its routines, nine-unit fretboard course, song repertoire and guita
 
 Bass and drums each have their own checkpoints, practice record and resource library. Six optional ensemble arrangements connect the two parts in the Library. The player uses the shared header transport, mixer and metronome. [Instrument curriculum research](RHYTHM_SECTION_RESEARCH.md).
 
+Bass lessons and ensemble parts display four-line tab, with G at the top and low E at the bottom. In bass and drum practice, choose either bar, use **Hear once** for a demonstration, then **Play loop** with your chosen backing. Select **Both bars** to practice the transition and log a clean take.
+
 ## Riffs
 
 Library → **Riffs** is a repertoire of 73 real-song guitar parts across alternative/grunge, emo/math rock, indie/post-punk and shoegaze. It opens with 50 E-standard parts; filter by tuning or genre, search by song, artist or technique, and star a few for your saved practice list. Filters and saved songs survive reloads and work offline.
