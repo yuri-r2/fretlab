@@ -17,7 +17,7 @@ const {pathToFileURL} = require('node:url');
     await studio.locator('summary').first().click();
     await studio.locator('[data-studio-setup]').selectOption('pick');
     await tab('learn');
-    assert.equal(await studio.locator('[data-piece]').count(),9);
+    assert.equal(await studio.locator('[data-piece]').count(),13);
     await studio.locator('details').first().locator('summary').click();
     await studio.locator('[data-check="0-1"]').click();
     assert.match(await studio.locator('[role=status]').first().innerText(),/Correct/);
@@ -30,8 +30,9 @@ const {pathToFileURL} = require('node:url');
       await studio.locator('[data-piece]').first().click();
       const select=field(part,'study');
       const ids=await select.locator('option').evaluateAll(o=>o.map(x=>x.value));
-      assert.equal(ids.length,9);
-      assert.equal(ids.filter(id=>id.startsWith(part==='bass'?'bass-':'drum-')).length,9);
+      const expected=part==='bass'?13:10;
+      assert.equal(ids.length,expected);
+      assert.equal(ids.filter(id=>id.startsWith(part==='bass'?'bass-':'drum-')).length,expected);
 
       await select.selectOption(ids[0]);
       assert.equal(await field(part,'swap').count(),0);
@@ -39,7 +40,7 @@ const {pathToFileURL} = require('node:url');
       for(const id of ids){
         await select.selectOption(id);
         const counts=room(part).locator('thead [data-pulse]');
-        assert.equal(await counts.count(),['ghost','turnaround','drum-burst','drum-displace','drum-return'].includes(id)?32:16);
+        assert.equal(await counts.count(),['ghost','turnaround','drum-burst','drum-displace','drum-return','drum-crossaccent','bass-burst','bass-target','bass-octave-engine'].includes(id)?32:16);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
       }
       await tab('library');
@@ -52,7 +53,7 @@ const {pathToFileURL} = require('node:url');
       }
       await select.selectOption('release');
       if(part==='bass'){
-        assert.equal(await room(part).locator('tbody tr:last-child [data-pulse="0"]').textContent(),'0');
+        assert.equal(await room(part).locator('tbody tr:last-child [data-pulse="0"]').innerText(),'0');
         assert.equal(await room(part).locator('tbody tr:last-child [data-pulse="1"]').textContent(),'–');
         assert.equal(await room(part).locator('tbody tr:last-child [data-pulse="9"]').textContent(),'');
         await field(part,'tempo').fill('200');
@@ -92,13 +93,13 @@ const {pathToFileURL} = require('node:url');
     await instrument.selectOption('bass');
     assert.match(await studio.innerText(),/clean at 200/i);
     await tab('library');
-    assert.equal(await studio.locator('a').count(),4);
+    assert.equal(await studio.locator('[data-song-shelf] a').count(),3);
     await instrument.selectOption('drums');
     await tab('today');
     await studio.locator('summary').first().click();
     await studio.locator('[data-studio-setup]').selectOption('pad');
     await tab('learn');
-    assert.equal(await studio.locator('[data-piece]').count(),5);
+    assert.equal(await studio.locator('[data-piece]').count(),6);
     await studio.locator('[data-piece="drum-burst"]').click();
     assert.equal(await room('drums').locator('tbody th').first().textContent(),'Pad');
     await page.reload();
@@ -106,6 +107,54 @@ const {pathToFileURL} = require('node:url');
     await instrument.selectOption('guitar');
     assert.ok(await page.locator('#view-today').isVisible());
     assert.ok(await page.locator('#rtStart').isVisible());
+    require('node:child_process').execFileSync(process.execPath,[path.join(__dirname,'../scripts/export-apps.js'),'--check']);
+    const fs=require('node:fs');
+    const server=require('node:http').createServer((req,res)=>{
+      let file=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+      if(file.endsWith('/'))file+='index.html';
+      fs.readFile(path.join(__dirname,'..',file),(err,body)=>{
+        res.writeHead(err?404:200,{'Content-Type':file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':'text/html'});
+        res.end(err?'Missing':body);
+      });
+    });
+    await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+    try{
+      const home='http://127.0.0.1:'+server.address().port+'/';
+      await page.goto(home+'apps.html');
+      await page.evaluate(()=>localStorage.setItem('fretlab.v1',JSON.stringify({settings:{goal:25},band:{bass:{best:{'bass-release':91}}}})));
+      for(const [app,title] of [['bass','Pocket Bass'],['drums','Pocket Drums'],['guitar','Pocket Guitar']]){
+        await page.goto(home+app+'/');
+        assert.equal(await page.title(),title);
+        assert.equal(await instrument.isVisible(),false);
+        assert.equal(await instrument.inputValue(),app);
+        if(app==='guitar')continue;
+        await tab('progress');
+        assert.equal((await studio.innerText()).includes('91 BPM'),app==='bass');
+        await tab('learn');
+        assert.equal(await studio.locator('[data-piece]').count(),app==='bass'?13:10);
+        if(app==='bass'){
+          await studio.locator('[data-piece="bass-burst"]').click();
+          await field('bass','names').check();
+          assert.ok((await room('bass').locator('.tab-pitch:visible').allTextContents()).includes('A'));
+          assert.ok(await room('bass').getByText('Work through this lesson').isVisible());
+        }
+        await page.locator('.studio-bar a[href$="/tools"]').click();
+        if(app==='bass'){
+          await studio.locator('[data-tool="minor"]').check();
+          await studio.locator('[data-bass-tone="39"]').first().click();
+          assert.match(await studio.locator('[data-tone-readout]').innerText(),/Third/);
+        }else{
+          await studio.locator('[data-tool="pattern"]').selectOption('Paradiddle');
+          await studio.locator('[data-tool="left"]').check();
+          assert.match(await studio.locator('.mono').innerText(),/>L · R · L · L/);
+          await studio.locator('[data-tool-play]').click();
+        }
+        await page.evaluate(()=>location.hash='voicings');
+        await page.waitForFunction(()=>document.querySelector('#studioPage h2')?.textContent.includes('practice'));
+        await page.reload();assert.equal(await instrument.inputValue(),app);
+      }
+      assert.ok(await page.evaluate(()=>JSON.parse(localStorage.getItem('pocket-rehearsal.bass.v1')).band.bass.noteNames));
+    }finally{server.close();}
     assert.deepEqual(errors,[]);
     console.log('OK');
   } finally {await browser.close();}
