@@ -5711,16 +5711,16 @@ function renderBand(part) {
   const root=$('#view-'+part), study=bandStudy(part), bass=part==='bass', other=bass?'drums':'bass';
   const solo=PLAY_PATH[part].includes(study);
   const group=(label,list)=>'<optgroup label="'+label+'">'+list.map((s,i)=>'<option value="'+s.id+'" '+(s===study?'selected':'')+'>'+(i+1)+'. '+s.title+'</option>').join('')+'</optgroup>';
-  const opts=group(bandNames[part]+' lessons',studioLessons(part))+(playable(part,BAND[0])?group('Ensemble grooves',BAND):'');
+  const opts=solo?group(bandNames[part]+' lessons',studioLessons(part)):group('Ensemble grooves',BAND);
   root.innerHTML='<div class="vhead"><div><span class="label">'+bandNames[part]+'</span><h2>'+study.title+'</h2></div><p class="small muted">'+(bass?'Four-string bass · E A D G':S.band.drums.setup==='pad'?'Practice pad':'Drum kit · kick, snare and closed hi-hat')+'</p></div>'+
-    '<div class="stack band-room"><div><button class="btn" data-go="'+studioRoute(part,solo?'learn':'library')+'">← '+(solo?'Course':'Library')+'</button></div><label class="f"><span>Lesson or ensemble groove</span><select data-band="study">'+opts+'</select></label>'+
-    '<p>'+bandInstruction(part,study)+'</p><div class="row"><label class="f"><span>Tempo (BPM)</span><input type="number" min="35" max="200" data-band="tempo" value="'+bandTempo(part,study)+'"></label>'+
+    '<div class="stack band-room"><div><button class="btn" data-go="'+studioRoute(part,solo?'learn':'library')+'">← '+(solo?'Course':'Library')+'</button></div><label class="f"><span>'+(solo?'Course lesson':'Ensemble groove')+'</span><select data-band="study">'+opts+'</select></label>'+
+    (solo?'<p>'+LESSON_COACH[study.id][0]+'</p>':'')+'<p>'+bandInstruction(part,study)+'</p><div class="row"><label class="f"><span>Tempo (BPM)</span><input type="number" min="35" max="200" data-band="tempo" value="'+bandTempo(part,study)+'"></label>'+
     (solo?'<label><input type="checkbox" data-band="guide" '+(S.band[part].guide?'checked':'')+'> Play guide (off for click only)</label>':
     '<label class="f"><span>Backing</span><select data-band="mix"><option value="both">Full band</option><option value="partner">'+(bass?'Drums only':'Bass only')+'</option><option value="self">'+bandNames[part]+' only</option></select></label>')+
     '<label><input type="checkbox" data-band="click" '+(S.band[part].click?'checked':'')+'> Click</label></div>'+
     '<div class="row"><button class="btn primary big" data-band="play">Play loop</button><span data-band="position" class="small muted">4/4 · one-bar count-in</span></div>'+
     '<div class="band-bars">'+bandScore(study,part)+'</div><p class="small muted">'+(bass?'Numbers are frets. 0 is an open string. A dash sustains the previous note. An empty column is a rest.':'Read each column together. × is a closed hat, ● a drum hit, and (●) a quiet snare ghost note. R and L show sticking when specified. &gt; marks an accented snare. Empty cells are silent.')+'</p>'+
-    '<div class="row"><button class="btn" data-band="log">Log clean take</button><span role="status" class="small muted" data-band="best">'+bandRecord(part,study)+'</span></div>'+
+    (solo?'<p><strong>Listen for this.</strong> '+LESSON_COACH[study.id][1]+'</p>':'')+'<div class="row"><button class="btn" data-band="log">Log clean take</button><span role="status" class="small muted" data-band="best">'+bandRecord(part,study)+'</span></div>'+
     (solo || !playable(other,study)?'': '<div><button class="btn" data-band="swap">Play the '+(bass?'drum':'bass')+' part</button></div>')+'</div>';
   if(!solo)root.querySelector('[data-band="mix"]').value=S.band[part].mix;
   root.onchange=e=>{
@@ -5817,6 +5817,28 @@ PLAY_PATH.drums.push(
   {id:'drum-displace',title:'Slide a kick past the backbeat',bpm:74,div:4,drums:'Play eighths on closed hat and snare on two and four. Kick on one and the last sixteenth of two. In bar two shift that second kick to the “e” of three. Keep both backbeats in the same place.',hat:Array.from({length:16},(_,i)=>i*2),snare:[4,12,20,28],kick:[0,7,16,25]},
   {id:'drum-return',title:'Leave the fill on time',bpm:78,div:4,drums:'Play a bar of backbeat. In bar two take both hands to the snare on beat three for four sixteenths. Resume hat and snare together on beat four. Listen for the quarter-note pulse through the fill.',hat:[0,2,4,6,8,10,12,14,16,18,20,22,28,30],snare:[4,12,20,24,25,26,27,28],kick:[0,8,16,24]}
 );
+// A lesson has a musical reason and an audible performance checkpoint in addition to its score.
+const LESSON_COACH = {
+  'bass-release':['Stopping the string sets the rhythm just as clearly as starting it. The same E can fill two eighths or leave the second eighth empty.','On the short notes, hear a whole empty eighth before the next attack.'],
+  'bass-alternate':['An odd number of attacks changes which finger or pick direction starts the next group. A rest gives you time but does not count as a stroke.','Play both bars twice with the same attack volume on A and D.'],
+  'bass-gates':['A bass line can change feel without changing pitch. The rests in bar one make the downbeats separate; the longer notes in bar two connect them.','With the guide muted, make the difference between bars audible on one pitch.'],
+  'bass-map':['Fret three on A and fret five on G are both C. The higher C vibrates an octave above the lower one. The E and G between them belong to a C-major triad.','Name each pitch while playing and land on the high C without the A string ringing beneath it.'],
+  'bass-thirds':['The root tells you this is an A chord. The third tells you its quality. Moving the third down one fret changes major to minor.','Play the two bars and sing the note that changed. Keep the fifth identical.'],
+  'bass-roots':['E belongs to C major and A minor. Holding it through the bar line lets the harmony change under a single note.','Play through the bar line without a new attack on one. Land the next A cleanly.'],
+  'bass-pedal':['A pedal is a recurring anchor. Here open E gives the ear a home while G, A, B and D answer it in a higher register.','Give each return to E the same weight, including the one after the highest answer.'],
+  'bass-pickup':['An anticipation places the next harmony before its expected downbeat. The written hold carries the early A past one.','Keep counting out loud through the held A. The pulse should continue even though your hand is still.'],
+  'bass-walk':['A chromatic approach sits one fret from its target. D♭ falls to C in the middle; F♯ rises to G across the repeat.','Hear both resolutions on one. Keep the approach notes the same length as the other quarters.'],
+  'drum-hands':['Different stick heights can make one hand sound like an accent. Alternating the leading hand exposes an imbalance that speed can hide.','Listen through two loops. The lead should change hands without a change in loudness.'],
+  'drum-doubles':['Two strokes from one hand still occupy two equal subdivisions. A rebound that arrives early compresses the second half of a pair.','Keep counting eighths when the singles become doubles. Each second stroke should land on its own count.'],
+  'drum-accents':['An accent is a change in loudness. The hands keep moving at the same rate while the louder stroke moves from the right side to the left.','Play the marked accents above the taps while keeping the taps audible and even.'],
+  'drum-rests':['The space between two hits is part of the rhythm. Counting every eighth keeps the offbeat in place when the downbeat falls silent.','Count one-and through bar two. Hear the strokes fall between the numbers.'],
+  'drum-burst':['Four sixteenths take exactly as long as one quarter. The last stroke of a burst leaves one sixteenth before the next downbeat.','Play two loops without speeding up the quarter note immediately after either burst.'],
+  'drum-foot':['When the foot moves between the hands, your hat supplies a reference pulse. A kick can sound alone between two hat attacks.','Listen for a clear lone kick on each written offbeat in bar two.'],
+  'drum-paradiddle':['The doubled stroke changes which hand leads the next group. Moving one hand to the hat reveals the sticking as a melody between surfaces.','Hear the same rhythm across both bars after the right hand moves to the hat.'],
+  'drum-displace':['Moving the kick by a few sixteenths changes how it pulls against a steady backbeat. The hi-hat remains a ruler for both bars.','Count the late kick in each bar and keep both snare backbeats in place.'],
+  'drum-return':['A fill can end inside a bar. Here the hands leave the groove for one beat, then return to the backbeat before the next bar begins.','Return to hat and snare together on four, then land on the kick at the top of the loop.']
+};
+
 const CHECKS = {
   bass:[
     ['When should a short note end?', ['At the next attack','On its written release'],1,'Listen to the space from the release to the next attack.'],
@@ -5847,7 +5869,7 @@ function studioPage(part,page){
   const weekly=Array.from({length:7},(_,i)=>studioSeconds(S.days[dayAdd(-i)],part)).reduce((sum,n)=>sum+n,0);
   const head=(title,desc)=>'<div class="vhead"><div class="stack"><span class="label">'+cfg.name+'</span><h2>'+title+'</h2></div><p class="small muted">'+desc+'</p></div>';
   const cards=list=>'<div class="excards">'+list.map(s=>studyButton(s,part)).join('')+'</div>';
-  if(page==='today')return head('Today’s practice',cfg.subtitle)+studioSetup(part)+'<div class="studio-columns"><section class="card stack"><h3>Continue practicing</h3>'+studyButton(current,part)+'</section><section class="card stack"><h3>Next in your course</h3>'+studyButton(next,part)+'<span class="small muted">'+completed+' of '+lessons.length+' lessons logged clean</span></section></div>';
+  if(page==='today')return head('Today’s practice',cfg.subtitle)+studioSetup(part)+'<div class="studio-columns"><section class="card stack"><h3>Practice this lesson</h3>'+studyButton(current,part)+'<p>'+(LESSON_COACH[current.id]?.[1] || current[part])+'</p></section><section class="card stack"><h3>Your course</h3><span>'+completed+' of '+lessons.length+' lessons logged clean</span>'+(current!==next?studyButton(next,part):'')+'<div><button class="btn" data-go="'+studioRoute(part,'learn')+'">Open course</button></div></section></div>';
   if(page==='learn')return head(part==='bass'?'Electric bass course':'Drum studies',part==='bass'?'Move from controlling a single note to writing a line through changes.':'Develop the hands first, then carry the pulse between limbs.')+cfg.chapters.map((ch,i)=>{
     const items=lessons.filter(s=>ch.ids.includes(s.id));if(!items.length)return '';
     const [question,answers]=CHECKS[part][i];
