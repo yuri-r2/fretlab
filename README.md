@@ -12,11 +12,11 @@ Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in T
 
 ## Instrument workspaces
 
-Choose Guitar, Bass guitar or Drums above the page. Today, Learn, Library and Progress follow that choice. Opening the app without a bookmark restores your instrument. Old guitar bookmarks and the bass and drum player links still work.
+Open [Pocket Guitar](https://yuri-r2.github.io/fretlab/guitar/), [Pocket Bass](https://yuri-r2.github.io/fretlab/bass/) or [Pocket Drums](https://yuri-r2.github.io/fretlab/drums/). Each app has its own home screen, install identity, settings, backup and progress. Existing bookmarks open the corresponding app. Earlier practice records seed each instrument on first use.
 
-Guitar keeps its routines, nine-unit fretboard course, song repertoire and guitar tools. Bass has a three-chapter course on articulation, chord tones and line construction, with nine scored studies. Its setup provides four open-string reference tones and fingerstyle or pick instructions. Drums has nine studies in strokes, subdivision and kit coordination. Practice pad setup offers the five studies playable on one surface. Kit setup includes kick, snare and closed-hat references.
+Pocket Bass has thirteen scored lessons across four chapters, from a first fretted note through syncopated octave jumps and chromatic enclosures. Each lesson includes an isolation drill, a correction and an audible checkpoint. The chord-tone finder sounds individual fret positions. Its Library links bass parts by Queen, Nirvana and Muse. [Bass curriculum research](BASS_CURRICULUM_RESEARCH.md)
 
-Bass and drums each have their own checkpoints, practice record and resource library. Six optional ensemble arrangements connect the two parts in the Library. The player uses the shared header transport, mixer and metronome. [Instrument curriculum research](RHYTHM_SECTION_RESEARCH.md).
+Pocket Drums has ten scored studies, a reversible-lead rudiment trainer and drum repertoire. Pad mode narrows the course to one-surface studies. Guitar retains its nine-unit course, guitar tools and riff repertoire. Six paired ensemble arrangements are playable in the bass and drum apps.
 
 Bass lessons and ensemble parts display four-line tab, with G at the top and low E at the bottom. In bass and drum practice, choose either bar, use **Hear once** for a demonstration, then **Play loop** with your chosen backing. Select **Both bars** to practice the transition and log a clean take.
 
