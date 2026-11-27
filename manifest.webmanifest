@@ -2,7 +2,7 @@
  "name": "Pocket Rehearsal",
  "short_name": "Pocket Rehearsal",
  "description": "Practice guitar, four-string bass and drums with dedicated lessons and shared ensemble grooves.",
- "start_url": "./#today",
+ "start_url": "./",
  "scope": "./",
  "display": "standalone",
  "orientation": "any",
