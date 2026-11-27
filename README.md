@@ -16,7 +16,7 @@ Open [Pocket Guitar](https://yuri-r2.github.io/fretlab/guitar/), [Pocket Bass](h
 
 Pocket Bass has thirteen scored lessons across four chapters, from a first fretted note through syncopated octave jumps and chromatic enclosures. Each lesson includes an isolation drill, a correction and an audible checkpoint. The chord-tone finder sounds individual fret positions. Its Library links bass parts by Queen, Nirvana and Muse. [Bass curriculum research](BASS_CURRICULUM_RESEARCH.md)
 
-Pocket Drums has ten scored studies, a reversible-lead rudiment trainer and drum repertoire. Pad mode narrows the course to one-surface studies. Guitar retains its nine-unit course, guitar tools and riff repertoire. Six paired ensemble arrangements are playable in the bass and drum apps.
+Pocket Drums teaches twelve original four-bar studies in sticking, syncopated reading, coordination and phrase resolution. Four work on a practice pad. Select a bar or an adjacent pair to rehearse the transition, isolate a kit voice, then perform the phrase with the guide off. The Library retains earlier studies and links drum parts by Rush, Tool, Led Zeppelin and Fleetwood Mac. [Drum course research](DRUM_CURRICULUM_RESEARCH.md). Guitar retains its nine-unit course, guitar tools and riff repertoire. Six paired ensemble arrangements are playable in the bass and drum apps.
 
 Bass lessons and ensemble parts display four-line tab, with G at the top and low E at the bottom. In bass and drum practice, choose either bar, use **Hear once** for a demonstration, then **Play loop** with your chosen backing. Select **Both bars** to practice the transition and log a clean take.
 
