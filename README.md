@@ -10,9 +10,13 @@ Four main destinations keep the learning flow close at hand: **Today**, **Learn*
 
 Today's plan fits the time you choose, from 5 to 90 minutes. Choose a focus in Today, or make an exercise or chord collection your focus from its own screen. Reviews retain their key, and the final application block uses the session's focus material. Timers wait for Next block so a time limit does not interrupt a phrase. The persistent session bar has an **Open block** button: return to the current exercise from any page with its step, key, tempo and practice position. Opening it keeps the block timer and paused state. Session Pause stops the exercise or metronome along with the timer; Resume continues the same exercise at its paused position. End keeps that position, and Next block stops the outgoing playback.
 
-## Bass guitar and drums
+## Instrument workspaces
 
-Open either instrument from Today, Learn or Library. Each has five dedicated lessons, its own reading resources and six ensemble grooves. Hear the guide, turn it off to play to the click, or choose the partner part in an ensemble groove. Log a clean tempo to save a personal best. [Curriculum research](RHYTHM_SECTION_RESEARCH.md).
+Choose Guitar, Bass guitar or Drums above the page. Today, Learn, Library and Progress follow that choice. Opening the app without a bookmark restores your instrument. Old guitar bookmarks and the bass and drum player links still work.
+
+Guitar keeps its routines, nine-unit fretboard course, song repertoire and guitar tools. Bass has a three-chapter course on articulation, chord tones and line construction, with nine scored studies. Its setup provides four open-string reference tones and fingerstyle or pick instructions. Drums has nine studies in strokes, subdivision and kit coordination. Practice pad setup offers the five studies playable on one surface. Kit setup includes kick, snare and closed-hat references.
+
+Bass and drums each have their own checkpoints, practice record and resource library. Six optional ensemble arrangements connect the two parts in the Library. The player uses the shared header transport, mixer and metronome. [Instrument curriculum research](RHYTHM_SECTION_RESEARCH.md).
 
 ## Riffs
 
