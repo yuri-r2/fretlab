@@ -30,7 +30,7 @@ const {pathToFileURL} = require('node:url');
       await studio.locator('[data-piece]').first().click();
       const select=field(part,'study');
       const ids=await select.locator('option').evaluateAll(o=>o.map(x=>x.value));
-      const expected=part==='bass'?13:10;
+      const expected=part==='bass'?13:12;
       assert.equal(ids.length,expected);
       assert.equal(ids.filter(id=>id.startsWith(part==='bass'?'bass-':'drum-')).length,expected);
 
@@ -40,8 +40,23 @@ const {pathToFileURL} = require('node:url');
       for(const id of ids){
         await select.selectOption(id);
         const counts=room(part).locator('thead [data-pulse]');
-        assert.equal(await counts.count(),['ghost','turnaround','drum-burst','drum-displace','drum-return','drum-crossaccent','bass-burst','bass-target','bass-octave-engine'].includes(id)?32:16);
+        assert.equal(await counts.count(),part==='drums'?(['drum-triplet-doubles','drum-halfshuffle','drum-triplet-break'].includes(id)?48:64):['ghost','turnaround','drum-burst','drum-displace','drum-return','drum-crossaccent','bass-burst','bass-target','bass-octave-engine'].includes(id)?32:16);
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+      }
+      if(part==='drums'){
+        await select.selectOption('drum-fill-return');
+        await field(part,'layer').selectOption('tom');
+        await field(part,'passage').selectOption('2-3');
+        assert.deepEqual(await room(part).locator('table:visible').evaluateAll(ts=>ts.map(t=>t.dataset.bar)),['2','2','3','3']);
+        assert.equal(await field(part,'log').isDisabled(),true);
+        await field(part,'tempo').fill('200');
+        await field(part,'listen').click();
+        await room(part).locator('[data-bar="3"] td.playing').first().waitFor();
+        await page.waitForFunction(()=>document.querySelector('#view-drums [data-band="play"]').textContent==='Play loop');
+        await field(part,'passage').selectOption('both');
+        assert.equal(await field(part,'log').isEnabled(),true);
+        await select.selectOption('drum-triplet-doubles');
+        assert.deepEqual(await room(part).locator('thead').first().locator('[data-pulse]').allTextContents(),['1','trip','let','2','trip','let']);
       }
       await tab('library');
       await studio.locator('[data-piece="release"]').click();
@@ -99,8 +114,8 @@ const {pathToFileURL} = require('node:url');
     await studio.locator('summary').first().click();
     await studio.locator('[data-studio-setup]').selectOption('pad');
     await tab('learn');
-    assert.equal(await studio.locator('[data-piece]').count(),6);
-    await studio.locator('[data-piece="drum-burst"]').click();
+    assert.equal(await studio.locator('[data-piece]').count(),4);
+    await studio.locator('[data-piece="drum-triplet-doubles"]').click();
     assert.equal(await room('drums').locator('tbody th').first().textContent(),'Pad');
     await page.reload();
     assert.equal(await instrument.inputValue(),'drums');
@@ -131,7 +146,7 @@ const {pathToFileURL} = require('node:url');
         await tab('progress');
         assert.equal(/clean at 91\b/i.test(await studio.innerText()),app==='bass');
         await tab('learn');
-        assert.equal(await studio.locator('[data-piece]').count(),app==='bass'?13:10);
+        assert.equal(await studio.locator('[data-piece]').count(),app==='bass'?13:12);
         if(app==='bass'){
           await studio.locator('[data-piece="bass-burst"]').click();
           await field('bass','names').check();
