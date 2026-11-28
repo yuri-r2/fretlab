@@ -4454,6 +4454,7 @@ function bandRanges(study){
   const choices=[['both',bars===2?'Both bars':'Full phrase · 4 bars',0,bars]];
   for(let i=0;i<bars;i++)choices.push([String(i+1),'Bar '+(i+1),i,1]);
   if(bars>2)for(let i=0;i<bars-1;i++)choices.push([(i+1)+'-'+(i+2),'Bars '+(i+1)+'–'+(i+2),i,2]);
+  if(bars>2)choices.push(['wrap','Turnaround · bar '+bars+' → bar 1',bars-1,2]);
   return choices;
 }
 function bandScore(study, part) {
@@ -4525,11 +4526,16 @@ function renderBand(part) {
     const passage=bandPassage(part,study), log=root.querySelector('[data-band="log"]');
     root.querySelector('[data-band="passage"]').value=passage;
     const [, ,start,count]=bandRanges(study).find(([id])=>id===passage);
-    root.querySelectorAll('[data-bar]').forEach(table=>{
-      const bar=Number(table.dataset.bar),inside=bar>start && bar<=start+count;
+    const bars=study.bars || 2, grid=root.querySelector('.band-bars');
+    const tables=Array.from(grid.querySelectorAll('[data-bar]'));
+    const distance=table=>(Number(table.dataset.bar)-1-start+bars)%bars;
+    if(study.bars)tables.sort((a,b)=>distance(a)-distance(b));
+    for(const table of tables){
+      const inside=distance(table)<count;
       table.dataset.selected=String(passage!=='both' && inside);
       table.hidden=!!study.bars && !inside;
-    });
+      if(study.bars)grid.appendChild(table);
+    }
     log.disabled=passage!=='both';
     log.textContent=log.disabled?(study.bars?'Log take after full phrase':'Log take after both bars'):'Log clean take';
   }
@@ -4574,6 +4580,8 @@ function bandStart(part,preview=false) {
   const solo=PLAY_PATH[part].includes(study);
   const [, ,firstBar,barCount]=bandRanges(study).find(([id])=>id===bandPassage(part,study));
   const offset=firstBar*4*div, length=barCount*4*div, root=$('#view-'+part);
+  const totalCells=(study.bars || 2)*4*div;
+  const scoreCell=elapsedCell=>(offset+elapsedCell%length)%totalCells;
   const layerControl=root.querySelector('[data-band="layer"]');
   const r=bandRun={root,notes:bus(AU.notes),drums:bus(AU.click),timer:null};
   const first=ctx.currentTime+0.08, start=preview?0:-4*div;
@@ -4585,7 +4593,7 @@ function bandStart(part,preview=false) {
     if(preview && elapsed>=length){bandStop();return;}
     next=Math.max(next,Math.ceil(elapsed-0.02));
     while((!preview || next<length) && first+(next-start)*sec<now+0.12){
-      const t=first+(next-start)*sec, i=offset+next%length, {mix,click}=S.band[part];
+      const t=first+(next-start)*sec, i=scoreCell(next), {mix,click}=S.band[part];
       if(next%div===0 && (next<0 || click || (solo && !preview && !S.band[part].guide)))SND.click(t,next%(4*div)===0?3:1,r.drums);
       if(next>=0){
         const layer=layerControl?.value || 'all';
@@ -4606,7 +4614,7 @@ function bandStart(part,preview=false) {
     if(pos===last || pos<start)return;
     last=pos;
     root.querySelectorAll('.playing').forEach(c=>c.classList.remove('playing'));
-    const scorePos=offset+pos%length;
+    const scorePos=scoreCell(pos);
     if(pos>=0)root.querySelectorAll('[data-pulse="'+scorePos+'"]').forEach(c=>c.classList.add('playing'));
     root.querySelector('[data-band="position"]').textContent=pos<0?'Count in · '+(5+Math.floor(pos/div)):'Bar '+(1+Math.floor(scorePos/div/4))+' · beat '+(1+Math.floor(pos/div)%4);
   }

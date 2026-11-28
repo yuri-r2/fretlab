@@ -1,5 +1,5 @@
 // Fretlab offline support: prefer current pages online and retain the app shell for offline use.
-const CACHE = 'fretlab-v38';
+const CACHE = 'fretlab-v39';
 const SHELL = ['./', './index.html', './audio-check.html', './manifest.webmanifest', './icon-192.png', './icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./apps.html','./shared/practice.js','./shared/practice.css',
   ...['guitar','bass','drums'].flatMap(part=>['./'+part+'/index.html','./'+part+'/manifest.webmanifest'])];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
