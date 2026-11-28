@@ -57,6 +57,16 @@ const {pathToFileURL} = require('node:url');
         assert.equal(await field(part,'log').isEnabled(),true);
         await select.selectOption('drum-triplet-doubles');
         assert.deepEqual(await room(part).locator('thead').first().locator('[data-pulse]').allTextContents(),['1','trip','let','2','trip','let']);
+        await field(part,'passage').selectOption('wrap');
+        assert.deepEqual(await room(part).locator('table:visible').evaluateAll(ts=>ts.map(t=>t.dataset.bar)),['4','4','1','1']);
+        await field(part,'tempo').fill('200');
+        await field(part,'listen').click();
+        await room(part).locator('[data-bar="4"] td.playing').first().waitFor();
+        await room(part).locator('[data-bar="1"] td.playing').first().waitFor();
+        await page.waitForFunction(()=>document.querySelector('#view-drums [data-band="play"]').textContent==='Play loop');
+        assert.equal(await field(part,'log').isDisabled(),true);
+        await field(part,'passage').selectOption('both');
+        assert.deepEqual(await room(part).locator('table:visible').evaluateAll(ts=>ts.map(t=>t.dataset.bar)),['1','1','2','2','3','3','4','4']);
       }
       await tab('library');
       await studio.locator('[data-piece="release"]').click();
